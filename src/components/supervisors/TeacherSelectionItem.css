@@ -1,0 +1,89 @@
+.teacher-selection-item {
+    padding: 0.75rem 1rem; /* Reduced vertical padding */
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s;
+    background-color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.teacher-selection-item:hover {
+    background-color: #f9fafb;
+}
+
+.teacher-selection-item.selected {
+    background-color: #eff6ff;
+    border-color: #bfdbfe;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.checkbox-wrapper {
+    margin-top: 0.25rem;
+}
+
+.checkbox-input {
+    /* Style your checkbox here */
+    width: 1rem;
+    height: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+    accent-color: #2563eb; /* This changes the color of the checkbox when checked */
+}
+
+.teacher-details {
+    flex: 1;
+}
+
+.teacher-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.25rem; /* Reduced margin */
+}
+
+.teacher-name {
+    font-weight: 600;
+    color: #111827;
+}
+
+.teacher-info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.25rem; /* Reduced gap */
+    font-size: 0.875rem;
+    color: #4b5563;
+    margin-bottom: 0.5rem; /* Reduced margin */
+}
+
+@media (min-width: 768px) {
+    .teacher-info-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.font-medium {
+    font-weight: 500;
+}
+
+.teacher-contact-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* Reduced gap */
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.icon {
+    width: 1rem;
+    height: 1rem;
+    color: #6b7280;
+}
