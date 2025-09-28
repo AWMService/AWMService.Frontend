@@ -1,0 +1,133 @@
+.time-periods-page {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header-buttons button {
+    margin-left: 10px;
+}
+
+.btn {
+    padding: 6px 12px;
+    margin: 5px;
+    border: 1px solid #333;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #eee;
+}
+
+.btn.danger {
+    border-color: red;
+    color: red;
+}
+
+.btn.secondary {
+    background-color: #ddd;
+}
+
+.status-message {
+    padding: 10px;
+    background-color: #cce5ff;
+    color: #004085;
+    margin-bottom: 15px;
+    position: relative;
+    border-radius: 4px;
+}
+
+.status-message .close {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+}
+
+.statistics-grid {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.stat-card {
+    padding: 10px;
+    border: 1px solid #ccc;
+    flex: 1;
+    text-align: center;
+    border-radius: 4px;
+}
+
+.periods-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.period-card {
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 4px;
+    width: 250px;
+}
+
+.card-buttons button {
+    margin-right: 5px;
+}
+
+.dialog-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dialog {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 4px;
+    width: 300px;
+}
+
+.dialog-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.dialog-buttons .btn {
+    margin-left: 5px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 50px;
+    border: 2px dashed #ccc;
+    border-radius: 4px;
+}
+
+.quick-selector {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+.quick-selector .templates button {
+    display: block;
+    margin-bottom: 5px;
+    width: 100%;
+}
+
+
