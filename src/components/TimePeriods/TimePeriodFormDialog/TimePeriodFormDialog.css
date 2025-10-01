@@ -1,0 +1,112 @@
+.dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.dialog {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    width: 420px;
+    max-width: 90%;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    animation: fadeInScale 0.2s ease-out;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+.dialog h2 {
+    margin: 0 0 16px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.dialog form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.dialog label {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    gap: 6px;
+}
+
+.dialog input,
+.dialog select {
+    font-family: inherit;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #111827;
+    background: #ffffff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    appearance: none; /* убираем дефолтную стрелочку */
+}
+
+/* Кастомная стрелочка у select */
+.dialog select {
+    background-image: url("data:image/svg+xml;utf8,<svg fill='none' stroke='%236b7280' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M19 9l-7 7-7-7'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    padding-right: 36px; /* место под стрелочку */
+    cursor: pointer;
+}
+
+/* Наведение */
+.dialog input:hover,
+.dialog select:hover {
+    border-color: #9ca3af;
+}
+
+/* Фокус */
+.dialog input:focus,
+.dialog select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+/* Опции внутри списка */
+.dialog select option {
+    font-family: inherit;
+    font-size: 14px;
+    padding: 8px;
+    background: #ffffff;
+    color: #111827;
+}
+
+/* Выбранная опция */
+.dialog select option:checked {
+    background: #3b82f6;
+    color: #ffffff;
+}
+
+.dialog-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

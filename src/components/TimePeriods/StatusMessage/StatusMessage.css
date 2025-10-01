@@ -1,0 +1,16 @@
+.status-message {
+    background: #d1fae5;
+    border: 1px solid #10b981;
+    color: #065f46;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-message .close {
+    cursor: pointer;
+    font-weight: bold;
+}
