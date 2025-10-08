@@ -1,0 +1,127 @@
+.topics-page {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.topics-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.topics-title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.topics-subtitle {
+    color: #666;
+}
+
+.topics-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.topic-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    background: #fff;
+    transition: box-shadow 0.3s;
+}
+
+.topic-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.topic-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.topic-title {
+    margin: 10px 0 5px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.topic-desc {
+    font-size: 14px;
+    color: #444;
+}
+
+.badge {
+    display: inline-block;
+    background: #f1f1f1;
+    border-radius: 5px;
+    padding: 2px 8px;
+    margin-right: 5px;
+    font-size: 12px;
+}
+
+.status {
+    font-size: 13px;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 5px;
+}
+
+.status-draft { background: #eee; color: #555; }
+.status-pending { background: #fff3cd; color: #856404; }
+.status-approved { background: #d4edda; color: #155724; }
+.status-rejected { background: #f8d7da; color: #721c24; }
+
+.topic-footer {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    font-size: 13px;
+    color: #555;
+}
+
+.rejection-box {
+    margin-top: 10px;
+    padding: 10px;
+    background: #fdd;
+    border: 1px solid #f99;
+    border-radius: 5px;
+}
+
+.topic-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+}
+
+.btn-outline {
+    background: white;
+    border: 1px solid #007bff;
+    color: #007bff;
+}
+
+.btn-outline:hover {
+    background: #007bff;
+    color: white;
+}

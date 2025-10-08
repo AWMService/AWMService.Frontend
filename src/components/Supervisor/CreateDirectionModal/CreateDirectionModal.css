@@ -1,0 +1,159 @@
+
+.cdm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1200;
+    padding: 20px;
+}
+
+/* modal */
+.cdm-modal {
+    width: 720px;
+    max-width: calc(100% - 40px);
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(2,6,23,0.2);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* header */
+.cdm-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    padding: 20px 22px;
+    border-bottom: 1px solid #eef2f6;
+}
+
+.cdm-header h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #111827;
+}
+
+.cdm-header .muted {
+    margin: 4px 0 0 0;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* close button */
+.cdm-close {
+    background: transparent;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    color: #374151;
+    border-radius: 6px;
+}
+.cdm-close:hover {
+    background: #f3f4f6;
+}
+
+/* body */
+.cdm-body {
+    padding: 18px 22px;
+    max-height: 70vh;
+    overflow: auto;
+}
+
+/* sections */
+.cdm-section {
+    margin-bottom: 16px;
+}
+
+.cdm-section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.cdm-section-title h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #111827;
+}
+
+.cdm-required {
+    background: #fff5f0;
+    color: #b45309;
+    border: 1px solid #ffedd5;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+}
+
+/* labels and inputs */
+.cdm-field-label {
+    display: block;
+    margin: 8px 0 6px;
+    font-size: 13px;
+    color: #374151;
+}
+
+.cdm-input,
+.cdm-textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border: 1px solid #e6e9ee;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #111827;
+    background: white;
+    outline: none;
+    transition: border-color 0.12s, box-shadow 0.12s;
+}
+
+.cdm-input::placeholder,
+.cdm-textarea::placeholder {
+    color: #9ca3af;
+}
+
+/* invalid state */
+.cdm-input.invalid,
+.cdm-textarea.invalid {
+    border-color: #fca5a5;
+    box-shadow: 0 0 0 3px rgba(255, 221, 221, 0.4);
+}
+
+/* footer */
+.cdm-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 14px 22px;
+    border-top: 1px solid #eef2f6;
+    background: #ffffff;
+}
+
+/* reuse your existing .btn styles by keeping class names same (btn, btn-primary, btn-outline) */
+/* if needed, add slight modal-specific overrides */
+
+.btn.disabled,
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* responsive smaller screens */
+@media (max-width: 520px) {
+    .cdm-modal {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 10px;
+    }
+    .cdm-header,
+    .cdm-body,
+    .cdm-footer {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+}
