@@ -1,0 +1,145 @@
+/* General Page Layout */
+.supervisors-page {
+    padding: 2rem;
+    background-color: #F9FAFB; /* Athens Gray 50% from Figma */
+    flex: 1;
+}
+
+/* Page Header */
+.page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.page-header-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.page-header-icon-bg {
+    background-color: #DBEAFE; /* A light blue */
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-header-icon {
+    width: 2rem;
+    height: 2rem;
+    color: #2563EB;
+}
+
+.page-title {
+    font-size: 1.125rem; /* 18px */
+    font-weight: 600;
+    color: #1F2937; /* Ebony Clay */
+    line-height: 1.55;
+}
+
+.page-subtitle {
+    font-size: 0.875rem; /* 14px */
+    color: #4B5563; /* River Bed */
+    margin-top: 0.25rem;
+}
+
+/* Buttons */
+.button {
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    border: none;
+}
+
+.primary-button {
+    background-color: #2563EB; /* Royal Blue */
+    color: #ffffff;
+}
+
+.primary-button:hover {
+    background-color: #1D4ED8; /* Persian Blue */
+}
+
+.button-icon {
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+    filter: brightness(0) invert(1);
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB; /* Athens Gray */
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.stat-card-title {
+    font-size: 0.875rem;
+    color: #4B5563; /* River Bed */
+    margin: 0;
+    margin-top: 0.5rem;
+}
+
+.stat-card-value {
+    font-size: 1.5rem; /* 24px */
+    font-weight: 700;
+    line-height: 1.33;
+    margin: 0;
+}
+
+.stat-value-approved { color: #16A34A; } /* Salem */
+.stat-value-unapproved { color: #D97706; } /* Tahiti Gold */
+.stat-value-available { color: #2563EB; } /* Royal Blue */
+.stat-value-total { color: #9333EA; } /* Electric Violet */
+
+
+/* Search Bar */
+.search-bar-container {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.search-bar-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1rem;
+    height: 1rem;
+    color: #9CA3AF; /* Gray Chateau */
+}
+
+.search-bar-input {
+    width: 100%;
+    max-width: 460px;
+    padding: 0.6rem 0.6rem 0.6rem 2.5rem;
+    border-radius: 0.375rem;
+    border: 1px solid #E5E7EB; /* Athens Gray */
+    font-size: 0.875rem;
+}
+
+/* Supervisor Grid */
+.supervisors-grid-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
