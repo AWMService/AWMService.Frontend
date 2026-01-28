@@ -1,0 +1,52 @@
+.critique-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.critique-card-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.file-display {
+    display: flex;
+    align-items: center;
+    background-color: #f2f4fa;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 1rem;
+}
+
+.file-display img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.file-display span {
+    font-size: 16px;
+    color: #333;
+}
+
+.download-all-button {
+    width: 100%;
+    background-color: #4A5568; /* Gray */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 1rem;
+}
+
+.download-all-button:hover {
+    background-color: #2D3748;
+}
