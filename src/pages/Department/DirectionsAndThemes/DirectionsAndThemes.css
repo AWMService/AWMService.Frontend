@@ -1,0 +1,232 @@
+
+
+.projects-page {
+    padding: 20px 28px;
+    background-color: #f9fafb;
+    min-height: 100vh;
+    font-family: "Inter", sans-serif;
+}
+
+
+
+.page-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
+.page-subtitle {
+    margin-top: 6px;
+    font-size: 14px;
+    color: #64748b;
+}
+
+
+
+.projects-tabs {
+    display: inline-flex;
+    align-items: center;
+    background-color: #eef2f7;
+    border-radius: 999px;
+    padding: 3px;
+    gap: 4px;
+    margin: 16px 0 20px;
+}
+
+.tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: none;
+
+    background: transparent;
+    font-size: 13px;
+    font-weight: 500;
+    color: #334155;
+
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.tab-btn:hover {
+    background-color: rgba(37, 99, 235, 0.08);
+}
+
+.tab-btn.active {
+    background-color: #2563eb;
+    color: #ffffff;
+}
+
+
+.tab-btn span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+
+    background-color: #e5e7eb;
+    color: #475569;
+}
+
+.tab-btn.active span {
+    background-color: #1e40af;
+    color: #ffffff;
+}
+
+
+
+.projects-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+
+
+.search-input {
+    width: 100%;
+    max-width: 820px;
+    padding: 9px 14px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    font-size: 14px;
+    color: #0f172a;
+
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.search-input::placeholder {
+    color: #94a3b8;
+}
+
+.search-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+
+
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filter-btn {
+    padding: 6px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 999px;
+
+    background-color: #ffffff;
+    font-size: 13px;
+    font-weight: 500;
+    color: #334155;
+
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.filter-btn:hover {
+    background-color: #f1f5f9;
+}
+
+.filter-btn.active {
+    background-color: #2563eb;
+    color: #ffffff;
+    border-color: #2563eb;
+}
+
+
+.projects-list {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.no-results {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 14px;
+    margin-top: 24px;
+}
+
+
+
+.rejection-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.rejection-section textarea {
+    width: 100%;
+    max-width: 560px;
+    height: 96px;
+
+    padding: 12px 14px;
+    font-size: 14px;
+    color: #0f172a;
+
+    border: none;
+    border-radius: 8px;
+    resize: none;
+
+    background-color: #f3f4f6;
+    box-shadow: inset 0 0 0 1px #e5e7eb;
+
+    transition: box-shadow 0.15s ease;
+}
+
+.rejection-section textarea::placeholder {
+    color: #94a3b8;
+}
+
+.rejection-section textarea:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 2px #2563eb;
+}
+
+.rejection-section .confirm-reject-btn,
+.rejection-section .cancel-btn {
+    padding: 9px 18px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.rejection-section .confirm-reject-btn {
+    background-color: #dc2626;
+    color: #ffffff;
+}
+
+.rejection-section .confirm-reject-btn:hover {
+    background-color: #b91c1c;
+}
+
+.rejection-section .cancel-btn {
+    background-color: #e5e7eb;
+    color: #0f172a;
+}
+
+.rejection-section .cancel-btn:hover {
+    background-color: #d1d5db;
+}

@@ -44,9 +44,28 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                     <p><strong>Статус:</strong> {theme.status}</p>
                     <p><strong>Тип работы:</strong> {theme.type}</p>
                     <p><strong>Научный руководитель:</strong> {theme.supervisor}</p>
+
+                    <p><strong>Студент{theme.students?.length > 1 ? "ы" : ""}:</strong></p>
+
+                    {theme.students && theme.students.length > 0 ? (
+                        <ul className="students-list">
+                            {theme.students.map((student) => (
+                                <li key={student.id}>
+                                    {student.fullName}
+                                    {student.group && (
+                                        <span className="student-group"> ({student.group})</span>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className="no-students">Студент не назначен</p>
+                    )}
+
                     <p><strong>Название темы:</strong> {getTitle()}</p>
                     <p><strong>Описание темы:</strong> {getDescription()}</p>
                     <p><strong>Дата подачи:</strong> {theme.submittedAt}</p>
+
                 </div>
 
                 <div className="modal-actions">

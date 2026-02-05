@@ -1,38 +1,42 @@
 import React, { useState, useEffect } from "react";
-import Button from "../Button/Button.jsx";
 import "./TimePeriodFormDialog.css";
 
-export default function TimePeriodFormDialog({ isOpen, onClose, onSubmit, editingPeriod }) {
-    const [formData, setFormData] = useState({ name: "", startDate: "", endDate: "" });
+export default function TimePeriodFormDialog({
+                                                 isOpen,
+                                                 onClose,
+                                                 onSubmit,
+                                                 editingPeriod,
+                                             }) {
+    const [formData, setFormData] = useState({
+        name: "",
+        startDate: "",
+        endDate: "",
+    });
 
     const periodOptions = [
         { value: "Предзащита 1", label: "Предзащита 1" },
         { value: "Предзащита 2", label: "Предзащита 2" },
         { value: "Предзащита 3", label: "Предзащита 3" },
-        { value: "Защита", label: "Защита" }
+        { value: "Защита", label: "Защита" },
     ];
 
-    // если редактируем период — заполняем форму
     useEffect(() => {
         if (editingPeriod) {
             setFormData({
                 name: editingPeriod.name || "",
                 startDate: editingPeriod.startDate || "",
-                endDate: editingPeriod.endDate || ""
+                endDate: editingPeriod.endDate || "",
             });
         } else {
             setFormData({ name: "", startDate: "", endDate: "" });
         }
-    }, [editingPeriod]);
+    }, [editingPeriod, isOpen]);
 
     if (!isOpen) return null;
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = (e) => {
@@ -44,11 +48,16 @@ export default function TimePeriodFormDialog({ isOpen, onClose, onSubmit, editin
         <div className="dialog-backdrop">
             <div className="dialog">
                 <h2>{editingPeriod ? "Редактировать период" : "Создать период"}</h2>
-                <form onSubmit={handleSubmit}>
 
+                <form onSubmit={handleSubmit}>
                     <label>
                         Период:
-                        <select name="name" value={formData.name} onChange={handleChange} required>
+                        <select
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            required
+                        >
                             <option value="">Выберите период</option>
                             {periodOptions.map((option) => (
                                 <option key={option.value} value={option.value}>
@@ -81,10 +90,17 @@ export default function TimePeriodFormDialog({ isOpen, onClose, onSubmit, editin
                     </label>
 
                     <div className="dialog-buttons">
-                        <Button type="submit">{editingPeriod ? "Сохранить" : "Создать"}</Button>
-                        <Button className="secondary" onClick={onClose} type="button">
+                        <button type="submit" className="button primary-button">
+                            {editingPeriod ? "Сохранить" : "Создать"}
+                        </button>
+
+                        <button
+                            type="button"
+                            className="button secondary-button"
+                            onClick={onClose}
+                        >
                             Отмена
-                        </Button>
+                        </button>
                     </div>
                 </form>
             </div>

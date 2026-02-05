@@ -1,11 +1,11 @@
-/* General Page Layout */
+
 .supervisors-page {
     padding: 2rem;
-    background-color: #F9FAFB; /* Athens Gray 50% from Figma */
+    background-color: #F9FAFB;
     flex: 1;
 }
 
-/* Page Header */
+
 .page-header {
     display: flex;
     align-items: flex-start;
@@ -20,7 +20,7 @@
 }
 
 .page-header-icon-bg {
-    background-color: #DBEAFE; /* A light blue */
+    background-color: #DBEAFE;
     border-radius: 0.5rem;
     padding: 0.75rem;
     display: flex;
@@ -63,6 +63,9 @@
 .primary-button {
     background-color: #2563EB; /* Royal Blue */
     color: #ffffff;
+    font-weight: 400 !important;
+
+
 }
 
 .primary-button:hover {
@@ -143,3 +146,5 @@
     grid-template-columns: 1fr;
     gap: 1.5rem;
 }
+
+

@@ -6,8 +6,8 @@ import { HeaderSupervisor } from './components/Header/HeaderSupervisor';
 import { SidebarSupervisor } from './components/Sidebar/SidebarSupervisor';
 import SupervisorsPage from './pages/Department/Supervisors/SupervisorsPage.jsx';
 import TimePeriodsPage from './pages/Department/TimePeriods/TimePeriodsPage.jsx';
-import DirectionsPage from './pages/Department/Directions/DirectionsPage.jsx';
-import ThemePage from './pages/Department/Theme/ThemesPage.jsx';
+// import DirectionsPage from './pages/Department/Directions/DirectionsPage.jsx';
+// import ThemePage from './pages/Department/Theme/ThemesPage.jsx';
 import SettingsPage from './pages/Department/Settings/SettingsPage.jsx';
 import LoginPage from './pages/LoginPage/LoginPage.jsx';
 import StudentPage from './pages/Students/StudentPage.jsx';
@@ -15,11 +15,14 @@ import './App.css';
 import SDirectionsPage from "./pages/Supervisor/DirectionsPage/SDirectionsPage.jsx";
 import STopicsPage from "./pages/Supervisor/TopicsPage/STopicsPage.jsx";
 import MyStudentsPage from "./pages/Supervisor/MyStudentsPage/MyStudentsPage.jsx";
+import TimePeriodSetupPage from "./pages/Department/TimePeriods/TimePeriodSetupPage.jsx";
+import DirectionsAndThemes from "./pages/Department/DirectionsAndThemes/DirectionsAndThemes.jsx";
+import TimePeriodSchedulePage from "./pages/Department/TimePeriods/TimePeriodSchedulePage.jsx";
 
 function App() {
     const location = useLocation();
 
-    // Простые страницы (без хедера и сайдбара)
+
     const isSimplePage =
         location.pathname === '/' ||
         location.pathname === '/login' ||
@@ -51,9 +54,12 @@ function App() {
                         <Routes>
                             <Route path="/department/supervisors" element={<SupervisorsPage />} />
                             <Route path="/department/time-periods" element={<TimePeriodsPage />} />
-                            <Route path="/department/directions" element={<DirectionsPage />} />
-                            <Route path="/department/topics" element={<ThemePage />} />
+                            {/*<Route path="/department/directions" element={<DirectionsPage />} />*/}
+                            {/*<Route path="/department/topics" element={<ThemePage />} />*/}
                             <Route path="/department/settings" element={<SettingsPage />} />
+                            <Route path="/department/time-periods/:id/setup" element={<TimePeriodSetupPage />} />
+                            <Route path="/department/directions-topics" element={<DirectionsAndThemes /> } />
+                            <Route path="/department/time-periods/:id/schedule" element={<TimePeriodSchedulePage />}/>
                         </Routes>
                     </main>
                 </div>
@@ -79,7 +85,7 @@ function App() {
         );
     }
 
-    // Любой другой путь → страница логина
+
     return (
         <Routes>
             <Route path="*" element={<LoginPage />} />

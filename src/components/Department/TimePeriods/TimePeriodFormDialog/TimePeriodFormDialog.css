@@ -51,26 +51,26 @@
     color: #111827;
     background: #ffffff;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    appearance: none; /* убираем дефолтную стрелочку */
+    appearance: none;
 }
 
-/* Кастомная стрелочка у select */
+
 .dialog select {
     background-image: url("data:image/svg+xml;utf8,<svg fill='none' stroke='%236b7280' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M19 9l-7 7-7-7'/></svg>");
     background-repeat: no-repeat;
     background-position: right 10px center;
     background-size: 16px;
-    padding-right: 36px; /* место под стрелочку */
+    padding-right: 36px;
     cursor: pointer;
 }
 
-/* Наведение */
+
 .dialog input:hover,
 .dialog select:hover {
     border-color: #9ca3af;
 }
 
-/* Фокус */
+
 .dialog input:focus,
 .dialog select:focus {
     outline: none;
@@ -87,7 +87,7 @@
     color: #111827;
 }
 
-/* Выбранная опция */
+
 .dialog select option:checked {
     background: #3b82f6;
     color: #ffffff;

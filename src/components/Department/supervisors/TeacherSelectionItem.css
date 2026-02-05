@@ -1,5 +1,5 @@
 .teacher-selection-item {
-    padding: 0.75rem 1rem; /* Reduced vertical padding */
+    padding: 0.75rem 1rem;
     border-radius: 0.5rem;
     border: 1px solid #e5e7eb;
     transition: all 0.2s;
@@ -14,6 +14,7 @@
     background-color: #f9fafb;
 }
 
+
 .teacher-selection-item.selected {
     background-color: #eff6ff;
     border-color: #bfdbfe;
@@ -25,12 +26,11 @@
 }
 
 .checkbox-input {
-    /* Style your checkbox here */
     width: 1rem;
     height: 1rem;
     border: 1px solid #d1d5db;
     border-radius: 0.25rem;
-    accent-color: #2563eb; /* This changes the color of the checkbox when checked */
+    accent-color: #2563eb;
 }
 
 .teacher-details {
@@ -41,7 +41,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 0.25rem; /* Reduced margin */
+    margin-bottom: 0.25rem;
 }
 
 .teacher-name {
@@ -52,10 +52,10 @@
 .teacher-info-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0.25rem; /* Reduced gap */
+    gap: 0.25rem;
     font-size: 0.875rem;
     color: #4b5563;
-    margin-bottom: 0.5rem; /* Reduced margin */
+    margin-bottom: 0.5rem;
 }
 
 @media (min-width: 768px) {
@@ -71,19 +71,53 @@
 .teacher-contact-info {
     display: flex;
     align-items: center;
-    gap: 0.75rem; /* Reduced gap */
+    gap: 0.75rem;
     font-size: 0.875rem;
     color: #6b7280;
 }
 
 .contact-item {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 8px;
+    color: #374151;
+    font-size: 14px;
+    line-height: 1;
 }
+
 
 .icon {
     width: 1rem;
     height: 1rem;
-    color: #6b7280;
+    stroke: #6b7280;
+    stroke-width: 2;
+    fill: none;
 }
+
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #374151;
+    font-size: 14px;
+}
+
+.contact-item svg {
+    width: 16px;
+    height: 16px;
+    stroke: #374151;
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+    display: block;
+}
+
+
+.contact-item span {
+    line-height: 1;
+    display: block;
+}
+

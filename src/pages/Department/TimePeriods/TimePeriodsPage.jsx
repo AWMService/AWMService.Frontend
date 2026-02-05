@@ -1,110 +1,82 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./TimePeriodsPage.css";
 
-import Button from "../../../components/Department/TimePeriods/Button/Button.jsx";
-import PageHeader from "../../../components/Department/TimePeriods/PageHeader/PageHeader.jsx";
-import StatusMessage from "../../../components/Department/TimePeriods/StatusMessage/StatusMessage.jsx";
-import StatisticsGrid from "../../../components/Department/TimePeriods/StatisticsGrid/StatisticsGrid.jsx";
-import EmptyState from "../../../components/Department/TimePeriods/EmptyState/EmptyState.jsx";
 import TimePeriodCard from "../../../components/Department/TimePeriods/TimePeriodCard/TimePeriodCard.jsx";
 import TimePeriodFormDialog from "../../../components/Department/TimePeriods/TimePeriodFormDialog/TimePeriodFormDialog.jsx";
 
+import plusIcon from "../../../assets/icons/plus-icon.svg";
+
 export default function TimePeriodsPage() {
-    const [timePeriods, setTimePeriods] = useState([]);
-    const [saveMessage, setSaveMessage] = useState("");
-    const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-    const [editingPeriod, setEditingPeriod] = useState(null);
+    const [timePeriods, setTimePeriods] = useState(() => {
+        const saved = localStorage.getItem("timePeriods");
+        return saved ? JSON.parse(saved) : [];
+    });
 
-    const addPeriod = (period) => {
-        setTimePeriods((prev) => [
-            ...prev,
-            { ...period, id: Date.now().toString(), status: "upcoming" },
-        ]);
-        setSaveMessage("Период создан");
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+    useEffect(() => {
+        localStorage.setItem("timePeriods", JSON.stringify(timePeriods));
+    }, [timePeriods]);
+
+    const handleAddPeriod = (formData) => {
+        const newPeriod = {
+            id: Date.now().toString(),
+            name: formData.name,
+            startDate: formData.startDate,
+            endDate: formData.endDate,
+            commissions: 0,
+            students: 0,
+            dates: 0,
+            progress: 0,
+            status: "upcoming",
+        };
+
+        setTimePeriods((prev) => [...prev, newPeriod]);
+        setIsDialogOpen(false);
     };
 
-    const updatePeriod = (id, newData) => {
-        setTimePeriods((prev) =>
-            prev.map((p) => (p.id === id ? { ...p, ...newData } : p))
-        );
-        setSaveMessage("Период обновлен");
-    };
 
     const deletePeriod = (id) => {
         setTimePeriods((prev) => prev.filter((p) => p.id !== id));
-        setSaveMessage("Период удален");
     };
-
-    const clearSaveMessage = () => setSaveMessage("");
-
-    const handleFormSubmit = (data) => {
-        if (editingPeriod) {
-            updatePeriod(editingPeriod.id, data);
-            setEditingPeriod(null);
-        } else {
-            addPeriod(data);
-        }
-        setIsAddDialogOpen(false);
-    };
-
-    const handleEdit = (period) => {
-        setEditingPeriod(period);
-        setIsAddDialogOpen(true);
-    };
-
-    const handleDialogClose = () => {
-        setIsAddDialogOpen(false);
-        setEditingPeriod(null);
-    };
-
-    const statistics = [
-        { label: "Предстоящие", value: timePeriods.filter((p) => p.status === "upcoming").length },
-        { label: "Активные", value: timePeriods.filter((p) => p.status === "active").length },
-        { label: "Завершенные", value: timePeriods.filter((p) => p.status === "completed").length },
-        { label: "Всего периодов", value: timePeriods.length },
-    ];
 
     return (
         <div className="time-periods-page">
-            <PageHeader
-                title="Временные периоды"
-                description="Определение и управление периодами"
-            >
-                <Button onClick={() => setIsAddDialogOpen(true)}>Добавить период</Button>
-            </PageHeader>
-
-            {saveMessage && (
-                <StatusMessage message={saveMessage} onDismiss={clearSaveMessage} />
-            )}
-
-            {timePeriods.length > 0 ? (
-                <div className="periods-list">
-                    {timePeriods.map((period) => (
-                        <TimePeriodCard
-                            key={period.id}
-                            period={period}
-                            onEdit={handleEdit}
-                            onDelete={deletePeriod}
-                        />
-                    ))}
+            <div className="page-header">
+                <div className="page-header-info">
+                    <div>
+                        <h1 className="page-title">Временные периоды</h1>
+                        <p className="page-subtitle">
+                            Определение и управление периодами
+                        </p>
+                    </div>
                 </div>
-            ) : (
-                <EmptyState
-                    title="Временные периоды отсутствуют"
-                    description="Создайте первый период"
+
+                <button
+                    className="button primary-button"
+                    onClick={() => setIsDialogOpen(true)}
                 >
-                    <Button onClick={() => setIsAddDialogOpen(true)}>Создать период</Button>
-                </EmptyState>
-            )}
+                    <img src={plusIcon} alt="Add" className="button-icon" />
+                    Добавить период
+                </button>
+            </div>
+
+
+            <div className="periods-list">
+                {timePeriods.map((period) => (
+                    <TimePeriodCard
+                        key={period.id}
+                        period={period}
+                        onDelete={() => deletePeriod(period.id)}
+                    />
+                ))}
+            </div>
 
             <TimePeriodFormDialog
-                isOpen={isAddDialogOpen}
-                onClose={handleDialogClose}
-                onSubmit={handleFormSubmit}
-                editingPeriod={editingPeriod}
+                isOpen={isDialogOpen}
+                onClose={() => setIsDialogOpen(false)}
+                onSubmit={handleAddPeriod}
             />
-
-            <StatisticsGrid statistics={statistics} />
         </div>
     );
 }
