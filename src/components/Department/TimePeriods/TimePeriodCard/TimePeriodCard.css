@@ -1,23 +1,156 @@
-.period-card {
-    background: white;
+.period-card-modern {
+    background: #fff;
     border: 1px solid #e5e7eb;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 16px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
 }
 
-.period-card h3 {
-    margin: 0 0 8px;
-    font-size: 18px;
-}
+/* ===== Header ===== */
 
-.period-card p {
-    margin: 4px 0;
-    color: #374151;
-}
-
-.card-buttons {
+.period-header {
     display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.period-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #111827;
+    margin: 0;
+}
+
+.period-dates {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+/* ===== Header actions ===== */
+
+.period-header-actions {
+    display: flex;
+    align-items: center;
     gap: 8px;
+}
+
+.period-status {
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 999px;
+    padding: 4px 10px;
+}
+
+/* ===== Icon buttons (EXACT like SupervisorCard) ===== */
+
+.icon-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-button:hover {
+    background: #f3f4f6;
+}
+
+.icon-button svg {
+    width: 18px;
+    height: 18px;
+    stroke: #374151;
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.icon-button.danger svg {
+    stroke: #dc2626;
+}
+
+/* ===== Progress ===== */
+
+.progress-wrapper {
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 6px;
+    background-color: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: rgba(96, 165, 250, 0.8);
+    border-radius: 999px;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 12px;
+    color: #6b7280;
+    min-width: 32px;
+    text-align: right;
+}
+
+/* ===== Summary ===== */
+
+.period-summary {
+    display: flex;
+    gap: 24px;
+    font-size: 13px;
+    color: #374151;
     margin-top: 12px;
+}
+
+/* ===== Actions ===== */
+
+.period-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.action-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+}
+
+.action-button:hover {
+    background: #f3f4f6;
+}
+
+.action-button svg {
+    width: 16px;
+    height: 16px;
+    stroke: #374151;
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }

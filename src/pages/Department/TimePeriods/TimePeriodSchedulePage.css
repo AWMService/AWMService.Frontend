@@ -1,0 +1,167 @@
+.schedule-page {
+    padding: 16px 20px;
+    background: #f5f7fb;
+    min-height: 100vh;
+}
+
+/* ===== HEADER ===== */
+.schedule-header {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+}
+
+.schedule-header h1 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+.schedule-subtitle {
+    color: #6b7280;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+/* ===== COMMISSIONS ===== */
+.schedule-commissions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* ===== COMMISSION ===== */
+.commission-schedule-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 14px 18px;
+    border: 1px solid #e5e7eb;
+}
+
+.commission-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.commission-header h2 {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.commission-badge {
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+}
+
+/* ===== SESSION ===== */
+.session-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 14px;
+    padding: 12px 0;
+    border-top: 1px dashed #e5e7eb;
+}
+
+.session-row:first-of-type {
+    border-top: none;
+}
+
+/* date + time */
+.session-datetime {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.session-date {
+    font-size: 13px;
+    color: #111827;
+    font-weight: 500;
+}
+
+.session-time {
+    font-size: 13px;
+    color: #2563eb;
+    font-weight: 600;
+}
+
+/* ===== STUDENTS ===== */
+.session-students {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* 🔥 ГЛАВНЫЙ ФИКС ТУТ */
+.student-pill {
+    display: inline-flex;              /* важно */
+    align-items: center;               /* вертикаль */
+    justify-content: center;           /* горизонталь */
+
+    background: #f1f5f9;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    line-height: 1;                    /* чтобы текст не съезжал */
+    min-height: 24px;                  /* аккуратная высота */
+}
+
+.empty-slot {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+
+/* ===== MEMBERS ===== */
+.members-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    color: #2563eb;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 4px 0;
+}
+
+.members-toggle:hover {
+    text-decoration: underline;
+}
+
+.commission-members {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    font-size: 13px;
+}
+
+.commission-members > div {
+    margin-bottom: 6px;
+}
+
+.commission-members strong {
+    display: inline-block;
+    min-width: 110px;
+    color: #374151;
+}
+
+.commission-members ul {
+    margin: 6px 0 0 0;
+    padding-left: 18px;
+}
+
+.commission-members li {
+    margin-bottom: 4px;
+}
+

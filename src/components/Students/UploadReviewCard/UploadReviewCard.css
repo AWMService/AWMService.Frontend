@@ -1,0 +1,80 @@
+.critique-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.critique-card-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.upload-area {
+    border: 2px dashed #d1d5db;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+}
+
+.upload-area:hover {
+    background-color: #f9fafb;
+}
+
+.upload-area img {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 15px;
+}
+
+.upload-area p {
+    margin: 0;
+    color: #6b7280;
+}
+
+.file-display {
+    display: flex;
+    align-items: center;
+    background-color: #f2f4fa;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 1.5rem;
+}
+
+.file-display img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.file-display span {
+    font-size: 16px;
+    color: #333;
+}
+
+.submit-button {
+    width: 100%;
+    background-color: #566f9e;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 15px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+    background-color: #435a8a;
+}
+
+.submit-button:disabled {
+    background-color: #a0aec0;
+    cursor: not-allowed;
+}

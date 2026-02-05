@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./Sidebar.css";
+
 import supervisorsIcon from "../../assets/icons/supervisors-sidebar-icon.svg";
 import periodsIcon from "../../assets/icons/periods-sidebar-icon.svg";
 import settingsIcon from "../../assets/icons/settings-sidebar-icon.svg";
-import reportsIcon from "../../assets/icons/reports-sidebar-icon.svg";
 import graduationCapIcon from "../../assets/icons/graduation-cap-icon.svg";
 import menuIcon from "../../assets/icons/menu-icon.svg";
 import xIcon from "../../assets/icons/x-icon.svg";
+
+/* ===================== NAV ITEMS ===================== */
 
 const navigationItems = [
   {
@@ -23,16 +25,11 @@ const navigationItems = [
     description: "Управление периодами для задач кафедры",
   },
   {
-    href: "/department/directions",
-    label: "Направления ДП/ДР",
+    // 🔥 ОДИН ПУНКТ ДЛЯ НАПРАВЛЕНИЙ + ТЕМ
+    href: "/department/directions-topics?tab=directions",
+    label: "Направления и темы ДП/ДР",
     icon: graduationCapIcon,
-    description: "Управление направлениями дипломных работ",
-  },
-  {
-    href: "/department/topics",
-    label: "Темы ДП/ДР",
-    icon: reportsIcon,
-    description: "Управление темами дипломных проектов и исследований",
+    description: "Управление направлениями и темами дипломных проектов и исследований",
   },
   {
     href: "/department/settings",
@@ -42,10 +39,13 @@ const navigationItems = [
   },
 ];
 
+/* ===================== COMPONENT ===================== */
+
 export function Sidebar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+
   const pathname = location.pathname;
 
   const handleNavClick = (e, href) => {
@@ -54,17 +54,25 @@ export function Sidebar() {
     setIsMobileMenuOpen(false);
   };
 
+  // ✅ корректная проверка active (без ?tab)
+  const isItemActive = (href) => {
+    const basePath = href.split("?")[0];
+    return pathname.startsWith(basePath);
+  };
+
   return (
       <>
-        {/* Desktop Sidebar */}
+        {/* ===================== DESKTOP SIDEBAR ===================== */}
         <aside className="sidebar-desktop">
           <div className="sidebar-desktop-content">
             <nav className="sidebar-nav">
               <div className="sidebar-header">
                 <h2>Панель управления</h2>
               </div>
+
               {navigationItems.map((item) => {
-                const isActive = pathname === item.href;
+                const isActive = isItemActive(item.href);
+
                 return (
                     <a
                         key={item.href}
@@ -90,14 +98,13 @@ export function Sidebar() {
           </div>
         </aside>
 
-        {/* Mobile Menu Button */}
+        {/* ===================== MOBILE MENU BUTTON ===================== */}
         <div className="mobile-menu-button-wrapper">
           <button
               className="mobile-menu-button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             <img
-                key={isMobileMenuOpen ? "x-icon" : "menu-icon"}
                 src={isMobileMenuOpen ? xIcon : menuIcon}
                 alt="menu"
                 className="menu-icon"
@@ -105,7 +112,7 @@ export function Sidebar() {
           </button>
         </div>
 
-        {/* Mobile Menu Overlay */}
+        {/* ===================== MOBILE OVERLAY ===================== */}
         {isMobileMenuOpen && (
             <div
                 className="mobile-menu-overlay"
@@ -113,15 +120,17 @@ export function Sidebar() {
             />
         )}
 
-        {/* Mobile Menu */}
+        {/* ===================== MOBILE SIDEBAR ===================== */}
         <div className={`sidebar-mobile ${isMobileMenuOpen ? "open" : ""}`}>
           <div className="sidebar-mobile-content">
             <nav className="sidebar-nav">
               <div className="sidebar-header">
                 <h2>Панель управления</h2>
               </div>
+
               {navigationItems.map((item) => {
-                const isActive = pathname === item.href;
+                const isActive = isItemActive(item.href);
+
                 return (
                     <a
                         key={item.href}
