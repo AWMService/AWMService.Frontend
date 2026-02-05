@@ -15,7 +15,7 @@ export default function LoginPage() {
                     Кафедра
                 </button>
                 <button
-                    onClick={() => navigate("/student")}
+                    onClick={() => navigate("/student/choose-theme")}
                     className="role-button"
                 >
                     Студент

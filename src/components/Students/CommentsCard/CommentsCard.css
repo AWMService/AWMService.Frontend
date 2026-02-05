@@ -1,0 +1,20 @@
+.card {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0; /* Light gray border */
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+.card h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.comments-box {
+    background-color: #f2f4fa;
+    padding: 1rem;
+    border-radius: 6px;
+    white-space: pre-wrap; /* To respect newlines */
+}

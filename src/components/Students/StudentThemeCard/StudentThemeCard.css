@@ -1,0 +1,100 @@
+
+.student-theme-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    padding: 1rem;
+    border: 1px solid #DDDFE4;
+    border-radius: 6px;
+    background-color: #fff;
+    position: relative; /* For status badge positioning */
+}
+
+.card-main-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-title {
+    font-size: 13px;
+    font-weight: 400;
+    margin: 0 0 0.5rem;
+}
+
+.card-description {
+    font-size: 14px;
+    color: #706E6E;
+    margin: 0 0 1rem;
+    line-height: 1.4;
+}
+
+.card-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.tag {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 400;
+}
+
+.tag-supervisor, .tag-slots {
+    background-color: #C2E9FF;
+    color: #384D75;
+}
+
+.tag-direction {
+    background-color: #ECEFFF;
+    color: #384D75;
+}
+
+.card-actions {
+    display: flex;
+    align-items: center;
+    padding-left: 1rem;
+}
+
+.apply-button, .cancel-button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.apply-button {
+    background-color: #566F9E;
+    color: white;
+}
+
+.cancel-button {
+    background-color: white;
+    color: #566F9E;
+    border: 1px solid #566F9E;
+}
+
+.status-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-pending { background-color: #fef3c7; color: #92400e; }
+.status-rejected { background-color: #fee2e2; color: #991b1b; }
+
+.rejection-reason-box {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+    padding: 0.75rem;
+    margin-top: 1rem;
+    border-radius: 5px;
+    font-size: 13px;
+}

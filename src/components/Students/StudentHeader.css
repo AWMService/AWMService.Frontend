@@ -1,0 +1,15 @@
+/* Using general Header.css for now, can be specialized */
+@import '../../components/Header/Header.css';
+
+.student-header {
+    background: linear-gradient(to left, #60a5fa, #2563eb);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 30;
+}
+.student-header .header-container {
+    display: flex;
+    justify-content: space-between;
+}
