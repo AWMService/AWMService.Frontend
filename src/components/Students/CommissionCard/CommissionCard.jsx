@@ -1,18 +1,23 @@
 import React from 'react';
 import './CommissionCard.css';
-import peopleIcon from '../../../assets/icons/pre-defense/people-icon.svg';
 
 export const CommissionCard = ({ commission }) => {
     return (
-        <div className="commission-card">
-            <h4><img src={peopleIcon} alt="" className="icon" />Состав Комиссии</h4>
-            <div className="commission-list">
-              {commission.map((member, index) => (
-                <div key={index} className="commission-member">
-                  <p><strong>{member.name}</strong> ({member.role})</p>
-                  <p>{member.position}, {member.degree}</p>
+        <div className="card side-card">
+            <div className="card-header small-header">
+                <h4 className="card-heading">
+                    Состав комиссии
+                </h4>
+            </div>
+            <div className="card-body compact-body">
+                <div className="commission-list">
+                    {commission.map((member, index) => (
+                        <div key={index} className="member-item">
+                            <div className="member-name">{member.name}</div>
+                            <div className="member-role">{member.role}</div>
+                        </div>
+                    ))}
                 </div>
-              ))}
             </div>
         </div>
     );

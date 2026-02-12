@@ -6,11 +6,24 @@ import markerIcon from '../../../assets/icons/pre-defense/marker-icon.svg';
 
 export const ScheduleCard = ({ title, schedule }) => {
     return (
-        <div className="schedule-card">
-            <h4>{title}</h4>
-            <p><img src={calendarIcon} alt="" className="icon" /> <strong>Дата:</strong> {schedule.date}</p>
-            <p><img src={clockIcon} alt="" className="icon" /> <strong>Время:</strong> {schedule.time}</p>
-            <p><img src={markerIcon} alt="" className="icon" /> <strong>Аудитория:</strong> {schedule.location}</p>
+        <div className="card side-card">
+            <div className="card-header small-header">
+                <h4 className="card-heading">{title}</h4>
+            </div>
+            <div className="card-body compact-body">
+                <div className="schedule-row">
+                    <img src={calendarIcon} alt="" className="mini-icon" />
+                    <span className="schedule-text">{schedule.date}</span>
+                </div>
+                <div className="schedule-row">
+                    <img src={clockIcon} alt="" className="mini-icon" />
+                    <span className="schedule-text">{schedule.time}</span>
+                </div>
+                <div className="schedule-row">
+                    <img src={markerIcon} alt="" className="mini-icon" />
+                    <span className="schedule-text">{schedule.location}</span>
+                </div>
+            </div>
         </div>
     );
 };

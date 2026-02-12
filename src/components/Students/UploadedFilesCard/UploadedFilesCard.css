@@ -1,41 +1,115 @@
-.card {
-    background-color: #fff;
-    padding: 1.5rem;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0; /* Light gray border */
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+.files-card {
+    display: flex;
+    flex-direction: column;
 }
 
-.card h4 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
+.card-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.card-header-row h4 {
+    margin: 0;
+}
+
+.btn-link {
+    background: none;
+    border: none;
+    color: #566F9E;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.btn-link:hover {
+    background-color: #F3F4F6;
 }
 
 .file-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    gap: 12px; /* Чуть больше отступ между файлами */
 }
 
-.file-item {
-    background-color: #f2f4fa; /* White Lilac */
-    padding: 0.75rem;
+/* Стиль самой карточки файла (как на фото 1) */
+.file-item-card {
+    background-color: #FFFFFF; /* Белый фон */
+    padding: 16px;
+    border-radius: 8px; /* Скругление */
+    border: 1px solid #E5E7EB; /* Рамка */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.file-item-card:hover {
+    border-color: #566F9E; /* При наведении рамка синеет */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.file-info-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.file-icon-large {
+    width: 32px; /* Иконка крупнее */
+    height: 32px;
+    opacity: 0.8;
+}
+
+.file-text-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.file-name-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1F2937;
+}
+
+.file-size-text {
+    font-size: 12px;
+    color: #9CA3AF; /* Серый цвет для доп. инфо */
+}
+
+/* Кнопка удаления (корзина) */
+.delete-icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
     border-radius: 6px;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    justify-content: center;
+    opacity: 0.6;
+    transition: all 0.2s;
 }
 
-.btn-primary {
-    background-color: #566F9E;
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    font-weight: 500;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+.delete-icon-btn img {
+    width: 18px;
+    height: 18px;
+}
+
+.delete-icon-btn:hover {
+    background-color: #FEE2E2; /* Светло-красный фон при наведении */
+    opacity: 1;
+}
+
+.empty-state {
+    color: #6B7280;
+    font-size: 13px;
+    text-align: center;
+    padding: 12px;
+    border: 1px dashed #E5E7EB;
+    border-radius: 8px;
 }

@@ -1,81 +1,102 @@
-/* General Page Styles */
 .review-step-page {
-    padding: 2rem;
-    background-color: #f9fafb; /* White Lilac */
+    padding: 24px 32px;
+    background-color: #F8F9FC; /* Светлый фон страницы */
+    min-height: auto;
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: #1F2937;
 }
 
 .review-step-header {
+    margin-bottom: 24px;
+}
+
+.header-title-row {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    gap: 12px;
+}
+
+.page-icon {
+    width: 28px;
+    height: 28px;
+    opacity: 0.8;
 }
 
 .review-step-header h2 {
-    font-size: 1.875rem;
-    font-weight: 700;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    color: #111827;
+}
+
+.review-step-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .review-step-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    gap: 1.5rem;
-    margin-top: 1.5rem;
+    gap: 20px;
 }
 
 .review-step-left, .review-step-right {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 20px;
 }
 
-/* Card styles */
+/* Общий стиль карточек, используемый везде */
 .card {
-    background-color: #fff;
-    padding: 1.5rem;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0; /* Light gray border */
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    background-color: #FFFFFF;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .card h4 {
-    font-size: 1.25rem;
+    font-size: 15px;
     font-weight: 600;
-    margin-bottom: 1rem;
-}
-
-.card p, .card span {
+    margin: 0 0 16px 0;
+    color: #1F2937;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    gap: 8px;
 }
 
-
-
-/* File List */
-.file-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+/* Кнопки */
+.btn-primary {
+    background-color: #566F9E;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    width: fit-content;
 }
 
-.file-item {
-    background-color: #f2f4fa; /* White Lilac */
-    padding: 0.75rem;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
+.btn-primary:hover {
+    background-color: #435880;
 }
 
-/* Comments */
-.comments-box {
-    background-color: #f2f4fa;
-    padding: 1rem;
-    border-radius: 6px;
-    white-space: pre-wrap; /* To respect newlines */
+.btn-primary:disabled {
+    background-color: #9CA3AF;
+    cursor: not-allowed;
 }
 
-
+/* Адаптив */
+@media (max-width: 900px) {
+    .review-step-grid {
+        grid-template-columns: 1fr;
+    }
+}

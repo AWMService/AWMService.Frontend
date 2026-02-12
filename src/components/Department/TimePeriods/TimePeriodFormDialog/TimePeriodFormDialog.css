@@ -8,6 +8,10 @@
     z-index: 1000;
 }
 
+.secondary-button{
+    font-weight: 500;
+}
+
 .dialog {
     background: #ffffff;
     border-radius: 12px;
@@ -71,6 +75,7 @@
 }
 
 
+
 .dialog input:focus,
 .dialog select:focus {
     outline: none;
@@ -110,3 +115,5 @@
         transform: scale(1);
     }
 }
+
+

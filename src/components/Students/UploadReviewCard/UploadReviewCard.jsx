@@ -5,20 +5,39 @@ import fileIcon from '../../../assets/icons/pre-defense/file-icon.svg';
 
 export const UploadReviewCard = ({ onFileChange, onSubmit, reviewFile }) => {
     return (
-        <div className="critique-card upload-review-card">
-            <h2 className="critique-card-title">Загрузите отзыв рецензента</h2>
-             <div className="upload-area" onClick={() => document.getElementById('file-upload-review').click()}>
-                <img src={uploadIcon} alt="Upload"/>
-                <p>Перетащите файлы сюда или нажмите для выбора</p>
-                <input type="file" id="file-upload-review" onChange={onFileChange} style={{ display: 'none' }} />
+        <div className="card-compact">
+            <h3 className="card-title-compact">Загрузите отзыв рецензента</h3>
+
+            <div
+                className="upload-area-compact"
+                onClick={() => document.getElementById('review-upload').click()}
+            >
+                <input
+                    type="file"
+                    id="review-upload"
+                    onChange={onFileChange}
+                    style={{ display: 'none' }}
+                />
+
+                {reviewFile ? (
+                    <div className="file-selected-view">
+                        <img src={fileIcon} alt="file" />
+                        <span className="selected-name">{reviewFile.name}</span>
+                        <span className="change-link">Изменить</span>
+                    </div>
+                ) : (
+                    <div className="upload-placeholder">
+                        <img src={uploadIcon} alt="upload" />
+                        <span>Нажмите или перетащите файл</span>
+                    </div>
+                )}
             </div>
-            {reviewFile && (
-                <div className="file-display uploaded-review">
-                    <img src={fileIcon} alt="File"/>
-                    <span>{reviewFile.name}</span>
-                </div>
-            )}
-            <button className="submit-button" onClick={onSubmit} disabled={!reviewFile}>
+
+            <button
+                className="btn-primary-compact"
+                onClick={onSubmit}
+                disabled={!reviewFile}
+            >
                 Отправить
             </button>
         </div>

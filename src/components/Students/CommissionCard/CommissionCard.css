@@ -1,39 +1,63 @@
-.commission-card {
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+/* Переиспользуем .card из SubmissionCard.css */
+
+.small-header {
+    padding: 12px 16px;
+    background: #f8fafc;
 }
 
-.commission-card h4 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #1f2937;
-    margin-top: 0;
-    margin-bottom: 1rem;
+.compact-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Schedule items */
+.schedule-row {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 10px;
 }
 
-.icon {
-    width: 1.25rem;
-    height: 1.25rem;
+.mini-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.6;
 }
 
+.schedule-text {
+    font-size: 14px;
+    color: #334155;
+}
+
+/* Commission items */
 .commission-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 12px;
 }
 
-.commission-member {
-    background-color: #f9fafb;
-    padding: 1rem;
-    border-radius: 0.375rem;
+.card-heading{
+    font-size: 14px;
+    font-weight: 500;
+}
+.member-item {
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 8px;
+}
+.member-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
 }
 
-.commission-member p {
-    margin: 0.25rem 0;
+.member-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.member-role {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 2px;
 }

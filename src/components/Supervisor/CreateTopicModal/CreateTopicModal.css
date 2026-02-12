@@ -1,214 +1,262 @@
-/* =========================
-   CreateTopicModal (compact)
-   ========================= */
+/* Общий сброс для предотвращения выхода элементов за границы */
+.ctm-modal, .ctm-modal * {
+    box-sizing: border-box;
+}
 
-/* Overlay: центрирует модалку, затемняет фон */
 .ctm-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.45);
-    backdrop-filter: blur(3px);
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1400;
+    z-index: 2500;
     padding: 20px;
-    box-sizing: border-box;
 }
 
-/* Modal: компактный, центрированный */
 .ctm-modal {
-    width: 640px;                 /* более компактная ширина */
-    max-width: 96%;
-    max-height: 80vh;            /* ограничение высоты */
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 18px 50px rgba(2, 6, 23, 0.18);
-    overflow: hidden;
+    width: 620px;
+    max-width: 100%;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     display: flex;
     flex-direction: column;
-    position: relative;
-    transition: transform 0.18s ease, opacity 0.18s ease;
+    overflow: hidden;
+    animation: ctm-appear 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Header: компактный, с лёгкой линией */
+@keyframes ctm-appear {
+    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Header */
 .ctm-header {
-    padding: 18px 22px;
-    border-bottom: 1px solid #eef2f6;
-    background: #ffffff;
+    padding: 20px 24px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
 }
-.ctm-header h2 {
+
+.ctm-header-text h2 {
     margin: 0;
-    font-size: 20px;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 700;
     color: #0f172a;
 }
-.ctm-sub {
-    margin-top: 6px;
-    color: #6b7280;
-    font-size: 13px;
+
+.ctm-status-preview {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    color: #d97706; /* Оранжевый акцент "На рассмотрении" */
+    font-size: 12px;
+    font-weight: 500;
 }
 
-/* Close button (keeps visually light) */
-.ctm-close {
-    position: absolute;
-    right: 12px;
-    top: 12px;
-    background: transparent;
+.ctm-close-btn {
+    background: #f8fafc;
     border: none;
+    color: #94a3b8;
+    padding: 8px;
+    border-radius: 12px;
     cursor: pointer;
-    padding: 6px;
-    color: #475569;
-    border-radius: 8px;
-    transition: background 0.12s ease;
+    transition: all 0.2s;
 }
-.ctm-close:hover { background: rgba(15,23,42,0.04); }
 
-/* Body: scrollable region inside modal */
+.ctm-close-btn:hover {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+/* Body */
 .ctm-body {
-    padding: 18px 22px;
+    padding: 24px;
     overflow-y: auto;
-    gap: 16px;
-    display: block;
-    box-sizing: border-box;
+    overflow-x: hidden;
+    max-height: 70vh;
 }
 
-/* Compact section / spacing */
 .ctm-section {
-    margin-bottom: 12px;
-}
-.ctm-section-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #0f172a;
-    margin: 10px 0 12px;
+    margin-bottom: 20px;
+    width: 100%;
 }
 
-/* Labels */
-.ctm-label,
-.ctm-field-label {
-    display: block;
+.ctm-section-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.ctm-section-label h3 {
     font-size: 13px;
     font-weight: 600;
-    color: #374151;
-    margin-bottom: 8px;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
 }
 
-/* Inputs / selects / textarea — compact, rounded */
-.ctm-input,
-.ctm-select,
+.ctm-icon-muted { color: #94a3b8; }
+
+/* Группа инпутов */
+.ctm-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.ctm-field {
+    display: flex;
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    transition: all 0.2s;
+}
+
+.ctm-field:focus-within {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+}
+
+.ctm-lang-tag {
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 800;
+    width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #e2e8f0;
+    flex-shrink: 0;
+}
+
+.ctm-input, .ctm-select {
+    width: 100%;
+    height: 42px;
+    padding: 0 14px;
+    border: none;
+    font-size: 14px;
+    outline: none;
+    background: transparent;
+    color: #1e293b;
+}
+
 .ctm-textarea {
     width: 100%;
-    padding: 10px 12px;
-    border-radius: 10px;
-    border: 1px solid #e6e9ee;
-    background: #fff;
+    min-height: 90px;
+    padding: 12px 14px;
+    border: none;
     font-size: 14px;
-    color: #111827;
     outline: none;
-    transition: box-shadow .14s ease, border-color .14s ease;
+    resize: none; /* Запрет изменения размера вручную */
+    line-height: 1.5;
+    background: transparent;
+    color: #1e293b;
 }
 
-.ctm-input::placeholder,
-.ctm-textarea::placeholder { color: #9ca3af; }
+.ctm-field.vertical {
+    flex-direction: column;
+    width: 100%;
+}
+
+.ctm-field.vertical .ctm-lang-tag {
+    width: 100%;
+    height: 30px;
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+    justify-content: flex-start;
+    padding-left: 14px;
+}
+
+/* Сетка параметров */
+.ctm-grid-params {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 16px;
+    width: 100%;
+}
 
 .ctm-select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: linear-gradient(45deg,#9ca3af 50%, transparent 50%),
-    linear-gradient(135deg, transparent 50%, #9ca3af 50%);
-    background-position: calc(100% - 18px) calc(1em + 2px), calc(100% - 13px) calc(1em + 2px);
-    background-size: 6px 6px, 6px 6px;
-    background-repeat: no-repeat;
-    padding-right: 36px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background-color: #fff;
 }
 
-/* Focus states */
-.ctm-input:focus,
-.ctm-select:focus,
-.ctm-textarea:focus {
-    border-color: #6366f1;
-    box-shadow: 0 4px 18px rgba(99,102,241,0.08);
-}
-
-/* Textarea sizing */
-.ctm-textarea {
-    min-height: 110px;
-    resize: vertical;
-}
-
-/* compact bottom row (two columns) */
-.ctm-bottom-row {
+/* Ошибки и уведомления */
+.ctm-error-notice {
     display: flex;
-    gap: 14px;
-    margin-top: 8px;
-    align-items: flex-end;
-}
-.ctm-col { flex: 1; }
-
-/* required / warning box (subtle) */
-.ctm-required-box { padding: 12px 22px; }
-.ctm-required {
-    display: inline-flex;
     align-items: center;
-    gap: 10px;
-    background: #fff7ed;
-    border: 1px solid #fde3c6;
-    color: #92400e;
-    padding: 8px 12px;
+    gap: 8px;
+    background: #fff1f2;
+    color: #e11d48;
+    padding: 12px;
     border-radius: 12px;
     font-size: 13px;
+    margin-top: 10px;
 }
 
-/* Actions area: fixed-ish at bottom inside modal */
-.ctm-actions {
+.ctm-field.invalid, .ctm-select.invalid {
+    border-color: #f43f5e;
+    background: #fffafb;
+}
+
+/* Footer */
+.ctm-footer {
+    padding: 20px 24px;
+    border-top: 1px solid #f1f5f9;
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    padding: 12px 20px;
-    border-top: 1px solid #f1f5f9;
     background: #fff;
 }
 
-/* Buttons: subtle, rounded */
-.btn {
-    padding: 8px 14px;
-    border-radius: 10px;
-    font-size: 14px;
-    cursor: pointer;
-}
-.btn-outline {
+.ctm-btn-secondary {
     background: #fff;
-    border: 1px solid #e6e9ee;
-    color: #111827;
+    border: 1px solid #e2e8f0;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
 }
-.btn-outline:hover { background: #fafafa; }
-.btn-primary {
-    background: #6d28d9; /* purple-ish */
+
+.ctm-btn-secondary:hover { background: #f8fafc; }
+
+.ctm-btn-primary {
+    background: #2563eb;
     color: #fff;
     border: none;
+    padding: 10px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
 }
-.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 
-/* Invalid state */
-.invalid {
-    border-color: #ef4444 !important;
-    box-shadow: 0 4px 18px rgba(239,68,68,0.08);
+.ctm-btn-primary:hover { background: #1d4ed8; }
+
+.ctm-btn-primary.disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
-/* Responsive: make modal narrower on small screens and full-height scrolling */
-@media (max-width: 640px) {
-    .ctm-modal {
-        width: 100%;
-        height: 100%;
-        max-height: 100%;
-        border-radius: 0;
-        margin: 0;
-        justify-content: space-between;
-    }
-    .ctm-body { padding: 14px; max-height: calc(100vh - 160px); }
-    .ctm-actions { padding: 12px 14px; }
-    .ctm-header { padding: 16px; }
-    .ctm-close { right: 10px; top: 10px; }
+/* Адаптивность */
+@media (max-width: 600px) {
+    .ctm-grid-params { grid-template-columns: 1fr; }
+    .ctm-modal { height: 100%; border-radius: 0; }
 }

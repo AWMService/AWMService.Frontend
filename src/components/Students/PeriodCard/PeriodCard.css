@@ -1,26 +1,28 @@
-.card {
-    background-color: #fff;
-    padding: 1.5rem;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0; /* Light gray border */
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+.period-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.card h4 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-}
-
-.card p,
-.card span {
+.date-row {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    gap: 8px;
+    font-size: 13px;
 }
 
-.icon {
-    width: 20px;
-    height: 20px;
+.icon-xs {
+    width: 16px;
+    height: 16px;
+    opacity: 0.5;
+}
+
+.label {
+    color: #6B7280;
+}
+
+.value {
+    font-weight: 500;
+    color: #1F2937;
+    margin-left: auto;
 }

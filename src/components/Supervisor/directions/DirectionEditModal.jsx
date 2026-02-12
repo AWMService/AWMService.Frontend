@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { X, Edit3, Globe, AlignLeft } from "lucide-react";
 import "./DirectionEditModal.css";
 
 export default function DirectionEditModal({ direction, onClose, onSave }) {
-    // helper to normalise title/description objects
     const normalizeLangObj = (obj) => ({
         kk: obj?.kk ?? "",
         ru: obj?.ru ?? "",
@@ -20,7 +19,6 @@ export default function DirectionEditModal({ direction, onClose, onSave }) {
     });
 
     useEffect(() => {
-        // whenever direction changes, re-normalize fields to always contain kk/ru/en
         if (direction) {
             setForm({
                 id: direction.id,
@@ -29,16 +27,6 @@ export default function DirectionEditModal({ direction, onClose, onSave }) {
                 status: direction.status ?? "draft",
                 createdAt: direction.createdAt ?? new Date().toISOString(),
                 approvedAt: direction.approvedAt ?? null,
-            });
-        } else {
-            // if no direction (editing new), reset to defaults
-            setForm({
-                id: Date.now().toString(),
-                title: { kk: "", ru: "", en: "" },
-                description: { kk: "", ru: "", en: "" },
-                status: "draft",
-                createdAt: new Date().toISOString(),
-                approvedAt: null,
             });
         }
     }, [direction]);
@@ -51,100 +39,82 @@ export default function DirectionEditModal({ direction, onClose, onSave }) {
     };
 
     const handleSaveClick = () => {
-        // Можно тут добавить валидацию перед сохранением
         onSave({
             ...form,
-            // убедимся, что в сохраняемом объекте тоже всегда есть все языки
             title: normalizeLangObj(form.title),
             description: normalizeLangObj(form.description),
         });
     };
 
     return (
-        <div className="modal-overlay">
-            <div className="modal-container modal-large">
-                <button className="modal-close" onClick={onClose} aria-label="Закрыть">
-                    <X />
-                </button>
-
-                <div className="modal-header">
-                    <div>
-                        <h2>Редактировать направление</h2>
-                        <p className="modal-sub">Внесите необходимые изменения в направление дипломного проекта</p>
+        <div className="dem-overlay" onClick={onClose}>
+            <div className="dem-modal" onClick={(e) => e.stopPropagation()}>
+                <div className="dem-header">
+                    <div className="dem-header-text">
+                        <div className="dem-title-row">
+                            <Edit3 size={20} className="dem-icon-edit" />
+                            <h2>Редактирование</h2>
+                        </div>
+                        <p>Внесите изменения в информацию о направлении</p>
                     </div>
-                    <div>
-                        <span className="status filled">Заполнено</span>
+                    <button className="dem-close-btn" onClick={onClose}>
+                        <X size={20} />
+                    </button>
+                </div>
+
+                <div className="dem-body">
+                    {/* Title Section */}
+                    <div className="dem-section">
+                        <div className="dem-section-label">
+                            <Globe size={16} />
+                            <h3>Название направления</h3>
+                        </div>
+
+                        <div className="dem-input-group">
+                            {['kk', 'ru', 'en'].map((lang) => (
+                                <div className="dem-field" key={`title-${lang}`}>
+                                    <div className="dem-lang-tag">{lang.toUpperCase()}</div>
+                                    <input
+                                        className="dem-input"
+                                        value={form.title[lang]}
+                                        onChange={(e) => handleChange("title", lang, e.target.value)}
+                                        placeholder={`Название (${lang.toUpperCase()})...`}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Description Section */}
+                    <div className="dem-section">
+                        <div className="dem-section-label">
+                            <AlignLeft size={16} />
+                            <h3>Описание направления</h3>
+                        </div>
+
+                        <div className="dem-input-group">
+                            {['kk', 'ru', 'en'].map((lang) => (
+                                <div className="dem-field vertical" key={`desc-${lang}`}>
+                                    <div className="dem-lang-tag">{lang.toUpperCase()}</div>
+                                    <textarea
+                                        className="dem-textarea"
+                                        value={form.description[lang]}
+                                        onChange={(e) => handleChange("description", lang, e.target.value)}
+                                        placeholder={`Описание (${lang.toUpperCase()})...`}
+                                        rows={3}
+                                    />
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
-                <div className="modal-section">
-                    <h3 className="section-title">Название направления</h3>
-
-                    <label className="field-label">Қазақша</label>
-                    <input
-                        className="input"
-                        value={form.title?.kk ?? ""}
-                        onChange={(e) => handleChange("title", "kk", e.target.value)}
-                        placeholder="Қазақша"
-                    />
-
-                    <label className="field-label">Русский</label>
-                    <input
-                        className="input"
-                        value={form.title?.ru ?? ""}
-                        onChange={(e) => handleChange("title", "ru", e.target.value)}
-                        placeholder="Русский"
-                    />
-
-                    <label className="field-label">English</label>
-                    <input
-                        className="input"
-                        value={form.title?.en ?? ""}
-                        onChange={(e) => handleChange("title", "en", e.target.value)}
-                        placeholder="English"
-                    />
-                </div>
-
-                <div className="modal-section">
-                    <h3 className="section-title">Описание направления</h3>
-
-                    <label className="field-label">Қазақша</label>
-                    <textarea
-                        className="textarea"
-                        value={form.description?.kk ?? ""}
-                        onChange={(e) => handleChange("description", "kk", e.target.value)}
-                        placeholder="Зерттеу саласының толық сипаттамасы..."
-                        rows={4}
-                    />
-
-                    <label className="field-label">Русский</label>
-                    <textarea
-                        className="textarea"
-                        value={form.description?.ru ?? ""}
-                        onChange={(e) => handleChange("description", "ru", e.target.value)}
-                        placeholder="Детальное описание области исследования..."
-                        rows={4}
-                    />
-
-                    <label className="field-label">English</label>
-                    <textarea
-                        className="textarea"
-                        value={form.description?.en ?? ""}
-                        onChange={(e) => handleChange("description", "en", e.target.value)}
-                        placeholder="Detailed description..."
-                        rows={4}
-                    />
-                </div>
-
-                <div className="modal-footer">
-                    <button className="btn btn-outline" onClick={onClose}>
+                <div className="dem-footer">
+                    <button className="dem-btn-secondary" onClick={onClose}>
                         Отмена
                     </button>
-                    <button
-                        className="btn btn-primary"
-                        onClick={handleSaveClick}
-                    >
-                        Сохранить
+                    <button className="dem-btn-primary" onClick={handleSaveClick}>
+                        Сохранить изменения
                     </button>
                 </div>
             </div>

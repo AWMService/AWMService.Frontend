@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { X, Calendar } from "lucide-react";
+import { X, Calendar, BookText, AlignLeft, AlertCircle } from "lucide-react";
 import "./DirectionViewModal.css";
 
+const statusLabels = {
+    draft: "Черновик",
+    pending: "На рассмотрении",
+    approved: "Утверждено",
+    rejected: "Отклонено",
+};
+
 export default function DirectionViewModal({ onClose, direction }) {
-    const [titleTab, setTitleTab] = useState("en");
-    const [descTab, setDescTab] = useState("kk");
+    const [titleTab, setTitleTab] = useState("ru");
+    const [descTab, setDescTab] = useState("ru");
 
     useEffect(() => {
         if (direction) {
-            // выбор языка для заголовка
-            if (direction.title?.en) setTitleTab("en");
-            else if (direction.title?.ru) setTitleTab("ru");
-            else setTitleTab("kk");
+            if (direction.title?.ru) setTitleTab("ru");
+            else if (direction.title?.kk) setTitleTab("kk");
+            else setTitleTab("en");
 
-            // выбор языка для описания
-            if (direction.description?.kk) setDescTab("kk");
-            else if (direction.description?.ru) setDescTab("ru");
+            if (direction.description?.ru) setDescTab("ru");
+            else if (direction.description?.kk) setDescTab("kk");
             else setDescTab("en");
         }
     }, [direction]);
@@ -23,141 +28,113 @@ export default function DirectionViewModal({ onClose, direction }) {
     if (!direction) return null;
 
     const formatDate = (iso) => {
-        if (!iso) return "-";
+        if (!iso) return "—";
         try {
-            return new Date(iso).toLocaleDateString("ru-RU");
+            return new Date(iso).toLocaleDateString("ru-RU", {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
         } catch {
-            return iso ?? "-";
+            return iso ?? "—";
         }
     };
 
     return (
-        <div className="dvm-overlay" role="dialog" aria-modal="true">
-            <div className="dvm-modal">
-                {/* Header */}
+        <div className="dvm-overlay" onClick={onClose}>
+            <div className="dvm-modal" onClick={(e) => e.stopPropagation()}>
                 <div className="dvm-header">
-                    <h2>Просмотр направления</h2>
-                    <div className="dvm-header-right">
-                        <div className="dvm-status">
-                            {direction.status === "approved"
-                                ? "Утверждено"
-                                : direction.status ?? "-"}
+                    <div className="dvm-header-info">
+                        <h2>Детали направления</h2>
+                        <span className={`dvm-status-pill st-${direction.status}`}>
+                            {statusLabels[direction.status] || direction.status}
+                        </span>
+                    </div>
+                    <button className="dvm-close-btn" onClick={onClose}>
+                        <X size={20} strokeWidth={2} />
+                    </button>
+                </div>
+
+                <div className="dvm-content">
+                    {/* Если статус отклонен — показываем причину сразу сверху */}
+                    {direction.status === "rejected" && direction.rejectionReason && (
+                        <div className="dvm-rejection-alert">
+                            <AlertCircle size={20} />
+                            <div className="dvm-rejection-content">
+                                <strong>Причина отклонения:</strong>
+                                <p>{direction.rejectionReason}</p>
+                            </div>
                         </div>
-                        <button
-                            className="dvm-close"
-                            onClick={onClose}
-                            aria-label="Закрыть"
-                        >
-                            <X />
-                        </button>
+                    )}
+
+                    <div className="dvm-info-grid">
+                        <div className="dvm-info-card">
+                            <Calendar size={18} />
+                            <div className="dvm-info-text">
+                                <label>Дата создания</label>
+                                <span>{formatDate(direction.createdAt)}</span>
+                            </div>
+                        </div>
+                        {direction.approvedAt && (
+                            <div className="dvm-info-card">
+                                <Calendar size={18} />
+                                <div className="dvm-info-text">
+                                    <label>Дата утверждения</label>
+                                    <span>{formatDate(direction.approvedAt)}</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="dvm-section">
+                        <div className="dvm-section-header">
+                            <div className="dvm-section-title">
+                                <BookText size={18} />
+                                <h3>Название направления</h3>
+                            </div>
+                            <div className="dvm-tabs-mini">
+                                {['kk', 'ru', 'en'].map((lang) => (
+                                    <button
+                                        key={lang}
+                                        className={`dvm-tab-btn ${titleTab === lang ? "active" : ""}`}
+                                        onClick={() => setTitleTab(lang)}
+                                    >
+                                        {lang.toUpperCase()}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="dvm-text-box">
+                            {direction.title?.[titleTab] || <span className="dvm-no-data">Информация отсутствует</span>}
+                        </div>
+                    </div>
+
+                    <div className="dvm-section">
+                        <div className="dvm-section-header">
+                            <div className="dvm-section-title">
+                                <AlignLeft size={18} />
+                                <h3>Подробное описание</h3>
+                            </div>
+                            <div className="dvm-tabs-mini">
+                                {['kk', 'ru', 'en'].map((lang) => (
+                                    <button
+                                        key={lang}
+                                        className={`dvm-tab-btn ${descTab === lang ? "active" : ""}`}
+                                        onClick={() => setDescTab(lang)}
+                                    >
+                                        {lang.toUpperCase()}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="dvm-text-box description-area">
+                            {direction.description?.[descTab] || <span className="dvm-no-data">Описание не заполнено</span>}
+                        </div>
                     </div>
                 </div>
 
-                {/* Даты */}
-                <div className="dvm-dates">
-                    <div className="dvm-date-item">
-                        <Calendar />
-                        <div>
-                            <div className="dvm-date-label">Дата добавления:</div>
-                            <div className="dvm-date-value">
-                                {formatDate(direction.createdAt)}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="dvm-date-item">
-                        <Calendar />
-                        <div>
-                            <div className="dvm-date-label">Дата утверждения:</div>
-                            <div className="dvm-date-value">
-                                {formatDate(direction.approvedAt)}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Название */}
-                <div className="dvm-section">
-                    <h3 className="dvm-section-title">
-                        <span className="dvm-icon">📘</span> Название направления
-                    </h3>
-
-                    <div className="dvm-tabs">
-                        <button
-                            className={`dvm-tab ${titleTab === "kk" ? "active" : ""}`}
-                            onClick={() => setTitleTab("kk")}
-                        >
-                            Қазақша
-                        </button>
-                        <button
-                            className={`dvm-tab ${titleTab === "ru" ? "active" : ""}`}
-                            onClick={() => setTitleTab("ru")}
-                        >
-                            Русский
-                        </button>
-                        <button
-                            className={`dvm-tab ${titleTab === "en" ? "active" : ""}`}
-                            onClick={() => setTitleTab("en")}
-                        >
-                            English
-                        </button>
-                    </div>
-
-                    <div className="dvm-box">
-                        {titleTab === "kk" && (
-                            <div className="dvm-text">{direction.title?.kk ?? "-"}</div>
-                        )}
-                        {titleTab === "ru" && (
-                            <div className="dvm-text">{direction.title?.ru ?? "-"}</div>
-                        )}
-                        {titleTab === "en" && (
-                            <div className="dvm-text">{direction.title?.en ?? "-"}</div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Описание */}
-                <div className="dvm-section">
-                    <h3 className="dvm-section-title">Описание направления</h3>
-
-                    <div className="dvm-tabs">
-                        <button
-                            className={`dvm-tab ${descTab === "kk" ? "active" : ""}`}
-                            onClick={() => setDescTab("kk")}
-                        >
-                            Қазақша
-                        </button>
-                        <button
-                            className={`dvm-tab ${descTab === "ru" ? "active" : ""}`}
-                            onClick={() => setDescTab("ru")}
-                        >
-                            Русский
-                        </button>
-                        <button
-                            className={`dvm-tab ${descTab === "en" ? "active" : ""}`}
-                            onClick={() => setDescTab("en")}
-                        >
-                            English
-                        </button>
-                    </div>
-
-                    <div className="dvm-box dvm-box--large">
-                        {descTab === "kk" && (
-                            <div className="dvm-text">
-                                {direction.description?.kk ?? "-"}
-                            </div>
-                        )}
-                        {descTab === "ru" && (
-                            <div className="dvm-text">
-                                {direction.description?.ru ?? "-"}
-                            </div>
-                        )}
-                        {descTab === "en" && (
-                            <div className="dvm-text">
-                                {direction.description?.en ?? "-"}
-                            </div>
-                        )}
-                    </div>
+                <div className="dvm-footer">
+                    <button className="dvm-btn-primary" onClick={onClose}>Понятно</button>
                 </div>
             </div>
         </div>

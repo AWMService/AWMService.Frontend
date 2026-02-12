@@ -167,6 +167,7 @@
     padding: 10px 20px;
     border-radius: 12px;
     cursor: pointer;
+    font-weight: 200;
 }
 
 .btn-secondary:hover {

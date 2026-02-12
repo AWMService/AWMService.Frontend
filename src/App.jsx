@@ -19,6 +19,18 @@ import AntiplagiarismPage from './pages/Students/AntiplagiarismPage/Antiplagiari
 import CritiquePage from './pages/Students/CritiquePage/CritiquePage.jsx';
 import documentCheckIcon from './assets/icons/document-check-icon.svg';
 import codeIcon from './assets/icons/code-icon.svg';
+import SDirectionsPage from "./pages/Supervisor/DirectionsPage/SDirectionsPage.jsx";
+import STopicsPage from "./pages/Supervisor/TopicsPage/STopicsPage.jsx";
+import MyStudentsPage from "./pages/Supervisor/MyStudentsPage/MyStudentsPage.jsx";
+import TimePeriodSetupPage from "./pages/Department/TimePeriods/TimePeriodsSetupPage/TimePeriodSetupPage.jsx";
+import DirectionsAndThemes from "./pages/Department/DirectionsAndThemes/DirectionsAndThemes.jsx";
+import TimePeriodSchedulePage from "./pages/Department/TimePeriods/TimePeriodSchedulePage.jsx";
+import './App.css';
+import SchedulePage from "./pages/Supervisor/SchedulePage/SchedulePage.jsx";
+import StudentList from "./pages/Supervisor/StudentsList/StudentList.jsx";
+import SecretaryStudentList from "./pages/Supervisor/StudentsList/SecretaryStudent/SecretaryStudentList.jsx";
+import AntiPlagiarismDashboard from "./pages/Checks/AntiPlagiarismDashboard.jsx";
+
 
 const normocontrolData = {
   pageTitle: 'Нормоконтроль',
@@ -33,7 +45,7 @@ const softwareCheckData = {
   expert: { name: 'Сидоров А.А.', position: 'Инженер-программист', degree: 'Магистр' },
   initialStatus: 'in_progress',
 };
-import './App.css';
+
 
 const preDefense1Data = {
   pageTitle: 'Предзащита 1',
@@ -92,12 +104,7 @@ const defenseData = {
       comments: "Отличная работа и уверенная защита! Поздравляем!"
   }
 };
-import SDirectionsPage from "./pages/Supervisor/DirectionsPage/SDirectionsPage.jsx";
-import STopicsPage from "./pages/Supervisor/TopicsPage/STopicsPage.jsx";
-import MyStudentsPage from "./pages/Supervisor/MyStudentsPage/MyStudentsPage.jsx";
-import TimePeriodSetupPage from "./pages/Department/TimePeriods/TimePeriodSetupPage.jsx";
-import DirectionsAndThemes from "./pages/Department/DirectionsAndThemes/DirectionsAndThemes.jsx";
-import TimePeriodSchedulePage from "./pages/Department/TimePeriods/TimePeriodSchedulePage.jsx";
+
 
 function App() {
     const location = useLocation();
@@ -155,6 +162,10 @@ function App() {
                             <Route path="/supervisors/my-topics" element={<STopicsPage />} />
                             <Route path="/supervisors/directions" element={<SDirectionsPage />} />
                             <Route path="/supervisors/mystudents" element={<MyStudentsPage />} />
+                            <Route path="/supervisors/schedule" element={<SchedulePage />} />
+                            <Route path="/supervisors/schedule/:commissionId" element={<StudentList />} />
+                            <Route path="/supervisors/secretary" element={<SecretaryStudentList/>}/>
+                            <Route path="/supervisors/checks" element={<AntiPlagiarismDashboard />}/>
                         </Routes>
                     </main>
                 </div>

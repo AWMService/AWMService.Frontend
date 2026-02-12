@@ -1,52 +1,71 @@
-.critique-card {
-    background-color: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 25px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+.files-list-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
 }
 
-.critique-card-title {
-    font-size: 1.25rem;
-    font-weight: 500;
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    color: #333;
+.file-row-compact {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #F8FAFC;
+    border-radius: 6px;
+    border: 1px solid #F1F5F9;
 }
 
-.file-display {
+.file-info-row {
     display: flex;
     align-items: center;
-    background-color: #f2f4fa;
-    border-radius: 6px;
-    padding: 15px;
-    margin-bottom: 1rem;
+    gap: 10px;
 }
 
-.file-display img {
-    width: 24px;
-    height: 24px;
-    margin-right: 10px;
+.file-info-row img {
+    width: 20px; /* Маленькая иконка */
+    height: 20px;
 }
 
-.file-display span {
-    font-size: 16px;
-    color: #333;
+.file-texts {
+    display: flex;
+    flex-direction: column;
 }
 
-.download-all-button {
-    width: 100%;
-    background-color: #4A5568; /* Gray */
-    color: white;
+.fname {
+    font-size: 13px;
+    font-weight: 500;
+    color: #334155;
+}
+
+.fsize {
+    font-size: 11px;
+    color: #94A3B8;
+}
+
+.link-btn {
+    background: none;
     border: none;
-    border-radius: 6px;
-    padding: 12px;
-    font-size: 16px;
+    color: #566F9E;
+    font-size: 12px;
+    font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.3s;
-    margin-top: 1rem;
 }
 
-.download-all-button:hover {
-    background-color: #2D3748;
+.link-btn:hover { text-decoration: underline; }
+
+.btn-full-gray {
+    width: 100%;
+    background-color: #F1F5F9;
+    color: #475569;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-full-gray:hover {
+    background-color: #E2E8F0;
 }

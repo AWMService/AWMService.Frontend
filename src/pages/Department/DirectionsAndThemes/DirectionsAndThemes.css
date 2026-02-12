@@ -1,10 +1,11 @@
 
 
 .projects-page {
-    padding: 20px 28px;
+    padding: 44px 52px;
     background-color: #f9fafb;
     min-height: 100vh;
     font-family: "Inter", sans-serif;
+    margin-top: 64px;
 }
 
 
@@ -157,6 +158,7 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+
 }
 
 .no-results {

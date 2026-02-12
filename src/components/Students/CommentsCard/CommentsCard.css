@@ -1,20 +1,19 @@
-.card {
-    background-color: #fff;
-    padding: 1.5rem;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0; /* Light gray border */
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-}
-
-.card h4 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-}
-
 .comments-box {
-    background-color: #f2f4fa;
-    padding: 1rem;
-    border-radius: 6px;
-    white-space: pre-wrap; /* To respect newlines */
+    background-color: #F9FAFB;
+    padding: 12px 16px;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #1F2937;
+    border: 1px solid #F3F4F6;
+    min-height: 60px;
+}
+
+.comments-box.empty {
+    color: #6B7280;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

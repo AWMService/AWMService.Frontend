@@ -1,8 +1,9 @@
 
 .supervisors-page {
-    padding: 2rem;
     background-color: #F9FAFB;
     flex: 1;
+    margin-top: 64px;
+    padding: 56px;
 }
 
 

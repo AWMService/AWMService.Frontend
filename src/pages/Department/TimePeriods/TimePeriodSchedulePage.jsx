@@ -1,37 +1,48 @@
-import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Calendar, ChevronDown, ChevronUp } from "lucide-react";
-import "./TimePeriodSchedulePage.css";
+import React, { useState, useMemo } from 'react';
+import {
+    MapPin, ChevronDown, ChevronUp,
+    ShieldCheck, ArrowLeft
+} from 'lucide-react';
+import './TimePeriodSchedulePage.css';
 
-/* ===== MOCK DATA ===== */
+/* ===== ДАННЫЕ (MOCK) ===== */
 const mockSchedule = {
-    name: "Период защиты ВКР — Июнь 2026",
+    title: "График защит",
     commissions: [
         {
             id: "c1",
-            name: "Комиссия 1",
-            chairman: "Доцент Сидоров П.П.",
-            secretary: "Доцент Иванова Е.Е.",
-            members: [
-                "Профессор Козлова М.М.",
-                "Доцент Морозов В.В.",
-            ],
+            name: "ГЭК №1 (ПИ)",
+            chairman: "д.т.н. Соколов А.П.",
+            secretary: "Петрова В.Д.",
+            members: ["Иванов И.И.", "Сидоров С.С."],
             sessions: [
                 {
                     id: "s1",
                     date: "2026-06-10",
-                    time: "10:00",
+                    time: "09:00",
+                    room: "402",
+                    type: "Защита",
                     students: [
-                        "Иванов И.И.",
-                        "Петров П.П.",
-                        "Сидоров С.С.",
-                    ],
+                        "Иванов И.И.", "Петров П.П.", "Сидоров С.С.", "Кузнецов К.К.", "Смирнов А.А.",
+                        "Попов В.В.", "Васильев Г.Г.", "Соколов Д.Д.", "Михайлов Е.Е.", "Новиков Ж.Ж.",
+                        "Федоров З.З.", "Морозов И.И.", "Волков К.К.", "Алексеев Л.Л.", "Лебедев М.М.",
+                        "Семенов Н.Н.", "Егоров О.О.", "Павлов П.П.", "Козлов Р.Р.", "Степанов С.С.",
+                        "Николаев Т.Т.", "Орлов У.У.", "Андреев Ф.Ф."
+                    ]
                 },
                 {
                     id: "s2",
-                    date: "2026-06-11",
+                    date: "2026-06-10",
                     time: "14:00",
-                    students: ["Козлов К.К."],
+                    room: "402",
+                    type: "Защита",
+                    students: [
+                        "Григорьев А.А.", "Яковлев Б.Б.", "Романов В.В.", "Воробьев Г.Г.", "Сергеев Д.Д.",
+                        "Зайцев Е.Е.", "Борисов Ж.Ж.", "Комаров З.З.", "Киселев И.И.", "Макаров К.К.",
+                        "Громов Л.Л.", "Денисов М.М.", "Гаврилов Н.Н.", "Титов О.О.", "Белов П.П.",
+                        "Тарасов Р.Р.", "Жуков С.С.", "Баранов Т.Т.", "Фролов У.У.", "Шестаков Ф.Ф.",
+                        "Горбунов Х.Х.", "Панин Ц.Ц."
+                    ]
                 },
             ],
         },
@@ -39,107 +50,149 @@ const mockSchedule = {
 };
 
 export default function TimePeriodSchedulePage() {
-    const navigate = useNavigate();
-    const { id } = useParams();
-    const [openCommission, setOpenCommission] = useState(null);
+    const [selectedDate, setSelectedDate] = useState('2026-06-10');
+    const [expandedCards, setExpandedCards] = useState({});
 
-    const toggleCommission = (cid) => {
-        setOpenCommission(prev => (prev === cid ? null : cid));
+    const toggleCard = (sessionId) => {
+        setExpandedCards(prev => ({
+            ...prev,
+            [sessionId]: !prev[sessionId]
+        }));
     };
 
+    const uniqueDates = useMemo(() => {
+        const dates = new Set();
+        mockSchedule.commissions.forEach(c => {
+            c.sessions.forEach(s => dates.add(s.date));
+        });
+        return Array.from(dates).sort();
+    }, []);
+
+    const dailyEvents = useMemo(() => {
+        const events = [];
+        mockSchedule.commissions.forEach(commission => {
+            commission.sessions.forEach(session => {
+                if (session.date === selectedDate) {
+                    events.push({
+                        ...session,
+                        commissionName: commission.name,
+                        chairman: commission.chairman,
+                        secretary: commission.secretary,
+                        members: commission.members
+                    });
+                }
+            });
+        });
+        return events.sort((a, b) => a.time.localeCompare(b.time));
+    }, [selectedDate]);
+
     return (
-        <div className="schedule-page">
-            {/* ===== HEADER ===== */}
-            <div className="schedule-header">
-                <button className="back-button" onClick={() => navigate(-1)}>
-                    <ArrowLeft size={16} /> Назад
-                </button>
+        <div className="dept-schedule-page">
+            <div className="bg-sphere sphere-1"></div>
+            <div className="bg-sphere sphere-2"></div>
+            <div className="bg-sphere sphere-3"></div>
 
-                <h1>
-                    <Calendar size={20} />
-                    Расписание защит
-                </h1>
+            <div className="schedule-header-fixed">
+                <div className="header-top">
+                    <div className="header-content-row">
+                        <div className="header-titles">
+                            <h1>{mockSchedule.title}</h1>
+                            <p className="subtitle">Общий график работы комиссий</p>
+                        </div>
+                    </div>
+                </div>
 
-                <p className="schedule-subtitle">
-                    {mockSchedule.name}
-                </p>
+                <div className="date-picker-row">
+                    {uniqueDates.map(date => (
+                        <button
+                            key={date}
+                            className={`date-tab ${selectedDate === date ? 'active' : ''}`}
+                            onClick={() => setSelectedDate(date)}
+                        >
+                            <span className="date-tab-day">{new Date(date).getDate()}</span>
+                            <span className="date-tab-month">
+                                {new Date(date).toLocaleDateString('ru-RU', { month: 'short' }).replace('.', '')}
+                            </span>
+                        </button>
+                    ))}
+                </div>
             </div>
 
-            {/* ===== COMMISSIONS ===== */}
-            <div className="schedule-commissions">
-                {mockSchedule.commissions.map((c) => (
-                    <div key={c.id} className="commission-schedule-card">
-                        {/* HEADER */}
-                        <div className="commission-header">
-                            <h2>{c.name}</h2>
+            <div className="timeline-container">
+                {dailyEvents.length > 0 ? (
+                    dailyEvents.map((event, index) => (
+                        <div key={event.id} className="timeline-item">
+                            <div className="timeline-time">
+                                <span className="time-main">{event.time}</span>
+                                <div className="timeline-dot"></div>
+                                {index !== dailyEvents.length - 1 && <div className="timeline-line"></div>}
+                            </div>
 
-                            <button
-                                className="members-toggle"
-                                onClick={() => toggleCommission(c.id)}
-                            >
-                                Состав комиссии
-                                {openCommission === c.id ? (
-                                    <ChevronUp size={16} />
-                                ) : (
-                                    <ChevronDown size={16} />
-                                )}
-                            </button>
+                            <div className="card-wrapper">
+                                <div className={`sharp-card ${expandedCards[event.id] ? 'expanded' : ''}`}>
+                                    <div className={`card-accent ${event.type === 'Защита' ? 'final' : 'pre'}`}></div>
+                                    <div className="card-main-content">
+                                        <div className="card-header">
+                                            <div className="commission-badge">
+                                                <ShieldCheck size={14} />
+                                                {event.commissionName}
+                                            </div>
+                                            <div className="room-badge">
+                                                <MapPin size={14} /> {event.room}
+                                            </div>
+                                        </div>
+
+                                        <div className="students-section">
+                                            <div className="section-label">Студенты ({event.students.length}):</div>
+                                            {/* Добавлен контейнер со скроллом */}
+                                            <div className="students-scroll-area">
+                                                <div className="students-grid">
+                                                    {event.students.map((student, idx) => (
+                                                        <div key={idx} className="student-chip-compact">
+                                                            <span className="student-num">{idx + 1}</span>
+                                                            <span className="student-name">{student}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="commission-details">
+                                            <button className="details-toggle" onClick={() => toggleCard(event.id)}>
+                                                <span>Состав комиссии</span>
+                                                {expandedCards[event.id] ? <ChevronUp size={16}/> : <ChevronDown size={16}/>}
+                                            </button>
+
+                                            {expandedCards[event.id] && (
+                                                <div className="details-content">
+                                                    <div className="detail-row">
+                                                        <span className="label">Председатель:</span>
+                                                        <span className="value">{event.chairman}</span>
+                                                    </div>
+                                                    <div className="detail-row">
+                                                        <span className="label">Секретарь:</span>
+                                                        <span className="value">{event.secretary}</span>
+                                                    </div>
+                                                    <div className="detail-row members-block">
+                                                        <span className="label">Члены:</span>
+                                                        <ul className="members-list-inline">
+                                                            {event.members.map((m, i) => <li key={i}>{m}</li>)}
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
-                        {/* MEMBERS */}
-                        {openCommission === c.id && (
-                            <div className="commission-members">
-                                <div>
-                                    <strong>Председатель:</strong>
-                                    <span>{c.chairman}</span>
-                                </div>
-
-                                <div>
-                                    <strong>Секретарь:</strong>
-                                    <span>{c.secretary}</span>
-                                </div>
-
-                                <div>
-                                    <strong>Члены комиссии:</strong>
-                                    <ul>
-                                        {c.members.map((m, i) => (
-                                            <li key={i}>{m}</li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* SESSIONS */}
-                        {c.sessions.map((s) => (
-                            <div key={s.id} className="session-row">
-                                <div className="session-datetime">
-                                    <span className="session-date">
-                                        {new Date(s.date).toLocaleDateString(
-                                            "ru-RU",
-                                            {
-                                                day: "numeric",
-                                                month: "long",
-                                                year: "numeric",
-                                            }
-                                        )}
-                                    </span>
-                                    <span className="session-time">
-                                        {s.time}
-                                    </span>
-                                </div>
-
-                                <div className="session-students">
-                                    {s.students.map((st, i) => (
-                                        <span key={i} className="student-pill">
-                                            {st}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-                        ))}
+                    ))
+                ) : (
+                    <div className="empty-state">
+                        <div className="empty-icon">📅</div>
+                        <p>На этот день запланированных комиссий нет</p>
                     </div>
-                ))}
+                )}
             </div>
         </div>
     );
