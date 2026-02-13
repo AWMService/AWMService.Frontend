@@ -1,140 +1,396 @@
-/* overlay */
-.tv-overlay{
+.tv-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(15,23,42,0.45);
-    backdrop-filter: blur(3px);
+    background: rgba(15, 23, 42, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1500;
-    padding: 18px;
-    box-sizing: border-box;
+    z-index: 2000;
+    padding: 20px;
+    backdrop-filter: blur(2px);
 }
 
-/* modal (compact, same visual family as create modal) */
-.tv-modal{
-    width: 640px;
-    max-width: 96%;
-    max-height: 82vh;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 18px 50px rgba(0,0,0,0.16);
+.tv-modal {
+    width: 600px;
+    max-width: 100%;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    position: relative;
+    animation: tv-slide-up 0.2s ease-out;
+    max-height: 90vh; /* Ограничиваем высоту */
 }
 
-/* close button */
-.tv-close {
-    position: absolute;
-    right: 12px;
-    top: 12px;
+@keyframes tv-slide-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header */
+.tv-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+}
+
+.tv-header-info h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 4px 0;
+}
+
+.tv-status-badge {
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.st-draft { background: #f1f5f9; color: #64748b; }
+.st-pending { background: #fff7ed; color: #c2410c; }
+.st-approved { background: #f0fdf4; color: #15803d; }
+.st-rejected { background: #fef2f2; color: #b91c1c; }
+
+.tv-close-btn {
     background: transparent;
     border: none;
+    color: #94a3b8;
     cursor: pointer;
-    padding: 6px;
-    color: #475569;
-    border-radius: 8px;
+    padding: 4px;
+    display: flex;
+    transition: color 0.2s;
 }
-.tv-close:hover { background: rgba(15,23,42,0.04); }
 
-/* header */
-.tv-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid #eef2f6;
-    background: #ffffff;
-}
-.tv-header h2 { margin: 0; font-size: 20px; font-weight: 600; color: #0f172a; }
-.tv-sub { margin-top: 6px; color: #6b7280; font-size: 13px; }
+.tv-close-btn:hover { color: #64748b; }
 
-/* body */
+/* Body */
 .tv-body {
-    padding: 16px 20px;
+    padding: 20px 24px;
     overflow-y: auto;
-    gap: 12px;
+    flex: 1; /* Занимает доступное место */
 }
 
-/* required box (status) */
-.tv-required-box { margin-bottom: 10px; }
-.tv-required {
-    display: inline-flex;
+/* Сетка инфо-блоков */
+.tv-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.tv-info-item {
+    background: #f8fafc;
+    padding: 10px 14px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid transparent;
+}
+
+.tv-info-item svg { color: #64748b; }
+
+.tv-info-content label {
+    display: block;
+    font-size: 11px;
+    color: #94a3b8;
+    margin-bottom: 2px;
+}
+
+.tv-info-content span {
+    font-size: 13px;
+    color: #334155;
+    font-weight: 500;
+}
+
+/* Sections */
+.tv-section { margin-bottom: 24px; }
+
+.tv-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.tv-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #475569;
+}
+
+.tv-section-title h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.text-orange { color: #f97316; }
+
+/* ЗАЯВКИ (Requests) - СТИЛИ */
+.requests-section {
+    background: #fff7ed;
+    border: 1px solid #ffedd5;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.tv-badge-count {
+    background: #f97316;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+}
+
+.tv-requests-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tv-request-card {
+    background: #ffffff;
+    border: 1px solid #fed7aa;
+    border-radius: 10px;
+    padding: 10px;
+    transition: all 0.2s;
+}
+
+.tv-request-card.rejecting {
+    border-color: #fecaca;
+    background: #fff1f2;
+}
+
+.tv-req-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tv-student-info {
+    display: flex;
     align-items: center;
     gap: 10px;
-    background: #fff7ed;
-    border: 1px solid #fde3c6;
-    color: #92400e;
-    padding: 8px 12px;
-    border-radius: 10px;
-    font-size: 13px;
 }
 
-/* dates row */
-.tv-dates { display: flex; gap: 20px; margin-bottom: 8px; }
-.tv-date-item { display:flex; gap:10px; align-items:center; }
-.tv-date-label { font-size: 12px; color: #6b7280; }
-.tv-date-value { font-weight: 600; }
-
-/* label + box */
-.tv-row { margin-bottom: 12px; }
-.tv-label { display:block; font-size:13px; font-weight:600; color:#374151; margin-bottom:8px; }
-.tv-box {
-    border: 1px solid #e6e9ee;
-    padding: 10px 12px;
-    border-radius: 10px;
-    background: #fff;
-    font-size: 14px;
-    color: #111827;
+.req-avatar {
+    background: #fff7ed !important;
+    color: #f97316 !important;
+    border-color: #ffedd5 !important;
 }
 
-/* sections with tabs */
-.tv-section { margin-top: 8px; margin-bottom: 12px; }
-.tv-section-title {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: #0f172a;
+.tv-req-details {
+    display: flex;
+    flex-direction: column;
 }
-.tv-tabs { display:flex; gap:8px; margin-bottom:10px; }
-.tv-tab {
-    padding: 6px 10px;
+
+.tv-req-date {
+    font-size: 10px;
+    color: #94a3b8;
+}
+
+.tv-req-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.tv-action-btn {
+    width: 32px;
+    height: 32px;
     border-radius: 8px;
-    border: 1px solid #e6e9ee;
-    background: #f8fafc;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-approve {
+    background: #dcfce7;
+    color: #16a34a;
+}
+.btn-approve:hover { background: #bbf7d0; }
+
+.btn-reject {
+    background: #fee2e2;
+    color: #dc2626;
+}
+.btn-reject:hover { background: #fecaca; }
+
+/* Форма отказа внутри карточки */
+.tv-reject-form {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.tv-reject-form textarea {
+    width: 100%;
+    min-height: 60px;
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
     font-size: 13px;
-}
-.tv-tab.active {
-    background: #6d28d9;
-    color: #fff;
-    border-color: #6d28d9;
-}
-
-/* large text box */
-.tv-box--large {
-    min-height: 110px;
-    padding: 14px;
-    white-space: pre-wrap;
-    line-height: 1.5;
+    font-family: inherit;
+    margin-bottom: 8px;
+    box-sizing: border-box;
+    outline: none;
+    resize: none;
 }
 
-/* actions footer */
-.tv-actions {
-    display:flex;
-    justify-content:flex-end;
-    gap:12px;
-    padding: 12px 18px;
+.tv-reject-form textarea:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
+}
+
+.tv-reject-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.tv-btn-small {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-cancel { background: #ffffff; border: 1px solid #e2e8f0; color: #64748b; }
+.btn-confirm-reject { background: #dc2626; color: white; }
+
+/* Остальные стили */
+.tv-tabs-mini {
+    background: #f1f5f9;
+    padding: 2px;
+    border-radius: 6px;
+    display: flex;
+}
+
+.tv-tab-btn {
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: none;
+    background: transparent;
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tv-tab-btn.active {
+    background: #ffffff;
+    color: #2563eb;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.tv-text-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #334155;
+    line-height: 1.6;
+}
+
+.desc-area { min-height: 80px; white-space: pre-wrap; }
+
+/* Footer */
+.tv-footer {
+    padding: 16px 24px;
     border-top: 1px solid #f1f5f9;
     background: #fff;
+    display: flex;
+    justify-content: flex-end;
 }
 
-/* reuse .btn rules from global if present; otherwise define */
-.btn { padding: 8px 14px; border-radius: 10px; font-size: 14px; cursor: pointer; }
-.btn-outline { border: 1px solid #e6e9ee; background: #fff; color:#111827; }
-.btn-primary { background:#6d28d9; color:#fff; border:none; }
-
-@media (max-width:640px){
-    .tv-modal { width: 100%; height: 100%; max-height: 100%; border-radius:0; }
-    .tv-body { padding: 12px; max-height: calc(100vh - 160px); }
+.tv-btn-primary {
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
 }
+
+.tv-btn-primary:hover { background: #1d4ed8; }
+
+@media (max-width: 600px) {
+    .tv-modal { width: 100%; height: 100%; border-radius: 0; max-height: 100vh; }
+    .tv-info-grid { grid-template-columns: 1fr; }
+}
+
+/* Элементы списка студентов */
+.tv-remaining-slots {
+    font-size: 11px;
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.tv-students-container { margin-top: 8px; }
+.tv-students-list { display: flex; flex-direction: column; gap: 8px; }
+
+.tv-student-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+    border-radius: 10px;
+}
+
+.tv-student-avatar {
+    width: 24px;
+    height: 24px;
+    background: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    border: 1px solid #e2e8f0;
+}
+
+.tv-student-name {
+    font-size: 13px;
+    color: #334155;
+    font-weight: 500;
+}
+
+.tv-empty-box {
+    padding: 16px;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+.tv-empty-text { color: #cbd5e1; font-style: italic; }

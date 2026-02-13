@@ -1,80 +1,80 @@
-.critique-card {
-    background-color: #ffffff;
-    border: 1px solid #e2e8f0;
+.upload-area-compact {
+    border: 1px dashed #CBD5E1;
     border-radius: 8px;
-    padding: 25px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.critique-card-title {
-    font-size: 1.25rem;
-    font-weight: 500;
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    color: #333;
-}
-
-.upload-area {
-    border: 2px dashed #d1d5db;
-    border-radius: 8px;
-    padding: 40px;
+    padding: 20px;
     text-align: center;
     cursor: pointer;
-    margin-bottom: 1.5rem;
+    background-color: #F8FAFC;
+    transition: all 0.2s;
+    margin-bottom: 16px;
 }
 
-.upload-area:hover {
-    background-color: #f9fafb;
+.upload-area-compact:hover {
+    background-color: #F1F5F9;
+    border-color: #94A3B8;
 }
 
-.upload-area img {
-    width: 48px;
-    height: 48px;
-    margin-bottom: 15px;
-}
-
-.upload-area p {
-    margin: 0;
-    color: #6b7280;
-}
-
-.file-display {
+.upload-placeholder {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    background-color: #f2f4fa;
-    border-radius: 6px;
-    padding: 15px;
-    margin-bottom: 1.5rem;
+    gap: 8px;
 }
 
-.file-display img {
+.upload-placeholder img {
     width: 24px;
     height: 24px;
-    margin-right: 10px;
+    opacity: 0.6;
 }
 
-.file-display span {
-    font-size: 16px;
-    color: #333;
+.upload-placeholder span {
+    font-size: 13px;
+    color: #64748B;
 }
 
-.submit-button {
+/* Состояние когда файл выбран */
+.file-selected-view {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.file-selected-view img {
+    width: 20px;
+    height: 20px;
+}
+
+.selected-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: #334155;
+}
+
+.change-link {
+    font-size: 12px;
+    color: #566F9E;
+    text-decoration: underline;
+}
+
+.btn-primary-compact {
     width: 100%;
-    background-color: #566f9e;
+    background-color: #566F9E;
     color: white;
     border: none;
     border-radius: 6px;
-    padding: 15px;
-    font-size: 16px;
+    padding: 10px; /* Меньше высота кнопки */
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background 0.2s;
 }
 
-.submit-button:hover {
+.btn-primary-compact:hover:not(:disabled) {
     background-color: #435a8a;
 }
 
-.submit-button:disabled {
-    background-color: #a0aec0;
+.btn-primary-compact:disabled {
+    background-color: #CBD5E1;
     cursor: not-allowed;
 }

@@ -1,5 +1,4 @@
 body {
-  padding-top: 64px; /* Height of the header */
 }
 
 .app-container {
@@ -15,7 +14,6 @@ body {
 
 .content {
   flex-grow: 1;
-  padding: 24px;
   background-color: #F9FAFB;
 }
 

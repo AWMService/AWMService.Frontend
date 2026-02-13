@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { X, Edit3, Globe, AlignLeft, Layers, Users, Info } from "lucide-react";
 import "./TopicEditModal.css";
 
 export default function TopicEditModal({ open, onClose, topic, onSave, directions }) {
@@ -35,7 +35,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
+        setForm(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSave = () => {
@@ -55,72 +55,168 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
             workType: form.workType,
             participantCount: Number(form.participantCount),
         };
+
         onSave(updatedTopic);
     };
 
     return (
-        <div className="edit-overlay">
-            <div className="edit-modal">
-                <button className="edit-close" onClick={onClose}>
-                    <X />
-                </button>
-
-                <h2>Редактирование темы</h2>
-
-                <div className="edit-form">
-                    <label>Название (Рус)</label>
-                    <input name="titleRu" value={form.titleRu} onChange={handleChange} />
-                    <label>Название (Қаз)</label>
-                    <input name="titleKk" value={form.titleKk} onChange={handleChange} />
-                    <label>Название (Eng)</label>
-                    <input name="titleEn" value={form.titleEn} onChange={handleChange} />
-
-                    <label>Описание (Рус)</label>
-                    <textarea name="descRu" value={form.descRu} onChange={handleChange} />
-                    <label>Описание (Қаз)</label>
-                    <textarea name="descKk" value={form.descKk} onChange={handleChange} />
-                    <label>Описание (Eng)</label>
-                    <textarea name="descEn" value={form.descEn} onChange={handleChange} />
-
-                    <label>Направление</label>
-                    <select
-                        name="direction"
-                        value={form.direction}
-                        onChange={handleChange}
-                    >
-                        <option value="">Выберите...</option>
-                        {directions.map((d) => (
-                            <option key={d}>{d}</option>
-                        ))}
-                    </select>
-
-                    <label>Тип работы</label>
-                    <select
-                        name="workType"
-                        value={form.workType}
-                        onChange={handleChange}
-                    >
-                        <option value="diploma_project">Дипломный проект</option>
-                        <option value="diploma_work">Дипломная работа</option>
-                        <option value="course_work">Курсовая работа</option>
-                    </select>
-
-                    <label>Количество студентов</label>
-                    <input
-                        type="number"
-                        min="1"
-                        name="participantCount"
-                        value={form.participantCount}
-                        onChange={handleChange}
-                    />
+        <div className="tem-overlay" onClick={onClose}>
+            <div className="tem-modal" onClick={(e) => e.stopPropagation()}>
+                <div className="tem-header">
+                    <div className="tem-header-text">
+                        <div className="tem-title-row">
+                            <Edit3 size={18} className="tem-icon-accent" />
+                            <h2>Редактирование темы</h2>
+                        </div>
+                        <p>Внесите изменения в параметры темы</p>
+                    </div>
+                    <button className="tem-close-btn" onClick={onClose}>
+                        <X size={20} />
+                    </button>
                 </div>
 
-                <div className="edit-actions">
-                    <button className="btn btn-outline" onClick={onClose}>
+                <div className="tem-body">
+                    {/* Название */}
+                    <div className="tem-section">
+                        <div className="tem-section-label">
+                            <Globe size={16} className="tem-icon-muted" />
+                            <h3>Название темы</h3>
+                        </div>
+                        <div className="tem-input-group">
+                            <div className="tem-field">
+                                <div className="tem-lang-tag">KK</div>
+                                <input
+                                    name="titleKk"
+                                    value={form.titleKk}
+                                    onChange={handleChange}
+                                    placeholder="Тақырып атауы..."
+                                    className="tem-input"
+                                />
+                            </div>
+                            <div className="tem-field">
+                                <div className="tem-lang-tag">RU</div>
+                                <input
+                                    name="titleRu"
+                                    value={form.titleRu}
+                                    onChange={handleChange}
+                                    placeholder="Название темы..."
+                                    className="tem-input"
+                                />
+                            </div>
+                            <div className="tem-field">
+                                <div className="tem-lang-tag">EN</div>
+                                <input
+                                    name="titleEn"
+                                    value={form.titleEn}
+                                    onChange={handleChange}
+                                    placeholder="Topic title..."
+                                    className="tem-input"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Описание */}
+                    <div className="tem-section">
+                        <div className="tem-section-label">
+                            <AlignLeft size={16} className="tem-icon-muted" />
+                            <h3>Описание и задачи</h3>
+                        </div>
+                        <div className="tem-input-group">
+                            <div className="tem-field vertical">
+                                <div className="tem-lang-tag">KK</div>
+                                <textarea
+                                    name="descKk"
+                                    value={form.descKk}
+                                    onChange={handleChange}
+                                    className="tem-textarea-fixed"
+                                />
+                            </div>
+
+                            <div className="tem-field vertical">
+                                <div className="tem-lang-tag">RU</div>
+                                <textarea
+                                    name="descRu"
+                                    value={form.descRu}
+                                    onChange={handleChange}
+                                    className="tem-textarea-fixed"
+                                />
+                            </div>
+
+                            {/* 🔥 EN DESCRIPTION */}
+                            <div className="tem-field vertical">
+                                <div className="tem-lang-tag">EN</div>
+                                <textarea
+                                    name="descEn"
+                                    value={form.descEn}
+                                    onChange={handleChange}
+                                    className="tem-textarea-fixed"
+
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Параметры */}
+                    <div className="tem-grid-params">
+                        <div className="tem-section">
+                            <div className="tem-section-label">
+                                <Info size={16} className="tem-icon-muted" />
+                                <h3>Направление</h3>
+                            </div>
+                            <select
+                                name="direction"
+                                value={form.direction}
+                                onChange={handleChange}
+                                className="tem-select"
+                            >
+                                <option value="">Выберите...</option>
+                                {directions.map((d) => (
+                                    <option key={d} value={d}>{d}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="tem-section">
+                            <div className="tem-section-label">
+                                <Layers size={16} className="tem-icon-muted" />
+                                <h3>Тип работы</h3>
+                            </div>
+                            <select
+                                name="workType"
+                                value={form.workType}
+                                onChange={handleChange}
+                                className="tem-select"
+                            >
+                                <option value="diploma_project">Дипломный проект</option>
+                                <option value="diploma_work">Дипломная работа</option>
+                                <option value="course_work">Курсовая работа</option>
+                            </select>
+                        </div>
+
+                        <div className="tem-section">
+                            <div className="tem-section-label">
+                                <Users size={16} className="tem-icon-muted" />
+                                <h3>Студентов</h3>
+                            </div>
+                            <input
+                                type="number"
+                                min="1"
+                                name="participantCount"
+                                value={form.participantCount}
+                                onChange={handleChange}
+                                className="tem-input-number"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="tem-footer">
+                    <button className="tem-btn-secondary" onClick={onClose}>
                         Отмена
                     </button>
-                    <button className="btn btn-primary" onClick={handleSave}>
-                        Сохранить
+                    <button className="tem-btn-primary" onClick={handleSave}>
+                        Сохранить изменения
                     </button>
                 </div>
             </div>

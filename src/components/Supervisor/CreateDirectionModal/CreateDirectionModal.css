@@ -1,159 +1,219 @@
-
 .cdm-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.45);
+    background: rgba(15, 23, 42, 0.5); /* Без блюра */
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1200;
+    z-index: 2000;
     padding: 20px;
 }
 
-/* modal */
 .cdm-modal {
-    width: 720px;
-    max-width: calc(100% - 40px);
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(2,6,23,0.2);
-    overflow: hidden;
+    width: 680px;
+    max-width: 100%;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    animation: cdm-appear 0.3s ease-out;
 }
 
-/* header */
+@keyframes cdm-appear {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header */
 .cdm-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: start;
-    padding: 20px 22px;
-    border-bottom: 1px solid #eef2f6;
-}
-
-.cdm-header h2 {
-    margin: 0;
-    font-size: 20px;
-    color: #111827;
-}
-
-.cdm-header .muted {
-    margin: 4px 0 0 0;
-    font-size: 13px;
-    color: #6b7280;
-}
-
-/* close button */
-.cdm-close {
-    background: transparent;
-    border: none;
-    padding: 6px;
-    cursor: pointer;
-    color: #374151;
-    border-radius: 6px;
-}
-.cdm-close:hover {
-    background: #f3f4f6;
-}
-
-/* body */
-.cdm-body {
-    padding: 18px 22px;
-    max-height: 70vh;
-    overflow: auto;
-}
-
-/* sections */
-.cdm-section {
-    margin-bottom: 16px;
-}
-
-.cdm-section-title {
+    padding: 24px 28px;
+    border-bottom: 1px solid #f1f5f9;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
 }
 
-.cdm-section-title h3 {
+.cdm-header-text h2 {
     margin: 0;
-    font-size: 16px;
-    color: #111827;
+    font-size: 19px;
+    font-weight: 600;
+    color: #1e293b;
 }
 
-.cdm-required {
-    background: #fff5f0;
-    color: #b45309;
-    border: 1px solid #ffedd5;
-    padding: 6px 10px;
-    border-radius: 999px;
+.cdm-header-text p {
+    margin: 4px 0 0 0;
     font-size: 13px;
+    color: #94a3b8;
 }
 
-/* labels and inputs */
-.cdm-field-label {
-    display: block;
-    margin: 8px 0 6px;
-    font-size: 13px;
-    color: #374151;
-}
-
-.cdm-input,
-.cdm-textarea {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 12px 14px;
-    border: 1px solid #e6e9ee;
+.cdm-close-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 8px;
     border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.cdm-close-btn:hover {
+    background: #f8fafc;
+    color: #64748b;
+}
+
+/* Body & Form */
+.cdm-body {
+    padding: 24px 28px;
+    max-height: 65vh;
+    overflow-y: auto;
+}
+
+.cdm-section {
+    margin-bottom: 24px;
+}
+
+.cdm-section-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    color: #475569;
+}
+
+.cdm-section-label h3 {
     font-size: 14px;
-    color: #111827;
-    background: white;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Input Styles */
+.cdm-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cdm-field {
+    display: flex;
+    align-items: stretch;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+
+.cdm-field:focus-within {
+    border-color: #2563eb;
+}
+
+.cdm-field.vertical {
+    flex-direction: column;
+}
+
+.cdm-lang-tag {
+    background: #f8fafc;
+    color: #94a3b8;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    border-right: 1px solid #e2e8f0;
+    min-width: 45px;
+}
+
+.cdm-field.vertical .cdm-lang-tag {
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+    justify-content: flex-start;
+    padding: 4px 12px;
+}
+
+.cdm-input, .cdm-textarea {
+    flex-grow: 1;
+    border: none;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #334155;
     outline: none;
-    transition: border-color 0.12s, box-shadow 0.12s;
+    background: transparent;
 }
 
-.cdm-input::placeholder,
-.cdm-textarea::placeholder {
-    color: #9ca3af;
+.cdm-textarea {
+    resize: none;
 }
 
-/* invalid state */
-.cdm-input.invalid,
-.cdm-textarea.invalid {
-    border-color: #fca5a5;
-    box-shadow: 0 0 0 3px rgba(255, 221, 221, 0.4);
+.cdm-input.error, .cdm-textarea.error {
+    background: #fff1f2;
 }
 
-/* footer */
+.cdm-input::placeholder, .cdm-textarea::placeholder {
+    color: #cbd5e1;
+}
+
+/* Validation Hint */
+.cdm-validation-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #f59e0b;
+    font-size: 12px;
+    padding: 8px 0;
+}
+
+/* Footer */
 .cdm-footer {
+    padding: 20px 28px;
+    border-top: 1px solid #f1f5f9;
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
-    padding: 14px 22px;
-    border-top: 1px solid #eef2f6;
+    gap: 12px;
     background: #ffffff;
 }
 
-/* reuse your existing .btn styles by keeping class names same (btn, btn-primary, btn-outline) */
-/* if needed, add slight modal-specific overrides */
-
-.btn.disabled,
-.btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+.cdm-btn-secondary {
+    background: #ffffff;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-/* responsive smaller screens */
+.cdm-btn-secondary:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.cdm-btn-primary {
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 400; /* Как просили ранее */
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cdm-btn-primary:hover:not(:disabled) {
+    background: #1d4ed8;
+}
+
+.cdm-btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #94a3b8;
+}
+
 @media (max-width: 520px) {
-    .cdm-modal {
-        width: 100%;
-        max-width: 100%;
-        border-radius: 10px;
-    }
-    .cdm-header,
-    .cdm-body,
-    .cdm-footer {
-        padding-left: 14px;
-        padding-right: 14px;
-    }
+    .cdm-modal { height: 100vh; border-radius: 0; }
+    .cdm-body { max-height: none; }
 }

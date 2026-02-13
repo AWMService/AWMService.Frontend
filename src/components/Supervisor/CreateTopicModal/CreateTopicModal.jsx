@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { X, Globe, AlignLeft, Info, Layers, Users, AlertCircle } from "lucide-react";
 import "./CreateTopicModal.css";
 
 export default function CreateTopicModal({ open, onClose, onCreate, directions = [] }) {
-    // directions: array of strings (названия утвержденных направлений)
     const [form, setForm] = useState({
         direction: "",
         title: { kk: "", ru: "", en: "" },
         description: { kk: "", ru: "", en: "" },
-        workType: "", // e.g. "course", "diploma"
+        workType: "",
         studentCount: "1",
     });
 
@@ -16,7 +15,6 @@ export default function CreateTopicModal({ open, onClose, onCreate, directions =
 
     useEffect(() => {
         if (!open) {
-            // reset on close
             setForm({
                 direction: "",
                 title: { kk: "", ru: "", en: "" },
@@ -31,17 +29,15 @@ export default function CreateTopicModal({ open, onClose, onCreate, directions =
     if (!open) return null;
 
     const updateField = (path, value) => {
-        // path is string like "title.kk" or "direction"
         if (!path.includes(".")) {
-            setForm((p) => ({ ...p, [path]: value }));
+            setForm(p => ({ ...p, [path]: value }));
             return;
         }
         const [parent, child] = path.split(".");
-        setForm((p) => ({ ...p, [parent]: { ...p[parent], [child]: value } }));
+        setForm(p => ({ ...p, [parent]: { ...p[parent], [child]: value } }));
     };
 
     const valid = () => {
-        // require direction, at least one title (prefer ru/kk), and at least one description
         const hasDirection = form.direction.trim() !== "";
         const hasTitle = (form.title.kk + form.title.ru + form.title.en).trim() !== "";
         const hasDesc = (form.description.kk + form.description.ru + form.description.en).trim() !== "";
@@ -52,7 +48,7 @@ export default function CreateTopicModal({ open, onClose, onCreate, directions =
     const handleSave = () => {
         setTouched(true);
         if (!valid()) return;
-        // assemble topic object
+
         const topic = {
             title: {
                 kk: form.title.kk.trim(),
@@ -70,141 +66,175 @@ export default function CreateTopicModal({ open, onClose, onCreate, directions =
             createdAt: new Date().toISOString(),
         };
 
-        if (onCreate) onCreate(topic);
+        onCreate?.(topic);
         onClose();
     };
 
     return (
-        <div className="ctm-overlay" role="dialog" aria-modal="true">
-            <div className="ctm-modal">
-                <button className="ctm-close" onClick={onClose} aria-label="Закрыть">
-                    <X />
-                </button>
-
-                <header className="ctm-header">
-                    <h2>Создать новую тему</h2>
-                    <p className="ctm-sub">Заполните информацию о теме дипломного проекта на всех языках</p>
-                </header>
-
-                <div className="ctm-required-box">
-                    {(!form.direction || (form.title.kk+form.title.ru+form.title.en).trim()==="" || (form.description.kk+form.description.ru+form.description.en).trim()==="") && (
-                        <div className="ctm-required">⚠ Требуется заполнение</div>
-                    )}
+        <div className="ctm-overlay" onClick={onClose}>
+            <div className="ctm-modal" onClick={e => e.stopPropagation()}>
+                <div className="ctm-header">
+                    <div className="ctm-header-text">
+                        <h2>Создать новую тему</h2>
+                        <p>Заполните информацию о проекте на трех языках</p>
+                    </div>
+                    <button className="ctm-close-btn" onClick={onClose}>
+                        <X size={20} />
+                    </button>
                 </div>
 
                 <div className="ctm-body">
-                    {/* Direction select */}
-                    <div className="ctm-row">
-                        <label className="ctm-label">Направление</label>
+                    {/* Direction */}
+                    <div className="ctm-section">
+                        <div className="ctm-section-label">
+                            <Info size={16} className="ctm-icon-muted" />
+                            <h3>Направление</h3>
+                        </div>
                         <select
                             className={`ctm-select ${touched && !form.direction ? "invalid" : ""}`}
                             value={form.direction}
-                            onChange={(e) => updateField("direction", e.target.value)}
+                            onChange={e => updateField("direction", e.target.value)}
                         >
-                            <option value="">Выберите направление из утвержденных</option>
-                            {directions.length === 0 && <option value="__none">Нет утверждённых направлений</option>}
+                            <option value="">Выберите направление из списка...</option>
                             {directions.map((d, idx) => (
                                 <option key={idx} value={d}>{d}</option>
                             ))}
                         </select>
                     </div>
 
-                    {/* Title multilingual */}
+                    {/* Titles */}
                     <div className="ctm-section">
-                        <h3 className="ctm-section-title">Название темы</h3>
-
-                        <label className="ctm-field-label">Қазақша</label>
-                        <input
-                            className={`ctm-input ${touched && (form.title.kk.trim()==="") && (form.title.ru.trim()==="" && form.title.en.trim()==="") ? "invalid" : ""}`}
-                            placeholder="Тақырыптың атауы қазақ тілінде"
-                            value={form.title.kk}
-                            onChange={(e) => updateField("title.kk", e.target.value)}
-                        />
-
-                        <label className="ctm-field-label">Русский</label>
-                        <input
-                            className="ctm-input"
-                            placeholder="Название темы на русском языке"
-                            value={form.title.ru}
-                            onChange={(e) => updateField("title.ru", e.target.value)}
-                        />
-
-                        <label className="ctm-field-label">English</label>
-                        <input
-                            className="ctm-input"
-                            placeholder="Topic title in English"
-                            value={form.title.en}
-                            onChange={(e) => updateField("title.en", e.target.value)}
-                        />
+                        <div className="ctm-section-label">
+                            <Globe size={16} className="ctm-icon-muted" />
+                            <h3>Название темы</h3>
+                        </div>
+                        <div className="ctm-input-group">
+                            <div className={`ctm-field ${touched && !form.title.kk && !form.title.ru && !form.title.en ? "invalid" : ""}`}>
+                                <div className="ctm-lang-tag">KK</div>
+                                <input
+                                    className="ctm-input"
+                                    placeholder="Тақырып атауы..."
+                                    value={form.title.kk}
+                                    onChange={e => updateField("title.kk", e.target.value)}
+                                />
+                            </div>
+                            <div className="ctm-field">
+                                <div className="ctm-lang-tag">RU</div>
+                                <input
+                                    className="ctm-input"
+                                    placeholder="Название темы..."
+                                    value={form.title.ru}
+                                    onChange={e => updateField("title.ru", e.target.value)}
+                                />
+                            </div>
+                            <div className="ctm-field">
+                                <div className="ctm-lang-tag">EN</div>
+                                <input
+                                    className="ctm-input"
+                                    placeholder="Topic title..."
+                                    value={form.title.en}
+                                    onChange={e => updateField("title.en", e.target.value)}
+                                />
+                            </div>
+                        </div>
                     </div>
 
-                    {/* Description multilingual */}
+                    {/* Descriptions */}
                     <div className="ctm-section">
-                        <h3 className="ctm-section-title">Описание темы</h3>
+                        <div className="ctm-section-label">
+                            <AlignLeft size={16} className="ctm-icon-muted" />
+                            <h3>Описание и задачи</h3>
+                        </div>
+                        <div className="ctm-input-group">
+                            <div className={`ctm-field vertical ${touched && !form.description.kk && !form.description.ru && !form.description.en ? "invalid" : ""}`}>
+                                <div className="ctm-lang-tag">KK</div>
+                                <textarea
+                                    className="ctm-textarea"
+                                    placeholder="Сипаттамасы..."
+                                    value={form.description.kk}
+                                    onChange={e => updateField("description.kk", e.target.value)}
+                                />
+                            </div>
 
-                        <label className="ctm-field-label">Қазақша</label>
-                        <textarea
-                            className={`ctm-textarea ${touched && (form.description.kk.trim()==="") && (form.description.ru.trim()==="" && form.description.en.trim()==="") ? "invalid" : ""}`}
-                            placeholder="Тақырыптың толық сипаттамасы қазақ тілінде..."
-                            rows={4}
-                            value={form.description.kk}
-                            onChange={(e) => updateField("description.kk", e.target.value)}
-                        />
+                            <div className="ctm-field vertical">
+                                <div className="ctm-lang-tag">RU</div>
+                                <textarea
+                                    className="ctm-textarea"
+                                    placeholder="Описание..."
+                                    value={form.description.ru}
+                                    onChange={e => updateField("description.ru", e.target.value)}
+                                />
+                            </div>
 
-                        <label className="ctm-field-label">Русский</label>
-                        <textarea
-                            className="ctm-textarea"
-                            placeholder="Подробное описание задач и целей темы на русском языке..."
-                            rows={4}
-                            value={form.description.ru}
-                            onChange={(e) => updateField("description.ru", e.target.value)}
-                        />
-
-                        <label className="ctm-field-label">English</label>
-                        <textarea
-                            className="ctm-textarea"
-                            placeholder="Detailed description of the topic in English..."
-                            rows={4}
-                            value={form.description.en}
-                            onChange={(e) => updateField("description.en", e.target.value)}
-                        />
+                            {/*  EN DESCRIPTION */}
+                            <div className="ctm-field vertical">
+                                <div className="ctm-lang-tag">EN</div>
+                                <textarea
+                                    className="ctm-textarea"
+                                    placeholder="Description..."
+                                    value={form.description.en}
+                                    onChange={e => updateField("description.en", e.target.value)}
+                                />
+                            </div>
+                        </div>
                     </div>
 
-                    {/* Bottom row: work type + student count */}
-                    <div className="ctm-bottom-row">
-                        <div className="ctm-col">
-                            <label className="ctm-label">Тип работы</label>
+                    {/* Params */}
+                    <div className="ctm-grid-params">
+                        <div className="ctm-section">
+                            <div className="ctm-section-label">
+                                <Layers size={16} className="ctm-icon-muted" />
+                                <h3>Тип работы</h3>
+                            </div>
                             <select
                                 className={`ctm-select ${touched && !form.workType ? "invalid" : ""}`}
                                 value={form.workType}
-                                onChange={(e) => updateField("workType", e.target.value)}
+                                onChange={e => updateField("workType", e.target.value)}
                             >
-                                <option value="">Выберите тип работы</option>
+                                <option value="">Выберите...</option>
                                 <option value="diploma">Дипломная работа</option>
                                 <option value="course">Курсовая работа</option>
-                                <option value="research">Научно-исследовательская</option>
+                                <option value="research">НИРС</option>
                             </select>
                         </div>
 
-                        <div className="ctm-col">
-                            <label className="ctm-label">Количество студентов</label>
+                        <div className="ctm-section">
+                            <div className="ctm-section-label">
+                                <Users size={16} className="ctm-icon-muted" />
+                                <h3>Студентов</h3>
+                            </div>
                             <select
                                 className="ctm-select"
                                 value={form.studentCount}
-                                onChange={(e) => updateField("studentCount", e.target.value)}
+                                onChange={e => updateField("studentCount", e.target.value)}
                             >
-                                <option value="1">1 - Индивидуальная</option>
-                                <option value="2">2 - Двоe</option>
-                                <option value="3">3 - Трое</option>
+                                <option value="1">1 студент</option>
+                                <option value="2">2 студента</option>
+                                <option value="3">3 студента</option>
                             </select>
                         </div>
                     </div>
 
-                    {/* Footer actions */}
-                    <div className="ctm-actions">
-                        <button className="btn btn-outline" onClick={onClose}>Отмена</button>
-                        <button className={`btn btn-primary ${!valid() ? "disabled" : ""}`} onClick={handleSave}>Сохранить тему</button>
-                    </div>
+                    {touched && !valid() && (
+                        <div className="ctm-error-notice">
+                            <AlertCircle size={14} />
+                            <span>
+                                Заполните обязательные поля (направление, тип и описание хотя бы на одном языке)
+                            </span>
+                        </div>
+                    )}
+                </div>
+
+                <div className="ctm-footer">
+                    <button className="ctm-btn-secondary" onClick={onClose}>
+                        Отмена
+                    </button>
+                    <button
+                        className={`ctm-btn-primary ${!valid() && touched ? "disabled" : ""}`}
+                        onClick={handleSave}
+                    >
+                        Создать тему
+                    </button>
                 </div>
             </div>
         </div>

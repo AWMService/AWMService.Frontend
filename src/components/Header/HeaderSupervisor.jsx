@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './Header.css';
-import logoutIcon from '../../assets/icons/logout-icon.svg';
 import bellIcon from '../../assets/icons/bell-icon.svg';
 import globeIcon from '../../assets/icons/globe-icon.svg';
 import arrowDownIcon from '../../assets/icons/arrow-down-icon.svg';
@@ -13,32 +12,51 @@ const pageNames = {
     "/super/settings": "Настройки",
 };
 
+const Icon = ({ src, size = 16, className = "" }) => (
+    <img
+        src={src}
+        className={className}
+        style={{
+            width: size,
+            height: size,
+            filter: 'brightness(0) invert(1)',
+        }}
+        alt=""
+    />
+);
+
 export function HeaderSupervisor() {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const currentPageName = pageNames[location.pathname] || "Панель руководителя";
+    const currentPageName =
+        pageNames[location.pathname] || "Панель руководителя";
+
     const notificationCount = 2;
 
     const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [languageOpen, setLanguageOpen] = useState(false);
+    const [userMenuOpen, setUserMenuOpen] = useState(false);
+
     const notificationsRef = useRef(null);
     const languageRef = useRef(null);
-
-    const handleClickOutside = (event) => {
-        if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
-            setNotificationsOpen(false);
-        }
-        if (languageRef.current && !languageRef.current.contains(event.target)) {
-            setLanguageOpen(false);
-        }
-    };
+    const userRef = useRef(null);
 
     useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
+        const handleClickOutside = (e) => {
+            if (notificationsRef.current && !notificationsRef.current.contains(e.target)) {
+                setNotificationsOpen(false);
+            }
+            if (languageRef.current && !languageRef.current.contains(e.target)) {
+                setLanguageOpen(false);
+            }
+            if (userRef.current && !userRef.current.contains(e.target)) {
+                setUserMenuOpen(false);
+            }
         };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
     const handleLogout = () => {
@@ -47,84 +65,111 @@ export function HeaderSupervisor() {
 
     return (
         <header className="header">
-            <div className="header-container">
-                <div className="header-content">
-                    <div className="header-left">
-                        <div className="logo-brand">
-                            <div className="logo-icon-wrapper">
-                                <span className="logo-text">Р</span>
-                            </div>
-                            <div className="logo-title-wrapper">
-                                <h1 className="logo-title">Руководитель</h1>
-                                <p className="logo-subtitle">Панель управления</p>
-                            </div>
-                        </div>
-                        <div className="page-indicator">
-                            <div className="indicator-line"></div>
-                            <span className="page-name">{currentPageName}</span>
+            <div className="header-content">
+
+                {/* ЛЕВАЯ ЧАСТЬ */}
+                <div className="header-left">
+                    <div className="logo-section">
+                        <div className="logo-box">Р</div>
+                        <div>
+                            <div className="logo-main">Руководитель</div>
+                            <div className="logo-sub">Панель управления</div>
                         </div>
                     </div>
 
-                    <div className="header-right">
-                        <div className="header-actions">
-                            <div className="dropdown" ref={notificationsRef}>
-                                <button
-                                    className="header-button relative"
-                                    onClick={() => setNotificationsOpen(!notificationsOpen)}
-                                >
-                                    <img src={bellIcon} alt="Notifications" className="icon" />
-                                    {notificationCount > 0 && (
-                                        <span className="badge notification-badge">{notificationCount}</span>
-                                    )}
-                                </button>
-                                {notificationsOpen && (
-                                    <div className="dropdown-content notifications-dropdown">
-                                        <div className="dropdown-header">
-                                            <span>Уведомления</span>
-                                        </div>
-                                        <div className="dropdown-item notification-item">
-                                            <div>Новый студент добавлен</div>
-                                            <div className="text-xs text-gray">5 минут назад</div>
-                                        </div>
-                                        <div className="dropdown-item notification-item">
-                                            <div>Отчёт ожидает проверки</div>
-                                            <div className="text-xs text-gray">1 час назад</div>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
+                    <div className="page-divider"></div>
+                    <div className="page-tittle">{currentPageName}</div>
+                </div>
 
-                            <div className="dropdown" ref={languageRef}>
-                                <button
-                                    className="header-button language-button"
-                                    onClick={() => setLanguageOpen(!languageOpen)}
-                                >
-                                    <img src={globeIcon} alt="Language" className="icon" />
-                                    <span>RU</span>
-                                    <img src={arrowDownIcon} alt="arrow down" className="arrow-icon" />
-                                </button>
-                                {languageOpen && (
-                                    <div className="dropdown-content language-dropdown">
-                                        <div className="dropdown-item">🇷🇺 Русский</div>
-                                        <div className="dropdown-item">🇰🇿 Қазақша</div>
-                                        <div className="dropdown-item">🇺🇸 English</div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
+                {/* ПРАВАЯ ЧАСТЬ */}
+                <div className="header-right">
 
-                        <div className="user-info">
-                            <div className="user-avatar"><span>РР</span></div>
-                            <div className="user-details">
-                                <div className="user-name">Рахимов Р.Р.</div>
-                                <div className="user-role">Руководитель</div>
+                    {/* 🔔 Уведомления */}
+                    <div className="nav-item-dropdown" ref={notificationsRef}>
+                        <button
+                            className="icon-btn"
+                            onClick={() => {
+                                setNotificationsOpen(v => !v);
+                                setLanguageOpen(false);
+                                setUserMenuOpen(false);
+                            }}
+                        >
+                            <Icon src={bellIcon} size={22} />
+                            {notificationCount > 0 && (
+                                <span className="red-badge">{notificationCount}</span>
+                            )}
+                        </button>
+
+                        {notificationsOpen && (
+                            <div className="dropdown-menu align-right">
+                                <div className="dropdown-header">Уведомления</div>
+                                <div className="dropdown-item">
+                                    Новых уведомлений: {notificationCount}
+                                </div>
                             </div>
-                            <button className="header-button logout-button" onClick={handleLogout}>
-                                <img src={logoutIcon} alt="Logout" className="icon" />
-                                <span className="logout-text">Выйти</span>
-                            </button>
-                        </div>
+                        )}
                     </div>
+
+                    {/* 🌐 Язык */}
+                    <div className="nav-item-dropdown" ref={languageRef}>
+                        <button
+                            className="lang-selector"
+                            onClick={() => {
+                                setLanguageOpen(v => !v);
+                                setNotificationsOpen(false);
+                                setUserMenuOpen(false);
+                            }}
+                        >
+                            <Icon src={globeIcon} size={20} />
+                            <span>RU</span>
+                            <Icon
+                                src={arrowDownIcon}
+                                size={10}
+                                className={languageOpen ? 'rotate' : ''}
+                            />
+                        </button>
+
+                        {languageOpen && (
+                            <div className="dropdown-menu align-right">
+                                <div className="dropdown-item">Русский (RU)</div>
+                                <div className="dropdown-item">English (EN)</div>
+                                <div className="dropdown-item">Қазақша (KZ)</div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* 👤 Пользователь */}
+                    <div className="nav-item-dropdown" ref={userRef}>
+                        <div
+                            className="user-profile"
+                            onClick={() => {
+                                setUserMenuOpen(v => !v);
+                                setNotificationsOpen(false);
+                                setLanguageOpen(false);
+                            }}
+                        >
+                            <div className="avatar-circle">РР</div>
+                            <div>
+                                <div className="u-name">Рахимов Р.Р.</div>
+                                <div className="u-role">Руководитель</div>
+                            </div>
+                            <Icon
+                                src={arrowDownIcon}
+                                size={10}
+                                className={userMenuOpen ? 'rotate' : ''}
+                            />
+                        </div>
+
+                        {userMenuOpen && (
+                            <div className="dropdown-menu align-right">
+                                <div className="dropdown-item">Профиль</div>
+                                <div className="dropdown-item logout" onClick={handleLogout}>
+                                    Выйти
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
                 </div>
             </div>
         </header>

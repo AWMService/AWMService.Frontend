@@ -1,123 +1,81 @@
-import { useState } from "react"
-import { Users, Upload, FileText } from "lucide-react"
+import React, { useState } from "react"
+import { Users } from "lucide-react"
 import "./MyStudentsPage.css"
+import StudentModal from "../../../components/Supervisor/MyStudentsModal/StudentModal.jsx"
 
 export default function MyStudentsPage() {
-    const [students] = useState([
+    const [students, setStudents] = useState([
         {
-            id: "1",
-            topic: { title: "Разработка веб-приложения для управления задачами", direction: "Веб-технологии и облачные вычисления" },
-            studentCount: 1,
-            students: [{ name: "Иванов Алексей Петрович" }],
-            workStage: "pre-defense",
-            createdAt: "2024-01-15T10:00:00Z",
-            hasReview: false,
+            id: 1,
+            topic: { title: "Разработка веб-приложения для управления задачами", direction: "Веб-технологии" },
+            stage: "Предзащита",
+            students: [{ id: 101, name: "Иванов Алексей Петрович", score: 85 }],
+            projectFiles: [
+                { id: "pf1", name: "Пояснительная_записка_v1.pdf", date: "01.02.2024", uploadedBy: "Иванов А.П." },
+                { id: "pf2", name: "Код_программы.zip", date: "03.02.2024", uploadedBy: "Иванов А.П." }
+            ],
+            supervisorFiles: [{ id: "sf1", name: "Правки_по_структуре.docx", date: "04.02.2024" }],
+            notes: [
+                { id: 1, text: "Нужно доработать схему базы данных", date: "04.02.2024, 14:20" },
+                { id: 2, text: "Вводная часть оформлена верно", date: "05.02.2024, 10:15" }
+            ]
         },
-        {
-            id: "2",
-            topic: { title: "Система распознавания изображений", direction: "Искусственный интеллект и машинное обучение" },
-            studentCount: 2,
-            students: [{ name: "Петрова Мария Сергеевна" }, { name: "Сидоров Дмитрий Александрович" }],
-            workStage: "development",
-            createdAt: "2024-01-20T14:30:00Z",
-            hasReview: true,
-        },
-        {
-            id: "3",
-            topic: { title: "Мобильное приложение для онлайн-обучения", direction: "Мобильные технологии" },
-            studentCount: 1,
-            students: [{ name: "Казымова Айгерим Нурлановна" }],
-            workStage: "testing",
-            createdAt: "2024-02-01T09:15:00Z",
-            hasReview: false,
-        },
+        // ... другие студенты
     ])
 
-    const stageLabels = {
-        proposal: "Утверждение темы",
-        development: "Разработка",
-        testing: "Тестирование",
-        "pre-defense": "Предзащита",
-        defense: "Защита",
-        completed: "Завершено",
-    }
+    const [selectedStudent, setSelectedStudent] = useState(null)
 
-    const stageColors = {
-        proposal: "stage-blue",
-        development: "stage-yellow",
-        testing: "stage-orange",
-        "pre-defense": "stage-purple",
-        defense: "stage-green",
-        completed: "stage-gray",
+    const getCardStatusClass = (stageName) => {
+        const s = stageName ? stageName.toLowerCase() : "";
+        if (s.includes("предзащита")) return "sp-pill-purple";
+        if (s.includes("разработка")) return "sp-pill-orange";
+        if (s.includes("финал") || s.includes("защита")) return "sp-pill-green";
+        return "sp-pill-gray";
     }
 
     return (
-        <div className="supervisors-page">
-            {/* Header */}
-            <div className="page-header">
-                <Users className="icon" />
-                <div>
-                    <h1 className="title">Мои студенты</h1>
-                    <p className="subtitle">Статус работ студентов</p>
+        <div className="sp-page-root">
+            <header className="sp-page-header">
+                <div className="sp-header-text">
+                    <h1 className="sp-main-title">Мои студенты</h1>
+                    <p className="sp-main-subtitle">Панель управления дипломными проектами</p>
                 </div>
-            </div>
+            </header>
 
-            {/* Students */}
-            {students.length === 0 ? (
-                <div className="empty-card">
-                    <Users className="empty-icon" />
-                    <h3>Студенты не назначены</h3>
-                    <p>Студенты будут отображаться здесь после назначения тем</p>
-                </div>
-            ) : (
-                <div className="students-list">
-                    {students.map((student) => (
-                        <div key={student.id} className="student-card">
-                            {/* Тема */}
-                            <div className="topic">
-                                <h3>{student.topic.title}</h3>
-                                <p>{student.topic.direction}</p>
-                            </div>
-
-                            {/* Кол-во студентов */}
-                            <div className="count">
-                                <Users className="small-icon" />
-                                <span>{student.studentCount} {student.studentCount === 1 ? "студент" : "студента"}</span>
-                            </div>
-
-                            {/* ФИО студентов */}
-                            <div className="names">
-                                {student.students.map((s, index) => (
-                                    <div key={index}>{s.name}</div>
-                                ))}
-                            </div>
-
-                            {/* Этап работы */}
-                            <div className={`stage ${stageColors[student.workStage]}`}>
-                                {stageLabels[student.workStage]}
-                            </div>
-
-                            {/* Отзыв */}
-                            <div className="review">
-                                <button
-                                    className="review-btn"
-                                    onClick={() => alert(`Загрузить отзыв для студента ${student.id}`)}
-                                >
-                                    <Upload className="small-icon" />
-                                    {student.hasReview ? "Обновить отзыв" : "Загрузить отзыв"}
-                                </button>
-                            </div>
-
-                            {/* Мобильная инфа */}
-                            <div className="mobile-info">
-                                <span>Создано: {new Date(student.createdAt).toLocaleDateString("ru-RU")}</span>
-                                {student.hasReview && (
-                                    <span className="reviewed"><FileText className="tiny-icon" /> Отзыв загружен</span>
-                                )}
+            <div className="sp-cards-grid">
+                {students.map(student => (
+                    <div key={student.id} className="sp-item-card">
+                        <div className="sp-card-top">
+                            <span className={`sp-status-badge ${getCardStatusClass(student.stage)}`}>
+                                {student.stage}
+                            </span>
+                            <div className="sp-users-count">
+                                <Users size={14} /> {student.students.length}
                             </div>
                         </div>
-                    ))}
-                </div>
+
+                        <h3 className="sp-card-title">{student.topic.title}</h3>
+                        <p className="sp-card-dir">{student.topic.direction}</p>
+
+                        <div className="sp-card-names">
+                            {student.students.map((s) => (
+                                <div key={s.id} className="sp-name-row">{s.name}</div>
+                            ))}
+                        </div>
+
+                        <button className="sp-open-btn" onClick={() => setSelectedStudent(student)}>
+                            Открыть карточку
+                        </button>
+                    </div>
+                ))}
+            </div>
+
+            {selectedStudent && (
+                <StudentModal
+                    student={selectedStudent}
+                    setStudent={setSelectedStudent}
+                    setStudents={setStudents}
+                />
             )}
         </div>
     )

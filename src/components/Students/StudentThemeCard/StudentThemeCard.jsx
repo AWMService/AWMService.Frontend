@@ -2,49 +2,77 @@ import React from 'react';
 import './StudentThemeCard.css';
 
 export function StudentThemeCard({ theme, onApply, onCancel, onReapply }) {
-  const { title, description, supervisor, availableSlots, direction, status, rejectionReason } = theme;
+    const { title, description, supervisor, availableSlots, direction, status, rejectionReason } = theme;
 
-  const renderStatusBadge = () => {
-    if (status === 'applied') {
-      return <span className="status-badge status-pending">На рассмотрении</span>;
-    }
-    if (status === 'rejected') {
-      return <span className="status-badge status-rejected">Отклонена</span>;
-    }
-    return null;
-  };
+    // Мини-бэджик статуса (только текст и цвет)
+    const renderStatusLabel = () => {
+        if (status === 'applied') return <span className="status-text text-pending">● На рассмотрении</span>;
+        if (status === 'rejected') return <span className="status-text text-rejected">● Отклонено</span>;
+        return null;
+    };
 
-  const renderActions = () => {
-    switch (status) {
-      case 'applied':
-        return <button className="cancel-button" onClick={() => onCancel(theme.id)}>Отменить заявку</button>;
-      case 'rejected':
-        return <button className="apply-button" onClick={() => onReapply(theme.id)}>Подать заявку повторно</button>;
-      default:
-        return <button className="apply-button" onClick={() => onApply(theme.id)}>Подать заявку</button>;
-    }
-  };
+    const renderAction = () => {
+        const isFull = availableSlots === 0;
 
-  return (
-    <div className="student-theme-card">
-      {renderStatusBadge()}
-      <div className="card-main-content">
-        <h3 className="card-title">{title}</h3>
-        <p className="card-description">{description}</p>
-        <div className="card-tags">
-          <span className="tag tag-supervisor">{supervisor}</span>
-          <span className="tag tag-slots">Доступные места: {availableSlots}</span>
-          <span className="tag tag-direction">{direction}</span>
+        if (status === 'applied') {
+            return (
+                <button className="btn-compact btn-danger" onClick={() => onCancel(theme.id)}>
+                    Отменить
+                </button>
+            );
+        }
+        if (status === 'rejected') {
+            return (
+                <button className="btn-compact btn-primary" onClick={() => onReapply(theme.id)}>
+                    Повторить
+                </button>
+            );
+        }
+
+        return (
+            <button
+                className={`btn-compact ${isFull ? 'btn-disabled' : 'btn-outline-primary'}`}
+                onClick={() => onApply(theme.id)}
+                disabled={isFull}
+            >
+                {isFull ? 'Занято' : 'Выбрать'}
+            </button>
+        );
+    };
+
+    return (
+        <div className={`theme-card-compact ${status === 'rejected' ? 'rejected-border' : ''}`}>
+
+            {/* ВЕРХ: Руководитель + Статус */}
+            <div className="compact-header">
+                <span className="supervisor-sm">{supervisor}</span>
+                {renderStatusLabel()}
+            </div>
+
+            {/* ЦЕНТР: Заголовок + Описание */}
+            <div className="compact-body">
+                <h4 className="title-sm">{title}</h4>
+                <p className="desc-sm">{description}</p>
+
+                {status === 'rejected' && rejectionReason && (
+                    <div className="reject-note">
+                        Причина: {rejectionReason}
+                    </div>
+                )}
+            </div>
+
+            {/* НИЗ: Инфо + Кнопка */}
+            <div className="compact-footer">
+                <div className="meta-row">
+                    <span className="meta-item">{direction}</span>
+                    <span className="meta-dot">•</span>
+                    <span className={`meta-item ${availableSlots === 0 ? 'text-red' : ''}`}>
+                    {availableSlots > 0 ? `${availableSlots} места` : 'Мест нет'}
+                </span>
+                </div>
+                {renderAction()}
+            </div>
+
         </div>
-        {status === 'rejected' && rejectionReason && (
-          <div className="rejection-reason-box">
-            <strong>Причина отклонения:</strong> {rejectionReason}
-          </div>
-        )}
-      </div>
-      <div className="card-actions">
-        {renderActions()}
-      </div>
-    </div>
-  );
+    );
 }

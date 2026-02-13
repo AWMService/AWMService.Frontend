@@ -1,374 +1,199 @@
 .header {
-    background: linear-gradient(to left, #2563eb, #60a5fa);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(59, 130, 246, 0.3);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    background: #2563eb;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    color: white;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 30;
-}
-
-.header-container {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 1rem;
-    color: #dbeafe;
+    z-index: 1000;
+    font-family: sans-serif;
 }
 
 .header-content {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    height: 4rem; /* 64px */
+    align-items: center;
+    width: 100%;
 }
 
+/* Левая часть */
 .header-left {
     display: flex;
     align-items: center;
-    gap: 1.5rem; /* 24px */
+    gap: 20px;
 }
 
-.logo-brand {
+.logo-section {
     display: flex;
     align-items: center;
-    gap: 0.75rem; /* 12px */
+    gap: 12px;
 }
 
-.logo-icon-wrapper {
-    width: 2rem; /* 32px */
-    height: 2rem; /* 32px */
-    background-color: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(5px);
-    border-radius: 0.5rem; /* 8px */
+.logo-box {
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.logo-text {
-    color: white;
     font-weight: bold;
-    font-size: 0.875rem; /* 14px */
+    font-size: 18px;
 }
 
-.logo-title-wrapper {
-    display: none;
-}
-
-.logo-title {
-    font-size: 14px;
+.logo-main {
+    font-size: 18px;
     font-weight: 600;
-    color: white;
-    letter-spacing: -0.025em;
-
-}
-
-
-.logo-subtitle {
-    font-size: 0.75rem;
-    color: #dbeafe;
-    font-weight: 500;
-    margin-top: -35px;
     line-height: 1.1;
 }
 
-
-.page-indicator {
-    display: none;
-    align-items: center;
-    gap: 0.5rem; /* 8px */
+.logo-sub {
+    font-size: 11px;
+    opacity: 0.8;
 }
 
-.indicator-line {
-    width: 0.25rem; /* 4px */
-    height: 1.5rem; /* 24px */
-    background-color: rgba(255, 255, 255, 0.4);
-    border-radius: 9999px;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+.page-divider {
+    width: 3px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 4px;
 }
 
-.page-name {
-    font-size: 0.875rem; /* 14px */
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.9);
+.page-tittle {
+    font-size: 16px;
+    font-weight: 400;
 }
 
+/* Правая часть */
 .header-right {
     display: flex;
     align-items: center;
-    gap: 0.5rem; /* 8px */
+    gap: 24px;
 }
 
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+.nav-item-dropdown {
+    position: relative; /* Чтобы дропдаун позиционировался относительно этого элемента */
 }
 
-.header-button {
-    background-color: transparent;
+.icon-btn {
+    background: none;
     border: none;
     cursor: pointer;
-    color: white;
-    padding: 0.5rem;
-    border-radius: 0.5rem; /* 8px */
-    transition: background-color 0.2s;
     position: relative;
+    padding: 4px;
 }
 
-.header-button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.icon {
-    width: 1.2rem;
-    height: 1.2rem;
-    filter: brightness(0) invert(1);
-}
-.badge {
+.red-badge {
     position: absolute;
-    top: -3px;
-    right: -15px;
-    height: 13px;
-    width: 10px;
+    top: -2px;
+    right: -2px;
+    background: #ef4444;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
-    border-radius: 50%;
-    background-color: #ef4444;
-    color: white;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    border: 2px solid #2563eb;
 }
 
-
-.notification-badge {
-    background-color: #ef4444 !important;
-    color: white;
-}
-
-.notification-badge:hover {
-    background-color: #ef4444;
-}
-
-.dropdown {
-    position: relative;
-}
-
-.dropdown-content {
-    position: absolute;
-    right: 0;
-    margin-top: 0.5rem;
-    width: 20rem; /* 320px */
-    background-color: white;
-    border-radius: 0.5rem; /* 8px */
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    border: 1px solid #e5e7eb;
-    z-index: 40;
-}
-
-.dropdown-header {
+.lang-selector {
+    background: none;
+    border: none;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1rem;
+    gap: 8px;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.avatar-circle {
+    width: 38px;
+    height: 38px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-weight: 600;
-    color: #111827;
+    font-size: 14px;
 }
 
-.secondary-badge {
-    background-color: #f3f4f6;
-    color: #111827;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.5rem;
-    font-size: 0.75rem;
+.u-name {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.1;
 }
 
-.dropdown-separator {
-    height: 1px;
-    background-color: #e5e7eb;
-    margin: 0.25rem 0;
+.u-role {
+    font-size: 11px;
+    opacity: 0.7;
+}
+
+/* ВЫПАДАЮЩИЕ СПИСКИ (DROPDOWNS) */
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 12px); /* Смещение вниз от кнопки */
+    background: white;
+    color: #333;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    min-width: 180px;
+    overflow-x: hidden;
+    overflow-y: visible;
+    z-index: 1001;
+}
+
+.align-right {
+    right: 0; /* Выравнивание по правому краю родителя */
 }
 
 .dropdown-item {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.25rem; /* 4px */
-    padding: 1rem;
+    padding: 12px 16px;
+    font-size: 14px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background 0.2s;
 }
 
 .dropdown-item:hover {
-    background-color: #f9fafb;
+    background: #f3f4f6;
 }
 
-.notification-item div:first-child {
-    font-weight: 500;
-    font-size: 0.875rem; /* 14px */
-    color: #111827;
+.dropdown-header {
+    padding: 12px 16px;
+    font-weight: bold;
+    border-bottom: 1px solid #eee;
+    font-size: 12px;
+    color: #666;
 }
 
-.text-xs {
-    font-size: 0.75rem; /* 12px */
-    color: #4b5563;
+.logout {
+    color: #ef4444;
+    border-top: 1px solid #eee;
 }
 
-.text-gray {
-    color: #9ca3af;
+.rotate {
+    transform: rotate(180deg);
 }
 
-.language-button {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem; /* 4px */
-    padding: 0.5rem;
-}
-
-.arrow-icon {
-    width: 0.75rem; /* 12px */
-    height: 0.75rem; /* 12px */
-    filter: brightness(0) invert(1);
-}
-
-.language-dropdown {
-    width: auto;
-}
-
-.language-dropdown .dropdown-item {
-    flex-direction: row;
-    align-items: center;
-    gap: 0.5rem; /* 8px */
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem; /* 12px */
-}
-
-.user-avatar {
-    width: 2rem; /* 32px */
-    height: 2rem; /* 32px */
-    background-color: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(5px);
-    border-radius: 9999px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.user-avatar span {
-    color: white;
-    font-weight: 600;
-    font-size: 0.875rem; /* 14px */
-}
-
-.user-details {
-    display: none;
-    text-align: left;
-}
-
-.user-name {
-    font-size: 0.875rem; /* 14px */
-    font-weight: 600;
-    color: white;
-}
-
-.user-role {
-    font-size: 0.75rem; /* 12px */
-    color: #dbeafe;
-    font-weight: 500;
-}
-
-.logout-button {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem; /* 8px */
-    margin-left: 0.5rem; /* 8px */
-}
-
-.logout-text {
-    display: none;
-    font-size: 0.875rem; /* 14px */
-    font-weight: 500;
-}
-
-.mobile-page-title {
-    display: none;
-    border-top: 1px solid rgba(59, 130, 246, 0.3);
-    background-color: rgba(96, 165, 250, 0.8);
-    backdrop-filter: blur(5px);
-    padding: 0.5rem 1rem;
-}
-
-.mobile-page-title span {
-    font-size: 0.875rem; /* 14px */
-    font-weight: 600;
-    color: white;
-}
-
-/* Medium screens */
-@media (min-width: 768px) {
-    .page-indicator {
-        display: flex;
-    }
-
-    .mobile-page-title {
-        display: none;
-    }
-}
-
-/* Small screens */
-@media (min-width: 640px) {
-    .logo-title-wrapper {
-        display: block;
-    }
-
-    .user-details {
-        display: block;
-    }
-
-    .logout-text {
-        display: inline;
-    }
-}
-
-/* Mobile specific adjustments */
-@media (max-width: 767px) {
-    .header-left {
-        margin-left: 0;
-    }
-    .header-container{
-        padding-left: 5rem;
-    }
-    .mobile-page-title {
-        display: block;
-    }
-}
-
-.relative {
-    position: relative;
-}
-
-.dropdown-item span:first-child {
-    font-weight: 500;
-}
-/* --- FIX: стабильное выравнивание логотипа и текста --- */
-.logo-brand {
-    min-width: 180px; /* фиксированная ширина, чтобы не сжималось */
-}
-
-.logo-title-wrapper {
-    display: flex !important;
-    flex-direction: column;
-    justify-content: center;
-    line-height: 1.2;
+img {
+    transition: transform 0.2s ease;
 }

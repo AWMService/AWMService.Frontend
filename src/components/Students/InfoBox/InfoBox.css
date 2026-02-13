@@ -1,38 +1,57 @@
-/* Info Box */
 .info-box {
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 1rem;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 16px;
     display: flex;
     align-items: flex-start;
-    gap: 1rem;
-    font-size: 1rem;
+    gap: 12px;
+    font-size: 14px;
+    line-height: 1.5;
 }
 
-.info-box .icon {
-    width: 24px;
-    height: 24px;
+.info-icon {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
     flex-shrink: 0;
-    margin-top: 0.25rem; /* Adjust icon alignment with text */
 }
 
-.info-box p {
+.info-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.info-title {
+    font-weight: 600;
     margin: 0;
 }
 
+.info-desc {
+    margin: 0;
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+/* Варианты стилей */
 .info-box.neutral {
-    background-color: #f3f4f6;
-    border-color: #d1d5db;
+    background-color: #F3F4F6;
+    border-color: #E5E7EB;
+    color: #374151;
 }
 
 .info-box.warning {
-    background-color: #fef2f2; /* Red-50 */
-    border-color: #fca5a5; /* Red-300 */
-    color: #991b1b;
+    background-color: #FEF2F2;
+    border-color: #FEE2E2;
+    color: #991B1B;
+}
+
+.info-box.warning .info-title {
+    color: #7F1D1D;
 }
 
 .info-box.success {
-    background-color: #f0fdf4; /* Green-50 */
-    border-color: #86efac; /* Green-300 */
-    color: #14532d;
+    background-color: #ECFDF5;
+    border-color: #D1FAE5;
+    color: #065F46;
 }

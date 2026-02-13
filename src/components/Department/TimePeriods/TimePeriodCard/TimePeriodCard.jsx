@@ -10,24 +10,24 @@ export default function TimePeriodCard({ period, onDelete }) {
     };
 
     return (
-        <div className="period-card-modern">
+        <div className="tp-card">
             {/* ===== Header ===== */}
-            <div className="period-header">
+            <div className="tp-card__header">
                 <div>
-                    <h3 className="period-title">
+                    <h3 className="tp-card__title">
                         {period.name || period.title}
                     </h3>
-                    <p className="period-dates">
+                    <p className="tp-card__dates">
                         Начало: <strong>{period.startDate}</strong> · Окончание:{" "}
                         <strong>{period.endDate}</strong>
                     </p>
                 </div>
 
-                <div className="period-header-actions">
-                    <span className="period-status">Предстоящий</span>
+                <div className="tp-card__header-actions">
+                    <span className="tp-card__status">Предстоящий</span>
 
                     <button
-                        className="icon-button danger"
+                        className="tp-card__icon-btn tp-card__icon-btn--danger"
                         title="Удалить период"
                         onClick={onDelete}
                     >
@@ -43,27 +43,27 @@ export default function TimePeriodCard({ period, onDelete }) {
             </div>
 
             {/* ===== Progress ===== */}
-            <div className="progress-wrapper">
-                <div className="progress-bar">
+            <div className="tp-card__progress-wrapper">
+                <div className="tp-card__progress-bar">
                     <div
-                        className="progress-fill"
+                        className="tp-card__progress-fill"
                         style={{ width: `${period.progress}%` }}
                     />
                 </div>
-                <span className="progress-text">{period.progress}%</span>
+                <span className="tp-card__progress-text">{period.progress}%</span>
             </div>
 
             {/* ===== Summary ===== */}
-            <div className="period-summary">
+            <div className="tp-card__summary">
                 <span>Комиссии: {period.commissions}</span>
                 <span>Студенты: {period.students}</span>
                 <span>Даты: {period.dates}</span>
             </div>
 
             {/* ===== Actions ===== */}
-            <div className="period-actions">
+            <div className="tp-card__actions">
                 <button
-                    className="action-button"
+                    className="tp-card__action-btn"
                     onClick={handleSetupClick}
                 >
                     <svg viewBox="0 0 24 24">
@@ -74,7 +74,7 @@ export default function TimePeriodCard({ period, onDelete }) {
                 </button>
 
                 <button
-                    className="action-button"
+                    className="tp-card__action-btn"
                     onClick={() =>
                         navigate(`/department/time-periods/${period.id}/schedule`)
                     }

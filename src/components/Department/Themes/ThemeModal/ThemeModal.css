@@ -1,170 +1,336 @@
-.modal-overlay {
+/* --- Overlay & Base --- */
+.tm-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 2000;
+    padding: 16px;
+    box-sizing: border-box;
 }
 
-
-.modal-content {
-    background: #fff;
-    padding: 22px;
-    border-radius: 12px;
-    max-width: 650px;
-    width: 90%;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    animation: fadeIn 0.3s ease-in-out;
+.tm-content {
+    background: #ffffff;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 620px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+    animation: tmSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
 }
 
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
+@keyframes tmSlideUp {
+    from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
+.tm-scroll-area {
+    overflow-y: auto;
+    padding: 0 24px 24px 24px;
+}
 
-.language-switcher {
+/* --- Header --- */
+.tm-header {
+    padding: 24px 24px 10px 24px;
     display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-bottom: 15px;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 10;
 }
 
-.language-switcher button {
-    padding: 5px 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f5f5f5;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s ease-in-out;
-}
-
-.language-switcher button:hover {
-    background-color: #e0e0e0;
-}
-
-.language-switcher button.active-lang {
-    background-color: #2563eb;
-    color: #fff;
-    border-color: #2563eb;
-}
-
-.modal-title {
-    font-size: 22px;
+.tm-status {
+    font-size: 11px;
     font-weight: 700;
-    margin: 0 0 10px;
+    padding: 6px 12px;
+    border-radius: 100px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.modal-subtitle {
-    font-size: 15px;
-    color: #6b7280;
-    margin-bottom: 15px;
+.tm-status--pending {
+    background-color: #EFF6FF;
+    color: #1E40AF;
+    border: 1px solid #DBEAFE;
 }
 
-.modal-info p {
-    margin: 6px 0;
-    font-size: 14px;
+.tm-status--rejected {
+    background-color: #FEF2F2;
+    color: #991B1B;
+    border: 1px solid #FEE2E2;
+}
+
+.tm-status--approved {
+    background-color: #ECFDF5;
+    color: #065F46;
+    border: 1px solid #D1FAE5;
+}
+
+/* Language Switcher */
+.tm-lang-switch {
+    background: #F3F4F6;
+    padding: 4px;
+    border-radius: 10px;
+    display: inline-flex;
+}
+
+.tm-lang-btn {
+    border: none;
+    background: transparent;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6B7280;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tm-lang-btn--active {
+    background: #FFFFFF;
+    color: #111827;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.tm-lang-btn:hover:not(.tm-lang-btn--active) {
     color: #374151;
 }
 
-
-.modal-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 18px;
+/* --- Typography & Body --- */
+.tm-title {
+    margin: 10px 0 4px 0;
+    font-size: 22px;
+    font-weight: 800;
+    color: #111827;
+    line-height: 1.3;
+    font-family: 'Noto Sans', sans-serif !important;
 }
 
-.reject-btn {
-    background: #e74c3c;
-    color: white;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 6px;
-    cursor: pointer;
+.tm-subtitle {
+    margin: 0 0 24px 0;
+    font-size: 14px;
+    color: #9CA3AF;
 }
 
-.approve-btn {
-    background: #2ecc71;
-    color: white;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 6px;
-    cursor: pointer;
+.tm-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+    background: #F9FAFB;
+    padding: 16px;
+    border-radius: 12px;
 }
 
-.close-btn {
-    background: #7f8c8d;
-    color: white;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.reject-btn:hover { background: #c0392b; }
-.approve-btn:hover { background: #27ae60; }
-.close-btn:hover   { background: #636e72; }
-
-
-.rejection-section {
+.tm-info-item {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+}
+
+.tm-info-item__label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #9CA3AF;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.tm-info-item__value {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1F2937;
+}
+
+.tm-section {
+    margin-bottom: 24px;
+}
+
+.tm-section__title {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 10px;
+}
+
+.tm-section__text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #4B5563;
+}
+
+/* Rejected Info Display - UPDATED with margin */
+.tm-rejected-info {
     margin-top: 20px;
+    margin-bottom: 24px; /* Отступ от кнопки Закрыть */
+    padding: 16px;
+    background-color: #FEF2F2;
+    border-radius: 12px;
+    border: 1px solid #FECACA;
 }
 
-.rejection-section textarea {
-    width: 620px;
-    padding: 12px 15px;
-    font-size: 15px;
-    border: none;
-    border-radius: 8px;
-    background-color: #f3f4f6;
-    resize: none;
-    height: 100px;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    box-shadow: inset 0 0 0 1px #e5e7eb;
-    transition: box-shadow 0.2s;
+.tm-rejected-info__label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #B91C1C;
+    margin-bottom: 6px;
 }
 
-.rejection-section textarea:focus {
-    outline: none;
-    box-shadow: inset 0 0 0 2px #2563eb;
+.tm-rejected-info__text {
+    font-size: 14px;
+    color: #7F1D1D;
+    line-height: 1.6;
+    margin: 0;
 }
 
-.rejection-section .confirm-reject-btn,
-.rejection-section .cancel-btn {
-    padding: 10px 20px;
-    font-size: 15px;
+/* --- Footer Actions --- */
+.tm-footer {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.tm-footer__actions {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 12px;
+}
+
+.tm-btn {
+    padding: 12px 20px;
     border-radius: 10px;
     border: none;
+    font-size: 14px;
+    font-weight: 400;
     cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
+    transition: transform 0.1s, opacity 0.2s, background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.rejection-section .confirm-reject-btn {
-    background-color: #dc2626;
-    color: #fff;
+.tm-btn:active {
+    transform: scale(0.98);
 }
 
-.rejection-section .confirm-reject-btn:hover {
-    background-color: #b91c1c;
-    transform: scale(1.03);
+/* --- Disabled State --- */
+.tm-btn:disabled {
+    background-color: #E5E7EB !important;
+    color: #9CA3AF !important;
+    border: 1px solid #D1D5DB !important;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
 }
 
-.rejection-section .cancel-btn {
-    background-color: #e5e7eb;
+/* Colors updated to match DirectionModal (Blue theme) */
+.tm-btn--approve {
+    background: #2563EB !important;
+    color: #FFFFFF !important;
+    border: 1px solid #2563EB !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+}
+
+.tm-btn--approve:hover {
+    background: #1E40AF !important;
+}
+
+.tm-btn--reject {
+    background: rgba(37, 99, 235, 0.08) !important;
+    color: #1E40AF !important;
+    border: 1px solid rgba(37, 99, 235, 0.25) !important;
+}
+
+.tm-btn--reject:hover {
+    background: rgba(37, 99, 235, 0.16) !important;
+}
+
+.tm-btn--close {
+    width: 100%;
+    background: #F3F4F6;
+    color: #4B5563;
+}
+
+/* --- Rejection Form Modernized --- */
+.tm-rejection-form {
+    animation: tmFadeIn 0.3s ease;
+    background: #F9FAFB;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #E5E7EB;
+}
+
+.tm-rejection-form__title {
+    margin: 0 0 10px 0;
+    font-size: 15px;
     color: #111827;
 }
 
-.rejection-section .cancel-btn:hover {
-    background-color: #d1d5db;
-    transform: scale(1.03);
+.tm-rejection-form__textarea {
+    width: 100%;
+    height: 140px;
+    padding: 14px;
+    border: 1px solid #D1D5DB;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    resize: none;
+    outline: none;
+    background: #FFFFFF;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+    display: block;
+}
+
+.tm-rejection-form__textarea:focus {
+    border-color: #6366F1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.tm-rejection-form__buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.tm-btn--confirm-reject {
+    background: rgba(99, 102, 241, 0.86);
+    color: white;
+    padding: 10px 20px;
+}
+
+.tm-btn--confirm-reject:hover {
+    background: rgba(16, 18, 200, 0.86);
+}
+
+.tm-btn--ghost {
+    background: transparent;
+    color: #372e2e;
+}
+
+.tm-btn--ghost:hover {
+    background: rgba(184, 184, 184, 0.68);
+}
+
+@keyframes tmFadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile responsive */
+@media (max-width: 500px) {
+    .tm-info-grid { grid-template-columns: 1fr; }
+    .tm-footer__actions { grid-template-columns: 1fr; }
 }
