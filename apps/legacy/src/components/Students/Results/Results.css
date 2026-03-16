@@ -1,0 +1,70 @@
+.results-container {
+    /* Наследует .card из SubmissionCard.css если импортирован глобально, или скопируйте стили .card */
+}
+
+.scores-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed #e2e8f0;
+}
+
+.score-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.score-label {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.score-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.primary-score {
+    background: #eff6ff; /* Светло-синий фон */
+    color: #2563eb;
+    font-size: 24px;
+    border: 2px solid #bfdbfe;
+}
+
+.secondary-score {
+    background: #f8fafc;
+    color: #475569;
+    font-size: 18px;
+    border: 2px solid #e2e8f0;
+}
+
+.comments-section {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.comments-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #94a3b8;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.comments-text {
+    font-size: 14px;
+    color: #334155;
+    line-height: 1.5;
+}

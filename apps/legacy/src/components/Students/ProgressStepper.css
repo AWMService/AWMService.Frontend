@@ -1,0 +1,122 @@
+.stepper-container {
+    display: flex;
+    align-items: flex-start; /* Выравнивание по верху, чтобы линия встала ровно */
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    box-sizing: border-box;
+}
+
+/* Обертка шага */
+.step-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80px; /* Фиксируем ширину, чтобы текст не прыгал */
+}
+
+.step-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.step-wrapper.disabled .step-link {
+    cursor: default;
+    pointer-events: none;
+}
+
+.step-wrapper:not(.disabled) .step-link:hover {
+    transform: translateY(-2px);
+}
+
+/* --- КРУГ (Увеличенный размер) --- */
+.step-circle {
+    width: 48px;  /* Было 32px, стало 48px (средний размер) */
+    height: 48px;
+    border-radius: 50%;
+    background-color: #FFFFFF;
+    border: 2px solid #E2E8F0; /* Серый бордюр по умолчанию */
+    color: #64748B; /* Серый текст */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px; /* Шрифт чуть крупнее */
+    font-weight: 600;
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+/* Состояние: Активный */
+.step-circle.active {
+    border-color: #566F9E;
+    background-color: #566F9E;
+    color: #FFFFFF;
+    box-shadow: 0 4px 10px rgba(86, 111, 158, 0.3); /* Тень для акцента */
+}
+
+/* Состояние: Завершенный */
+.step-circle.completed {
+    border-color: #10B981;
+    background-color: #10B981;
+    color: #FFFFFF;
+}
+
+/* Иконка галочки */
+.icon-svg {
+    width: 20px; /* Увеличили иконку */
+    height: 20px;
+    filter: brightness(0) invert(1); /* Делаем белой */
+}
+
+/* --- ТЕКСТ (Label) --- */
+.step-label {
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #94A3B8;
+    text-align: center;
+    line-height: 1.2;
+    transition: color 0.3s;
+}
+
+.step-label.active {
+    color: #566F9E;
+    font-weight: 700;
+}
+
+/* --- ЛИНИЯ (Connector) --- */
+.connector-line {
+    flex: 1;
+    height: 2px;
+    background-color: #E2E8F0;
+    margin: 0 5px;
+    /* Центрируем линию относительно круга 48px */
+    margin-top: 24px; /* Половина высоты круга */
+    border-radius: 2px;
+    transition: background-color 0.4s ease;
+}
+
+.connector-line.filled {
+    background-color: #10B981; /* Зеленая линия */
+}
+
+/* Адаптив для маленьких экранов */
+@media (max-width: 768px) {
+    .step-label {
+        font-size: 11px;
+        display: none; /* Скрываем текст неактивных шагов */
+    }
+    .step-label.active {
+        display: block; /* Показываем только текущий */
+    }
+    .step-wrapper {
+        width: auto;
+    }
+}

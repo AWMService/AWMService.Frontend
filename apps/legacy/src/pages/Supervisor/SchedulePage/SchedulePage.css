@@ -1,0 +1,270 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+
+.teacher-schedule-page {
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    overflow-x: hidden;
+    padding-bottom: 50px;
+    margin-top: 64px;
+}
+
+
+.header-top {
+    max-width: 800px;
+    margin: 0 auto;
+    padding-top: 10px;
+}
+
+.header-top h1 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1e293b;
+    letter-spacing: -0.5px;
+    margin: 0;
+}
+
+.subtitle {
+    color: #64748b;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+/* --- ПЕРЕКЛЮЧАТЕЛЬ ДАТ --- */
+.date-picker-row {
+    display: flex;
+    gap: 12px;
+    max-width: 800px;
+    margin: 20px auto 0;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: none; /* Скрыть скролл в FF */
+}
+
+.date-picker-row::-webkit-scrollbar { display: none; }
+
+.date-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    min-width: 65px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    cursor: pointer;
+    border-radius: 14px;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.date-tab.active {
+    background: #6366f1;
+    border: 1px solid #4f46e5; /* Чуть более темная рамка для четкости края */
+    transform: none; /* Убираем прыжок, если он мешает */
+}
+
+.date-tab.active .date-tab-day,
+.date-tab.active .date-tab-month {
+    color: #fff;
+}
+
+.date-tab-day { font-size: 20px; font-weight: 800; color: #1e293b; }
+.date-tab-month { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #94a3b8; }
+
+/* --- ТАЙМЛАЙН --- */
+.timeline-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+}
+
+.timeline-item {
+    display: flex;
+    gap: 30px;
+    position: relative;
+}
+
+.timeline-time {
+    min-width: 60px;
+    text-align: right;
+    padding-top: 20px;
+}
+
+.time-main {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+.timeline-dot {
+    position: absolute;
+    left: 67px;
+    top: 25px;
+    width: 10px;
+    height: 10px;
+    background: #6366f1;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    z-index: 2;
+}
+
+/* --- КАРТОЧКА --- */
+.card-wrapper {
+    flex: 1;
+    cursor: pointer;
+    perspective: 1000px;
+}
+
+.sharp-card {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #fff;
+    backdrop-filter: blur(10px);
+    display: flex;
+    border-radius: 24px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.sharp-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.1);
+    border-color: rgba(99, 102, 241, 0.2);
+}
+
+.card-accent { width: 6px; }
+.card-accent.pre { background: #10b981; }
+.card-accent.final { background: #6366f1; }
+
+.card-watermark {
+    position: absolute;
+    right: -20px;
+    bottom: -20px;
+    color: rgba(99, 102, 241, 0.05);
+    transform: rotate(-15deg);
+    pointer-events: none;
+}
+
+.card-main-content { padding: 24px; flex: 1; z-index: 1; }
+
+.card-upper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.card-tags { display: flex; gap: 8px; align-items: center; }
+
+.tag-pill {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 6px 14px;
+    border-radius: 20px;
+    text-transform: uppercase;
+}
+
+.pill-pre { background: #dcfce7; color: #15803d; }
+.pill-final { background: #e0e7ff; color: #4338ca; }
+
+.room-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 6px 12px;
+    border-radius: 12px;
+}
+
+/* ИНФОРМАЦИЯ О КОМИССИИ */
+.member-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #334155;
+}
+
+.icon-blue { color: #6366f1; }
+.icon-gray { color: #94a3b8; }
+
+/* ВЫПАДАЮЩИЙ СПИСОК */
+.dropdown-content {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sharp-card:hover .dropdown-content {
+    max-height: 600px;
+    opacity: 1;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px dashed #e2e8f0;
+}
+
+.list-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #94a3b8;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+.members-list ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.members-list li {
+    background: #f8fafc;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    color: #475569;
+    border: 1px solid #f1f5f9;
+}
+
+.click-hint {
+    margin-top: 20px;
+    font-size: 11px;
+    color: #6366f1;
+    font-weight: 700;
+    text-align: right;
+    opacity: 0.6;
+}
+
+/* СОСТОЯНИЕ "ПУСТО" */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 32px;
+    border: 2px dashed #cbd5e1;
+    color: #64748b;
+}
+
+.empty-icon { font-size: 48px; margin-bottom: 16px; }
+
+/* АДАПТИВНОСТЬ */
+@media (max-width: 600px) {
+    .timeline-item { gap: 15px; }
+    .timeline-time { min-width: 50px; }
+    .members-list ul { grid-template-columns: 1fr; }
+    .card-main-content { padding: 16px; }
+}

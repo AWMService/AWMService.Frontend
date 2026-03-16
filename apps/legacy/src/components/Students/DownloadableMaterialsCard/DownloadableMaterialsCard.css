@@ -1,0 +1,71 @@
+.files-list-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.file-row-compact {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #F8FAFC;
+    border-radius: 6px;
+    border: 1px solid #F1F5F9;
+}
+
+.file-info-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.file-info-row img {
+    width: 20px; /* Маленькая иконка */
+    height: 20px;
+}
+
+.file-texts {
+    display: flex;
+    flex-direction: column;
+}
+
+.fname {
+    font-size: 13px;
+    font-weight: 500;
+    color: #334155;
+}
+
+.fsize {
+    font-size: 11px;
+    color: #94A3B8;
+}
+
+.link-btn {
+    background: none;
+    border: none;
+    color: #566F9E;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.link-btn:hover { text-decoration: underline; }
+
+.btn-full-gray {
+    width: 100%;
+    background-color: #F1F5F9;
+    color: #475569;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-full-gray:hover {
+    background-color: #E2E8F0;
+}
