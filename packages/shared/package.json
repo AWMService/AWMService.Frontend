@@ -17,6 +17,7 @@
         "react-i18next": "^17.0.1"
     },
     "peerDependencies": {
-        "react": ">=18.0.0"
+        "react": ">=18.0.0",
+        "react-router-dom": ">=6.0.0"
     }
 }

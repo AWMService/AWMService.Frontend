@@ -16,7 +16,7 @@ importers:
         version: 8.2.1
       react-i18next:
         specifier: ^17.0.1
-        version: 17.0.1(i18next@26.0.2)(react@19.2.4)
+        version: 17.0.1(i18next@26.0.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
     devDependencies:
       turbo:
         specifier: ^2
@@ -268,7 +268,10 @@ importers:
         version: 19.2.4
       react-i18next:
         specifier: ^17.0.1
-        version: 17.0.1(i18next@26.0.2)(react@19.2.4)
+        version: 17.0.1(i18next@26.0.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react-router-dom:
+        specifier: '>=6.0.0'
+        version: 7.13.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
 
 packages:
 
@@ -2110,13 +2113,15 @@ snapshots:
       react: 19.2.4
       scheduler: 0.27.0
 
-  react-i18next@17.0.1(i18next@26.0.2)(react@19.2.4):
+  react-i18next@17.0.1(i18next@26.0.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
     dependencies:
       '@babel/runtime': 7.29.2
       html-parse-stringify: 3.0.1
       i18next: 26.0.2
       react: 19.2.4
       use-sync-external-store: 1.6.0(react@19.2.4)
+    optionalDependencies:
+      react-dom: 19.2.4(react@19.2.4)
 
   react-redux@9.2.0(@types/react@19.2.14)(react@19.2.4)(redux@5.0.1):
     dependencies:

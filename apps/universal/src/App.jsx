@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { RoleProvider, UNIVERSAL_ROLES, useRole, ROLES } from '@awm/shared';
+import { RoleProvider, UNIVERSAL_ROLES, useRole, ROLES, ProtectedRoute } from '@awm/shared';
 import { UniversalHeader } from './components/Header/UniversalHeader';
 import { UniversalSidebar } from './components/Sidebar/UniversalSidebar';
 import STopicsPage from './pages/TopicsPage/STopicsPage.jsx';
@@ -47,24 +47,64 @@ function AppContent() {
                         <Route index element={<Navigate to={getDefaultRoute()} replace />} />
                         
                         {/* Руководитель */}
-                        <Route path="/my-topics" element={<STopicsPage />} />
-                        <Route path="/directions" element={<SDirectionsPage />} />
-                        <Route path="/mystudents" element={<MyStudentsPage />} />
+                        <Route path="/my-topics" element={
+                            <ProtectedRoute allowedRoles={[ROLES.SUPERVISOR]} fallback="/">
+                                <STopicsPage />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/directions" element={
+                            <ProtectedRoute allowedRoles={[ROLES.SUPERVISOR]} fallback="/">
+                                <SDirectionsPage />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/mystudents" element={
+                            <ProtectedRoute allowedRoles={[ROLES.SUPERVISOR]} fallback="/">
+                                <MyStudentsPage />
+                            </ProtectedRoute>
+                        } />
                         
                         {/* Рецензент */}
-                        <Route path="/reviews" element={<ReviewerWorksPage />} />
+                        <Route path="/reviews" element={
+                            <ProtectedRoute allowedRoles={[ROLES.REVIEWER]} fallback="/">
+                                <ReviewerWorksPage />
+                            </ProtectedRoute>
+                        } />
                         
                         {/* Нормоконтроль */}
-                        <Route path="/documents" element={<NormocontrolPage />} />
+                        <Route path="/documents" element={
+                            <ProtectedRoute allowedRoles={[ROLES.NORMOCONTROL]} fallback="/">
+                                <NormocontrolPage />
+                            </ProtectedRoute>
+                        } />
                         
                         {/* Комиссия (Председатель, Секретарь, Член комиссии) */}
-                        <Route path="/schedule" element={<SchedulePage />} />
-                        <Route path="/schedule/:commissionId" element={<StudentList />} />
-                        <Route path="/secretary" element={<SecretaryStudentList />} />
-                        <Route path="/commission" element={<CommissionPage />} />
+                        <Route path="/schedule" element={
+                            <ProtectedRoute allowedRoles={[ROLES.SUPERVISOR, ROLES.CHAIRMAN, ROLES.SECRETARY, ROLES.COMMISSION_MEMBER]} fallback="/">
+                                <SchedulePage />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/schedule/:commissionId" element={
+                            <ProtectedRoute allowedRoles={[ROLES.SUPERVISOR, ROLES.CHAIRMAN, ROLES.SECRETARY, ROLES.COMMISSION_MEMBER]} fallback="/">
+                                <StudentList />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/secretary" element={
+                            <ProtectedRoute allowedRoles={[ROLES.SECRETARY]} fallback="/">
+                                <SecretaryStudentList />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/commission" element={
+                            <ProtectedRoute allowedRoles={[ROLES.CHAIRMAN, ROLES.SECRETARY, ROLES.COMMISSION_MEMBER]} fallback="/">
+                                <CommissionPage />
+                            </ProtectedRoute>
+                        } />
                         
-                        {/* Проверки (общий для нескольких ролей) */}
-                        <Route path="/checks" element={<AntiPlagiarismDashboard />} />
+                        {/* Проверки */}
+                        <Route path="/checks" element={
+                            <ProtectedRoute allowedRoles={[ROLES.SUPERVISOR]} fallback="/">
+                                <AntiPlagiarismDashboard />
+                            </ProtectedRoute>
+                        } />
                         
                         <Route path="*" element={<Navigate to={getDefaultRoute()} replace />} />
                     </Routes>
