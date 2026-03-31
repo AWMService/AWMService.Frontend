@@ -26,10 +26,13 @@ function App() {
         pageIcon: codeIcon,
         expert: { name: 'Сидоров А.А.', position: 'Инженер-программист', degree: 'Магистр' },
         initialStatus: 'in_progress',
+        route: 'software-check',
     };
 
     const preDefense1Data = {
         pageTitle: t('student.preDefense1'),
+        attemptNumber: 1,
+        previousAttempts: [],
         schedule: {
             date: '2025-05-01',
             time: 'от 10:00',
@@ -45,6 +48,16 @@ function App() {
 
     const preDefense2Data = {
         pageTitle: t('student.preDefense2'),
+        attemptNumber: 2,
+        previousAttempts: [
+            {
+                attemptNumber: 1,
+                date: '2026-04-15',
+                score: 65,
+                result: t('student.notPassed'),
+                comments: 'Необходимо доработать презентацию и теоретическую часть',
+            },
+        ],
         schedule: {
             date: '2025-05-21',
             time: 'от 10:00',
