@@ -1,27 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { X, Calendar, BookOpen, Layers, Users, User, Info, Check, AlertCircle } from "lucide-react";
 import "./TopicViewModal.css";
-
-const statusLabels = {
-    draft: "Черновик",
-    pending: "На рассмотрении",
-    approved: "Утверждено",
-    rejected: "Отклонено",
-};
-
-const workTypeLabels = {
-    diploma_project: "Дипломный проект",
-    diploma_work: "Дипломная работа",
-    course_work: "Курсовая работа",
-};
 
 export default function TopicViewModal({
                                            open,
                                            onClose,
                                            topic,
-                                           onApproveStudent, // Функция: (requestId) => void
-                                           onRejectStudent   // Функция: (requestId, reason) => void
+                                           onApproveStudent,
+                                           onRejectStudent
                                        }) {
+    const { t } = useTranslation();
     const [titleTab, setTitleTab] = useState("ru");
     const [descTab, setDescTab] = useState("ru");
 
@@ -43,6 +32,19 @@ export default function TopicViewModal({
     }, [topic]);
 
     if (!open || !topic) return null;
+
+    const statusLabels = {
+        draft: t('status.draft'),
+        pending: t('status.underReview'),
+        approved: t('status.approved'),
+        rejected: t('status.rejected'),
+    };
+
+    const workTypeLabels = {
+        diploma_project: t('supervisor.diplomaProject'),
+        diploma_work: t('supervisor.diplomaWork'),
+        course_work: t('supervisor.courseWork'),
+    };
 
     // Списки
     const students = topic.students || []; // Уже принятые
@@ -79,7 +81,7 @@ export default function TopicViewModal({
 
     const handleSubmitReject = (reqId) => {
         if (!rejectReason.trim()) {
-            alert("Пожалуйста, укажите причину отказа");
+            alert(t('supervisor.rejectionReason'));
             return;
         }
         if (onRejectStudent) {
@@ -93,7 +95,7 @@ export default function TopicViewModal({
             <div className="tv-modal" onClick={(e) => e.stopPropagation()}>
                 <div className="tv-header">
                     <div className="tv-header-info">
-                        <h2>Детали темы</h2>
+                        <h2>{t('supervisor.topicDetails')}</h2>
                         <span className={`tv-status-badge st-${topic.status}`}>
                             {statusLabels[topic.status] || topic.status}
                         </span>
@@ -109,29 +111,29 @@ export default function TopicViewModal({
                         <div className="tv-info-item">
                             <Layers size={16} />
                             <div className="tv-info-content">
-                                <label>Тип работы</label>
+                                <label>{t('supervisor.workType')}</label>
                                 <span>{workTypeLabels[topic.workType] || topic.workType}</span>
                             </div>
                         </div>
                         <div className="tv-info-item">
                             <Users size={16} />
                             <div className="tv-info-content">
-                                <label>Лимит мест</label>
-                                <span>{maxParticipants} чел.</span>
+                                <label>{t('supervisor.maxStudents')}</label>
+                                <span>{maxParticipants}</span>
                             </div>
                         </div>
                         <div className="tv-info-item">
                             <Calendar size={16} />
                             <div className="tv-info-content">
-                                <label>Создано</label>
+                                <label>{t('supervisor.createdDate')}</label>
                                 <span>{formatDate(topic.createdAt)}</span>
                             </div>
                         </div>
                         <div className="tv-info-item">
                             <Info size={16} />
                             <div className="tv-info-content">
-                                <label>Направление</label>
-                                <span>{topic.directionTitle || "Не указано"}</span>
+                                <label>{t('nav.directions')}</label>
+                                <span>{topic.directionTitle || t('common.noData')}</span>
                             </div>
                         </div>
                     </div>
@@ -142,7 +144,7 @@ export default function TopicViewModal({
                             <div className="tv-section-header">
                                 <div className="tv-section-title">
                                     <AlertCircle size={18} className="text-orange" />
-                                    <h3>Заявки на рассмотрении</h3>
+                                    <h3>{t('supervisor.requestsUnderReview')}</h3>
                                 </div>
                                 <span className="tv-badge-count">{requests.length}</span>
                             </div>
@@ -155,8 +157,8 @@ export default function TopicViewModal({
                                                     <User size={14} />
                                                 </div>
                                                 <div className="tv-req-details">
-                                                    <span className="tv-student-name">{req.student?.fullName || "Студент"}</span>
-                                                    <span className="tv-req-date">Подано: {formatDate(req.createdAt)}</span>
+                                                    <span className="tv-student-name">{req.student?.fullName || t('roles.student')}</span>
+                                                    <span className="tv-req-date">{t('department.submitted')} {formatDate(req.createdAt)}</span>
                                                 </div>
                                             </div>
 
@@ -165,14 +167,14 @@ export default function TopicViewModal({
                                                 <div className="tv-req-actions">
                                                     <button
                                                         className="tv-action-btn btn-approve"
-                                                        title="Принять"
+                                                        title={t('status.approved')}
                                                         onClick={() => onApproveStudent && onApproveStudent(req.id)}
                                                     >
                                                         <Check size={16} />
                                                     </button>
                                                     <button
                                                         className="tv-action-btn btn-reject"
-                                                        title="Отказать"
+                                                        title={t('status.rejected')}
                                                         onClick={() => handleStartReject(req.id)}
                                                     >
                                                         <X size={16} />
@@ -185,17 +187,17 @@ export default function TopicViewModal({
                                         {rejectingId === req.id && (
                                             <div className="tv-reject-form">
                                                 <textarea
-                                                    placeholder="Укажите причину отказа..."
+                                                    placeholder={t('supervisor.rejectionReason')}
                                                     value={rejectReason}
                                                     onChange={(e) => setRejectReason(e.target.value)}
                                                     autoFocus
                                                 />
                                                 <div className="tv-reject-actions">
                                                     <button className="tv-btn-small btn-cancel" onClick={handleCancelReject}>
-                                                        Отмена
+                                                        {t('common.cancel')}
                                                     </button>
                                                     <button className="tv-btn-small btn-confirm-reject" onClick={() => handleSubmitReject(req.id)}>
-                                                        Отказать
+                                                        {t('status.rejected')}
                                                     </button>
                                                 </div>
                                             </div>
@@ -211,11 +213,11 @@ export default function TopicViewModal({
                         <div className="tv-section-header">
                             <div className="tv-section-title">
                                 <Users size={18} />
-                                <h3>Состав группы</h3>
+                                <h3>{t('supervisor.groupComposition')}</h3>
                             </div>
                             {remainingSlots > 0 && (
                                 <span className="tv-remaining-slots">
-                                    Осталось мест: {remainingSlots}
+                                    {t('supervisor.remainingSlots', { count: remainingSlots })}
                                 </span>
                             )}
                         </div>
@@ -233,7 +235,7 @@ export default function TopicViewModal({
                                 </div>
                             ) : (
                                 <div className="tv-empty-box">
-                                    В этой теме пока нет утвержденных студентов
+                                    {t('supervisor.noApprovedStudents')}
                                 </div>
                             )}
                         </div>
@@ -244,7 +246,7 @@ export default function TopicViewModal({
                         <div className="tv-section-header">
                             <div className="tv-section-title">
                                 <BookOpen size={18} />
-                                <h3>Название темы</h3>
+                                <h3>{t('supervisor.topicTitle')}</h3>
                             </div>
                             <div className="tv-tabs-mini">
                                 {["kk", "ru", "en"].map((lang) => (
@@ -259,7 +261,7 @@ export default function TopicViewModal({
                             </div>
                         </div>
                         <div className="tv-text-box">
-                            {topic.title?.[titleTab] || <span className="tv-empty-text">Нет данных</span>}
+                            {topic.title?.[titleTab] || <span className="tv-empty-text">{t('common.noData')}</span>}
                         </div>
                     </div>
 
@@ -268,7 +270,7 @@ export default function TopicViewModal({
                         <div className="tv-section-header">
                             <div className="tv-section-title">
                                 <Info size={18} />
-                                <h3>Описание и задачи</h3>
+                                <h3>{t('supervisor.descriptionTasks')}</h3>
                             </div>
                             <div className="tv-tabs-mini">
                                 {["kk", "ru", "en"].map((lang) => (
@@ -283,14 +285,14 @@ export default function TopicViewModal({
                             </div>
                         </div>
                         <div className="tv-text-box desc-area">
-                            {topic.description?.[descTab] || <span className="tv-empty-text">Описание отсутствует</span>}
+                            {topic.description?.[descTab] || <span className="tv-empty-text">{t('supervisor.noDescription')}</span>}
                         </div>
                     </div>
                 </div>
 
                 <div className="tv-footer">
                     <button className="tv-btn-primary" onClick={onClose}>
-                        Закрыть
+                        {t('common.close')}
                     </button>
                 </div>
             </div>

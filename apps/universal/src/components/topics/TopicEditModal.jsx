@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { X, Edit3, Globe, AlignLeft, Layers, Users, Info } from "lucide-react";
 import "./TopicEditModal.css";
 
 export default function TopicEditModal({ open, onClose, topic, onSave, directions }) {
+    const { t } = useTranslation();
     const [form, setForm] = useState({
         titleRu: "",
         titleKk: "",
@@ -66,9 +68,9 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                     <div className="tem-header-text">
                         <div className="tem-title-row">
                             <Edit3 size={18} className="tem-icon-accent" />
-                            <h2>Редактирование темы</h2>
+                            <h2>{t('supervisor.editTopicTitle')}</h2>
                         </div>
-                        <p>Внесите изменения в параметры темы</p>
+                        <p>{t('supervisor.editTopicSubtitle')}</p>
                     </div>
                     <button className="tem-close-btn" onClick={onClose}>
                         <X size={20} />
@@ -80,7 +82,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                     <div className="tem-section">
                         <div className="tem-section-label">
                             <Globe size={16} className="tem-icon-muted" />
-                            <h3>Название темы</h3>
+                            <h3>{t('supervisor.topicTitle')}</h3>
                         </div>
                         <div className="tem-input-group">
                             <div className="tem-field">
@@ -89,7 +91,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                                     name="titleKk"
                                     value={form.titleKk}
                                     onChange={handleChange}
-                                    placeholder="Тақырып атауы..."
+                                    placeholder={t('supervisor.topicTitle') + '...'}
                                     className="tem-input"
                                 />
                             </div>
@@ -99,7 +101,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                                     name="titleRu"
                                     value={form.titleRu}
                                     onChange={handleChange}
-                                    placeholder="Название темы..."
+                                    placeholder={t('supervisor.topicTitle') + '...'}
                                     className="tem-input"
                                 />
                             </div>
@@ -120,7 +122,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                     <div className="tem-section">
                         <div className="tem-section-label">
                             <AlignLeft size={16} className="tem-icon-muted" />
-                            <h3>Описание и задачи</h3>
+                            <h3>{t('supervisor.descriptionTasks')}</h3>
                         </div>
                         <div className="tem-input-group">
                             <div className="tem-field vertical">
@@ -162,7 +164,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                         <div className="tem-section">
                             <div className="tem-section-label">
                                 <Info size={16} className="tem-icon-muted" />
-                                <h3>Направление</h3>
+                                <h3>{t('nav.directions')}</h3>
                             </div>
                             <select
                                 name="direction"
@@ -170,7 +172,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                                 onChange={handleChange}
                                 className="tem-select"
                             >
-                                <option value="">Выберите...</option>
+                                <option value="">{t('common.select')}</option>
                                 {directions.map((d) => (
                                     <option key={d} value={d}>{d}</option>
                                 ))}
@@ -180,7 +182,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                         <div className="tem-section">
                             <div className="tem-section-label">
                                 <Layers size={16} className="tem-icon-muted" />
-                                <h3>Тип работы</h3>
+                                <h3>{t('supervisor.workType')}</h3>
                             </div>
                             <select
                                 name="workType"
@@ -188,16 +190,16 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                                 onChange={handleChange}
                                 className="tem-select"
                             >
-                                <option value="diploma_project">Дипломный проект</option>
-                                <option value="diploma_work">Дипломная работа</option>
-                                <option value="course_work">Курсовая работа</option>
+                                <option value="diploma_project">{t('supervisor.diplomaProject')}</option>
+                                <option value="diploma_work">{t('supervisor.diplomaWork')}</option>
+                                <option value="course_work">{t('supervisor.courseWork')}</option>
                             </select>
                         </div>
 
                         <div className="tem-section">
                             <div className="tem-section-label">
                                 <Users size={16} className="tem-icon-muted" />
-                                <h3>Студентов</h3>
+                                <h3>{t('supervisor.students')}</h3>
                             </div>
                             <input
                                 type="number"
@@ -213,10 +215,10 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
 
                 <div className="tem-footer">
                     <button className="tem-btn-secondary" onClick={onClose}>
-                        Отмена
+                        {t('common.cancel')}
                     </button>
                     <button className="tem-btn-primary" onClick={handleSave}>
-                        Сохранить изменения
+                        {t('common.saveChanges')}
                     </button>
                 </div>
             </div>

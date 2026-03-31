@@ -70,13 +70,13 @@ function CommissionPage() {
                     className={`tab ${activeTab === 'upcoming' ? 'active' : ''}`}
                     onClick={() => setActiveTab('upcoming')}
                 >
-                    Предстоящие ({mockCommissions.filter(c => c.status === 'upcoming').length})
+                    {t('commission.upcoming')} ({mockCommissions.filter(c => c.status === 'upcoming').length})
                 </button>
                 <button 
                     className={`tab ${activeTab === 'completed' ? 'active' : ''}`}
                     onClick={() => setActiveTab('completed')}
                 >
-                    Завершённые ({mockCommissions.filter(c => c.status === 'completed').length})
+                    {t('commission.completedSessions')} ({mockCommissions.filter(c => c.status === 'completed').length})
                 </button>
             </div>
 
@@ -86,7 +86,7 @@ function CommissionPage() {
                         <div className="commission-card-header">
                             <h3>{commission.name}</h3>
                             <span className={`status-badge ${commission.status}`}>
-                                {commission.status === 'upcoming' ? 'Предстоящая' : 'Завершена'}
+                                {commission.status === 'upcoming' ? t('commission.statusUpcoming') : t('commission.statusCompleted')}
                             </span>
                         </div>
                         

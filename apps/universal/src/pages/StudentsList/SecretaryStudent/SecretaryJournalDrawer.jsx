@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function SecretaryJournalDrawer({ open, onClose, student }) {
+    const { t } = useTranslation();
     // Начальный статус
     const [status, setStatus] = useState(student?.globalStatus || "gathering");
     const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -63,7 +65,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
             <aside className={`s-journal-drawer ${open ? "s-open" : ""}`}>
                 <div className="s-drawer-header">
                     <button className="s-close-btn" onClick={onClose}>×</button>
-                    <h2 className="s-drawer-title">Управление оценкой</h2>
+                    <h2 className="s-drawer-title">{t('commission.commissionManagement')}</h2>
                     {student && (
                         <div className="s-student-info">
                             <div className="s-student-name-large">{student.name}</div>
@@ -75,7 +77,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
                 <div className="s-drawer-body">
                     {/* Список комиссии */}
                     <div className="sec-members-section">
-                        <h4>Статусы комиссии (5 человек)</h4>
+                        <h4>{t('commission.commissionList')}</h4>
                         <ul className="sec-members-list">
                             {members.map(m => (
                                 <li key={m.id} className={`sec-member-item ${m.status === 'locked' ? 'finalized' : ''}`}>
@@ -83,9 +85,9 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
                                         <span className="sec-member-name">
                                             {m.name} <span className="sec-role-tag">{m.role}</span>
                                         </span>
-                                        {m.status === "editing" && <span className="sec-m-status editing">Оценивает...</span>}
-                                        {m.status === "submitted" && <span className="sec-m-status submitted">Оценка отправлена</span>}
-                                        {m.status === "locked" && <span className="sec-m-status locked">Подтвержден финал</span>}
+                                        {m.status === "editing" && <span className="sec-m-status editing">{t('status.inProgress')}</span>}
+                                        {m.status === "submitted" && <span className="sec-m-status submitted">{t('status.submitted')}</span>}
+                                        {m.status === "locked" && <span className="sec-m-status locked">{t('status.confirmFinal')}</span>}
                                     </div>
                                     <div className="sec-member-score">
                                         {m.score !== null ? m.score : "-"}
@@ -100,7 +102,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
                     {/* Итоговый балл */}
                     <div className={`sec-summary-box ${status === 'completed' ? 'locked' : ''}`}>
                         <span>
-                            {status === 'completed' ? 'Итоговый балл в протоколе:' : 'Текущий средний балл:'}
+                            {status === 'completed' ? t('journal.gradeInProtocol') : t('journal.currentAverage')}
                         </span>
                         <strong>{averageScore}</strong>
                     </div>
@@ -109,7 +111,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
 
                     {status === "gathering" && (
                         <div className="s-status-message">
-                            Ожидаем первоначальные баллы от всех членов комиссии...
+                            {t('messages.waitingGrades')}
                         </div>
                     )}
 
@@ -121,14 +123,14 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
                             title="Нажмите, чтобы симулировать подтверждение всеми членами комиссии"
                         >
                             <span style={{cursor: "pointer", textDecoration: "underline"}}>
-                                (Тест) Баллы открыты. Ожидаем подтверждения от комиссии... (Нажмите здесь)
+                                (Тест) {t('messages.gradesRevealed')}
                             </span>
                         </div>
                     )}
 
                     {status === "ready_to_lock" && (
                         <div className="s-status-message sec-msg-success">
-                            Все члены комиссии подтвердили финальные оценки!
+                            {t('messages.allConfirmed')}
                         </div>
                     )}
                 </div>
@@ -143,27 +145,27 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
                                 onClick={handleRevealClick}
                                 disabled={members.some(m => m.status !== 'submitted')}
                             >
-                                {members.some(m => m.status !== 'submitted') ? "Ждем оценок..." : "Показать баллы комиссии"}
+                                {members.some(m => m.status !== 'submitted') ? t('messages.waitingOtherMembers') : t('messages.gradesRevealed')}
                             </button>
                         )}
 
                         {/* Кнопка 2: Ждем (выключена) */}
                         {status === "reviewing" && (
                             <button className="s-btn-secondary" disabled>
-                                Идет обсуждение...
+                                {t('messages.discussionActive')}
                             </button>
                         )}
 
                         {/* Кнопка 3: УТВЕРДИТЬ */}
                         {status === "ready_to_lock" && (
                             <button className="s-btn-primary sec-btn-success" onClick={handleFinalLock}>
-                                Утвердить оценку студента
+                                {t('journal.approveGrade')}
                             </button>
                         )}
 
                         {/* Финал */}
                         {status === "completed" && (
-                            <div className="s-locked-badge">Протокол утвержден и закрыт</div>
+                            <div className="s-locked-badge">{t('status.protocolApproved')}</div>
                         )}
                     </div>
                 </div>
@@ -173,11 +175,11 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
             {showConfirmModal && (
                 <div className="sec-modal-overlay">
                     <div className="sec-modal-content">
-                        <h3>Открытие баллов</h3>
-                        <p>Показать оценки всем членам комиссии для обсуждения?</p>
+                        <h3>{t('messages.gradesRevealed')}</h3>
+                        <p>{t('commission.overallSchedule')}</p>
                         <div className="sec-modal-actions">
-                            <button className="s-btn-secondary" onClick={() => setShowConfirmModal(false)}>Отмена</button>
-                            <button className="s-btn-primary" onClick={confirmRevealScores}>Да, показать</button>
+                            <button className="s-btn-secondary" onClick={() => setShowConfirmModal(false)}>{t('common.cancel')}</button>
+                            <button className="s-btn-primary" onClick={confirmRevealScores}>{t('common.yes')}</button>
                         </div>
                     </div>
                 </div>

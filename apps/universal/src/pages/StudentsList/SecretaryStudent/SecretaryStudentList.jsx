@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import SecretaryJournalDrawer from "./SecretaryJournalDrawer";
 import "./Secretary.css";
 
 export default function SecretaryStudentList() {
+    const { t } = useTranslation();
     const { commissionId } = useParams();
 
     const [selectedStudent, setSelectedStudent] = useState(null);
@@ -51,15 +53,15 @@ export default function SecretaryStudentList() {
     const getStatusLabel = (status) => {
         switch (status) {
             case "gathering":
-                return { text: "Сбор оценок", class: "sec-status-warning" };
+                return { text: t('status.gatheringGrades'), class: "sec-status-warning" };
             case "ready_to_reveal":
-                return { text: "Ждет публикации", class: "sec-status-info" };
+                return { text: t('status.awaitingPublication'), class: "sec-status-info" };
             case "reviewing":
-                return { text: "Обсуждение (Правки)", class: "sec-status-warning" };
+                return { text: t('status.discussionEdits'), class: "sec-status-warning" };
             case "ready_to_lock":
-                return { text: "Ждет утверждения", class: "sec-status-success" };
+                return { text: t('status.awaitingApproval'), class: "sec-status-success" };
             case "completed":
-                return { text: "Протокол закрыт", class: "sec-status-locked" };
+                return { text: t('status.protocolClosed'), class: "sec-status-locked" };
             default:
                 return { text: "", class: "" };
         }
@@ -69,7 +71,7 @@ export default function SecretaryStudentList() {
         <div className={`s-page-container ${isDrawerOpen ? "s-drawer-open" : ""}`}>
             <div className="s-main-content">
                 <h1 className="s-title">
-                    Панель тех. секретаря - Комиссия №{commissionId || "1"}
+                    {t('nav.secretary')} - {t('commission.commissions')} №{commissionId || "1"}
                 </h1>
 
                 <div className="s-topics-grid">
@@ -92,7 +94,7 @@ export default function SecretaryStudentList() {
 
                                             {s.averageScore && (
                                                 <span className="sec-avg-score">
-                                                    Ср. балл: {s.averageScore}
+                                                    {t('journal.currentAverage')} {s.averageScore}
                                                 </span>
                                             )}
                                         </div>

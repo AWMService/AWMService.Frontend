@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { X, Globe, AlignLeft, Info, Layers, Users, AlertCircle } from "lucide-react";
 import "./CreateTopicModal.css";
 
 export default function CreateTopicModal({ open, onClose, onCreate, directions = [] }) {
+    const { t } = useTranslation();
     const [form, setForm] = useState({
         direction: "",
         title: { kk: "", ru: "", en: "" },
@@ -75,8 +77,8 @@ export default function CreateTopicModal({ open, onClose, onCreate, directions =
             <div className="ctm-modal" onClick={e => e.stopPropagation()}>
                 <div className="ctm-header">
                     <div className="ctm-header-text">
-                        <h2>Создать новую тему</h2>
-                        <p>Заполните информацию о проекте на трех языках</p>
+                        <h2>{t('supervisor.createTopic')}</h2>
+                        <p>{t('supervisor.fillInfo')}</p>
                     </div>
                     <button className="ctm-close-btn" onClick={onClose}>
                         <X size={20} />
@@ -88,14 +90,14 @@ export default function CreateTopicModal({ open, onClose, onCreate, directions =
                     <div className="ctm-section">
                         <div className="ctm-section-label">
                             <Info size={16} className="ctm-icon-muted" />
-                            <h3>Направление</h3>
+                            <h3>{t('nav.directions')}</h3>
                         </div>
                         <select
                             className={`ctm-select ${touched && !form.direction ? "invalid" : ""}`}
                             value={form.direction}
                             onChange={e => updateField("direction", e.target.value)}
                         >
-                            <option value="">Выберите направление из списка...</option>
+                            <option value="">{t('supervisor.selectDirection')}</option>
                             {directions.map((d, idx) => (
                                 <option key={idx} value={d}>{d}</option>
                             ))}
@@ -106,14 +108,14 @@ export default function CreateTopicModal({ open, onClose, onCreate, directions =
                     <div className="ctm-section">
                         <div className="ctm-section-label">
                             <Globe size={16} className="ctm-icon-muted" />
-                            <h3>Название темы</h3>
+                            <h3>{t('supervisor.topicTitle')}</h3>
                         </div>
                         <div className="ctm-input-group">
                             <div className={`ctm-field ${touched && !form.title.kk && !form.title.ru && !form.title.en ? "invalid" : ""}`}>
                                 <div className="ctm-lang-tag">KK</div>
                                 <input
                                     className="ctm-input"
-                                    placeholder="Тақырып атауы..."
+                                    placeholder={t('supervisor.topicTitle') + '...'}
                                     value={form.title.kk}
                                     onChange={e => updateField("title.kk", e.target.value)}
                                 />
@@ -122,7 +124,7 @@ export default function CreateTopicModal({ open, onClose, onCreate, directions =
                                 <div className="ctm-lang-tag">RU</div>
                                 <input
                                     className="ctm-input"
-                                    placeholder="Название темы..."
+                                    placeholder={t('supervisor.topicTitle') + '...'}
                                     value={form.title.ru}
                                     onChange={e => updateField("title.ru", e.target.value)}
                                 />
@@ -143,14 +145,14 @@ export default function CreateTopicModal({ open, onClose, onCreate, directions =
                     <div className="ctm-section">
                         <div className="ctm-section-label">
                             <AlignLeft size={16} className="ctm-icon-muted" />
-                            <h3>Описание и задачи</h3>
+                            <h3>{t('supervisor.descriptionTasks')}</h3>
                         </div>
                         <div className="ctm-input-group">
                             <div className={`ctm-field vertical ${touched && !form.description.kk && !form.description.ru && !form.description.en ? "invalid" : ""}`}>
                                 <div className="ctm-lang-tag">KK</div>
                                 <textarea
                                     className="ctm-textarea"
-                                    placeholder="Сипаттамасы..."
+                                    placeholder={t('common.description') + '...'}
                                     value={form.description.kk}
                                     onChange={e => updateField("description.kk", e.target.value)}
                                 />
@@ -160,7 +162,7 @@ export default function CreateTopicModal({ open, onClose, onCreate, directions =
                                 <div className="ctm-lang-tag">RU</div>
                                 <textarea
                                     className="ctm-textarea"
-                                    placeholder="Описание..."
+                                    placeholder={t('common.description') + '...'}
                                     value={form.description.ru}
                                     onChange={e => updateField("description.ru", e.target.value)}
                                 />
@@ -184,33 +186,33 @@ export default function CreateTopicModal({ open, onClose, onCreate, directions =
                         <div className="ctm-section">
                             <div className="ctm-section-label">
                                 <Layers size={16} className="ctm-icon-muted" />
-                                <h3>Тип работы</h3>
+                                <h3>{t('supervisor.workType')}</h3>
                             </div>
                             <select
                                 className={`ctm-select ${touched && !form.workType ? "invalid" : ""}`}
                                 value={form.workType}
                                 onChange={e => updateField("workType", e.target.value)}
                             >
-                                <option value="">Выберите...</option>
-                                <option value="diploma">Дипломная работа</option>
-                                <option value="course">Курсовая работа</option>
-                                <option value="research">НИРС</option>
+                                <option value="">{t('common.select')}</option>
+                                <option value="diploma">{t('supervisor.diplomaWork')}</option>
+                                <option value="course">{t('supervisor.courseWork')}</option>
+                                <option value="research">{t('supervisor.research')}</option>
                             </select>
                         </div>
 
                         <div className="ctm-section">
                             <div className="ctm-section-label">
                                 <Users size={16} className="ctm-icon-muted" />
-                                <h3>Студентов</h3>
+                                <h3>{t('supervisor.students')}</h3>
                             </div>
                             <select
                                 className="ctm-select"
                                 value={form.studentCount}
                                 onChange={e => updateField("studentCount", e.target.value)}
                             >
-                                <option value="1">1 студент</option>
-                                <option value="2">2 студента</option>
-                                <option value="3">3 студента</option>
+                                <option value="1">{t('supervisor.oneStudent')}</option>
+                                <option value="2">{t('supervisor.twoStudents')}</option>
+                                <option value="3">{t('supervisor.threeStudents')}</option>
                             </select>
                         </div>
                     </div>
@@ -219,7 +221,7 @@ export default function CreateTopicModal({ open, onClose, onCreate, directions =
                         <div className="ctm-error-notice">
                             <AlertCircle size={14} />
                             <span>
-                                Заполните обязательные поля (направление, тип и описание хотя бы на одном языке)
+                                {t('supervisor.requiredFields')}
                             </span>
                         </div>
                     )}
@@ -227,13 +229,13 @@ export default function CreateTopicModal({ open, onClose, onCreate, directions =
 
                 <div className="ctm-footer">
                     <button className="ctm-btn-secondary" onClick={onClose}>
-                        Отмена
+                        {t('common.cancel')}
                     </button>
                     <button
                         className={`ctm-btn-primary ${!valid() && touched ? "disabled" : ""}`}
                         onClick={handleSave}
                     >
-                        Создать тему
+                        {t('supervisor.createTopic')}
                     </button>
                 </div>
             </div>

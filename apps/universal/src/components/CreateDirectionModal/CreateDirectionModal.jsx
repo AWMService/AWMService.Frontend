@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { X, Globe, AlignLeft, Info } from "lucide-react";
 import "./CreateDirectionModal.css";
 
 export default function CreateDirectionModal({ onClose, onCreate }) {
+    const { t } = useTranslation();
     const [title, setTitle] = useState({ kk: "", ru: "", en: "" });
     const [description, setDescription] = useState({ kk: "", ru: "", en: "" });
     const [touched, setTouched] = useState({
@@ -46,8 +48,8 @@ export default function CreateDirectionModal({ onClose, onCreate }) {
             <div className="cdm-modal" onClick={(e) => e.stopPropagation()}>
                 <div className="cdm-header">
                     <div className="cdm-header-text">
-                        <h2>Новое направление</h2>
-                        <p>Заполните информацию на трех языках</p>
+                        <h2>{t('supervisor.newDirection')}</h2>
+                        <p>{t('supervisor.fillInfo')}</p>
                     </div>
                     <button className="cdm-close-btn" onClick={onClose}>
                         <X size={20} />
@@ -60,7 +62,7 @@ export default function CreateDirectionModal({ onClose, onCreate }) {
                         <div className="cdm-section">
                             <div className="cdm-section-label">
                                 <Globe size={16} />
-                                <h3>Название направления</h3>
+                                <h3>{t('supervisor.directionTitle')}</h3>
                             </div>
 
                             <div className="cdm-input-group">
@@ -70,7 +72,7 @@ export default function CreateDirectionModal({ onClose, onCreate }) {
                                         value={title.kk}
                                         onChange={(e) => handleChangeTitle("kk", e.target.value)}
                                         onBlur={() => markTouched("title", "kk")}
-                                        placeholder="Бағыт атауы..."
+                                        placeholder={t('supervisor.directionTitle') + '...'}
                                         className={`cdm-input ${touched.title.kk && !title.kk.trim() ? "error" : ""}`}
                                     />
                                 </div>
@@ -81,7 +83,7 @@ export default function CreateDirectionModal({ onClose, onCreate }) {
                                         value={title.ru}
                                         onChange={(e) => handleChangeTitle("ru", e.target.value)}
                                         onBlur={() => markTouched("title", "ru")}
-                                        placeholder="Название на русском..."
+                                        placeholder={t('supervisor.directionTitle') + '...'}
                                         className={`cdm-input ${touched.title.ru && !title.ru.trim() ? "error" : ""}`}
                                     />
                                 </div>
@@ -102,7 +104,7 @@ export default function CreateDirectionModal({ onClose, onCreate }) {
                         <div className="cdm-section">
                             <div className="cdm-section-label">
                                 <AlignLeft size={16} />
-                                <h3>Описание и цели</h3>
+                                <h3>{t('supervisor.descriptionTasks')}</h3>
                             </div>
 
                             <div className="cdm-input-group">
@@ -112,7 +114,7 @@ export default function CreateDirectionModal({ onClose, onCreate }) {
                                         value={description.kk}
                                         onChange={(e) => handleChangeDesc("kk", e.target.value)}
                                         onBlur={() => markTouched("description", "kk")}
-                                        placeholder="Толық сипаттамасы..."
+                                        placeholder={t('common.description') + '...'}
                                         className={`cdm-textarea ${touched.description.kk && !description.kk.trim() ? "error" : ""}`}
                                         rows={3}
                                     />
@@ -123,7 +125,7 @@ export default function CreateDirectionModal({ onClose, onCreate }) {
                                     <textarea
                                         value={description.ru}
                                         onChange={(e) => handleChangeDesc("ru", e.target.value)}
-                                        placeholder="Детальное описание..."
+                                        placeholder={t('common.description') + '...'}
                                         className="cdm-textarea"
                                         rows={3}
                                     />
@@ -145,21 +147,21 @@ export default function CreateDirectionModal({ onClose, onCreate }) {
                         {!canSubmit && (
                             <div className="cdm-validation-hint">
                                 <Info size={14} />
-                                <span>Заполните название (KK, RU) и описание (KK)</span>
+                                <span>{t('supervisor.fillDirectionFields')}</span>
                             </div>
                         )}
                     </div>
 
                     <div className="cdm-footer">
                         <button type="button" className="cdm-btn-secondary" onClick={onClose}>
-                            Отмена
+                            {t('common.cancel')}
                         </button>
                         <button
                             type="submit"
                             className="cdm-btn-primary"
                             disabled={!canSubmit}
                         >
-                            Создать направление
+                            {t('supervisor.createDirection')}
                         </button>
                     </div>
                 </form>

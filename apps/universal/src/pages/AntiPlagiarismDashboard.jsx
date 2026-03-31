@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Upload,
     ChevronDown,
@@ -9,6 +10,7 @@ import {
 import './anti.css';
 
 const AntiPlagiarismDashboard = () => {
+    const { t } = useTranslation();
     const [expandedTopics, setExpandedTopics] = useState([1]);
 
     const [data, setData] = useState([
@@ -46,7 +48,7 @@ const AntiPlagiarismDashboard = () => {
     };
 
     const closeTopic = (id) => {
-        if(window.confirm("Вы уверены, что хотите окончательно закрыть тему?")) {
+        if(window.confirm(t('messages.confirmClose'))) {
             setData(data.map(t => t.id === id ? {...t, isClosed: true} : t));
         }
     };
@@ -58,13 +60,13 @@ const AntiPlagiarismDashboard = () => {
                 ...topic,
                 students: topic.students.map(s => s.id === studentId ? { ...s, file: file.name, status: 'ожидание' } : s)
             } : topic));
-            alert(`Файл ${file.name} выбран для студента`);
+            alert(t('messages.fileSelected', { filename: file.name }));
         }
     };
 
     return (
         <div className="edu-container">
-            <h1 className="edu-main-title">Проверка работ</h1>
+            <h1 className="edu-main-title">{t('antiplagiarism.workReview')}</h1>
 
             <div className="edu-list">
                 {data.map((topic) => (
@@ -78,7 +80,7 @@ const AntiPlagiarismDashboard = () => {
 
                             {!topic.isClosed && (
                                 <button className="edu-btn-close" onClick={() => closeTopic(topic.id)}>
-                                    Отправить
+                                    {t('common.send')}
                                 </button>
                             )}
                         </div>
@@ -88,10 +90,10 @@ const AntiPlagiarismDashboard = () => {
                                 <table className="edu-student-table">
                                     <thead>
                                     <tr>
-                                        <th>Студент</th>
-                                        <th>Документ</th>
-                                        <th>Результат</th>
-                                        <th style={{ textAlign: 'center' }}>Действия</th>
+                                        <th>{t('antiplagiarism.studentCol')}</th>
+                                        <th>{t('antiplagiarism.documentCol')}</th>
+                                        <th>{t('antiplagiarism.resultCol')}</th>
+                                        <th style={{ textAlign: 'center' }}>{t('antiplagiarism.actionsCol')}</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -104,7 +106,7 @@ const AntiPlagiarismDashboard = () => {
                                                             <FileText size={14} /> {student.file}
                                                         </span>
                                                 ) : (
-                                                    <span style={{ color: '#cbd5e0', fontStyle: 'italic' }}>Нет файла</span>
+                                                    <span style={{ color: '#cbd5e0', fontStyle: 'italic' }}>{t('antiplagiarism.noFile')}</span>
                                                 )}
                                             </td>
                                             <td>
@@ -114,9 +116,9 @@ const AntiPlagiarismDashboard = () => {
                                                     onChange={(e) => updateStatus(topic.id, student.id, e.target.value)}
                                                     className={`edu-status-select ${student.status}`}
                                                 >
-                                                    <option value="ожидание">Ожидание</option>
-                                                    <option value="зачет">Зачет</option>
-                                                    <option value="незачет">Незачет</option>
+                                                    <option value="ожидание">{t('status.waiting')}</option>
+                                                    <option value="зачет">{t('status.credit')}</option>
+                                                    <option value="незачет">{t('status.noCredit')}</option>
                                                 </select>
                                             </td>
                                             <td align="center">

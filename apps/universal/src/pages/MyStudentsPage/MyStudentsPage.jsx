@@ -1,9 +1,11 @@
 import React, { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { Users } from "lucide-react"
 import "./MyStudentsPage.css"
 import StudentModal from "../../components/MyStudentsModal/StudentModal.jsx"
 
 export default function MyStudentsPage() {
+    const { t } = useTranslation()
     const [students, setStudents] = useState([
         {
             id: 1,
@@ -37,8 +39,8 @@ export default function MyStudentsPage() {
         <div className="sp-page-root">
             <header className="sp-page-header">
                 <div className="sp-header-text">
-                    <h1 className="sp-main-title">Мои студенты</h1>
-                    <p className="sp-main-subtitle">Панель управления дипломными проектами</p>
+                    <h1 className="sp-main-title">{t('nav.myStudents')}</h1>
+                    <p className="sp-main-subtitle">{t('nav.myStudentsPanel')}</p>
                 </div>
             </header>
 
@@ -64,7 +66,7 @@ export default function MyStudentsPage() {
                         </div>
 
                         <button className="sp-open-btn" onClick={() => setSelectedStudent(student)}>
-                            Открыть карточку
+                            {t('common.openCard')}
                         </button>
                     </div>
                 ))}

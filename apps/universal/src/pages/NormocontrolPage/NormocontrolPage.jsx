@@ -113,7 +113,7 @@ function NormocontrolPage() {
                                 <span>{t('common.date')}: {doc.submittedDate}</span>
                                 {doc.remarks && (
                                     <span className="remarks">
-                                        {doc.remarks} замечаний
+                                        {t('normocontrol.remarksCount', { count: doc.remarks })}
                                     </span>
                                 )}
                             </div>

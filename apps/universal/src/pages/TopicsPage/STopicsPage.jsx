@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
     Plus,
     BookText,
@@ -16,19 +17,6 @@ import TopicViewModal from "../../components/topics/TopicViewModal";
 import TopicEditModal from "../../components/topics/TopicEditModal";
 
 import "./STopicsPage.css";
-
-const workTypeLabels = {
-    diploma_project: "Дипломный проект",
-    diploma_work: "Дипломная работа",
-    course_work: "Курсовая работа",
-};
-
-const statusLabels = {
-    draft: "Черновик",
-    pending: "На рассмотрении",
-    approved: "Утверждено",
-    rejected: "Отклонено",
-};
 
 // --- MOCK DATA: Добавили поле requests ---
 const mockTopics = [
@@ -71,6 +59,21 @@ const mockTopics = [
 ];
 
 export default function STopicsPage() {
+    const { t } = useTranslation();
+
+    const workTypeLabels = {
+        diploma_project: t('supervisor.diplomaProject'),
+        diploma_work: t('supervisor.diplomaWork'),
+        course_work: t('supervisor.courseWork'),
+    };
+
+    const statusLabels = {
+        draft: t('status.draft'),
+        pending: t('status.underReview'),
+        approved: t('status.approved'),
+        rejected: t('status.rejected'),
+    };
+
     const [topics, setTopics] = useState(mockTopics);
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [isViewOpen, setIsViewOpen] = useState(false);
@@ -178,12 +181,12 @@ export default function STopicsPage() {
             <div className="topics-container">
                 <header className="topics-header">
                     <div className="header-text">
-                        <h1>Мои темы</h1>
-                        <p>Управление темами и областями дипломных проектов</p>
+                        <h1>{t('supervisor.myTopics')}</h1>
+                        <p>{t('supervisor.myTopicsSubtitle')}</p>
                     </div>
                     <button className="btn-create-new" onClick={() => setIsCreateOpen(true)}>
                         <Plus size={18} />
-                        <span>Создать тему</span>
+                        <span>{t('supervisor.createTopic')}</span>
                     </button>
                 </header>
 
@@ -223,8 +226,8 @@ export default function STopicsPage() {
                                         <Users size={14} />
                                         <span>
                                             {topic.students?.length > 0
-                                                ? `Студентов: ${topic.students.length}/${topic.participantCount}`
-                                                : "Нет студентов"}
+                                                ? `${t('supervisor.students')}: ${topic.students.length}/${topic.participantCount}`
+                                                : t('supervisor.noApprovedStudents')}
                                         </span>
                                     </div>
                                     <div className="stat-item">
@@ -235,7 +238,7 @@ export default function STopicsPage() {
                                     {topic.requests?.length > 0 && (
                                         <div className="stat-item requests-indicator">
                                             <div className="indicator-dot"></div>
-                                            <span>Заявок: {topic.requests.length}</span>
+                                            <span>{t('supervisor.requestsUnderReview')}: {topic.requests.length}</span>
                                         </div>
                                     )}
                                 </div>
@@ -247,7 +250,7 @@ export default function STopicsPage() {
                                     onClick={() => openView(topic)}
                                 >
                                     <Eye size={16} />
-                                    <span>Детали</span>
+                                    <span>{t('common.details')}</span>
                                 </button>
 
                                 {topic.status === "draft" && (
@@ -262,7 +265,7 @@ export default function STopicsPage() {
                                         <button
                                             className="btn-send-mini"
                                             onClick={() => handleSendForReview(topic.id)}
-                                            title="Отправить на рассмотрение"
+                                            title={t('status.underReview')}
                                         >
                                             <Send size={14} />
                                         </button>

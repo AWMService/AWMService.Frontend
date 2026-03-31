@@ -1,18 +1,20 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Plus, BookOpen, Eye, Edit, Send, Calendar, AlertCircle } from "lucide-react";
 import CreateDirectionModal from "../../components/CreateDirectionModal/CreateDirectionModal";
 import DirectionViewModal from "../../components/directions/DirectionViewModal";
 import DirectionEditModal from "../../components/directions/DirectionEditModal";
 import "./SDirectionsPage.css";
 
-const statusLabels = {
-    draft: "Черновик",
-    pending: "На рассмотрении",
-    approved: "Утверждено",
-    rejected: "Отклонено",
-};
-
 export default function SDirectionsPage() {
+    const { t } = useTranslation();
+
+    const statusLabels = {
+        draft: t('status.draft'),
+        pending: t('status.underReview'),
+        approved: t('status.approved'),
+        rejected: t('status.rejected'),
+    };
     const [directions, setDirections] = useState([
         {
             id: "1",
@@ -76,15 +78,15 @@ export default function SDirectionsPage() {
         <div className="directions-page">
             <header className="directions-header">
                 <div className="header-text">
-                    <h1>Направления</h1>
-                    <p>Управление темами и областями дипломных проектов</p>
+                    <h1>{t('supervisor.directionsTitle')}</h1>
+                    <p>{t('supervisor.directionsSubtitle')}</p>
                 </div>
                 <button
                     className="btn-create-new"
                     onClick={() => setIsCreateModalOpen(true)}
                 >
                     <Plus size={20} strokeWidth={1.5} />
-                    <span>Создать направление</span>
+                    <span>{t('supervisor.createDirection')}</span>
                 </button>
             </header>
 
@@ -93,10 +95,10 @@ export default function SDirectionsPage() {
                     <div className="empty-icon-circle">
                         <BookOpen size={40} strokeWidth={1.5} />
                     </div>
-                    <h3>Список направлений пуст</h3>
-                    <p>Вы еще не создали ни одного направления для работы со студентами</p>
+                    <h3>{t('supervisor.noDirections')}</h3>
+                    <p>{t('supervisor.directionsSubtitle')}</p>
                     <button className="btn-empty-action" onClick={() => setIsCreateModalOpen(true)}>
-                        Создать первое направление
+                        {t('supervisor.createFirstDirection')}
                     </button>
                 </div>
             ) : (
@@ -131,14 +133,14 @@ export default function SDirectionsPage() {
 
                             <div className="card-footer-actions">
                                 <div className="left-actions">
-                                    <button className="minimal-btn" onClick={() => openView(direction)} title="Просмотр">
+                                    <button className="minimal-btn" onClick={() => openView(direction)} title={t('common.view')}>
                                         <Eye size={18} />
-                                        <span>Детали</span>
+                                        <span>{t('common.details')}</span>
                                     </button>
                                     {direction.status === "draft" && (
-                                        <button className="minimal-btn" onClick={() => openEdit(direction)} title="Редактировать">
+                                        <button className="minimal-btn" onClick={() => openEdit(direction)} title={t('common.edit')}>
                                             <Edit size={18} />
-                                            <span>Правка</span>
+                                            <span>{t('common.edit')}</span>
                                         </button>
                                     )}
                                 </div>
@@ -149,7 +151,7 @@ export default function SDirectionsPage() {
                                         onClick={() => handleSendForReview(direction.id)}
                                     >
                                         <Send size={14} />
-                                        Отправить
+                                        {t('common.send')}
                                     </button>
                                 )}
                             </div>

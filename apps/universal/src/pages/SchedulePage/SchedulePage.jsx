@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MapPin, ChevronRight, UserCheck, Users, ShieldCheck } from 'lucide-react';
 import './SchedulePage.css';
 import { useNavigate } from "react-router-dom";
@@ -29,6 +30,7 @@ const scheduleData = [
 ];
 
 export default function SchedulePage() {
+    const { t } = useTranslation();
     const [selectedDate, setSelectedDate] = useState('2024-05-15');
     const navigate = useNavigate();
     const uniqueDates = [...new Set(scheduleData.map(item => item.date))];
@@ -43,8 +45,8 @@ export default function SchedulePage() {
 
             <div className="schedule-header-fixed">
                 <div className="header-top">
-                    <h1>Расписание комиссий</h1>
-                    <p className="subtitle">Управление графиком защит и предзащит</p>
+                    <h1>{t('commission.scheduleTitle')}</h1>
+                    <p className="subtitle">{t('commission.scheduleSubtitle')}</p>
                 </div>
 
                 <div className="date-picker-row">
@@ -73,7 +75,7 @@ export default function SchedulePage() {
 
                         <div className="card-wrapper" onClick={() => navigate(`/schedule/${dailyEvent.id}`)}>
                             <div className="sharp-card">
-                                <div className={`card-accent ${dailyEvent.type === 'Защита' ? 'final' : 'pre'}`}></div>
+                <div className={`card-accent ${dailyEvent.type === 'Защита' ? 'final' : 'pre'}`}></div>
 
                                 {/* Декоративная иконка на фоне карточки */}
                                 <div className="card-watermark">
@@ -87,7 +89,7 @@ export default function SchedulePage() {
                                                 {dailyEvent.type} {dailyEvent.stage}
                                             </span>
                                             <span className="room-text">
-                                                <MapPin size={14} /> каб. {dailyEvent.room}
+                                                <MapPin size={14} /> {t('commission.roomShort')} {dailyEvent.room}
                                             </span>
                                         </div>
                                         <ChevronRight className="mobile-arrow" size={20} />
@@ -96,17 +98,17 @@ export default function SchedulePage() {
                                     <div className="commission-info">
                                         <div className="member-row chairman">
                                             <ShieldCheck size={16} className="icon-blue" />
-                                            <span><strong>Председатель:</strong> {dailyEvent.chairman}</span>
+                                            <span><strong>{t('commission.chairmanLabel')}</strong> {dailyEvent.chairman}</span>
                                         </div>
 
                                         <div className="dropdown-content">
                                             <div className="members-grid">
                                                 <div className="member-row">
                                                     <UserCheck size={16} className="icon-gray" />
-                                                    <span><strong>Секретарь:</strong> {dailyEvent.secretary}</span>
+                                                    <span><strong>{t('commission.secretaryLabel')}</strong> {dailyEvent.secretary}</span>
                                                 </div>
                                                 <div className="members-list">
-                                                    <div className="list-label"><Users size={16} /> Члены комиссии:</div>
+                                                    <div className="list-label"><Users size={16} /> {t('commission.membersLabel')}</div>
                                                     <ul>
                                                         {dailyEvent.members.map((m, i) => <li key={i}>{m}</li>)}
                                                     </ul>
@@ -114,7 +116,7 @@ export default function SchedulePage() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="click-hint">Нажмите, чтобы увидеть список студентов</div>
+                                    <div className="click-hint">{t('commission.clickForStudents')}</div>
                                 </div>
                             </div>
                         </div>
@@ -122,7 +124,7 @@ export default function SchedulePage() {
                 ) : (
                     <div className="empty-state">
                         <div className="empty-icon">📅</div>
-                        <p>На выбранную дату комиссий не назначено</p>
+                        <p>{t('commission.noCommissionsDay')}</p>
                     </div>
                 )}
             </div>

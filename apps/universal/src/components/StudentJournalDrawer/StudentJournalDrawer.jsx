@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import "../../pages/StudentsList/StudentList.css";
 
 const FileIcon = () => <span style={{ marginRight: 8 }} />;
@@ -18,11 +19,13 @@ export default function StudentJournalDrawer({
     onEdit,
     onSimulateSecretary
 }) {
+    const { t } = useTranslation();
+
     return (
         <aside className={`s-journal-drawer ${open ? "s-open" : ""}`}>
             <div className="s-drawer-header">
                 <button className="s-close-btn" onClick={onClose}>×</button>
-                <h2 className="s-drawer-title">Журнал оценки</h2>
+                <h2 className="s-drawer-title">{t('journal.evaluationTable')}</h2>
 
                 {selectedStudent && (
                     <div className="s-student-info">
@@ -34,7 +37,7 @@ export default function StudentJournalDrawer({
 
             <div className="s-drawer-body">
                 <div className="s-docs-section">
-                    <h4>Прикрепленные материалы</h4>
+                    <h4>{t('common.attachedMaterials')}</h4>
                     <div className="s-docs-list">
                         {mockDocs.map((doc, i) => (
                             <div key={i} className="s-doc-item">
@@ -53,9 +56,9 @@ export default function StudentJournalDrawer({
                 <table className="s-evaluation-table">
                     <thead>
                         <tr>
-                            <th>Критерий</th>
-                            <th style={{ width: 60 }}>Макс.</th>
-                            <th style={{ width: 80 }}>Балл</th>
+                            <th>{t('journal.criteria')}</th>
+                            <th style={{ width: 60 }}>{t('journal.maxScore')}</th>
+                            <th style={{ width: 80 }}>{t('journal.grade')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -84,13 +87,13 @@ export default function StudentJournalDrawer({
                         className="s-status-message"
                         onClick={onSimulateSecretary}
                     >
-                        Ожидание других членов комиссии...
+                        {t('messages.waitingOtherMembers')}
                     </div>
                 )}
 
                 {status === "finalizing" && (
                     <div className="s-comparison-box">
-                        <span>Средний балл комиссии:</span>
+                        <span>{t('journal.averageScore')}</span>
                         <strong>{(totalScore * 0.95).toFixed(1)}</strong>
                     </div>
                 )}
@@ -98,38 +101,38 @@ export default function StudentJournalDrawer({
 
             <div className="s-drawer-footer">
                 <div className="s-footer-total">
-                    <span>Итоговый балл:</span>
+                    <span>{t('journal.totalScore')}</span>
                     <span className="s-total-big">
-                        {totalScore} <span className="s-total-max">/ 100</span>
+                        {totalScore} <span className="s-total-max">{t('journal.totalMax')}</span>
                     </span>
                 </div>
 
                 <div className="s-actions">
                     {status === "editing" && (
                         <button className="s-btn-primary" onClick={onSend}>
-                            Отправить оценку
+                            {t('status.submitGrade')}
                         </button>
                     )}
 
                     {status === "waiting" && (
                         <button className="s-btn-secondary" disabled>
-                            Отправлено
+                            {t('status.submitted')}
                         </button>
                     )}
 
                     {status === "finalizing" && (
                         <div className="s-action-group">
                             <button className="s-btn-secondary" onClick={onEdit}>
-                                Исправить
+                                {t('status.editGrade')}
                             </button>
                             <button className="s-btn-primary" onClick={onFinalize}>
-                                Подтвердить (Финал)
+                                {t('status.confirmFinal')}
                             </button>
                         </div>
                     )}
 
                     {status === "locked" && (
-                        <div className="s-locked-badge">Оценка закреплена</div>
+                        <div className="s-locked-badge">{t('status.gradeLocked')}</div>
                     )}
                 </div>
             </div>

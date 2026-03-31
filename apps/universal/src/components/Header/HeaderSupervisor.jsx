@@ -1,16 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import './Header.css';
 import bellIcon from '../../assets/icons/bell-icon.svg';
 import globeIcon from '../../assets/icons/globe-icon.svg';
 import arrowDownIcon from '../../assets/icons/arrow-down-icon.svg';
-
-const pageNames = {
-    "/super/my-topics": "Мои темы",
-    "/super/students": "Мои студенты",
-    "/super/reports": "Отчёты",
-    "/super/settings": "Настройки",
-};
 
 const Icon = ({ src, size = 16, className = "" }) => (
     <img
@@ -28,9 +22,17 @@ const Icon = ({ src, size = 16, className = "" }) => (
 export function HeaderSupervisor() {
     const location = useLocation();
     const navigate = useNavigate();
+    const { t } = useTranslation();
+
+    const pageNames = {
+        "/super/my-topics": t('nav.myTopics'),
+        "/super/students": t('nav.myStudents'),
+        "/super/reports": t('department.reports'),
+        "/super/settings": t('auth.settings'),
+    };
 
     const currentPageName =
-        pageNames[location.pathname] || "Панель руководителя";
+        pageNames[location.pathname] || t('nav.dashboard');
 
     const notificationCount = 2;
 
@@ -70,10 +72,10 @@ export function HeaderSupervisor() {
                 {/* ЛЕВАЯ ЧАСТЬ */}
                 <div className="header-left">
                     <div className="logo-section">
-                        <div className="logo-box">Р</div>
+                        <div className="logo-box">{t('roles.supervisor').charAt(0)}</div>
                         <div>
-                            <div className="logo-main">Руководитель</div>
-                            <div className="logo-sub">Панель управления</div>
+                            <div className="logo-main">{t('roles.supervisor')}</div>
+                            <div className="logo-sub">{t('nav.dashboard')}</div>
                         </div>
                     </div>
 
@@ -102,9 +104,9 @@ export function HeaderSupervisor() {
 
                         {notificationsOpen && (
                             <div className="dropdown-menu align-right">
-                                <div className="dropdown-header">Уведомления</div>
+                                <div className="dropdown-header">{t('common.notifications')}</div>
                                 <div className="dropdown-item">
-                                    Новых уведомлений: {notificationCount}
+                                    {t('common.newNotifications', { count: notificationCount })}
                                 </div>
                             </div>
                         )}
@@ -151,7 +153,7 @@ export function HeaderSupervisor() {
                             <div className="avatar-circle">РР</div>
                             <div>
                                 <div className="u-name">Рахимов Р.Р.</div>
-                                <div className="u-role">Руководитель</div>
+                                <div className="u-role">{t('roles.supervisor')}</div>
                             </div>
                             <Icon
                                 src={arrowDownIcon}
@@ -162,9 +164,9 @@ export function HeaderSupervisor() {
 
                         {userMenuOpen && (
                             <div className="dropdown-menu align-right">
-                                <div className="dropdown-item">Профиль</div>
+                                <div className="dropdown-item">{t('auth.profile')}</div>
                                 <div className="dropdown-item logout" onClick={handleLogout}>
-                                    Выйти
+                                    {t('auth.logout')}
                                 </div>
                             </div>
                         )}

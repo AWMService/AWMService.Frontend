@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { X, Edit3, Globe, AlignLeft } from "lucide-react";
 import "./DirectionEditModal.css";
 
 export default function DirectionEditModal({ direction, onClose, onSave }) {
+    const { t } = useTranslation();
     const normalizeLangObj = (obj) => ({
         kk: obj?.kk ?? "",
         ru: obj?.ru ?? "",
@@ -53,9 +55,9 @@ export default function DirectionEditModal({ direction, onClose, onSave }) {
                     <div className="dem-header-text">
                         <div className="dem-title-row">
                             <Edit3 size={20} className="dem-icon-edit" />
-                            <h2>Редактирование</h2>
+                            <h2>{t('supervisor.editDirection')}</h2>
                         </div>
-                        <p>Внесите изменения в информацию о направлении</p>
+                        <p>{t('supervisor.editTopicSubtitle')}</p>
                     </div>
                     <button className="dem-close-btn" onClick={onClose}>
                         <X size={20} />
@@ -67,7 +69,7 @@ export default function DirectionEditModal({ direction, onClose, onSave }) {
                     <div className="dem-section">
                         <div className="dem-section-label">
                             <Globe size={16} />
-                            <h3>Название направления</h3>
+                            <h3>{t('supervisor.directionTitle')}</h3>
                         </div>
 
                         <div className="dem-input-group">
@@ -89,7 +91,7 @@ export default function DirectionEditModal({ direction, onClose, onSave }) {
                     <div className="dem-section">
                         <div className="dem-section-label">
                             <AlignLeft size={16} />
-                            <h3>Описание направления</h3>
+                            <h3>{t('common.description')}</h3>
                         </div>
 
                         <div className="dem-input-group">
@@ -111,10 +113,10 @@ export default function DirectionEditModal({ direction, onClose, onSave }) {
 
                 <div className="dem-footer">
                     <button className="dem-btn-secondary" onClick={onClose}>
-                        Отмена
+                        {t('common.cancel')}
                     </button>
                     <button className="dem-btn-primary" onClick={handleSaveClick}>
-                        Сохранить изменения
+                        {t('common.saveChanges')}
                     </button>
                 </div>
             </div>

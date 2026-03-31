@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import { useTranslation } from "react-i18next"
 import {
     X, Download, Plus,
     FileCheck, ClipboardList,
@@ -7,6 +8,7 @@ import {
 } from "lucide-react"
 
 export default function StudentModal({ student, setStudent, setStudents }) {
+    const { t } = useTranslation()
     const [tempNote, setTempNote] = useState("")
 
     const getCurrentDate = () =>
@@ -43,7 +45,7 @@ export default function StudentModal({ student, setStudent, setStudents }) {
     }
 
     const handleFileUpload = () => {
-        const fileName = prompt("Введите название файла:")
+        const fileName = prompt(t('student.enterFileName'))
         if (!fileName) return
         const newFile = { id: Date.now(), name: fileName, date: getCurrentDate().split(",")[0] }
 
@@ -65,7 +67,7 @@ export default function StudentModal({ student, setStudent, setStudents }) {
                         <h2 className="sm-title">{student.students.map(s => s.name).join(", ")}</h2>
                         <div className="sm-header-meta">
                             <span className={`sm-stage-tag ${getStageStyle(student.stage)}`}>
-                                {student.stage || "Этап не указан"}
+                                {student.stage || t('common.noData')}
                             </span>
                             <span className="sm-dot">•</span>
                             <p className="sm-subtitle">{student.topic.title}</p>
@@ -82,7 +84,7 @@ export default function StudentModal({ student, setStudent, setStudents }) {
                     <div className="sm-column">
                         <section className="sm-section">
                             <h4 className="sm-section-label">
-                                <ClipboardList size={18} /> Файлы студента
+                                <ClipboardList size={18} /> {t('common.documents')}
                             </h4>
                             <div className="sm-file-list">
                                 {student.projectFiles.length ? (
@@ -98,13 +100,13 @@ export default function StudentModal({ student, setStudent, setStudents }) {
                                             <button className="sm-icon-action"><Download size={14} /></button>
                                         </div>
                                     ))
-                                ) : <p className="sm-empty">Файлов еще нет</p>}
+                                ) : <p className="sm-empty">{t('common.filesNotUploaded')}</p>}
                             </div>
                         </section>
 
                         <section className="sm-section sm-mt-large">
                             <h4 className="sm-section-label">
-                                <FileCheck size={18} /> Ваши документы и отзывы
+                                <FileCheck size={18} /> {t('supervisor.yourDocuments')}
                             </h4>
                             <div className="sm-file-list sm-supervisor-box">
                                 {student.supervisorFiles.map(file => (
@@ -117,7 +119,7 @@ export default function StudentModal({ student, setStudent, setStudents }) {
                                     </div>
                                 ))}
                                 <button className="sm-add-file-btn" onClick={handleFileUpload}>
-                                    <Plus size={14} /> Загрузить файл
+                                    <Plus size={14} /> {t('supervisor.downloadFile')}
                                 </button>
                             </div>
                         </section>
@@ -127,7 +129,7 @@ export default function StudentModal({ student, setStudent, setStudents }) {
                     <div className="sm-column">
                         <section className="sm-section">
                             <h4 className="sm-section-label">
-                                <GraduationCap size={18} /> Результаты этапа
+                                <GraduationCap size={18} /> {t('common.stageResults')}
                             </h4>
                             <div className="sm-grades-wrapper">
                                 {student.students.map((s) => (
@@ -138,7 +140,7 @@ export default function StudentModal({ student, setStudent, setStudents }) {
                                         </div>
                                         <div className={`sm-score-pill ${getScoreColor(s.score)}`}>
                                             <span className="sm-score-num">{s.score ?? "-"}</span>
-                                            <span className="sm-score-unit">баллов</span>
+                                            <span className="sm-score-unit">{t('journal.grade')}</span>
                                         </div>
                                     </div>
                                 ))}
@@ -146,7 +148,7 @@ export default function StudentModal({ student, setStudent, setStudents }) {
                         </section>
 
                         <h4 className="sm-section-label sm-mt-mid">
-                            <MessageSquare size={18} /> Замечания руководителя
+                            <MessageSquare size={18} /> {t('supervisor.supervisorFeedback')}
                         </h4>
                         <div className="sm-notes-container">
                             {student.notes.length ? (
@@ -156,18 +158,18 @@ export default function StudentModal({ student, setStudent, setStudents }) {
                                         <span className="sm-note-timestamp">{note.date}</span>
                                     </div>
                                 ))
-                            ) : <p className="sm-empty">Замечаний пока нет</p>}
+                            ) : <p className="sm-empty">{t('common.noComments')}</p>}
                         </div>
 
                         <div className="sm-input-group">
                             <textarea
                                 className="sm-textarea"
-                                placeholder="Напишите замечание..."
+                                placeholder={t('common.writeComment')}
                                 value={tempNote}
                                 onChange={e => setTempNote(e.target.value)}
                             />
                             <button className="sm-send-btn" onClick={addNote}>
-                                Отправить замечание
+                                {t('common.sendComment')}
                             </button>
                         </div>
                     </div>

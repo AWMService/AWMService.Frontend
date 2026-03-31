@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import StudentJournalDrawer from "../../components/StudentJournalDrawer/StudentJournalDrawer.jsx";
 import "./StudentList.css";
 
 export default function StudentList() {
+    const { t } = useTranslation();
     const { commissionId } = useParams();
 
     const [selectedStudent, setSelectedStudent] = useState(null);
@@ -73,7 +75,7 @@ export default function StudentList() {
         <div className={`s-page-container ${isJournalOpen ? "s-drawer-open" : ""}`}>
             <div className="s-main-content">
                 <h1 className="s-title">
-                    Комиссия №{commissionId} ({currentStage === "pre1" ? "Предзащита" : "Защита"})
+                    {t('commission.commissions')} №{commissionId} ({currentStage === "pre1" ? t('commission.preDefense') : t('commission.defense')})
                 </h1>
 
                 <div className="s-topics-grid">
@@ -90,7 +92,7 @@ export default function StudentList() {
                                 >
                                     <span>{s.name}</span>
                                     <span className="s-readiness-tag">
-                                        {s.readiness}% готовности
+                                        {s.readiness}%
                                     </span>
                                 </div>
                             ))}

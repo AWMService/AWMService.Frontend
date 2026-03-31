@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { X, Calendar, BookText, AlignLeft, AlertCircle } from "lucide-react";
 import "./DirectionViewModal.css";
 
-const statusLabels = {
-    draft: "Черновик",
-    pending: "На рассмотрении",
-    approved: "Утверждено",
-    rejected: "Отклонено",
-};
-
 export default function DirectionViewModal({ onClose, direction }) {
+    const { t } = useTranslation();
+
+    const statusLabels = {
+        draft: t('status.draft'),
+        pending: t('status.underReview'),
+        approved: t('status.approved'),
+        rejected: t('status.rejected'),
+    };
     const [titleTab, setTitleTab] = useState("ru");
     const [descTab, setDescTab] = useState("ru");
 
@@ -45,7 +47,7 @@ export default function DirectionViewModal({ onClose, direction }) {
             <div className="dvm-modal" onClick={(e) => e.stopPropagation()}>
                 <div className="dvm-header">
                     <div className="dvm-header-info">
-                        <h2>Детали направления</h2>
+                        <h2>{t('common.details')}</h2>
                         <span className={`dvm-status-pill st-${direction.status}`}>
                             {statusLabels[direction.status] || direction.status}
                         </span>
@@ -61,7 +63,7 @@ export default function DirectionViewModal({ onClose, direction }) {
                         <div className="dvm-rejection-alert">
                             <AlertCircle size={20} />
                             <div className="dvm-rejection-content">
-                                <strong>Причина отклонения:</strong>
+                                <strong>{t('supervisor.rejectionReason')}</strong>
                                 <p>{direction.rejectionReason}</p>
                             </div>
                         </div>
@@ -71,7 +73,7 @@ export default function DirectionViewModal({ onClose, direction }) {
                         <div className="dvm-info-card">
                             <Calendar size={18} />
                             <div className="dvm-info-text">
-                                <label>Дата создания</label>
+                                <label>{t('supervisor.createdDate')}</label>
                                 <span>{formatDate(direction.createdAt)}</span>
                             </div>
                         </div>
@@ -79,7 +81,7 @@ export default function DirectionViewModal({ onClose, direction }) {
                             <div className="dvm-info-card">
                                 <Calendar size={18} />
                                 <div className="dvm-info-text">
-                                    <label>Дата утверждения</label>
+                                    <label>{t('supervisor.approvedDate')}</label>
                                     <span>{formatDate(direction.approvedAt)}</span>
                                 </div>
                             </div>
@@ -90,7 +92,7 @@ export default function DirectionViewModal({ onClose, direction }) {
                         <div className="dvm-section-header">
                             <div className="dvm-section-title">
                                 <BookText size={18} />
-                                <h3>Название направления</h3>
+                                <h3>{t('supervisor.directionTitle')}</h3>
                             </div>
                             <div className="dvm-tabs-mini">
                                 {['kk', 'ru', 'en'].map((lang) => (
@@ -105,7 +107,7 @@ export default function DirectionViewModal({ onClose, direction }) {
                             </div>
                         </div>
                         <div className="dvm-text-box">
-                            {direction.title?.[titleTab] || <span className="dvm-no-data">Информация отсутствует</span>}
+                            {direction.title?.[titleTab] || <span className="dvm-no-data">{t('common.noData')}</span>}
                         </div>
                     </div>
 
@@ -113,7 +115,7 @@ export default function DirectionViewModal({ onClose, direction }) {
                         <div className="dvm-section-header">
                             <div className="dvm-section-title">
                                 <AlignLeft size={18} />
-                                <h3>Подробное описание</h3>
+                                <h3>{t('common.description')}</h3>
                             </div>
                             <div className="dvm-tabs-mini">
                                 {['kk', 'ru', 'en'].map((lang) => (
@@ -128,13 +130,13 @@ export default function DirectionViewModal({ onClose, direction }) {
                             </div>
                         </div>
                         <div className="dvm-text-box description-area">
-                            {direction.description?.[descTab] || <span className="dvm-no-data">Описание не заполнено</span>}
+                            {direction.description?.[descTab] || <span className="dvm-no-data">{t('supervisor.noDescription')}</span>}
                         </div>
                     </div>
                 </div>
 
                 <div className="dvm-footer">
-                    <button className="dvm-btn-primary" onClick={onClose}>Понятно</button>
+                    <button className="dvm-btn-primary" onClick={onClose}>{t('common.close')}</button>
                 </div>
             </div>
         </div>
