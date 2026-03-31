@@ -4,12 +4,16 @@ import {
     X, Download, Plus,
     FileCheck, ClipboardList,
     MessageSquare, Calendar, User,
-    GraduationCap
+    GraduationCap, FileText, Upload, CheckCircle
 } from "lucide-react"
 
 export default function StudentModal({ student, setStudent, setStudents }) {
     const { t } = useTranslation()
     const [tempNote, setTempNote] = useState("")
+    const [reviewStatus, setReviewStatus] = useState("not_written")
+    const [reviewText, setReviewText] = useState("")
+    const [reviewFile, setReviewFile] = useState(null)
+    const [showConfirm, setShowConfirm] = useState(false)
 
     const getCurrentDate = () =>
         new Date().toLocaleString("ru-RU", {
@@ -54,6 +58,39 @@ export default function StudentModal({ student, setStudent, setStudents }) {
         ))
         setStudent(prev => ({ ...prev, supervisorFiles: [...prev.supervisorFiles, newFile] }))
     }
+
+    const getReviewBadge = () => {
+        switch (reviewStatus) {
+            case "draft":
+                return { className: "sm-review-badge-yellow", label: t("supervisor.reviewDraft") }
+            case "submitted":
+                return { className: "sm-review-badge-green", label: t("supervisor.reviewSubmitted") }
+            default:
+                return { className: "sm-review-badge-gray", label: t("supervisor.reviewNotWritten") }
+        }
+    }
+
+    const handleSaveDraft = () => {
+        if (!reviewText.trim()) return
+        setReviewStatus("draft")
+    }
+
+    const handleSubmitReview = () => {
+        if (!showConfirm) {
+            setShowConfirm(true)
+            return
+        }
+        setReviewStatus("submitted")
+        setShowConfirm(false)
+    }
+
+    const handleReviewFileChange = (e) => {
+        const file = e.target.files[0]
+        if (file) setReviewFile(file)
+    }
+
+    const reviewBadge = getReviewBadge()
+    const isSubmitted = reviewStatus === "submitted"
 
     if (!student) return null;
 
@@ -173,6 +210,76 @@ export default function StudentModal({ student, setStudent, setStudents }) {
                             </button>
                         </div>
                     </div>
+                </div>
+
+                {/* SUPERVISOR REVIEW SECTION */}
+                <div className={`sm-review-section ${isSubmitted ? "sm-review-submitted" : ""}`}>
+                    <div className="sm-review-header">
+                        <h4 className="sm-section-label">
+                            <FileText size={18} /> {t("supervisor.supervisorReview")}
+                        </h4>
+                        <span className={`sm-review-badge ${reviewBadge.className}`}>
+                            {reviewBadge.label}
+                        </span>
+                    </div>
+
+                    {isSubmitted && (
+                        <div className="sm-review-submitted-notice">
+                            <CheckCircle size={16} />
+                            <span>{t("supervisor.reviewSubmittedMessage")}</span>
+                        </div>
+                    )}
+
+                    <textarea
+                        className="sm-review-textarea"
+                        rows={5}
+                        placeholder={t("supervisor.reviewTextPlaceholder")}
+                        value={reviewText}
+                        onChange={e => setReviewText(e.target.value)}
+                        readOnly={isSubmitted}
+                    />
+
+                    <div className="sm-review-file-row">
+                        <label className="sm-review-file-label">
+                            <Upload size={14} />
+                            <span>{t("supervisor.reviewDocument")}</span>
+                        </label>
+                        {!isSubmitted && (
+                            <input
+                                type="file"
+                                accept=".pdf,.docx,.doc"
+                                className="sm-review-file-input"
+                                onChange={handleReviewFileChange}
+                            />
+                        )}
+                        {reviewFile && (
+                            <span className="sm-review-file-name">{reviewFile.name}</span>
+                        )}
+                    </div>
+
+                    {!isSubmitted && (
+                        <div className="sm-review-actions">
+                            {showConfirm && (
+                                <p className="sm-review-confirm-msg">
+                                    {t("supervisor.confirmSubmitReview")}
+                                </p>
+                            )}
+                            <div className="sm-review-buttons">
+                                <button
+                                    className="sm-review-btn sm-review-btn-secondary"
+                                    onClick={handleSaveDraft}
+                                >
+                                    {t("supervisor.saveDraft")}
+                                </button>
+                                <button
+                                    className="sm-review-btn sm-review-btn-primary"
+                                    onClick={handleSubmitReview}
+                                >
+                                    {showConfirm ? `${t("supervisor.submitReview")}?` : t("supervisor.submitReview")}
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

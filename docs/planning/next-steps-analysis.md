@@ -27,6 +27,7 @@ Required work:
 Acceptance criteria:
 - Language switcher changes text on all major pages in all 4 apps.
 - No critical user-facing static labels remain hardcoded.
+- Status: ✅ Completed — Full i18n sweep across student, universal, department, and admin; 508 translation keys in ru/en/kk; all apps build successfully. (Completed: 2026-03-31)
 
 ### 2) Finish Static Functional Flows for All Roles
 

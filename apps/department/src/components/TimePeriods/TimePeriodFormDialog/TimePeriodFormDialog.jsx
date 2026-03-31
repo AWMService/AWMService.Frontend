@@ -14,6 +14,7 @@ export default function TimePeriodFormDialog({
         startDate: "",
         endDate: "",
     });
+    const [error, setError] = useState("");
 
     const periodOptions = [
         { value: "Предзащита 1", label: t('student.preDefense1') },
@@ -39,10 +40,22 @@ export default function TimePeriodFormDialog({
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
+        if (name === "startDate" || name === "endDate") {
+            setError("");
+        }
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!formData.startDate || !formData.endDate) {
+            setError(t('department.validationStartBeforeEnd'));
+            return;
+        }
+        if (formData.startDate > formData.endDate) {
+            setError(t('department.validationStartBeforeEnd'));
+            return;
+        }
+        setError("");
         onSubmit(formData);
     };
 
@@ -90,6 +103,8 @@ export default function TimePeriodFormDialog({
                             required
                         />
                     </label>
+
+                    {error && <span className="dialog__error">{error}</span>}
 
                     <div className="dialog-buttons">
                         <button type="submit" className="button primary-button">

@@ -1,0 +1,134 @@
+.settings-page {
+    background-color: #F9FAFB;
+    flex: 1;
+    margin-top: 64px;
+    padding: 44px 52px;
+    font-family: "Inter", sans-serif;
+}
+
+.page-header {
+    margin-bottom: 20px;
+}
+
+.page-header h1 {
+    margin: 0 0 8px;
+    color: #0F172A;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.page-subtitle {
+    margin: 0;
+    color: #64748B;
+    font-size: 14px;
+}
+
+.settings-card {
+    border: 1px solid #E5E7EB;
+    background: #FFFFFF;
+    border-radius: 14px;
+    padding: 18px;
+    display: grid;
+    gap: 18px;
+    max-width: 760px;
+}
+
+.settings-group h2 {
+    margin: 0 0 12px;
+    color: #1F2937;
+    font-size: 16px;
+}
+
+.field-label {
+    display: block;
+    color: #4B5563;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.text-input {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 12px;
+    background: #FFFFFF;
+    border: 1px solid #D1D5DB;
+    color: #1F2937;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.text-input:focus {
+    outline: none;
+    border-color: #2563EB;
+}
+
+select.text-input {
+    appearance: auto;
+    cursor: pointer;
+}
+
+.switch-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #1F2937;
+    margin-bottom: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.switch-row input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-secondary,
+.btn-primary {
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-secondary {
+    background: #F3F4F6;
+    color: #111827;
+}
+
+.btn-primary {
+    background: #2563EB;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #1D4ED8;
+}
+
+.btn-secondary:hover {
+    background: #E5E7EB;
+}
+
+.feedback {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.feedback-success {
+    color: #16A34A;
+}
+
+.feedback-error {
+    color: #DC2626;
+}

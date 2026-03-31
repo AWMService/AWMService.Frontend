@@ -11,6 +11,7 @@ import menuIcon from "../../assets/icons/menu-icon.svg";
 import xIcon from "../../assets/icons/x-icon.svg";
 import scheduleIcon from "../../assets/icons/reports-sidebar-icon.svg";
 import checkIcon from "../../assets/icons/reports-sidebar-icon.svg";
+import bellIcon from "../../assets/icons/bell-icon.svg";
 
 export function UniversalSidebar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -112,6 +113,14 @@ export function UniversalSidebar() {
                 });
             }
         }
+
+        // Уведомления — для всех ролей
+        items.push({
+            href: "/notifications",
+            labelKey: "nav.notifications",
+            icon: bellIcon,
+            descriptionKey: "universal.notificationsDescription",
+        });
 
         return items;
     }, [currentRole]);

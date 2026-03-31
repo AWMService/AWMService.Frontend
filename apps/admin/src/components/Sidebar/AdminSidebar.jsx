@@ -39,6 +39,36 @@ export function AdminSidebar() {
       descriptionKey: "admin.departments",
     },
     {
+      href: "/institutes",
+      labelKey: "admin.institutesTitle",
+      icon: periodsIcon,
+      descriptionKey: "admin.institutesDescription",
+    },
+    {
+      href: "/education-levels",
+      labelKey: "admin.educationLevelsTitle",
+      icon: graduationCapIcon,
+      descriptionKey: "admin.educationLevelsDescription",
+    },
+    {
+      href: "/programs",
+      labelKey: "admin.programsTitle",
+      icon: periodsIcon,
+      descriptionKey: "admin.programsDescription",
+    },
+    {
+      href: "/work-types",
+      labelKey: "admin.workTypesTitle",
+      icon: periodsIcon,
+      descriptionKey: "admin.workTypesDescription",
+    },
+    {
+      href: "/students",
+      labelKey: "admin.studentsTitle",
+      icon: supervisorsIcon,
+      descriptionKey: "admin.studentsDescription",
+    },
+    {
       href: "/monitoring",
       labelKey: "admin.monitoring",
       icon: periodsIcon,

@@ -1,0 +1,252 @@
+.defense-readiness-page {
+    background-color: #f9fafb;
+    flex: 1;
+    margin-top: 64px;
+    padding: 56px;
+}
+
+.defense-readiness-page .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.defense-readiness-page .page-header-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.defense-readiness-page .page-header-icon-bg {
+    background-color: #dbeafe;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.defense-readiness-page .page-header-icon {
+    width: 2rem;
+    height: 2rem;
+    color: #2563eb;
+}
+
+.defense-readiness-page .page-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+    line-height: 1.55;
+}
+
+.defense-readiness-page .page-subtitle {
+    font-size: 0.875rem;
+    color: #4b5563;
+    margin-top: 0.25rem;
+}
+
+/* KPI Cards */
+.dr-kpi-cards {
+    display: flex;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.dr-kpi-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    flex: 1;
+    min-width: 200px;
+    border: 1px solid #e5e7eb;
+    border-left: 4px solid;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.dr-kpi-card--green {
+    border-left-color: #22c55e;
+}
+
+.dr-kpi-card--red {
+    border-left-color: #ef4444;
+}
+
+.dr-kpi-card--yellow {
+    border-left-color: #eab308;
+}
+
+.dr-kpi-label {
+    font-size: 0.8125rem;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.dr-kpi-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.dr-kpi-value--green {
+    color: #16a34a;
+}
+
+.dr-kpi-value--red {
+    color: #dc2626;
+}
+
+.dr-kpi-value--yellow {
+    color: #ca8a04;
+}
+
+/* Bulk bar */
+.dr-bulk-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.dr-selected-count {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.dr-admit-selected-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #fff;
+    background-color: #16a34a;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.dr-admit-selected-btn:hover {
+    background-color: #15803d;
+}
+
+.dr-admit-selected-btn:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+}
+
+/* Table */
+.dr-table-wrapper {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    overflow-x: auto;
+}
+
+.dr-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dr-table th {
+    background: #f9fafb;
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;
+}
+
+.dr-table td {
+    padding: 12px 16px;
+    font-size: 0.875rem;
+    color: #374151;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.dr-table tr:last-child td {
+    border-bottom: none;
+}
+
+.dr-table tr:hover {
+    background-color: #f9fafb;
+}
+
+.dr-checkbox {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #2563eb;
+}
+
+.dr-student-name {
+    font-weight: 500;
+    color: #1f2937;
+}
+
+.dr-topic {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dr-check-icon {
+    font-size: 1rem;
+    text-align: center;
+}
+
+/* Status badges */
+.dr-status-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.dr-status-badge--admitted {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.dr-status-badge--not-admitted {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.dr-status-badge--in-progress {
+    background: #fef9c3;
+    color: #ca8a04;
+}
+
+/* Admit button */
+.dr-admit-btn {
+    padding: 0.3rem 0.75rem;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #fff;
+    background-color: #16a34a;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    white-space: nowrap;
+}
+
+.dr-admit-btn:hover {
+    background-color: #15803d;
+}
+
+.dr-admit-btn:disabled {
+    background-color: #d1d5db;
+    color: #9ca3af;
+    cursor: not-allowed;
+}

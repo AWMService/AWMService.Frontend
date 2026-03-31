@@ -116,4 +116,10 @@
     }
 }
 
+.dialog__error {
+    color: #dc2626;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
 

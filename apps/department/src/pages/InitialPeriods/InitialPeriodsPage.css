@@ -1,0 +1,211 @@
+.initial-periods-page {
+    background-color: #F9FAFB;
+    flex: 1;
+    margin-top: 64px;
+    padding: 56px;
+}
+
+.initial-periods-page .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.initial-periods-page .page-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1F2937;
+    line-height: 1.55;
+}
+
+.initial-periods-page .page-subtitle {
+    font-size: 0.875rem;
+    color: #4B5563;
+    margin-top: 0.25rem;
+}
+
+/* ===================== PERIOD FORM ===================== */
+
+.periods-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.period-group {
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 20px;
+    background: #ffffff;
+}
+
+.period-group__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1F2937;
+    margin-bottom: 12px;
+}
+
+.period-group__dates {
+    display: flex;
+    gap: 16px;
+}
+
+.period-group__date-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.period-group__date-field label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.period-group__date-field input[type="date"] {
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 0.375rem;
+    border: 1px solid #E5E7EB;
+    font-size: 0.875rem;
+    color: #1F2937;
+    background: #ffffff;
+    outline: none;
+    transition: border-color 0.15s;
+    box-sizing: border-box;
+}
+
+.period-group__date-field input[type="date"]:focus {
+    border-color: #2563EB;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+}
+
+.period-group__error {
+    color: #DC2626;
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+.periods-form__order-error {
+    color: #DC2626;
+    font-size: 13px;
+    margin-top: 4px;
+    padding: 8px 12px;
+    background: #FEF2F2;
+    border-radius: 8px;
+    border: 1px solid #FECACA;
+}
+
+.periods-form__actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+/* ===================== SUMMARY VIEW ===================== */
+
+.periods-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.period-summary-card {
+    background: #ffffff;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.period-summary-card__info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.period-summary-card__name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1F2937;
+}
+
+.period-summary-card__dates {
+    font-size: 0.875rem;
+    color: #4B5563;
+}
+
+.period-summary-card__status {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #166534;
+    background: #DCFCE7;
+    border-radius: 9999px;
+}
+
+.periods-summary__actions {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 8px;
+}
+
+/* ===================== BUTTONS ===================== */
+
+.initial-periods-page .button {
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border: none;
+    transition: opacity 0.15s;
+}
+
+.initial-periods-page .primary-button {
+    background-color: #2563EB;
+    color: #ffffff;
+}
+
+.initial-periods-page .primary-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.initial-periods-page .secondary-button {
+    background-color: #ffffff;
+    color: #374151;
+    border: 1px solid #E5E7EB;
+}
+
+.initial-periods-page .secondary-button:hover {
+    background-color: #F9FAFB;
+}
+
+/* ===================== RESPONSIVE ===================== */
+
+@media (max-width: 768px) {
+    .initial-periods-page {
+        padding: 24px 16px;
+    }
+
+    .period-group__dates {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .period-summary-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+}

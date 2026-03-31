@@ -23,6 +23,8 @@ export {
 // Components
 export { LanguageSelector } from './components/LanguageSelector';
 export { RoleSelector } from './components/RoleSelector';
+export { ProtectedRoute } from './components/ProtectedRoute';
+export { ConfirmModal } from './components/ConfirmModal/ConfirmModal';
 
 // Re-export react-i18next hooks for convenience
 export { useTranslation, Trans } from 'react-i18next';

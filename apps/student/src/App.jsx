@@ -8,6 +8,9 @@ import DefenseStepPage from './pages/DefenseStepPage/DefenseStepPage.jsx';
 import ReviewStepPage from './pages/ReviewStepPage/ReviewStepPage.jsx';
 import AntiplagiarismPage from './pages/AntiplagiarismPage/AntiplagiarismPage.jsx';
 import CritiquePage from './pages/CritiquePage/CritiquePage.jsx';
+import ProfilePage from './pages/ProfilePage/ProfilePage.jsx';
+import MyWorkPage from './pages/MyWorkPage/MyWorkPage.jsx';
+import NotificationsPage from './pages/NotificationsPage/NotificationsPage.jsx';
 import documentCheckIcon from './assets/icons/document-check-icon.svg';
 import codeIcon from './assets/icons/code-icon.svg';
 
@@ -112,6 +115,9 @@ function App() {
                 <Route path="antiplagiarism" element={<AntiplagiarismPage />} />
                 <Route path="critique" element={<CritiquePage />} />
                 <Route path="defense" element={<DefenseStepPage {...defenseData} />} />
+                <Route path="profile" element={<ProfilePage />} />
+                <Route path="my-work" element={<MyWorkPage />} />
+                <Route path="notifications" element={<NotificationsPage />} />
             </Route>
             <Route path="*" element={<Navigate to="/choose-theme" replace />} />
         </Routes>

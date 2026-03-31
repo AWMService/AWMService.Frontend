@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import DocumentPreviewModal from '../../components/DocumentPreviewModal/DocumentPreviewModal';
+import RemarksFormModal from '../../components/RemarksFormModal/RemarksFormModal';
 import './NormocontrolPage.css';
 
 // Mock data для документов на нормоконтроль
-const mockDocuments = [
+const initialDocuments = [
     {
         id: 1,
         studentName: 'Иванов А.А.',
@@ -40,8 +42,47 @@ const mockDocuments = [
 function NormocontrolPage() {
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState('pending');
+    const [documents, setDocuments] = useState(initialDocuments);
+    const [selectedDocument, setSelectedDocument] = useState(null);
+    const [previewOpen, setPreviewOpen] = useState(false);
+    const [remarkOpen, setRemarkOpen] = useState(false);
 
-    const filteredDocs = mockDocuments.filter(doc => {
+    const openPreview = (doc) => {
+        setSelectedDocument(doc);
+        setPreviewOpen(true);
+    };
+
+    const openRemarkForm = (doc) => {
+        setSelectedDocument(doc);
+        setRemarkOpen(true);
+    };
+
+    const closeModals = () => {
+        setPreviewOpen(false);
+        setRemarkOpen(false);
+        setSelectedDocument(null);
+    };
+
+    const handleRemarkSubmit = (remark) => {
+        setDocuments((prev) =>
+            prev.map((doc) =>
+                doc.id === remark.documentId
+                    ? { ...doc, status: 'revision', remarks: (doc.remarks || 0) + 1 }
+                    : doc
+            )
+        );
+        closeModals();
+    };
+
+    const handleApprove = (docId) => {
+        setDocuments((prev) =>
+            prev.map((doc) =>
+                doc.id === docId ? { ...doc, status: 'approved' } : doc
+            )
+        );
+    };
+
+    const filteredDocs = documents.filter(doc => {
         if (activeTab === 'pending') return doc.status === 'pending';
         if (activeTab === 'revision') return doc.status === 'revision';
         if (activeTab === 'approved') return doc.status === 'approved';
@@ -62,7 +103,7 @@ function NormocontrolPage() {
             <div className="page-header">
                 <h1>{t('normocontrol.documentsCheck')}</h1>
                 <p className="page-subtitle">
-                    {t('normocontrol.pendingCheck')}: {mockDocuments.filter(d => d.status === 'pending').length}
+                    {t('normocontrol.pendingCheck')}: {documents.filter(d => d.status === 'pending').length}
                 </p>
             </div>
 
@@ -71,19 +112,19 @@ function NormocontrolPage() {
                     className={`tab ${activeTab === 'pending' ? 'active' : ''}`}
                     onClick={() => setActiveTab('pending')}
                 >
-                    {t('normocontrol.pendingCheck')} ({mockDocuments.filter(d => d.status === 'pending').length})
+                    {t('normocontrol.pendingCheck')} ({documents.filter(d => d.status === 'pending').length})
                 </button>
                 <button 
                     className={`tab ${activeTab === 'revision' ? 'active' : ''}`}
                     onClick={() => setActiveTab('revision')}
                 >
-                    {t('normocontrol.revision')} ({mockDocuments.filter(d => d.status === 'revision').length})
+                    {t('normocontrol.revision')} ({documents.filter(d => d.status === 'revision').length})
                 </button>
                 <button 
                     className={`tab ${activeTab === 'approved' ? 'active' : ''}`}
                     onClick={() => setActiveTab('approved')}
                 >
-                    {t('normocontrol.checked')} ({mockDocuments.filter(d => d.status === 'approved').length})
+                    {t('normocontrol.checked')} ({documents.filter(d => d.status === 'approved').length})
                 </button>
             </div>
 
@@ -119,15 +160,15 @@ function NormocontrolPage() {
                             </div>
 
                             <div className="document-actions">
-                                <button className="action-btn secondary">
+                                <button className="action-btn secondary" onClick={() => openPreview(doc)}>
                                     {t('common.view')}
                                 </button>
                                 {doc.status === 'pending' && (
                                     <>
-                                        <button className="action-btn success">
+                                        <button className="action-btn success" onClick={() => handleApprove(doc.id)}>
                                             {t('normocontrol.approved')}
                                         </button>
-                                        <button className="action-btn warning">
+                                        <button className="action-btn warning" onClick={() => openRemarkForm(doc)}>
                                             {t('normocontrol.addRemark')}
                                         </button>
                                     </>
@@ -143,6 +184,20 @@ function NormocontrolPage() {
                     </div>
                 )}
             </div>
+            {previewOpen && selectedDocument && (
+                <DocumentPreviewModal
+                    document={selectedDocument}
+                    onClose={closeModals}
+                />
+            )}
+
+            {remarkOpen && selectedDocument && (
+                <RemarksFormModal
+                    document={selectedDocument}
+                    onClose={closeModals}
+                    onSubmit={handleRemarkSubmit}
+                />
+            )}
         </div>
     );
 }

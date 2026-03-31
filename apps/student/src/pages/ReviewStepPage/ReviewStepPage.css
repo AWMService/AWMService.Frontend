@@ -100,3 +100,71 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Toggle переключатель ZIP / URL */
+.submit-mode-toggle {
+    display: inline-flex;
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 10px;
+    overflow: hidden;
+    width: fit-content;
+}
+
+.toggle-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #6B7280;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    user-select: none;
+}
+
+.toggle-option input[type="radio"] {
+    display: none;
+}
+
+.toggle-option.active {
+    background-color: #566F9E;
+    color: #FFFFFF;
+}
+
+/* Карточка ввода URL */
+.repo-url-card {
+    max-width: 640px;
+}
+
+.repo-url-field {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.repo-url-input {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 13px;
+    border: 1px solid #D1D5DB;
+    border-radius: 8px;
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.repo-url-input:focus {
+    border-color: #566F9E;
+}
+
+.repo-url-input.input-error {
+    border-color: #EF4444;
+}
+
+.repo-url-error {
+    margin: 8px 0 0;
+    font-size: 12px;
+    color: #EF4444;
+}

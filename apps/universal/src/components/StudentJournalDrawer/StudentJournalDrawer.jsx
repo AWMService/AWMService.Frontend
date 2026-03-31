@@ -82,6 +82,15 @@ export default function StudentJournalDrawer({
                     </tbody>
                 </table>
 
+                {(status === "editing" || status === "waiting") && (
+                    <div className="s-scores-hidden-banner">
+                        <span className="s-scores-hidden-icon">ℹ️</span>
+                        <span className="s-scores-hidden-text">
+                            {t('universal.scoresHiddenUntilReconciliation')}
+                        </span>
+                    </div>
+                )}
+
                 {status === "waiting" && (
                     <div
                         className="s-status-message"

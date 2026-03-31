@@ -14,6 +14,7 @@ import AntiPlagiarismDashboard from './pages/AntiPlagiarismDashboard.jsx';
 import ReviewerWorksPage from './pages/ReviewerWorksPage/ReviewerWorksPage.jsx';
 import NormocontrolPage from './pages/NormocontrolPage/NormocontrolPage.jsx';
 import CommissionPage from './pages/CommissionPage/CommissionPage.jsx';
+import NotificationsPage from './pages/NotificationsPage/NotificationsPage.jsx';
 import './App.css';
 
 function AppContent() {
@@ -103,6 +104,13 @@ function AppContent() {
                         <Route path="/checks" element={
                             <ProtectedRoute allowedRoles={[ROLES.SUPERVISOR]} fallback="/">
                                 <AntiPlagiarismDashboard />
+                            </ProtectedRoute>
+                        } />
+                        
+                        {/* Уведомления (все роли) */}
+                        <Route path="/notifications" element={
+                            <ProtectedRoute allowedRoles={UNIVERSAL_ROLES} fallback="/">
+                                <NotificationsPage />
                             </ProtectedRoute>
                         } />
                         

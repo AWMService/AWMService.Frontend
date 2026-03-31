@@ -1,0 +1,79 @@
+.institutes-page {
+    background-color: #F9FAFB;
+    flex: 1;
+    margin-top: 64px;
+    padding: 44px 52px;
+    font-family: "Inter", sans-serif;
+}
+
+.institutes-table {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.institutes-table .table-header {
+    display: grid;
+    grid-template-columns: 60px 1.5fr 2fr 100px 150px;
+    gap: 16px;
+    padding: 16px 20px;
+    background: #F9FAFB;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6B7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.institutes-table .table-row {
+    display: grid;
+    grid-template-columns: 60px 1.5fr 2fr 100px 150px;
+    gap: 16px;
+    padding: 16px 20px;
+    border-top: 1px solid #F3F4F6;
+    align-items: center;
+    transition: background 0.2s;
+}
+
+.institutes-table .table-row:hover {
+    background: #F9FAFB;
+}
+
+.institutes-table .col-num {
+    color: #6B7280;
+    font-size: 14px;
+}
+
+.institutes-table .col-name {
+    color: #1F2937;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.institutes-table .col-address {
+    color: #4B5563;
+    font-size: 14px;
+}
+
+.institutes-table .col-count {
+    color: #1F2937;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+@media (max-width: 1024px) {
+    .institutes-table .table-header,
+    .institutes-table .table-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .institutes-table .table-header {
+        display: none;
+    }
+
+    .institutes-table .table-row {
+        padding: 16px;
+    }
+}

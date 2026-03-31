@@ -42,10 +42,167 @@
     font-size: 15px;
 }
 
+.btn-reset-filters {
+    background: transparent;
+    color: #6b7280;
+    border: 1px solid #D9DBE0;
+    white-space: nowrap;
+}
+
+.btn-reset-filters:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.no-themes-message {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6b7280;
+    font-size: 15px;
+}
+
+/* Apply Modal */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.apply-modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.apply-modal h3 {
+    margin: 0 0 16px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1E293B;
+}
+
+.motivation-textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #D9DBE0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.motivation-textarea:focus {
+    outline: none;
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+.motivation-hint {
+    margin: 6px 0 16px;
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.apply-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
 .themes-list-container, .applications-list-container {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+}
+
+/* My Applications Page */
+
+.my-applications-header {
+    margin-bottom: 1.5rem;
+}
+
+.my-applications-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 0.25rem;
+}
+
+.my-applications-subtitle {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+}
+
+.my-applications-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6b7280;
+    font-size: 15px;
+}
+
+.my-application-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    background-color: #fff;
+}
+
+.my-app-card-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.my-app-card-content {
+    flex-grow: 1;
+}
+
+.my-app-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 0.25rem;
+}
+
+.my-app-card-supervisor {
+    font-size: 14px;
+    color: #666;
+    margin: 0 0 0.25rem;
+}
+
+.my-app-card-date {
+    font-size: 13px;
+    color: #9ca3af;
+    margin: 0;
+}
+
+.my-app-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+
+.my-app-card-extra {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #f3f4f6;
+    font-size: 13px;
+}
+
+.my-app-card-extra.approved-info {
+    color: #065f46;
+}
+
+.my-app-card-extra.rejected-info {
+    color: #991b1b;
 }
 
 

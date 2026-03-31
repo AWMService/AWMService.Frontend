@@ -2,18 +2,45 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './SettingsPage.css';
 
+const DEFAULT_SETTINGS = {
+  platformName: 'AWM Service',
+  supportEmail: 'support@awm.local',
+  notifyOnErrors: true,
+  maintenanceMode: false,
+};
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem('adminSettings');
+    return raw ? { ...DEFAULT_SETTINGS, ...JSON.parse(raw) } : DEFAULT_SETTINGS;
+  } catch {
+    return DEFAULT_SETTINGS;
+  }
+}
+
 function SettingsPage() {
   const { t } = useTranslation();
 
-  const [form, setForm] = useState({
-    platformName: 'AWM Service',
-    supportEmail: 'support@awm.local',
-    notifyOnErrors: true,
-    maintenanceMode: false,
-  });
+  const [form, setForm] = useState(loadSettings);
+  const [feedback, setFeedback] = useState(null);
 
   const handleChange = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
+    setFeedback(null);
+  };
+
+  const handleSave = () => {
+    if (!form.platformName.trim() || !form.supportEmail.trim()) {
+      setFeedback({ type: 'error', message: t('common.requiredFields', 'Please fill in all required fields') });
+      return;
+    }
+    localStorage.setItem('adminSettings', JSON.stringify(form));
+    setFeedback({ type: 'success', message: t('common.saved', 'Settings saved successfully') });
+  };
+
+  const handleCancel = () => {
+    setForm(loadSettings());
+    setFeedback(null);
   };
 
   return (
@@ -66,9 +93,13 @@ function SettingsPage() {
           </label>
         </div>
 
+        {feedback && (
+          <p className={`feedback feedback-${feedback.type}`}>{feedback.message}</p>
+        )}
+
         <div className="actions">
-          <button className="btn-secondary">{t('common.cancel')}</button>
-          <button className="btn-primary">{t('common.save')}</button>
+          <button className="btn-secondary" onClick={handleCancel}>{t('common.cancel')}</button>
+          <button className="btn-primary" onClick={handleSave}>{t('common.save')}</button>
         </div>
       </div>
     </div>

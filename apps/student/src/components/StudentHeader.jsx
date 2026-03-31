@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LanguageSelector } from '@awm/shared';
 import './StudentHeader.css';
@@ -93,6 +93,15 @@ export function StudentHeader() {
               {/* DROPDOWN ПРОФИЛЯ */}
               {userMenuOpen && (
                   <div className="dropdown-menu align-right">
+                    <Link to="/profile" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                      {t('student.profileTitle')}
+                    </Link>
+                    <Link to="/my-work" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                      {t('student.myWorkTitle')}
+                    </Link>
+                    <Link to="/notifications" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                      {t('student.notificationsTitle')}
+                    </Link>
                     <div className="dropdown-item logout" onClick={handleLogout}>
                       <img
                           src={logoutIcon}

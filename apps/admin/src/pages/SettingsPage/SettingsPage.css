@@ -94,3 +94,17 @@
     background: #2563EB;
     color: #fff;
 }
+
+.feedback {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.feedback-success {
+    color: #16A34A;
+}
+
+.feedback-error {
+    color: #DC2626;
+}

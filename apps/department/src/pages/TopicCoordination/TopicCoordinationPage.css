@@ -1,0 +1,418 @@
+.topic-coordination-page {
+    padding: 44px 52px;
+    background-color: #f9fafb;
+    min-height: 100vh;
+    font-family: "Inter", sans-serif;
+    margin-top: 64px;
+}
+
+/* ===================== HEADER ===================== */
+
+.topic-coordination-page .page-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
+.topic-coordination-page .page-subtitle {
+    margin-top: 6px;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.tc-stats-summary {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.tc-stat-item {
+    font-size: 13px;
+    font-weight: 500;
+    color: #475569;
+    padding: 4px 12px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 999px;
+}
+
+/* ===================== FILTERS ===================== */
+
+.tc-filters {
+    display: flex;
+    gap: 12px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.tc-filter-select {
+    padding: 9px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #0f172a;
+    background: #ffffff;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tc-filter-select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.tc-search-input {
+    flex: 1;
+    min-width: 220px;
+    max-width: 420px;
+    padding: 9px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #0f172a;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tc-search-input::placeholder {
+    color: #94a3b8;
+}
+
+.tc-search-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* ===================== TABLE ===================== */
+
+.tc-table-wrapper {
+    overflow-x: auto;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.tc-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tc-table thead th {
+    background: #f9fafb;
+    font-weight: 600;
+    font-size: 13px;
+    color: #475569;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;
+}
+
+.tc-table tbody td {
+    padding: 12px 16px;
+    font-size: 14px;
+    color: #1e293b;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle;
+}
+
+.tc-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tc-table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+.tc-col-checkbox {
+    width: 40px;
+    text-align: center;
+}
+
+.tc-col-checkbox input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #2563eb;
+}
+
+.tc-col-number {
+    width: 50px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.tc-col-actions {
+    white-space: nowrap;
+}
+
+/* ===================== STATUS BADGES ===================== */
+
+.tc-status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.tc-status-badge--pending {
+    background-color: #f3f4f6;
+    color: #6b7280;
+}
+
+.tc-status-badge--approved {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.tc-status-badge--rejected {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+/* ===================== ACTION BUTTONS ===================== */
+
+.tc-btn {
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.tc-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.tc-btn--approve {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.tc-btn--approve:hover:not(:disabled) {
+    background-color: #bbf7d0;
+}
+
+.tc-btn--reject {
+    background-color: #fee2e2;
+    color: #dc2626;
+    margin-left: 6px;
+}
+
+.tc-btn--reject:hover:not(:disabled) {
+    background-color: #fecaca;
+}
+
+/* ===================== BULK ACTIONS BAR ===================== */
+
+.tc-bulk-bar {
+    position: sticky;
+    bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-top: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    z-index: 10;
+}
+
+.tc-bulk-bar__label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #0369a1;
+    margin-right: auto;
+}
+
+.tc-bulk-btn {
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.tc-bulk-btn--approve {
+    background-color: #16a34a;
+    color: #ffffff;
+}
+
+.tc-bulk-btn--approve:hover {
+    background-color: #15803d;
+}
+
+.tc-bulk-btn--reject {
+    background-color: #dc2626;
+    color: #ffffff;
+}
+
+.tc-bulk-btn--reject:hover {
+    background-color: #b91c1c;
+}
+
+/* ===================== REJECT MODAL ===================== */
+
+.tc-reject-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.tc-reject-modal {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    width: 460px;
+    max-width: 90%;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    animation: tcFadeInScale 0.2s ease-out;
+}
+
+.tc-reject-modal__title {
+    margin: 0 0 16px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.tc-reject-modal textarea {
+    width: 100%;
+    height: 100px;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: #0f172a;
+    border: none;
+    border-radius: 8px;
+    resize: none;
+    background-color: #f3f4f6;
+    box-shadow: inset 0 0 0 1px #e5e7eb;
+    transition: box-shadow 0.15s ease;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.tc-reject-modal textarea::placeholder {
+    color: #94a3b8;
+}
+
+.tc-reject-modal textarea:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 2px #2563eb;
+}
+
+.tc-reject-modal__error {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #dc2626;
+}
+
+.tc-reject-modal__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.tc-reject-modal__btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.tc-reject-modal__btn--cancel {
+    background: transparent;
+    border: 1px solid #d1d5db;
+    color: #374151;
+}
+
+.tc-reject-modal__btn--cancel:hover {
+    background: #f3f4f6;
+}
+
+.tc-reject-modal__btn--confirm {
+    background-color: #dc2626;
+    color: #ffffff;
+}
+
+.tc-reject-modal__btn--confirm:hover {
+    background-color: #b91c1c;
+}
+
+.tc-reject-modal__btn--confirm:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ===================== FINALIZE ===================== */
+
+.tc-finalize-section {
+    margin-top: 24px;
+}
+
+.tc-finalize-btn {
+    width: 100%;
+    padding: 14px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    border: 2px solid #2563eb;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #2563eb;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.tc-finalize-btn:hover:not(:disabled) {
+    background: #eff6ff;
+}
+
+.tc-finalize-btn:disabled {
+    border-color: #d1d5db;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+/* ===================== EMPTY STATE ===================== */
+
+.tc-no-results {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 14px;
+    padding: 40px 0;
+}
+
+@keyframes tcFadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
