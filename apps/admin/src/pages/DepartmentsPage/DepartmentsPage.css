@@ -1,0 +1,139 @@
+.departments-page {
+    background-color: #F9FAFB;
+    flex: 1;
+    margin-top: 64px;
+    padding: 44px 52px;
+    font-family: "Inter", sans-serif;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #0F172A;
+    margin: 0 0 8px 0;
+}
+
+.page-subtitle {
+    color: #64748B;
+    font-size: 14px;
+    margin: 0;
+}
+
+.btn-primary {
+    padding: 10px 18px;
+    background: #2563EB;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+    background: #1D4ED8;
+}
+
+.tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    padding: 4px;
+    background: #E5E7EB;
+    border-radius: 12px;
+    width: fit-content;
+}
+
+.tab {
+    padding: 10px 20px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: #4B5563;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tab.active {
+    background: #FFFFFF;
+    color: #1F2937;
+}
+
+.items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.item-card {
+    padding: 24px;
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 16px;
+    transition: all 0.2s;
+}
+
+.item-card:hover {
+    background: #FFFFFF;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+}
+
+.item-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1F2937;
+    margin: 0 0 12px 0;
+}
+
+.faculty-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: rgba(99, 102, 241, 0.15);
+    border-radius: 20px;
+    font-size: 12px;
+    color: #818cf8;
+    margin-bottom: 16px;
+}
+
+.item-stats {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 16px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1F2937;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #6B7280;
+}
+
+.item-footer {
+    padding-top: 16px;
+    border-top: 1px solid #E5E7EB;
+    font-size: 13px;
+    color: #4B5563;
+}
+
+.faculty-card {
+    border-left: 4px solid #6366f1;
+}

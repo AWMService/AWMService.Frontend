@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { LanguageSelector } from '@awm/shared';
 import './StudentHeader.css';
 
 // Импорт иконок
 import logoutIcon from '../assets/icons/logout-icon.svg';
 import arrowDownIcon from '../assets/icons/arrow-down-icon.svg';
-import globeIcon from '../assets/icons/globe-icon.svg'; // Убедитесь, что иконка есть в папке
 
-// Вспомогательный компонент для иконок (как в примере)
+// Вспомогательный компонент для иконок
 const Icon = ({ src, alt, size = 16, className = "" }) => (
     <img
         src={src}
@@ -17,30 +18,26 @@ const Icon = ({ src, alt, size = 16, className = "" }) => (
           width: size,
           height: size,
           display: 'block',
-          filter: 'brightness(0) invert(1)', // Делает иконку белой
+          filter: 'brightness(0) invert(1)',
         }}
     />
 );
 
 export function StudentHeader() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   // Состояния для меню
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [languageOpen, setLanguageOpen] = useState(false);
 
   // Refs для отслеживания кликов вне элементов
   const userRef = useRef(null);
-  const languageRef = useRef(null);
 
   // Обработчик клика вне меню
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (userRef.current && !userRef.current.contains(e.target)) {
         setUserMenuOpen(false);
-      }
-      if (languageRef.current && !languageRef.current.contains(e.target)) {
-        setLanguageOpen(false);
       }
     };
 
@@ -59,10 +56,10 @@ export function StudentHeader() {
           {/* ЛЕВАЯ ЧАСТЬ */}
           <div className="header-left">
             <div className="logo-section">
-              <div className="logo-box">С</div>
+              <div className="logo-box">{t('roles.student').charAt(0)}</div>
               <div>
-                <div className="logo-main">Студент</div>
-                <div className="logo-sub">Дипломная работа</div>
+                <div className="logo-main">{t('roles.student')}</div>
+                <div className="logo-sub">{t('student.thesisTitle')}</div>
               </div>
             </div>
           </div>
@@ -70,29 +67,8 @@ export function StudentHeader() {
           {/* ПРАВАЯ ЧАСТЬ */}
           <div className="header-right">
 
-            {/* --- ЯЗЫКОВОЕ МЕНЮ (НОВОЕ) --- */}
-            <div className="nav-item-dropdown" ref={languageRef}>
-              <button
-                  className="lang-selector"
-                  onClick={() => setLanguageOpen(!languageOpen)}
-              >
-                <Icon src={globeIcon} size={20} />
-                <span className="lang-label">RU</span>
-                <Icon
-                    src={arrowDownIcon}
-                    size={10}
-                    className={languageOpen ? 'rotate' : ''}
-                />
-              </button>
-
-              {languageOpen && (
-                  <div className="dropdown-menu align-right">
-                    <div className="dropdown-item">Русский (RU)</div>
-                    <div className="dropdown-item">English (EN)</div>
-                    <div className="dropdown-item">Қазақша (KZ)</div>
-                  </div>
-              )}
-            </div>
+            {/* --- ЯЗЫКОВОЕ МЕНЮ --- */}
+            <LanguageSelector />
 
             {/* --- ПРОФИЛЬ СТУДЕНТА --- */}
             <div className="nav-item-dropdown" ref={userRef}>
@@ -104,7 +80,7 @@ export function StudentHeader() {
 
                 <div className="user-info-box">
                   <div className="u-name">Сергеев Н.С.</div>
-                  <div className="u-role">Студент</div>
+                  <div className="u-role">{t('roles.student')}</div>
                 </div>
 
                 <Icon
@@ -123,7 +99,7 @@ export function StudentHeader() {
                           alt=""
                           style={{ width: 14, height: 14, marginRight: 8 }}
                       />
-                      Выйти
+                      {t('auth.logout')}
                     </div>
                   </div>
               )}

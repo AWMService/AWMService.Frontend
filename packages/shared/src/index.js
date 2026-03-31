@@ -1,5 +1,28 @@
 // Shared assets
 // Icons can be imported directly from '@awm/shared/src/assets/icons/...'
-// This file exports any shared utilities or components
 
-export { };
+// i18n
+export { default as i18n } from './i18n';
+export { 
+  resources, 
+  supportedLanguages, 
+  defaultLanguage, 
+  changeLanguage, 
+  getCurrentLanguage 
+} from './i18n';
+
+// Context
+export { 
+  RoleProvider, 
+  useRole, 
+  ROLES, 
+  UNIVERSAL_ROLES, 
+  ROLE_META 
+} from './context/RoleContext';
+
+// Components
+export { LanguageSelector } from './components/LanguageSelector';
+export { RoleSelector } from './components/RoleSelector';
+
+// Re-export react-i18next hooks for convenience
+export { useTranslation, Trans } from 'react-i18next';

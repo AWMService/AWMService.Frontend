@@ -1,20 +1,23 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import './ProgressStepper.css';
 import doneIcon from '../assets/icons/done-icon.svg';
 
-const steps = [
-  { id: 1, name: 'Выбор темы', path: '/student/choose-theme' },
-  { id: 2, name: 'Предзащита 1', path: '/student/pre-defense-1' },
-  { id: 3, name: 'Предзащита 2', path: '/student/pre-defense-2' },
-  { id: 4, name: 'Нормоконтроль', path: '/student/normocontrol' },
-  { id: 5, name: 'Проверка ПО', path: '/student/software-check' },
-  { id: 6, name: 'Антиплагиат', path: '/student/antiplagiarism' },
-  { id: 7, name: 'Рецензия', path: '/student/critique' },
-  { id: 8, name: 'Защита', path: '/student/defense' },
-];
-
 export function ProgressStepper({ currentStep = 1, highestCompletedStep = 1 }) {
+  const { t } = useTranslation();
+
+  const steps = [
+    { id: 1, nameKey: 'student.chooseTheme', path: '/choose-theme' },
+    { id: 2, nameKey: 'student.preDefense1', path: '/pre-defense-1' },
+    { id: 3, nameKey: 'student.preDefense2', path: '/pre-defense-2' },
+    { id: 4, nameKey: 'student.normocontrol', path: '/normocontrol' },
+    { id: 5, nameKey: 'student.softwareCheck', path: '/software-check' },
+    { id: 6, nameKey: 'student.antiplagiarism', path: '/antiplagiarism' },
+    { id: 7, nameKey: 'student.critique', path: '/critique' },
+    { id: 8, nameKey: 'student.defense', path: '/defense' },
+  ];
+
   return (
       <div className="stepper-container">
         {steps.map((step, index) => {
@@ -43,13 +46,13 @@ export function ProgressStepper({ currentStep = 1, highestCompletedStep = 1 }) {
                       <Link to={step.path} className="step-link">
                         <StepCircle />
                         <span className={`step-label ${isActive ? 'active' : ''}`}>
-                            {step.name}
+                            {t(step.nameKey)}
                         </span>
                       </Link>
                   ) : (
                       <div className="step-link">
                         <StepCircle />
-                        <span className="step-label">{step.name}</span>
+                        <span className="step-label">{t(step.nameKey)}</span>
                       </div>
                   )}
                 </div>

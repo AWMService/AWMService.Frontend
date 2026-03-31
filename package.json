@@ -6,13 +6,14 @@
   "scripts": {
     "dev": "turbo run dev",
     "dev:student": "turbo run dev --filter=@awm/student",
-    "dev:supervisor": "turbo run dev --filter=@awm/supervisor",
+    "dev:universal": "turbo run dev --filter=@awm/universal",
     "dev:department": "turbo run dev --filter=@awm/department",
-    "dev:legacy": "turbo run dev --filter=@awm/legacy",
+    "dev:admin": "turbo run dev --filter=@awm/admin",
     "build": "turbo run build",
     "build:student": "turbo run build --filter=@awm/student",
-    "build:supervisor": "turbo run build --filter=@awm/supervisor",
+    "build:universal": "turbo run build --filter=@awm/universal",
     "build:department": "turbo run build --filter=@awm/department",
+    "build:admin": "turbo run build --filter=@awm/admin",
     "lint": "turbo run lint"
   },
   "devDependencies": {
@@ -23,5 +24,10 @@
     "onlyBuiltDependencies": [
       "esbuild"
     ]
+  },
+  "dependencies": {
+    "i18next": "^26.0.2",
+    "i18next-browser-languagedetector": "^8.2.1",
+    "react-i18next": "^17.0.1"
   }
 }
