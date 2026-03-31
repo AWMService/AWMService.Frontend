@@ -1,15 +1,17 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import './UploadModal.css';
 import uploadIcon from '../../assets/icons/pre-defense/upload-icon.svg';
 
 export const UploadModal = ({ isOpen, onClose, onFileChange, onUpload, file }) => {
+    const { t } = useTranslation();
     if (!isOpen) return null;
 
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h4>Загрузка документа</h4>
+                    <h4>{t('student.uploadDocument')}</h4>
                     <button className="close-btn" onClick={onClose}>&times;</button>
                 </div>
 
@@ -27,7 +29,7 @@ export const UploadModal = ({ isOpen, onClose, onFileChange, onUpload, file }) =
                                     <div className="icon-wrapper check">✓</div>
                                     <div className="file-info">
                                         <p className="file-name-large">{file.name}</p>
-                                        <p className="file-size">Готов к отправке</p>
+                                        <p className="file-size">{t('student.readyToSend')}</p>
                                     </div>
                                 </div>
                             ) : (
@@ -35,8 +37,8 @@ export const UploadModal = ({ isOpen, onClose, onFileChange, onUpload, file }) =
                                     <div className="icon-wrapper">
                                         <img src={uploadIcon} alt="upload" />
                                     </div>
-                                    <p className="primary-text">Нажмите для выбора файла</p>
-                                    <p className="secondary-text">или перетащите его сюда</p>
+                                    <p className="primary-text">{t('student.clickToUploadOrDrag')}</p>
+                                    <p className="secondary-text">{t('student.orDragHere')}</p>
                                 </>
                             )}
                         </label>
@@ -44,9 +46,9 @@ export const UploadModal = ({ isOpen, onClose, onFileChange, onUpload, file }) =
                 </div>
 
                 <div className="modal-actions">
-                    <button className="btn-secondary" onClick={onClose}>Отмена</button>
+                    <button className="btn-secondary" onClick={onClose}>{t('common.cancel')}</button>
                     <button className="btn-primary" onClick={onUpload} disabled={!file}>
-                        Загрузить
+                        {t('common.upload')}
                     </button>
                 </div>
             </div>

@@ -1,11 +1,13 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import './DownloadableMaterialsCard.css';
 import fileIcon from '../../assets/icons/pre-defense/file-icon.svg';
 
 export const DownloadableMaterialsCard = ({ files }) => {
+    const { t } = useTranslation();
     return (
         <div className="card-compact">
-            <h3 className="card-title-compact">Материалы для скачивания</h3>
+            <h3 className="card-title-compact">{t('student.materialsToDownload')}</h3>
             <div className="files-list-compact">
                 {files.map((file, index) => (
                     <div className="file-row-compact" key={index}>
@@ -16,11 +18,11 @@ export const DownloadableMaterialsCard = ({ files }) => {
                                 <span className="fsize">{file.size}</span>
                             </div>
                         </div>
-                        <button className="link-btn">Скачать</button>
+                        <button className="link-btn">{t('common.download')}</button>
                     </div>
                 ))}
             </div>
-            <button className="btn-full-gray">Скачать всё архивом</button>
+            <button className="btn-full-gray">{t('common.downloadAll')}</button>
         </div>
     );
 };

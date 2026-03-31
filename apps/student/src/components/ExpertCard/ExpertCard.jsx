@@ -1,10 +1,12 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import './ExpertCard.css';
 
 export const ExpertCard = ({ expert }) => {
+    const { t } = useTranslation();
     return (
         <div className="card">
-            <h4>Назначенный эксперт</h4>
+            <h4>{t('student.assignedExpert')}</h4>
             <div className="expert-info">
                 <div className="expert-avatar-placeholder">
                     {expert.name.charAt(0)}

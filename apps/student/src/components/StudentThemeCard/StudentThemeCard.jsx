@@ -1,13 +1,14 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import './StudentThemeCard.css';
 
 export function StudentThemeCard({ theme, onApply, onCancel, onReapply }) {
+    const { t } = useTranslation();
     const { title, description, supervisor, availableSlots, direction, status, rejectionReason } = theme;
 
-    // Мини-бэджик статуса (только текст и цвет)
     const renderStatusLabel = () => {
-        if (status === 'applied') return <span className="status-text text-pending">● На рассмотрении</span>;
-        if (status === 'rejected') return <span className="status-text text-rejected">● Отклонено</span>;
+        if (status === 'applied') return <span className="status-text text-pending">● {t('student.pending')}</span>;
+        if (status === 'rejected') return <span className="status-text text-rejected">● {t('student.rejected')}</span>;
         return null;
     };
 
@@ -17,14 +18,14 @@ export function StudentThemeCard({ theme, onApply, onCancel, onReapply }) {
         if (status === 'applied') {
             return (
                 <button className="btn-compact btn-danger" onClick={() => onCancel(theme.id)}>
-                    Отменить
+                    {t('common.cancel')}
                 </button>
             );
         }
         if (status === 'rejected') {
             return (
                 <button className="btn-compact btn-primary" onClick={() => onReapply(theme.id)}>
-                    Повторить
+                    {t('student.reapply')}
                 </button>
             );
         }
@@ -35,7 +36,7 @@ export function StudentThemeCard({ theme, onApply, onCancel, onReapply }) {
                 onClick={() => onApply(theme.id)}
                 disabled={isFull}
             >
-                {isFull ? 'Занято' : 'Выбрать'}
+                {isFull ? t('student.occupied') : t('student.selectTheme')}
             </button>
         );
     };
@@ -43,31 +44,28 @@ export function StudentThemeCard({ theme, onApply, onCancel, onReapply }) {
     return (
         <div className={`theme-card-compact ${status === 'rejected' ? 'rejected-border' : ''}`}>
 
-            {/* ВЕРХ: Руководитель + Статус */}
             <div className="compact-header">
                 <span className="supervisor-sm">{supervisor}</span>
                 {renderStatusLabel()}
             </div>
 
-            {/* ЦЕНТР: Заголовок + Описание */}
             <div className="compact-body">
                 <h4 className="title-sm">{title}</h4>
                 <p className="desc-sm">{description}</p>
 
                 {status === 'rejected' && rejectionReason && (
                     <div className="reject-note">
-                        Причина: {rejectionReason}
+                        {t('student.reason')}{rejectionReason}
                     </div>
                 )}
             </div>
 
-            {/* НИЗ: Инфо + Кнопка */}
             <div className="compact-footer">
                 <div className="meta-row">
                     <span className="meta-item">{direction}</span>
                     <span className="meta-dot">•</span>
                     <span className={`meta-item ${availableSlots === 0 ? 'text-red' : ''}`}>
-                    {availableSlots > 0 ? `${availableSlots} места` : 'Мест нет'}
+                    {availableSlots > 0 ? t('student.placesAvailable', { count: availableSlots }) : t('student.noPlaces')}
                 </span>
                 </div>
                 {renderAction()}

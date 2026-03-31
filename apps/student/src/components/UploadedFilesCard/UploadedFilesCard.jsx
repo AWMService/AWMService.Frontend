@@ -1,24 +1,25 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import './UploadedFilesCard.css';
 import fileIcon from '../../assets/icons/pre-defense/file-icon.svg';
 import deleteIcon from '../../assets/icons/pre-defense/delete-icon.svg';
 
-// Добавляем onDeleteFile в деструктуризацию пропсов
 export const UploadedFilesCard = ({ uploadedFiles, onUploadClick, onDeleteFile, status }) => {
+    const { t } = useTranslation();
     return (
         <div className="card files-card">
             <div className="card-header-row">
-                <h4>Загруженные файлы</h4>
+                <h4>{t('student.uploadedFiles')}</h4>
                 {status !== 'success' && (
                     <button className="btn-link" onClick={onUploadClick}>
-                        + Загрузить версию
+                        {t('student.uploadVersion')}
                     </button>
                 )}
             </div>
 
             <div className="file-list">
                 {uploadedFiles.length === 0 ? (
-                    <p className="empty-state">Файлы еще не загружены</p>
+                    <p className="empty-state">{t('common.filesNotUploaded')}</p>
                 ) : (
                     uploadedFiles.map((f, i) => (
                         <div key={i} className="file-item-card">
@@ -33,8 +34,8 @@ export const UploadedFilesCard = ({ uploadedFiles, onUploadClick, onDeleteFile, 
                             {status !== 'success' && (
                                 <button
                                     className="delete-icon-btn"
-                                    title="Удалить"
-                                    onClick={() => onDeleteFile(i)} // Вызываем удаление
+                                    title={t('common.delete')}
+                                    onClick={() => onDeleteFile(i)}
                                 >
                                     <img src={deleteIcon} alt="delete" />
                                 </button>

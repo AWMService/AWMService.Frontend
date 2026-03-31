@@ -57,6 +57,12 @@
     "stageResults": "Stage results",
     "platform": "Platform",
     "choose": "Choose",
+    "clear": "Clear",
+    "contactInfo": "Contact information",
+    "team": "Team",
+    "approve": "Approve",
+    "reject": "Reject",
+    "confirmReject": "Confirm rejection",
     "startLabel": "Start:",
     "endLabel": "End:"
   },
@@ -110,6 +116,7 @@
     "myApplications": "My Applications",
     "preDefense1": "Pre-defense 1",
     "preDefense2": "Pre-defense 2",
+    "preDefense3": "Pre-defense 3",
     "normocontrol": "Document Control",
     "softwareCheck": "Software Check",
     "antiplagiarism": "Plagiarism Check",
@@ -184,7 +191,14 @@
     "antiplagiarismNote": "Only works that passed document control can undergo plagiarism check.",
     "belowThresholdNote": "Originality below threshold (70%). Fix remarks and pass document control again before recheck.",
     "meetsRequirements": "Your work meets requirements. This file version will be fixed for defense.",
-    "wordDocument": "Word Document"
+    "wordDocument": "Word Document",
+    "preDefenseInfoText": "Upload materials for pre-defense. Presentation and explanatory note are required.",
+    "uploadUpdatedMaterials": "Upload updated materials addressing previous pre-defense comments.",
+    "minorFormattingFixes": "Minor formatting comments. Overall, the work is ready for defense.",
+    "uploadFinalVersion": "Upload the final version of your work for defense.",
+    "fileFormatHint": "PDF, DOCX up to 10MB",
+    "clickToUploadOrDrag": "Click to select a file",
+    "orDragHere": "or drag and drop here"
   },
   "supervisor": {
     "topics": "Topics",

@@ -1,15 +1,16 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import './SubmissionCard.css';
-// Импортируйте ваши иконки здесь
 import uploadIcon from '../../assets/icons/pre-defense/upload-icon.svg';
 import fileIcon from '../../assets/icons/pre-defense/file-icon.svg';
 import deleteIcon from '../../assets/icons/pre-defense/delete-icon.svg';
 
 export const SubmissionCard = ({ isSubmitted, file, infoText, handleFileChange, handleSubmit, handleFileDelete }) => {
+    const { t } = useTranslation();
     return (
         <div className="card submission-card">
             <div className="card-header">
-                <h4 className="card-heading">Материалы защиты</h4>
+                <h4 className="card-heading">{t('student.defenseMaterials')}</h4>
             </div>
 
             <div className="card-body">
@@ -26,8 +27,8 @@ export const SubmissionCard = ({ isSubmitted, file, infoText, handleFileChange, 
                                     <div className="icon-circle">
                                         <img src={uploadIcon} alt="Upload" />
                                     </div>
-                                    <p className="dropzone-title">Нажмите для загрузки или перетащите файл</p>
-                                    <p className="dropzone-hint">PDF, DOCX до 10MB</p>
+                                    <p className="dropzone-title">{t('student.uploadOrDrag')}</p>
+                                    <p className="dropzone-hint">{t('student.fileFormatHint')}</p>
                                 </div>
                             </label>
                         ) : (
@@ -51,7 +52,7 @@ export const SubmissionCard = ({ isSubmitted, file, infoText, handleFileChange, 
                                 onClick={handleSubmit}
                                 disabled={!file}
                             >
-                                Отправить на проверку
+                                {t('student.sendForReview')}
                             </button>
                         </div>
                     </>
@@ -63,10 +64,10 @@ export const SubmissionCard = ({ isSubmitted, file, infoText, handleFileChange, 
                             </div>
                             <div className="file-info">
                                 <span className="file-name">{file ? file.name : 'Diplom_Ivanov.docx'}</span>
-                                <span className="file-tag">Загружено</span>
+                                <span className="file-tag">{t('common.uploaded')}</span>
                             </div>
                             <button onClick={handleFileDelete} className="btn-text-danger">
-                                Изменить
+                                {t('common.change')}
                             </button>
                         </div>
                     </div>

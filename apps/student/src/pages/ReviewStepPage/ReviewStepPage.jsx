@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './ReviewStepPage.css';
 import warningIcon from '../../assets/icons/alert-circle-icon.svg';
 import infoIcon from '../../assets/icons/pre-defense/info-icon.svg';
@@ -10,6 +11,7 @@ import { PeriodCard } from '../../components/PeriodCard/PeriodCard.jsx';
 import { ExpertCard } from '../../components/ExpertCard/ExpertCard.jsx';
 
 const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus }) => {
+    const { t } = useTranslation();
     const [status, setStatus] = useState(initialStatus || 'in_progress');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [file, setFile] = useState(null);
@@ -25,22 +27,22 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus }) => {
             case 'failed':
                 return (
                     <InfoBox icon={warningIcon} type="warning">
-                        <p className="info-title">Эксперт вернул работу на доработку</p>
-                        <p className="info-desc">Необходимо исправить замечания и загрузить новую версию.</p>
+                        <p className="info-title">{t('student.expertReturnedWork')}</p>
+                        <p className="info-desc">{t('student.fixAndReupload')}</p>
                     </InfoBox>
                 );
             case 'success':
                 return (
                     <InfoBox icon={infoIcon} type="success">
-                        <p className="info-title">Этап успешно пройден</p>
-                        <p className="info-desc">Материалы утверждены и будут использованы для защиты.</p>
+                        <p className="info-title">{t('student.stagePassed')}</p>
+                        <p className="info-desc">{t('student.materialsApproved')}</p>
                     </InfoBox>
                 );
-            default: // in_progress
+            default:
                 return (
                     <InfoBox icon={infoIcon} type="neutral">
-                        <p className="info-title">Ожидается проверка эксперта</p>
-                        <p className="info-desc">Вы можете загрузить обновленную версию до окончания срока.</p>
+                        <p className="info-title">{t('student.awaitingExpertReview')}</p>
+                        <p className="info-desc">{t('student.canUploadUpdated')}</p>
                     </InfoBox>
                 );
         }

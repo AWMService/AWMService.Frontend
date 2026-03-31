@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './AntiplagiarismPage.css';
 import infoIcon from '../../assets/icons/pre-defense/info-icon.svg';
 import warningIcon from '../../assets/icons/alert-circle-icon.svg';
@@ -20,27 +21,8 @@ const CircularProgress = ({ percentage, color }) => {
     return (
         <div className="progress-circle-wrapper">
             <svg height={radius * 2} width={radius * 2} className="progress-svg">
-                {/* Фоновый круг */}
-                <circle
-                    stroke="#E2E8F0"
-                    fill="transparent"
-                    strokeWidth={stroke}
-                    r={normalizedRadius}
-                    cx={radius}
-                    cy={radius}
-                />
-                {/* Активный круг */}
-                <circle
-                    stroke={color}
-                    fill="transparent"
-                    strokeWidth={stroke}
-                    strokeDasharray={circumference + ' ' + circumference}
-                    style={{ strokeDashoffset }}
-                    strokeLinecap="round"
-                    r={normalizedRadius}
-                    cx={radius}
-                    cy={radius}
-                />
+                <circle stroke="#E2E8F0" fill="transparent" strokeWidth={stroke} r={normalizedRadius} cx={radius} cy={radius} />
+                <circle stroke={color} fill="transparent" strokeWidth={stroke} strokeDasharray={circumference + ' ' + circumference} style={{ strokeDashoffset }} strokeLinecap="round" r={normalizedRadius} cx={radius} cy={radius} />
             </svg>
             <div className="progress-value" style={{ color: color }}>
                 {percentage}<span>%</span>
@@ -50,7 +32,8 @@ const CircularProgress = ({ percentage, color }) => {
 };
 
 const AntiplagiarismPage = () => {
-    const [status, setStatus] = useState('in_progress'); // in_progress, failed, success
+    const { t } = useTranslation();
+    const [status, setStatus] = useState('in_progress');
     const [originality, setOriginality] = useState(50);
     const [comments] = useState("1. Высокий процент цитирования во 2 главе.\n2. Перефразируйте выводы в практической части.\n3. Обновите список источников.");
     const [currentFile, setCurrentFile] = useState({ name: 'Дипломка_финал_v2.docx', size: '1.2 MB' });
@@ -58,12 +41,7 @@ const AntiplagiarismPage = () => {
     const [fileToUpload, setFileToUpload] = useState(null);
 
     const periodData = { startDate: '21.05.2025', endDate: '10.06.2025' };
-    const expertData = {
-        name: 'Паленшеев Н.П.',
-        position: 'Преподаватель',
-        degree: 'PhD',
-        avatar: null // Здесь может быть путь к фото
-    };
+    const expertData = { name: 'Паленшеев Н.П.', position: 'Преподаватель', degree: 'PhD', avatar: null };
 
     const handleFileChange = (e) => {
         if (e.target.files.length > 0) setFileToUpload(e.target.files[0]);
@@ -71,10 +49,8 @@ const AntiplagiarismPage = () => {
 
     const handleUpload = () => {
         if (!fileToUpload) return;
-        setCurrentFile({ name: fileToUpload.name, size: 'Загрузка...' });
+        setCurrentFile({ name: fileToUpload.name, size: t('common.loading') });
         setIsModalOpen(false);
-
-        // Симуляция проверки
         setTimeout(() => {
             const newPct = Math.floor(Math.random() * (95 - 40 + 1)) + 40;
             setOriginality(newPct);
@@ -88,22 +64,22 @@ const AntiplagiarismPage = () => {
             case 'in_progress':
                 return (
                     <InfoBox icon={infoIcon} type="neutral">
-                        <span className="info-text-main">Ожидание проверки</span>
-                        <p>Проверку на антиплагиат проходит только работа, успешно прошедшая этап нормоконтроля.</p>
+                        <span className="info-text-main">{t('student.waitingCheck')}</span>
+                        <p>{t('student.antiplagiarismNote')}</p>
                     </InfoBox>
                 );
             case 'failed':
                 return (
                     <InfoBox icon={warningIcon} type="warning">
-                        <span className="info-text-main">Требуется доработка</span>
-                        <p>Оригинальность ниже порога (70%). Исправьте замечания и пройдите нормоконтроль заново перед повторной проверкой.</p>
+                        <span className="info-text-main">{t('student.needsRevision')}</span>
+                        <p>{t('student.belowThresholdNote')}</p>
                     </InfoBox>
                 );
             case 'success':
                 return (
                     <InfoBox icon={successIcon} type="success">
-                        <span className="info-text-main">Проверка пройдена</span>
-                        <p>Ваша работа соответствует требованиям. Данная версия файла будет зафиксирована для защиты.</p>
+                        <span className="info-text-main">{t('student.checkPassed')}</span>
+                        <p>{t('student.meetsRequirements')}</p>
                     </InfoBox>
                 );
             default: return null;
@@ -113,7 +89,7 @@ const AntiplagiarismPage = () => {
     return (
         <div className="anti-page-container">
             <header className="anti-header">
-                <h2>Антиплагиат</h2>
+                <h2>{t('student.antiplagiarism')}</h2>
             </header>
 
             {renderInfoBox()}
@@ -123,8 +99,8 @@ const AntiplagiarismPage = () => {
                     {status === 'in_progress' ? (
                         <div className="glass-card file-card-active">
                             <div className="card-header">
-                                <h4>Текущий файл</h4>
-                                <span className="status-badge">На проверке</span>
+                                <h4>{t('student.currentFile')}</h4>
+                                <span className="status-badge">{t('student.onReview')}</span>
                             </div>
                             <div className="file-item">
                                 <div className="file-icon-bg">
@@ -132,25 +108,22 @@ const AntiplagiarismPage = () => {
                                 </div>
                                 <div className="file-info">
                                     <span className="file-name">{currentFile.name}</span>
-                                    <span className="file-meta">{currentFile.size} • Документ Word</span>
+                                    <span className="file-meta">{currentFile.size} • {t('student.wordDocument')}</span>
                                 </div>
                             </div>
                         </div>
                     ) : (
                         <div className="results-container">
                             <div className="glass-card result-stat-card">
-                                <h4>Оригинальность</h4>
-                                <CircularProgress
-                                    percentage={originality}
-                                    color={status === 'success' ? '#10B981' : '#EF4444'}
-                                />
+                                <h4>{t('student.originality')}</h4>
+                                <CircularProgress percentage={originality} color={status === 'success' ? '#10B981' : '#EF4444'} />
                                 <p className="stat-desc">
-                                    {status === 'success' ? 'Допустимый порог пройден' : 'Необходимо минимум 70%'}
+                                    {status === 'success' ? t('student.thresholdMet') : t('student.thresholdNotMet')}
                                 </p>
                             </div>
 
                             <div className="glass-card comments-section">
-                                <h4>Замечания эксперта</h4>
+                                <h4>{t('student.expertComments')}</h4>
                                 <div className="comments-content">
                                     {comments.split('\n').map((line, i) => (
                                         <p key={i} className="comment-line">{line}</p>
@@ -163,12 +136,12 @@ const AntiplagiarismPage = () => {
                     <div className="anti-actions">
                         {status === 'failed' && (
                             <button className='btn-primary' onClick={() => setIsModalOpen(true)}>
-                                Загрузить новую версию
+                                {t('student.uploadNewVersion')}
                             </button>
                         )}
                         {status === 'success' && (
                             <button className='btn-secondary'>
-                                Скачать полный отчет (PDF)
+                                {t('student.downloadFullReport')}
                             </button>
                         )}
                     </div>
@@ -180,13 +153,7 @@ const AntiplagiarismPage = () => {
                 </aside>
             </div>
 
-            <UploadModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onFileChange={handleFileChange}
-                onUpload={handleUpload}
-                file={fileToUpload}
-            />
+            <UploadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onFileChange={handleFileChange} onUpload={handleUpload} file={fileToUpload} />
         </div>
     );
 };

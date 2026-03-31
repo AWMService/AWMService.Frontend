@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './CritiquePage.css';
 import infoIcon from '../../assets/icons/pre-defense/info-icon.svg';
 import mailReviewIcon from '../../assets/icons/mail-review-icon.svg';
@@ -16,6 +17,7 @@ const downloadableFiles = [
 ];
 
 const CritiquePage = () => {
+    const { t } = useTranslation();
     const [reviewFile, setReviewFile] = useState(null);
     const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -42,13 +44,13 @@ const CritiquePage = () => {
             <header className="critique-header-compact">
                 <div className="header-row">
                     <img src={mailReviewIcon} alt="Icon" className="header-icon"/>
-                    <h1>Рецензия</h1>
+                    <h1>{t('student.critique')}</h1>
                 </div>
             </header>
 
             <div className="info-banner-compact">
                 <img src={infoIcon} alt="Info"/>
-                <p>Скачайте материалы, отправьте их рецензенту, а затем загрузите полученный отзыв.</p>
+                <p>{t('student.critiqueInstruction')}</p>
             </div>
 
             <div className="critique-grid-compact">
@@ -58,8 +60,8 @@ const CritiquePage = () => {
                             <div className="success-icon-wrap">
                                 <img src={doneIcon} alt="Success"/>
                             </div>
-                            <h3>Отзыв загружен</h3>
-                            <p className="success-text">Файл отправлен на проверку.</p>
+                            <h3>{t('student.reviewUploaded')}</h3>
+                            <p className="success-text">{t('student.fileSentForReview')}</p>
 
                             <div className="file-preview-compact">
                                 <img src={fileIcon} alt="File"/>
@@ -67,7 +69,7 @@ const CritiquePage = () => {
                             </div>
 
                             <button className="btn-text-only" onClick={() => setIsSubmitted(false)}>
-                                Заменить файл
+                                {t('student.replaceFile')}
                             </button>
                         </div>
                     ) : (

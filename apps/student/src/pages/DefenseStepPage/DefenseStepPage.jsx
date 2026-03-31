@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './DefenseStepPage.css';
 import { SubmissionCard } from '../../components/SubmissionCard/SubmissionCard.jsx';
 import { ScheduleCard } from '../../components/ScheduleCard/ScheduleCard.jsx';
@@ -6,6 +7,7 @@ import { Results } from '../../components/Results/Results.jsx';
 import { CommissionCard } from '../../components/CommissionCard/CommissionCard.jsx';
 import { DownloadableMaterialsCard } from '../../components/DownloadableMaterialsCard/DownloadableMaterialsCard.jsx';
 const DefenseStepPage = ({ pageTitle, schedule, commission, infoText, initialResults, resultsType }) => {
+  const { t } = useTranslation();
   const [isSubmitted, setIsSubmitted] = useState(!!initialResults);
   const [file, setFile] = useState(null);
   const [pageResults, setPageResults] = useState(initialResults);
@@ -19,18 +21,17 @@ const DefenseStepPage = ({ pageTitle, schedule, commission, infoText, initialRes
   const handleSubmit = () => {
     if (file) {
       setIsSubmitted(true);
-      // Mock results based on page type
       if (resultsType === 'defense') {
           setPageResults({
               finalGrade: 'A',
               commissionGrade: 95,
-              comments: "Отличная работа и уверенная защита! Поздравляем!"
+              commentsKey: 'student.excellentWork'
           });
       } else {
           setPageResults({
               finalScore: Math.floor(Math.random() * (100 - 60 + 1)) + 60,
               readiness: Math.floor(Math.random() * (100 - 70 + 1)) + 70,
-              comments: "Файл успешно загружен. Ожидайте результатов проверки."
+              commentsKey: 'student.fileUploaded'
           });
       }
     }
@@ -60,7 +61,7 @@ const DefenseStepPage = ({ pageTitle, schedule, commission, infoText, initialRes
           {isSubmitted && <Results results={pageResults} resultsType={resultsType} />}
         </div>
         <div className="defense-step-right">
-          <ScheduleCard title={`Расписание ${pageTitle}`} schedule={schedule} />
+          <ScheduleCard title={`${t('nav.schedule')} ${pageTitle}`} schedule={schedule} />
           <CommissionCard commission={commission} />
         </div>
       </div>

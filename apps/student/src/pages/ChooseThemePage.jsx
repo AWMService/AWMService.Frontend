@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StudentThemeCard } from '../components/StudentThemeCard/StudentThemeCard';
 import './StudentPage.css';
 
@@ -34,6 +35,7 @@ const initialThemes = [
 ];
 
 export default function ChooseThemePage() {
+  const { t } = useTranslation();
   const [themes, setThemes] = useState(initialThemes);
 
   const handleApply = (themeId) => {
@@ -45,7 +47,6 @@ export default function ChooseThemePage() {
   };
 
   const handleReapply = (themeId) => {
-    // In a real app, this might open a new application form or just reset the status
     setThemes(themes.map(t => t.id === themeId ? { ...t, status: 'applied', rejectionReason: undefined } : t));
   };
 
@@ -53,15 +54,15 @@ export default function ChooseThemePage() {
   return (
     <div className="student-content-container">
       <div className="filters-container">
-        <input type="text" placeholder="Поиск по названию..." className="search-input" />
+        <input type="text" placeholder={t('student.searchByTitle')} className="search-input" />
         <select className="filter-select">
-          <option>Все преподаватели</option>
+          <option>{t('student.allTeachers')}</option>
         </select>
         <select className="filter-select">
-          <option>Все направления</option>
+          <option>{t('student.allDirections')}</option>
         </select>
         <select className="filter-select">
-          <option>Все доступные</option>
+          <option>{t('student.allAvailable')}</option>
         </select>
       </div>
 
