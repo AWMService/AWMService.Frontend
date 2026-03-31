@@ -108,7 +108,7 @@ export function AdminHeader() {
               <div className="user-profile" onClick={() => setUserMenuOpen(!userMenuOpen)}>
                 <div className="avatar-circle">АД</div>
                 <div className="user-info-box">
-                  <div className="u-name">Администратор</div>
+                  <div className="u-name">{t('roles.admin')}</div>
                   <div className="u-role">{t('roles.admin')}</div>
                 </div>
                 <Icon

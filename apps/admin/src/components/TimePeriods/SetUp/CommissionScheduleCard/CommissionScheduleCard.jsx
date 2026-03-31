@@ -1,7 +1,9 @@
+import { useTranslation } from "react-i18next";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 import "./CommissionScheduleCard.css";
 
 export default function CommissionScheduleCard({ commission }) {
+    const { t } = useTranslation();
     return (
         <div className="schedule-card">
             <h4>{commission.name}</h4>
@@ -29,7 +31,7 @@ export default function CommissionScheduleCard({ commission }) {
 
                             {session.students.length === 0 && (
                                 <div className="slot-empty">
-                                    Перетащите студентов сюда
+                                    {t('department.dragStudentsHere')}
                                 </div>
                             )}
 
@@ -50,7 +52,7 @@ export default function CommissionScheduleCard({ commission }) {
                                                 {s.name}
                                                 {s.teamId && (
                                                     <span className="team-badge">
-                                                        Команда
+                                                        {t('common.team')}
                                                     </span>
                                                 )}
                                             </div>

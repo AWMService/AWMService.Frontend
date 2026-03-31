@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import "./DirectionModal.css";
 
 const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
+    const { t } = useTranslation();
     const [showRejection, setShowRejection] = useState(false);
     const [rejectionReason, setRejectionReason] = useState("");
     const [language, setLanguage] = useState("ru");
@@ -68,25 +70,25 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                 <div className="dm-scroll-area">
                     <h2 className="dm-title">{getTitle()}</h2>
                     <p className="dm-subtitle">
-                        Информация о направлении дипломной работы
+                        {t('department.directionInfo')}
                     </p>
 
                     <div className="dm-body">
                         <div className="dm-info-grid">
                             <div className="dm-info-item">
-                                <span className="dm-info-item__label">Тип работы</span>
+                                <span className="dm-info-item__label">{t('supervisor.workType')}</span>
                                 <span className="dm-info-item__value">{direction.type}</span>
                             </div>
                             <div className="dm-info-item">
                                 <span className="dm-info-item__label">
-                                    Научный руководитель
+                                    {t('department.scientificSupervisor')}
                                 </span>
                                 <span className="dm-info-item__value">
                                     {direction.supervisor}
                                 </span>
                             </div>
                             <div className="dm-info-item">
-                                <span className="dm-info-item__label">Дата подачи</span>
+                                <span className="dm-info-item__label">{t('department.submissionDate')}</span>
                                 <span className="dm-info-item__value">
                                     {direction.submittedAt}
                                 </span>
@@ -95,7 +97,7 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
 
                         <div className="dm-section">
                             <span className="dm-section__title">
-                                Описание направления
+                                {t('department.directionDescription')}
                             </span>
                             <div className="dm-description-box">
                                 <p>{getDescription()}</p>
@@ -106,7 +108,7 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                         {isRejected && direction.rejectionReason && (
                             <div className="dm-rejected-info">
                                 <span className="dm-rejected-info__label">
-                                    Причина отказа
+                                    {t('department.rejectionReason')}
                                 </span>
                                 <p className="dm-rejected-info__text">
                                     {direction.rejectionReason}
@@ -126,7 +128,7 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                                             setShowRejection(true)
                                         }
                                     >
-                                        Отклонить
+                                        {t('common.reject')}
                                     </button>
                                     <button
                                         className="dm-btn dm-btn--approve"
@@ -137,17 +139,17 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                                             )
                                         }
                                     >
-                                        Утвердить
+                                        {t('common.approve')}
                                     </button>
                                 </div>
                             ) : (
                                 <div className="dm-rejection-form">
                                     <h3 className="dm-rejection-form__title">
-                                        Причина отклонения
+                                        {t('supervisor.rejectionReason')}
                                     </h3>
                                     <textarea
                                         className="dm-rejection-form__textarea"
-                                        placeholder="Подробно опишите, что нужно исправить..."
+                                        placeholder={t('department.rejectReasonPlaceholder')}
                                         value={rejectionReason}
                                         onChange={(e) =>
                                             setRejectionReason(e.target.value)
@@ -162,14 +164,14 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                                                 setRejectionReason("");
                                             }}
                                         >
-                                            Отмена
+                                            {t('common.cancel')}
                                         </button>
                                         <button
                                             className="dm-btn dm-btn--confirm-reject"
                                             onClick={handleReject}
                                             disabled={!rejectionReason.trim()}
                                         >
-                                            Подтвердить отказ
+                                            {t('common.confirmReject')}
                                         </button>
                                     </div>
                                 </div>
@@ -179,7 +181,7 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                                 className="dm-btn dm-btn--close"
                                 onClick={handleClose}
                             >
-                                Закрыть
+                                {t('common.close')}
                             </button>
                         )}
                     </div>

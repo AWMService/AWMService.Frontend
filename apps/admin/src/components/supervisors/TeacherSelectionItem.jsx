@@ -1,7 +1,9 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import "./TeacherSelectionItem.css";
 
 export function TeacherSelectionItem({ teacher, isSelected, onToggle }) {
+  const { t } = useTranslation();
   return (
       <div
           className={`teacher-selection-item ${isSelected ? "selected" : ""}`}
@@ -22,9 +24,9 @@ export function TeacherSelectionItem({ teacher, isSelected, onToggle }) {
           </div>
 
           <div className="teacher-info-grid">
-            <p><span className="font-medium">Должность:</span> {teacher.position}</p>
-            <p><span className="font-medium">Степень:</span> {teacher.degree}</p>
-            <p><span className="font-medium">Специализация:</span> {teacher.specialization}</p>
+            <p><span className="font-medium">{t('department.position')}:</span> {teacher.position}</p>
+            <p><span className="font-medium">{t('department.degree')}:</span> {teacher.degree}</p>
+            <p><span className="font-medium">{t('department.specialization')}:</span> {teacher.specialization}</p>
           </div>
 
           <div className="teacher-contact-info">

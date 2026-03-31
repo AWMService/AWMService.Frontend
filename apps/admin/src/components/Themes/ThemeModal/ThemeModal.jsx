@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import "./ThemeModal.css";
 
 const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
+    const { t } = useTranslation();
     const [showRejection, setShowRejection] = useState(false);
     const [rejectionReason, setRejectionReason] = useState("");
     const [language, setLanguage] = useState("ru");
@@ -66,25 +68,25 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                 <div className="tm-scroll-area">
                     <h2 className="tm-title">{getTitle()}</h2>
                     <p className="tm-subtitle">
-                        Информация по теме дипломной работы
+                        {t('department.themeInfo')}
                     </p>
 
                     <div className="tm-body">
                         <div className="tm-info-grid">
                             <div className="tm-info-item">
-                                <span className="tm-info-item__label">Тип работы</span>
+                                <span className="tm-info-item__label">{t('supervisor.workType')}</span>
                                 <span className="tm-info-item__value">{theme.type}</span>
                             </div>
                             <div className="tm-info-item">
                                 <span className="tm-info-item__label">
-                                    Научный руководитель
+                                    {t('department.scientificSupervisor')}
                                 </span>
                                 <span className="tm-info-item__value">
                                     {theme.supervisor}
                                 </span>
                             </div>
                             <div className="tm-info-item">
-                                <span className="tm-info-item__label">Дата подачи</span>
+                                <span className="tm-info-item__label">{t('department.submissionDate')}</span>
                                 <span className="tm-info-item__value">
                                     {theme.submittedAt}
                                 </span>
@@ -93,7 +95,7 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
 
                         <div className="tm-section">
                             <span className="tm-section__title">
-                                Описание темы
+                                {t('department.themeDescription')}
                             </span>
                             <div className="tm-section__text">
                                 <p>{getDescription()}</p>
@@ -104,7 +106,7 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                         {isRejected && theme.rejectionReason && (
                             <div className="tm-rejected-info">
                                 <span className="tm-rejected-info__label">
-                                    Причина отказа
+                                    {t('department.rejectionReason')}
                                 </span>
                                 <p className="tm-rejected-info__text">
                                     {theme.rejectionReason}
@@ -122,7 +124,7 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                                         className="tm-btn tm-btn--reject"
                                         onClick={() => setShowRejection(true)}
                                     >
-                                        Отклонить
+                                        {t('common.reject')}
                                     </button>
                                     <button
                                         className="tm-btn tm-btn--approve"
@@ -133,17 +135,17 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                                             )
                                         }
                                     >
-                                        Утвердить
+                                        {t('common.approve')}
                                     </button>
                                 </div>
                             ) : (
                                 <div className="tm-rejection-form">
                                     <h3 className="tm-rejection-form__title">
-                                        Причина отклонения
+                                        {t('supervisor.rejectionReason')}
                                     </h3>
                                     <textarea
                                         className="tm-rejection-form__textarea"
-                                        placeholder="Подробно опишите, что нужно исправить..."
+                                        placeholder={t('department.rejectReasonPlaceholder')}
                                         value={rejectionReason}
                                         onChange={(e) =>
                                             setRejectionReason(e.target.value)
@@ -158,14 +160,14 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                                                 setRejectionReason("");
                                             }}
                                         >
-                                            Отмена
+                                            {t('common.cancel')}
                                         </button>
                                         <button
                                             className="tm-btn tm-btn--confirm-reject"
                                             onClick={handleReject}
                                             disabled={!rejectionReason.trim()}
                                         >
-                                            Подтвердить отказ
+                                            {t('common.confirmReject')}
                                         </button>
                                     </div>
                                 </div>
@@ -175,7 +177,7 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                                 className="tm-btn tm-btn--close"
                                 onClick={handleClose}
                             >
-                                Закрыть
+                                {t('common.close')}
                             </button>
                         )}
                     </div>

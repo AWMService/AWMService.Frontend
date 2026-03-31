@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import "./SupervisorSelectionDialog.css";
 import { TeacherSelectionItem } from "./TeacherSelectionItem.jsx";
 
@@ -8,6 +9,7 @@ export function SupervisorSelectionDialog({
                                             onOpenChange,
                                             onConfirm,
                                           }) {
+  const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState("");
   const [selectedTeacherIds, setSelectedTeacherIds] = useState([]);
 
@@ -48,11 +50,10 @@ export function SupervisorSelectionDialog({
             <div className="supervisor-dialog-header-row">
               <div>
                 <h3 className="supervisor-dialog-title">
-                  Выбрать научных руководителей
+                  {t('department.selectTeachers')}
                 </h3>
                 <p className="supervisor-dialog-description">
-                  Выберите преподавателей для назначения научными руководителями
-                  (можно выбрать несколько)
+                  {t('department.supervisorsSubtitle')}
                 </p>
               </div>
 
@@ -60,7 +61,7 @@ export function SupervisorSelectionDialog({
               <button
                   className="supervisor-dialog-close"
                   onClick={handleCancel}
-                  aria-label="Закрыть"
+                  aria-label={t('common.close')}
               >
                 <svg viewBox="0 0 24 24">
                   <path d="M6 6l12 12" />
@@ -82,7 +83,7 @@ export function SupervisorSelectionDialog({
 
               <input
                   type="text"
-                  placeholder="Поиск по имени или специализации..."
+                  placeholder={t('department.searchSupervisors')}
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value)}
                   className="supervisor-search-input"
@@ -93,13 +94,13 @@ export function SupervisorSelectionDialog({
             {selectedTeacherIds.length > 0 && (
                 <div className="supervisor-selection-info">
               <span>
-                Выбрано: {selectedTeacherIds.length} преподавателей
+                {t('department.selectedCount', { count: selectedTeacherIds.length })}
               </span>
                   <button
                       onClick={() => setSelectedTeacherIds([])}
                       className="supervisor-clear-button"
                   >
-                    Очистить
+                    {t('common.clear')}
                   </button>
                 </div>
             )}
@@ -119,8 +120,8 @@ export function SupervisorSelectionDialog({
                 ) : (
                     <div className="supervisor-empty">
                       {availableTeachers.length === 0
-                          ? "Все преподаватели уже назначены"
-                          : "Преподаватели не найдены"}
+                          ? t('department.allTeachersAssigned')
+                          : t('department.teachersNotFound')}
                     </div>
                 )}
               </div>
@@ -132,14 +133,14 @@ export function SupervisorSelectionDialog({
                   className="supervisor-button outline"
                   onClick={handleCancel}
               >
-                Отмена
+                {t('common.cancel')}
               </button>
               <button
                   className="supervisor-button primary"
                   onClick={handleConfirm}
                   disabled={selectedTeacherIds.length === 0}
               >
-                Добавить выбранных ({selectedTeacherIds.length})
+                {t('department.confirmAdd')} ({selectedTeacherIds.length})
               </button>
             </div>
           </div>

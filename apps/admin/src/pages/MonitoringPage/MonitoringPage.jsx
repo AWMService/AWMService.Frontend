@@ -11,10 +11,10 @@ const mockActivity = [
 ];
 
 const kpi = [
-  { key: 'activeUsers', label: 'Активные пользователи', value: 246 },
-  { key: 'errorRate', label: 'Ошибки за 24ч', value: 12 },
-  { key: 'newUsers', label: 'Новые пользователи', value: 17 },
-  { key: 'incidents', label: 'Инциденты', value: 2 },
+  { key: 'activeUsers', labelKey: 'admin.activeUsers', value: 246 },
+  { key: 'errorRate', labelKey: 'admin.errorsPerDay', value: 12 },
+  { key: 'newUsers', labelKey: 'admin.newUsers', value: 17 },
+  { key: 'incidents', labelKey: 'admin.incidents', value: 2 },
 ];
 
 function MonitoringPage() {
@@ -38,7 +38,7 @@ function MonitoringPage() {
       <div className="kpi-grid">
         {kpi.map((item) => (
           <div className="kpi-card" key={item.key}>
-            <div className="kpi-label">{item.label}</div>
+            <div className="kpi-label">{t(item.labelKey)}</div>
             <div className="kpi-value">{item.value}</div>
           </div>
         ))}

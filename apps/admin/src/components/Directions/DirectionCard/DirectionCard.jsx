@@ -1,7 +1,9 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import "./DirectionCard.css";
 import DirectionStatusBadge from "../DirectionStatusBadge/DirectionStatusBadge.jsx";
 const DirectionCard = ({ direction, onView, language = "ru" }) => {
+    const { t } = useTranslation();
     return (
         <div className="direction-card">
             <div className="direction-header">
@@ -13,11 +15,11 @@ const DirectionCard = ({ direction, onView, language = "ru" }) => {
 
             <div className="direction-footer">
                 <div className="direction-supervisor">{direction.supervisor}</div>
-                <div className="direction-date">Подано: {direction.submittedAt}</div>
+                <div className="direction-date">{t('department.submitted')}{direction.submittedAt}</div>
             </div>
 
             <button className="view-btn" onClick={() => onView(direction)}>
-                Смотреть
+                {t('department.viewDetails')}
             </button>
         </div>
     );

@@ -27,7 +27,7 @@ function SettingsPage() {
         <div className="settings-group">
           <h2>{t('admin.generalSettings')}</h2>
 
-          <label className="field-label" htmlFor="platform-name">Платформа</label>
+          <label className="field-label" htmlFor="platform-name">{t('common.platform')}</label>
           <input
             id="platform-name"
             className="text-input"
@@ -53,7 +53,7 @@ function SettingsPage() {
               checked={form.notifyOnErrors}
               onChange={(e) => handleChange('notifyOnErrors', e.target.checked)}
             />
-            <span>Уведомлять админов при ошибках</span>
+            <span>{t('admin.notifyOnErrors')}</span>
           </label>
 
           <label className="switch-row">
