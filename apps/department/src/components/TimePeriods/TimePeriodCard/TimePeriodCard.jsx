@@ -1,9 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import "./TimePeriodCard.css";
 
 export default function TimePeriodCard({ period, onDelete }) {
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const handleSetupClick = () => {
         navigate(`/time-periods/${period.id}/setup`);
@@ -18,17 +20,17 @@ export default function TimePeriodCard({ period, onDelete }) {
                         {period.name || period.title}
                     </h3>
                     <p className="tp-card__dates">
-                        Начало: <strong>{period.startDate}</strong> · Окончание:{" "}
+                        {t('department.startLabel')}: <strong>{period.startDate}</strong> · {t('department.endLabel')}:{" "}
                         <strong>{period.endDate}</strong>
                     </p>
                 </div>
 
                 <div className="tp-card__header-actions">
-                    <span className="tp-card__status">Предстоящий</span>
+                    <span className="tp-card__status">{t('department.upcoming')}</span>
 
                     <button
                         className="tp-card__icon-btn tp-card__icon-btn--danger"
-                        title="Удалить период"
+                        title={t('department.deletePeriod')}
                         onClick={onDelete}
                     >
                         <svg viewBox="0 0 24 24">
@@ -55,9 +57,9 @@ export default function TimePeriodCard({ period, onDelete }) {
 
             {/* ===== Summary ===== */}
             <div className="tp-card__summary">
-                <span>Комиссии: {period.commissions}</span>
-                <span>Студенты: {period.students}</span>
-                <span>Даты: {period.dates}</span>
+                <span>{t('commission.commissions')}: {period.commissions}</span>
+                <span>{t('commission.students')}: {period.students}</span>
+                <span>{t('department.dates')}: {period.dates}</span>
             </div>
 
             {/* ===== Actions ===== */}
@@ -70,7 +72,7 @@ export default function TimePeriodCard({ period, onDelete }) {
                         <path d="M12 20h9" />
                         <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
                     </svg>
-                    Настроить
+                    {t('department.configure')}
                 </button>
 
                 <button
@@ -85,7 +87,7 @@ export default function TimePeriodCard({ period, onDelete }) {
                         <line x1="8" y1="2" x2="8" y2="6" />
                         <line x1="3" y1="10" x2="21" y2="10" />
                     </svg>
-                    Расписание
+                    {t('nav.schedule')}
                 </button>
 
             </div>

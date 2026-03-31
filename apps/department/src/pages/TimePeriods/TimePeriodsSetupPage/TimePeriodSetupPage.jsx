@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { ArrowLeft } from "lucide-react";
 
 import CommissionSetupStep from "./steps/CommissionSetupStep";
@@ -113,6 +114,7 @@ const studentsMock = [
 
 export default function TimePeriodSetupPage() {
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const [currentStep, setCurrentStep] = useState(1);
     const [commissions, setCommissions] = useState([]);
@@ -141,7 +143,7 @@ export default function TimePeriodSetupPage() {
             ...prev,
             {
                 id: crypto.randomUUID(),
-                name: `Комиссия ${prev.length + 1}`,
+                name: `${t('department.commissionLabel')} ${prev.length + 1}`,
                 chairman: "",
                 secretary: "",
                 members: [],
@@ -285,9 +287,9 @@ export default function TimePeriodSetupPage() {
     };
 
     const steps = [
-        { id: 1, title: "Создание комиссий" },
-        { id: 2, title: "Планирование и распределение" },
-        { id: 3, title: "Финализация" },
+        { id: 1, title: t('department.createCommissions') },
+        { id: 2, title: t('department.planningDistribution') },
+        { id: 3, title: t('department.finalization') },
     ];
 
     const progressPercent = Math.round(
@@ -298,10 +300,10 @@ export default function TimePeriodSetupPage() {
         <div className="setup-page">
             {/* ИСПОЛЬЗУЕМ НОВУЮ ФУНКЦИЮ handleBack */}
             <button className="back-button" onClick={handleBack}>
-                <ArrowLeft size={18} /> Назад
+                <ArrowLeft size={18} /> {t('common.back')}
             </button>
 
-            <h1>Настройка периода</h1>
+            <h1>{t('department.setupPeriod')}</h1>
 
             <div className="progress-section">
                 <div className="progress-bar">
@@ -311,7 +313,7 @@ export default function TimePeriodSetupPage() {
                     />
                 </div>
                 <p className="progress-label">
-                    Этап {currentStep} из {steps.length} — {steps[currentStep - 1].title}
+                    {t('department.stageProgress', { current: currentStep, total: steps.length, title: steps[currentStep - 1].title })}
                 </p>
             </div>
 

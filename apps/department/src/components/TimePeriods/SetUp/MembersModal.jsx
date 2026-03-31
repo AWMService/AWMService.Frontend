@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import "./MembersModal.css";
 
 const teachers = [
@@ -15,6 +16,7 @@ const teachers = [
 ];
 
 export default function MembersModal({ isOpen, selected, onClose, onConfirm }) {
+    const { t } = useTranslation();
     const [checked, setChecked] = useState([]);
     const [query, setQuery] = useState("");
 
@@ -45,7 +47,7 @@ export default function MembersModal({ isOpen, selected, onClose, onConfirm }) {
     return (
         <div className="modal-backdrop" onClick={onClose}>
             <div className="modal" onClick={(e) => e.stopPropagation()}>
-                <h3 className="modal-title">Члены комиссии</h3>
+                <h3 className="modal-title">{t('commission.members')}</h3>
 
                 <div className="search-wrapper">
                     {/*<svg viewBox="0 0 24 24" className="search-icon">*/}
@@ -55,7 +57,7 @@ export default function MembersModal({ isOpen, selected, onClose, onConfirm }) {
 
                     <input
                         className="search-input"
-                        placeholder="Поиск преподавателя"
+                        placeholder={t('department.searchTeacher')}
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                     />
@@ -81,14 +83,14 @@ export default function MembersModal({ isOpen, selected, onClose, onConfirm }) {
 
                 <div className="modal-actions">
                     <button className="btn-secondary" onClick={onClose}>
-                        Отмена
+                        {t('common.cancel')}
                     </button>
                     <button
                         className="btn-primary"
                         disabled={checked.length !== 4}
                         onClick={() => onConfirm(checked)}
                     >
-                        Утвердить
+                        {t('department.confirmMembers')}
                     </button>
                 </div>
             </div>

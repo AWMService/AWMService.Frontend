@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import "./TimePeriodsPage.css";
 
 import TimePeriodCard from "../../components/TimePeriods/TimePeriodCard/TimePeriodCard.jsx";
@@ -7,6 +8,7 @@ import TimePeriodFormDialog from "../../components/TimePeriods/TimePeriodFormDia
 import plusIcon from "../../assets/icons/plus-icon.svg";
 
 export default function TimePeriodsPage() {
+    const { t } = useTranslation();
     const [timePeriods, setTimePeriods] = useState(() => {
         const saved = localStorage.getItem("timePeriods");
         return saved ? JSON.parse(saved) : [];
@@ -45,9 +47,9 @@ export default function TimePeriodsPage() {
             <div className="page-header">
                 <div className="page-header-info">
                     <div>
-                        <h1 className="page-title">Временные периоды</h1>
+                        <h1 className="page-title">{t('department.timePeriodsTitle')}</h1>
                         <p className="page-subtitle">
-                            Определение и управление периодами
+                            {t('department.timePeriodsSubtitle')}
                         </p>
                     </div>
                 </div>
@@ -57,7 +59,7 @@ export default function TimePeriodsPage() {
                     onClick={() => setIsDialogOpen(true)}
                 >
                     <img src={plusIcon} alt="Add" className="button-icon" />
-                    Добавить период
+                    {t('department.addPeriod')}
                 </button>
             </div>
 

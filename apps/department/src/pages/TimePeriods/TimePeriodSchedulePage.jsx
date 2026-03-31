@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     MapPin, ChevronDown, ChevronUp,
     ShieldCheck, ArrowLeft
@@ -50,6 +51,7 @@ const mockSchedule = {
 };
 
 export default function TimePeriodSchedulePage() {
+    const { t } = useTranslation();
     const [selectedDate, setSelectedDate] = useState('2026-06-10');
     const [expandedCards, setExpandedCards] = useState({});
 
@@ -97,7 +99,7 @@ export default function TimePeriodSchedulePage() {
                     <div className="header-content-row">
                         <div className="header-titles">
                             <h1>{mockSchedule.title}</h1>
-                            <p className="subtitle">Общий график работы комиссий</p>
+                            <p className="subtitle">{t('commission.overallSchedule')}</p>
                         </div>
                     </div>
                 </div>
@@ -143,7 +145,7 @@ export default function TimePeriodSchedulePage() {
                                         </div>
 
                                         <div className="students-section">
-                                            <div className="section-label">Студенты ({event.students.length}):</div>
+                                            <div className="section-label">{t('commission.students')} ({event.students.length}):</div>
                                             {/* Добавлен контейнер со скроллом */}
                                             <div className="students-scroll-area">
                                                 <div className="students-grid">
@@ -159,22 +161,22 @@ export default function TimePeriodSchedulePage() {
 
                                         <div className="commission-details">
                                             <button className="details-toggle" onClick={() => toggleCard(event.id)}>
-                                                <span>Состав комиссии</span>
+                                                <span>{t('department.commissionComposition')}</span>
                                                 {expandedCards[event.id] ? <ChevronUp size={16}/> : <ChevronDown size={16}/>}
                                             </button>
 
                                             {expandedCards[event.id] && (
                                                 <div className="details-content">
                                                     <div className="detail-row">
-                                                        <span className="label">Председатель:</span>
+                                                        <span className="label">{t('commission.chairmanLabel')}</span>
                                                         <span className="value">{event.chairman}</span>
                                                     </div>
                                                     <div className="detail-row">
-                                                        <span className="label">Секретарь:</span>
+                                                        <span className="label">{t('commission.secretaryLabel')}</span>
                                                         <span className="value">{event.secretary}</span>
                                                     </div>
                                                     <div className="detail-row members-block">
-                                                        <span className="label">Члены:</span>
+                                                        <span className="label">{t('commission.membersLabel')}</span>
                                                         <ul className="members-list-inline">
                                                             {event.members.map((m, i) => <li key={i}>{m}</li>)}
                                                         </ul>
@@ -190,7 +192,7 @@ export default function TimePeriodSchedulePage() {
                 ) : (
                     <div className="empty-state">
                         <div className="empty-icon">📅</div>
-                        <p>На этот день запланированных комиссий нет</p>
+                        <p>{t('commission.noCommissionsDay')}</p>
                     </div>
                 )}
             </div>

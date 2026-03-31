@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import "./SupervisorCard.css";
 
 export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
+  const { t } = useTranslation();
   const loadPercent = Math.min(
       Math.round((supervisor.currentStudents / supervisor.maxStudents) * 100),
       100
@@ -40,7 +42,7 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
             {onUpdateWorkload && (
                 <button
                     className="icon-button"
-                    title="Редактировать"
+                    title={t('common.edit')}
                     onClick={() => setIsEditingWorkload(true)}
                 >
                   <svg viewBox="0 0 24 24">
@@ -53,7 +55,7 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
             {onRemove && (
                 <button
                     className="icon-button danger"
-                    title="Удалить"
+                    title={t('common.delete')}
                     onClick={() => onRemove(supervisor.id)}
                 >
                   <svg viewBox="0 0 24 24">
@@ -71,7 +73,7 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
         <div className="card-content">
           <div className="grid-section">
             <div>
-              <h4 className="section-title">Контактная информация</h4>
+              <h4 className="section-title">{t('department.contactInfo')}</h4>
 
               <div className="contact-item">
                 <svg viewBox="0 0 24 24">
@@ -90,8 +92,8 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
             </div>
 
             <div>
-              <h4 className="section-title">Нагрузка</h4>
-              <p>Текущие студенты: {supervisor.currentStudents}</p>
+              <h4 className="section-title">{t('department.workload')}</h4>
+              <p>{t('department.currentStudentsLabel')}: {supervisor.currentStudents}</p>
 
               {isEditingWorkload ? (
                   <div className="edit-workload-input">
@@ -106,7 +108,7 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
 
                     <button
                         className="icon-button success"
-                        title="Сохранить"
+                        title={t('common.save')}
                         onClick={handleSaveWorkload}
                     >
                       <svg viewBox="0 0 24 24">
@@ -116,7 +118,7 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
 
                     <button
                         className="icon-button"
-                        title="Отмена"
+                        title={t('common.cancel')}
                         onClick={handleCancelEdit}
                     >
                       <svg viewBox="0 0 24 24">
@@ -127,7 +129,7 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
                   </div>
               ) : (
                   <div>
-                    <p>Максимум: {supervisor.maxStudents}</p>
+                    <p>{t('department.maximumLabel')}: {supervisor.maxStudents}</p>
 
                     <div className="progress-wrapper">
                       <div className="progress-bar">
@@ -144,7 +146,7 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
 
             {supervisor.assignedDate && (
                 <div>
-                  <h4 className="section-title">Дата назначения</h4>
+                  <h4 className="section-title">{t('department.assignedDate')}</h4>
                   <span>
                 {new Date(supervisor.assignedDate).toLocaleDateString("ru-RU")}
               </span>

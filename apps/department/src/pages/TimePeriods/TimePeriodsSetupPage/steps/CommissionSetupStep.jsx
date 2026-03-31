@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import CommissionCard from "../../../../components/TimePeriods/SetUp/CommissionCard";
 
 export default function CommissionSetupStep({
@@ -8,9 +9,11 @@ export default function CommissionSetupStep({
                                                 removeCommission,
                                                 onNext
                                             }) {
+    const { t } = useTranslation();
+
     return (
         <>
-            <h3>Создание комиссий</h3>
+            <h3>{t('department.createCommissions')}</h3>
 
             <div className="setup-first">
                 {commissions.map(c => (
@@ -28,7 +31,7 @@ export default function CommissionSetupStep({
                     className="btn-add-Commission"
                     onClick={addCommission}
                 >
-                    + Создать комиссию
+                    {t('department.addCommission')}
                 </button>
 
                 {commissions.length > 0 && (
@@ -36,7 +39,7 @@ export default function CommissionSetupStep({
                         className="btn-primary"
                         onClick={onNext}
                     >
-                        Следующий этап
+                        {t('department.nextStage')}
                     </button>
                 )}
             </div>

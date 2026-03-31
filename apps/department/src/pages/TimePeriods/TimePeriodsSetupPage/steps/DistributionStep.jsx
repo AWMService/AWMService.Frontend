@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import CommissionScheduleCard from "../../../../components/TimePeriods/SetUp/CommissionScheduleCard/CommissionScheduleCard";
 
@@ -16,6 +17,8 @@ export default function DistributionStep({
                                              onDragEnd,
                                              onNext
                                          }) {
+    const { t } = useTranslation();
+
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <div className="layout">
@@ -28,7 +31,7 @@ export default function DistributionStep({
                             {...p.droppableProps}
                             className="students-column"
                         >
-                            <h3>Студенты</h3>
+                            <h3>{t('commission.students')}</h3>
 
                             {freeStudents.map((s, i) => (
                                 <Draggable
@@ -46,7 +49,7 @@ export default function DistributionStep({
                                             {s.name}
                                             {s.teamId && (
                                                 <span className="team-badge">
-                                                    Команда
+                                                    {t('department.team')}
                                                 </span>
                                             )}
                                         </div>
@@ -61,7 +64,7 @@ export default function DistributionStep({
                 {/* RIGHT */}
                 <div className="slots-column">
                     <div className="slot-create-card">
-                        <h3>Создать слот защиты</h3>
+                        <h3>{t('department.createDefenseSlot')}</h3>
 
                         <div className="slot-form">
                             <input
@@ -78,7 +81,7 @@ export default function DistributionStep({
                                 value={slotCommissionId}
                                 onChange={e => setSlotCommissionId(e.target.value)}
                             >
-                                <option value="">Комиссия</option>
+                                <option value="">{t('department.commissionLabel')}</option>
                                 {commissions.map(c => (
                                     <option key={c.id} value={c.id}>
                                         {c.name}
@@ -90,7 +93,7 @@ export default function DistributionStep({
                                 className="btn-primary"
                                 onClick={addSessionToCommission}
                             >
-                                Добавить
+                                {t('common.add')}
                             </button>
                         </div>
                     </div>
@@ -99,7 +102,7 @@ export default function DistributionStep({
                         className="btn-outline"
                         onClick={autoDistribute}
                     >
-                        Распределить автоматически
+                        {t('department.autoDistribute')}
                     </button>
 
                     {commissions.map(c => (
@@ -113,7 +116,7 @@ export default function DistributionStep({
                         className="btn-primary"
                         onClick={onNext}
                     >
-                        Следующий этап
+                        {t('department.nextStage')}
                     </button>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import "./SupervisorsPage.css";
 import { SupervisorCard } from "../../components/supervisors/SupervisorCard.jsx";
 import { SupervisorSelectionDialog } from "../../components/supervisors/SupervisorSelectionDialog.jsx";
@@ -73,6 +74,7 @@ const allTeachers = [
 ];
 
 function SupervisorsPage() {
+    const { t } = useTranslation();
     const [supervisors, setSupervisors] = useState(initialSupervisors);
     const [searchTerm, setSearchTerm] = useState("");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -120,9 +122,9 @@ function SupervisorsPage() {
             <div className="page-header">
                 <div className="page-header-info">
                     <div>
-                        <h1 className="page-title">Научные руководители</h1>
+                        <h1 className="page-title">{t('department.supervisorsTitle')}</h1>
                         <p className="page-subtitle">
-                            Управление назначенными научными руководителями кафедры
+                            {t('department.supervisorsSubtitle')}
                         </p>
                     </div>
                 </div>
@@ -132,7 +134,7 @@ function SupervisorsPage() {
                     onClick={() => setIsDialogOpen(true)}
                 >
                     <img src={plusIcon} alt="Add" className="button-icon" />
-                    Добавить руководителей
+                    {t('department.addSupervisors')}
                 </button>
             </div>
 
@@ -140,7 +142,7 @@ function SupervisorsPage() {
                 <img src={searchIcon} alt="Search" className="search-bar-icon" />
                 <input
                     type="text"
-                    placeholder="Поиск по имени, специализации..."
+                    placeholder={t('department.searchSupervisors')}
                     className="search-bar-input"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}

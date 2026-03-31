@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import MembersModal from "./MembersModal";
 import "./CommissionCard.css";
 
@@ -84,6 +85,7 @@ function SelectBox({ label, value, onChange, placeholder }) {
 }
 
 export default function CommissionCard({ commission, onChange, onRemove }) {
+    const { t } = useTranslation();
     const [membersOpen, setMembersOpen] = useState(false);
 
     return (
@@ -101,7 +103,7 @@ export default function CommissionCard({ commission, onChange, onRemove }) {
                 {onRemove && (
                     <button
                         className="icon-button danger"
-                        title="Удалить комиссию"
+                        title={t('department.deleteCommission')}
                         onClick={() => onRemove(commission.id)}
                     >
                         <svg viewBox="0 0 24 24">
@@ -116,30 +118,30 @@ export default function CommissionCard({ commission, onChange, onRemove }) {
             </div>
 
             <SelectBox
-                label="Председатель"
+                label={t('commission.chairman')}
                 value={commission.chairman}
-                placeholder="Выберите преподавателя"
+                placeholder={t('department.selectTeacher')}
                 onChange={(value) =>
                     onChange({ ...commission, chairman: value })
                 }
             />
 
             <SelectBox
-                label="Технический секретарь"
+                label={t('department.technicalSecretary')}
                 value={commission.secretary}
-                placeholder="Выберите преподавателя"
+                placeholder={t('department.selectTeacher')}
                 onChange={(value) =>
                     onChange({ ...commission, secretary: value })
                 }
             />
 
             <div className="members-row">
-                <span>Члены комиссии</span>
+                <span>{t('commission.members')}</span>
                 <button
                     className="btn-link"
                     onClick={() => setMembersOpen(true)}
                 >
-                    Выбрать
+                    {t('department.selectMember')}
                 </button>
             </div>
 

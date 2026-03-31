@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 export default function FinalizationStep({
                                              commissions,
@@ -6,6 +7,7 @@ export default function FinalizationStep({
                                              totalStudents,
                                              onFinish
                                          }) {
+    const { t } = useTranslation();
     const distributedStudents = commissions.reduce((sum, c) => {
         return (
             sum +
@@ -15,21 +17,21 @@ export default function FinalizationStep({
 
     return (
         <>
-            <h3>Финализация</h3>
+            <h3>{t('department.finalization')}</h3>
 
             <div className="final-summary">
                 <div className="summary-card">
-                    <span>Всего студентов</span>
+                    <span>{t('department.totalStudents')}</span>
                     <strong>{totalStudents}</strong>
                 </div>
 
                 <div className="summary-card success">
-                    <span>Распределено</span>
+                    <span>{t('department.distributed')}</span>
                     <strong>{distributedStudents}</strong>
                 </div>
 
                 <div className="summary-card danger">
-                    <span>Не распределено</span>
+                    <span>{t('department.notDistributed')}</span>
                     <strong>{freeStudents.length}</strong>
                 </div>
             </div>
@@ -53,7 +55,7 @@ export default function FinalizationStep({
                                 </div>
 
                                 <div className="session-students">
-                                    Студентов: <strong>{s.students.length}</strong>
+                                    {t('commission.studentsCount', { count: s.students.length })}
                                 </div>
                             </div>
                         ))}
@@ -66,12 +68,12 @@ export default function FinalizationStep({
                 disabled={freeStudents.length > 0}
                 onClick={onFinish}
             >
-                Утвердить период
+                {t('department.approvePeriod')}
             </button>
 
             {freeStudents.length > 0 && (
                 <p className="final-warning">
-                    Не все студенты распределены
+                    {t('department.notAllDistributed')}
                 </p>
             )}
         </>

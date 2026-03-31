@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import "./DirectionsAndThemes.css";
 import DirectionCard from "../../components/Directions/DirectionCard/DirectionCard.jsx";
 import DirectionModal from "../../components/Directions/DirectionModal/DirectionModal.jsx";
@@ -72,6 +73,7 @@ const TABS = {
 const DirectionsAndThemes = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const query = new URLSearchParams(location.search);
     const activeTab = query.get("tab") || TABS.DIRECTIONS;
@@ -86,6 +88,13 @@ const DirectionsAndThemes = () => {
 
     const [searchQuery, setSearchQuery] = useState("");
     const [filterStatus, setFilterStatus] = useState("Все");
+
+    const filterOptions = [
+        { value: "Все", label: t('common.all') },
+        { value: "На рассмотрении", label: t('status.underReview') },
+        { value: "Утверждено", label: t('status.approved') },
+        { value: "Отклонено", label: t('status.rejected') },
+    ];
 
 
     const changeTab = (tab) => {
@@ -144,13 +153,13 @@ const DirectionsAndThemes = () => {
             <div className="page-header-info">
                 <div>
                     <h1 className="page-title">
-                        {isDirections ? "Направления ДП/ДР" : "Темы ДП/ДР"}
+                        {isDirections ? t('supervisor.directionsDP') : t('supervisor.themesDP')}
                     </h1>
 
                     <p className="page-subtitle">
                         {isDirections
-                            ? "Рассмотрение и утверждение направлений дипломных проектов и исследований"
-                            : "Рассмотрение и утверждение тем дипломных проектов и исследований"}
+                            ? t('department.directionsSubtitle')
+                            : t('department.themesSubtitle')}
                     </p>
                 </div>
 
@@ -161,14 +170,14 @@ const DirectionsAndThemes = () => {
                     className={`tab-btn ${isDirections ? "active" : ""}`}
                     onClick={() => changeTab(TABS.DIRECTIONS)}
                 >
-                    Направления <span>{directions.length}</span>
+                    {t('department.directions')} <span>{directions.length}</span>
                 </button>
 
                 <button
                     className={`tab-btn ${!isDirections ? "active" : ""}`}
                     onClick={() => changeTab(TABS.THEMES)}
                 >
-                    Темы <span>{themes.length}</span>
+                    {t('supervisor.topics')} <span>{themes.length}</span>
                 </button>
             </div>
 
@@ -179,24 +188,24 @@ const DirectionsAndThemes = () => {
                     className="search-input"
                     placeholder={
                         isDirections
-                            ? "Поиск по направлениям..."
-                            : "Поиск по темам..."
+                            ? t('department.searchDirections')
+                            : t('department.searchThemes')
                     }
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
 
                 <div className="filter-buttons">
-                    {["Все", "На рассмотрении", "Утверждено", "Отклонено"].map(
-                        (status) => (
+                    {filterOptions.map(
+                        ({ value, label }) => (
                             <button
-                                key={status}
+                                key={value}
                                 className={`filter-btn ${
-                                    filterStatus === status ? "active" : ""
+                                    filterStatus === value ? "active" : ""
                                 }`}
-                                onClick={() => setFilterStatus(status)}
+                                onClick={() => setFilterStatus(value)}
                             >
-                                {status} ({getCount(items, status)})
+                                {label} ({getCount(items, value)})
                             </button>
                         )
                     )}
@@ -206,7 +215,7 @@ const DirectionsAndThemes = () => {
 
             <div className="projects-list">
                 {filteredItems.length === 0 && (
-                    <p className="no-results">Ничего не найдено</p>
+                    <p className="no-results">{t('common.noResults')}</p>
                 )}
 
                 {isDirections &&
@@ -224,7 +233,7 @@ const DirectionsAndThemes = () => {
                             key={theme.id}
                             direction={{
                                 ...theme,
-                                type: "Тема дипломной работы",
+                                type: t('department.themeOfDiplomaWork'),
                             }}
                             onView={setSelectedTheme}
                         />

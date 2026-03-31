@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import "./TimePeriodFormDialog.css";
 
 export default function TimePeriodFormDialog({
@@ -7,6 +8,7 @@ export default function TimePeriodFormDialog({
                                                  onSubmit,
                                                  editingPeriod,
                                              }) {
+    const { t } = useTranslation();
     const [formData, setFormData] = useState({
         name: "",
         startDate: "",
@@ -14,10 +16,10 @@ export default function TimePeriodFormDialog({
     });
 
     const periodOptions = [
-        { value: "Предзащита 1", label: "Предзащита 1" },
-        { value: "Предзащита 2", label: "Предзащита 2" },
-        { value: "Предзащита 3", label: "Предзащита 3" },
-        { value: "Защита", label: "Защита" },
+        { value: "Предзащита 1", label: t('student.preDefense1') },
+        { value: "Предзащита 2", label: t('student.preDefense2') },
+        { value: "Предзащита 3", label: `${t('commission.preDefense')} 3` },
+        { value: "Защита", label: t('commission.defense') },
     ];
 
     useEffect(() => {
@@ -47,18 +49,18 @@ export default function TimePeriodFormDialog({
     return (
         <div className="dialog-backdrop">
             <div className="dialog">
-                <h2>{editingPeriod ? "Редактировать период" : "Создать период"}</h2>
+                <h2>{editingPeriod ? t('department.editPeriod') : t('department.createPeriod')}</h2>
 
                 <form onSubmit={handleSubmit}>
                     <label>
-                        Период:
+                        {t('common.period')}:
                         <select
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
                             required
                         >
-                            <option value="">Выберите период</option>
+                            <option value="">{t('department.selectPeriod')}</option>
                             {periodOptions.map((option) => (
                                 <option key={option.value} value={option.value}>
                                     {option.label}
@@ -68,7 +70,7 @@ export default function TimePeriodFormDialog({
                     </label>
 
                     <label>
-                        Дата начала:
+                        {t('department.startDate')}:
                         <input
                             type="date"
                             name="startDate"
@@ -79,7 +81,7 @@ export default function TimePeriodFormDialog({
                     </label>
 
                     <label>
-                        Дата окончания:
+                        {t('department.endDate')}:
                         <input
                             type="date"
                             name="endDate"
@@ -91,7 +93,7 @@ export default function TimePeriodFormDialog({
 
                     <div className="dialog-buttons">
                         <button type="submit" className="button primary-button">
-                            {editingPeriod ? "Сохранить" : "Создать"}
+                            {editingPeriod ? t('common.save') : t('common.create')}
                         </button>
 
                         <button
@@ -99,7 +101,7 @@ export default function TimePeriodFormDialog({
                             className="button secondary-button"
                             onClick={onClose}
                         >
-                            Отмена
+                            {t('common.cancel')}
                         </button>
                     </div>
                 </form>
