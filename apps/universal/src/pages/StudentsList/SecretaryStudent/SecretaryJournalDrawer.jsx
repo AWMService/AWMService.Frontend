@@ -1,13 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-export default function SecretaryJournalDrawer({ open, onClose, student }) {
+const CRITERIA = [
+    { id: 1, name: "Актуальность темы", maxScore: 20 },
+    { id: 2, name: "Качество исследования", maxScore: 25 },
+    { id: 3, name: "Практическая значимость", maxScore: 20 },
+    { id: 4, name: "Качество доклада", maxScore: 15 },
+    { id: 5, name: "Ответы на вопросы", maxScore: 20 },
+];
+
+function generateCriteriaScores(memberId) {
+    return CRITERIA.map(c => ({
+        criterionId: c.id,
+        score: Math.round(c.maxScore * (0.6 + ((memberId * c.id * 7) % 40) / 100))
+    }));
+}
+
+export default function SecretaryJournalDrawer({ open, onClose, student, isFinalized = false }) {
     const { t } = useTranslation();
-    // Начальный статус
     const [status, setStatus] = useState(student?.globalStatus || "gathering");
     const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [reviewRequested, setReviewRequested] = useState({});
 
-    // Список комиссии (5 человек)
     const [members, setMembers] = useState([
         { id: 1, name: "Иванов И.И.", role: "Председатель", status: "submitted", score: 88 },
         { id: 2, name: "Смирнова А.В.", role: "Член комиссии", status: "submitted", score: 82 },
@@ -16,45 +30,62 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
         { id: 5, name: "Алиев М.М.", role: "Член комиссии", status: "submitted", score: 78 },
     ]);
 
-    useEffect(() => {
-        if (student) setStatus(student.globalStatus);
-    }, [student]);
+    // Per-criterion scores for reconciliation
+    const [criteriaScores] = useState(() =>
+        members.map(m => ({
+            memberId: m.id,
+            scores: generateCriteriaScores(m.id)
+        }))
+    );
 
-    // 1. Открытие модалки
+    useEffect(() => {
+        if (student) setStatus(isFinalized ? "completed" : student.globalStatus);
+    }, [student, isFinalized]);
+
     const handleRevealClick = () => setShowConfirmModal(true);
 
-    // 2. Подтверждение открытия баллов (переход в режим обсуждения)
     const confirmRevealScores = () => {
         setShowConfirmModal(false);
         setStatus("reviewing");
     };
 
-    // 3. СИМУЛЯЦИЯ: Члены комиссии поменяли баллы и подтвердили
-    // (Эту функцию мы вызываем кликом по тексту ожидания)
     const simulateMembersFinalizing = () => {
         const updatedMembers = members.map(m => {
-            // Симулируем, что пару человек изменили мнение в ходе обсуждения
             let newScore = m.score;
-            if (m.id === 2) newScore = 85; // Смирнова подняла балл
-            if (m.id === 5) newScore = 80; // Алиев подняла балл
-
-            return {
-                ...m,
-                score: newScore,
-                status: "locked" // Все подтвердили финал
-            };
+            if (m.id === 2) newScore = 85;
+            if (m.id === 5) newScore = 80;
+            return { ...m, score: newScore, status: "locked" };
         });
-
         setMembers(updatedMembers);
-        setStatus("ready_to_lock"); // Теперь секретарь может закрыть протокол
+        setStatus("ready_to_lock");
     };
 
-    // 4. Финальное утверждение секретарем
     const handleFinalLock = () => {
         setStatus("completed");
     };
 
-    // Пересчет среднего балла на лету
+    const handleRequestReview = (criterionId) => {
+        setReviewRequested(prev => ({ ...prev, [criterionId]: true }));
+    };
+
+    // Check if scores for a criterion diverge too much (> 30% of max)
+    const hasDivergence = (criterionId) => {
+        const criterion = CRITERIA.find(c => c.id === criterionId);
+        const scores = criteriaScores.map(ms =>
+            ms.scores.find(s => s.criterionId === criterionId)?.score ?? 0
+        );
+        const max = Math.max(...scores);
+        const min = Math.min(...scores);
+        return (max - min) > criterion.maxScore * 0.3;
+    };
+
+    const getCriterionAverage = (criterionId) => {
+        const scores = criteriaScores.map(ms =>
+            ms.scores.find(s => s.criterionId === criterionId)?.score ?? 0
+        );
+        return (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1);
+    };
+
     const submittedScores = members.filter(m => m.score !== null).map(m => m.score);
     const averageScore = submittedScores.length
         ? (submittedScores.reduce((a, b) => a + b, 0) / submittedScores.length).toFixed(1)
@@ -99,6 +130,66 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
 
                     <hr className="s-divider" />
 
+                    {/* Reconciliation: criteria × members score table */}
+                    <div className="sec-reconciliation-section">
+                        <h4>{t('commission.criteria')}</h4>
+                        <div className="sec-reconciliation-table-wrapper">
+                            <table className="sec-reconciliation-table">
+                                <thead>
+                                    <tr>
+                                        <th>{t('journal.criteria')}</th>
+                                        {members.map(m => (
+                                            <th key={m.id}>{m.name.split(' ')[0]}</th>
+                                        ))}
+                                        <th>{t('commission.average')}</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {CRITERIA.map((criterion, idx) => {
+                                        const divergent = hasDivergence(criterion.id);
+                                        const requested = reviewRequested[criterion.id];
+                                        return (
+                                            <tr key={criterion.id} className={idx % 2 === 0 ? 'sec-row-even' : ''}>
+                                                <td className="sec-criterion-name">
+                                                    {criterion.name}
+                                                    <span className="sec-max-score">({t('journal.maxScore')} {criterion.maxScore})</span>
+                                                </td>
+                                                {criteriaScores.map(ms => {
+                                                    const s = ms.scores.find(s => s.criterionId === criterion.id);
+                                                    return (
+                                                        <td key={ms.memberId} className="sec-criterion-score">
+                                                            {s?.score ?? '-'}
+                                                        </td>
+                                                    );
+                                                })}
+                                                <td className="sec-criterion-avg">
+                                                    {getCriterionAverage(criterion.id)}
+                                                </td>
+                                                <td className="sec-criterion-action">
+                                                    {divergent && !requested && !isFinalized && status !== "completed" && (
+                                                        <button
+                                                            className="sec-review-btn"
+                                                            onClick={() => handleRequestReview(criterion.id)}
+                                                            title={t('commission.scoreDivergence')}
+                                                        >
+                                                            {t('commission.requestReview')}
+                                                        </button>
+                                                    )}
+                                                    {requested && (
+                                                        <span className="sec-review-sent">✓</span>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <hr className="s-divider" />
+
                     {/* Итоговый балл */}
                     <div className={`sec-summary-box ${status === 'completed' ? 'locked' : ''}`}>
                         <span>
@@ -107,15 +198,12 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
                         <strong>{averageScore}</strong>
                     </div>
 
-                    {/* БЛОКИ СООБЩЕНИЙ */}
-
                     {status === "gathering" && (
                         <div className="s-status-message">
                             {t('messages.waitingGrades')}
                         </div>
                     )}
 
-                    {/* СИМУЛЯТОР: Нажми сюда, чтобы завершить обсуждение */}
                     {status === "reviewing" && (
                         <div
                             className="s-status-message sec-msg-blue clickable-simulate"
@@ -137,9 +225,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
 
                 <div className="s-drawer-footer">
                     <div className="s-actions">
-                        {/* Кнопка 1: Показать баллы */}
-                        {(status === "ready_to_reveal" || status === "gathering") && (
-                            // Для теста разрешаем нажать даже в gathering, если все submitted
+                        {!isFinalized && (status === "ready_to_reveal" || status === "gathering") && (
                             <button
                                 className="s-btn-primary"
                                 onClick={handleRevealClick}
@@ -149,29 +235,25 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
                             </button>
                         )}
 
-                        {/* Кнопка 2: Ждем (выключена) */}
-                        {status === "reviewing" && (
+                        {!isFinalized && status === "reviewing" && (
                             <button className="s-btn-secondary" disabled>
                                 {t('messages.discussionActive')}
                             </button>
                         )}
 
-                        {/* Кнопка 3: УТВЕРДИТЬ */}
-                        {status === "ready_to_lock" && (
+                        {!isFinalized && status === "ready_to_lock" && (
                             <button className="s-btn-primary sec-btn-success" onClick={handleFinalLock}>
                                 {t('journal.approveGrade')}
                             </button>
                         )}
 
-                        {/* Финал */}
-                        {status === "completed" && (
+                        {(isFinalized || status === "completed") && (
                             <div className="s-locked-badge">{t('status.protocolApproved')}</div>
                         )}
                     </div>
                 </div>
             </aside>
 
-            {/* Модальное окно */}
             {showConfirmModal && (
                 <div className="sec-modal-overlay">
                     <div className="sec-modal-content">

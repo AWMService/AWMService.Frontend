@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import SecretaryJournalDrawer from "./SecretaryJournalDrawer";
@@ -10,8 +10,11 @@ export default function SecretaryStudentList() {
 
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [attendance, setAttendance] = useState({});
+    const [isFinalized, setIsFinalized] = useState(false);
+    const [showFinalizeConfirm, setShowFinalizeConfirm] = useState(false);
+    const [showFinalizeSuccess, setShowFinalizeSuccess] = useState(false);
 
-    // Блокировка прокрутки страницы при открытом drawer
     useEffect(() => {
         if (isDrawerOpen) {
             document.body.style.overflow = "hidden";
@@ -24,8 +27,8 @@ export default function SecretaryStudentList() {
         };
     }, [isDrawerOpen]);
 
-    // Генерация большого количества тем
-    const topics = Array.from({ length: 24 }, (_, i) => ({
+    // Stable mock data generated once
+    const topics = useMemo(() => Array.from({ length: 24 }, (_, i) => ({
         id: i + 1,
         title: `Тема диплома №${i + 1}`,
         direction: "Информационные технологии",
@@ -33,17 +36,49 @@ export default function SecretaryStudentList() {
             {
                 id: i * 10 + 1,
                 name: `Студент ${i + 1}А`,
-                globalStatus: ["gathering", "ready_to_reveal", "reviewing", "ready_to_lock"][Math.floor(Math.random() * 4)],
-                averageScore: Math.random() > 0.4 ? (70 + Math.random() * 25).toFixed(1) : null
+                globalStatus: ["gathering", "ready_to_reveal", "reviewing", "ready_to_lock"][i % 4],
+                averageScore: i % 3 !== 0 ? (70 + (i * 3.7) % 25).toFixed(1) : null
             },
             {
                 id: i * 10 + 2,
                 name: `Студент ${i + 1}Б`,
-                globalStatus: ["gathering", "ready_to_reveal", "reviewing", "ready_to_lock"][Math.floor(Math.random() * 4)],
-                averageScore: Math.random() > 0.4 ? (70 + Math.random() * 25).toFixed(1) : null
+                globalStatus: ["gathering", "ready_to_reveal", "reviewing", "ready_to_lock"][(i + 1) % 4],
+                averageScore: i % 5 !== 0 ? (72 + (i * 2.3) % 23).toFixed(1) : null
             }
         ]
-    }));
+    })), []);
+
+    // Initialize attendance (all present by default)
+    useEffect(() => {
+        const initial = {};
+        topics.forEach(topic => {
+            topic.students.forEach(s => {
+                initial[s.id] = true;
+            });
+        });
+        setAttendance(initial);
+    }, [topics]);
+
+    const allStudents = useMemo(() =>
+        topics.flatMap(topic => topic.students),
+    [topics]);
+
+    const allScoresFilled = useMemo(() =>
+        allStudents.every(s => s.averageScore !== null),
+    [allStudents]);
+
+    const toggleAttendance = (e, studentId) => {
+        e.stopPropagation();
+        if (isFinalized) return;
+        setAttendance(prev => ({ ...prev, [studentId]: !prev[studentId] }));
+    };
+
+    const handleFinalize = () => {
+        setShowFinalizeConfirm(false);
+        setIsFinalized(true);
+        setShowFinalizeSuccess(true);
+        setTimeout(() => setShowFinalizeSuccess(false), 3000);
+    };
 
     const openDrawer = (student, topic) => {
         setSelectedStudent({ ...student, topicTitle: topic.title });
@@ -51,6 +86,9 @@ export default function SecretaryStudentList() {
     };
 
     const getStatusLabel = (status) => {
+        if (isFinalized) {
+            return { text: t('status.protocolClosed'), class: "sec-status-locked" };
+        }
         switch (status) {
             case "gathering":
                 return { text: t('status.gatheringGrades'), class: "sec-status-warning" };
@@ -70,9 +108,34 @@ export default function SecretaryStudentList() {
     return (
         <div className={`s-page-container ${isDrawerOpen ? "s-drawer-open" : ""}`}>
             <div className="s-main-content">
-                <h1 className="s-title">
-                    {t('nav.secretary')} - {t('commission.commissions')} №{commissionId || "1"}
-                </h1>
+                <div className="sec-page-header">
+                    <h1 className="s-title">
+                        {t('nav.secretary')} - {t('commission.commissions')} №{commissionId || "1"}
+                    </h1>
+
+                    <div className="sec-header-actions">
+                        {!isFinalized ? (
+                            <button
+                                className="sec-finalize-btn"
+                                disabled={!allScoresFilled}
+                                onClick={() => setShowFinalizeConfirm(true)}
+                                title={!allScoresFilled ? t('commission.waitingScores') : ''}
+                            >
+                                {t('commission.finalizeSession')}
+                            </button>
+                        ) : (
+                            <span className="sec-finalized-badge">
+                                ✓ {t('commission.sessionFinalized')}
+                            </span>
+                        )}
+                    </div>
+                </div>
+
+                {showFinalizeSuccess && (
+                    <div className="sec-success-message">
+                        ✓ {t('commission.sessionFinalized')}
+                    </div>
+                )}
 
                 <div className="s-topics-grid">
                     {topics.map(topic => (
@@ -82,21 +145,48 @@ export default function SecretaryStudentList() {
 
                             {topic.students.map(s => {
                                 const statusBadge = getStatusLabel(s.globalStatus);
+                                const isPresent = attendance[s.id] !== false;
 
                                 return (
                                     <div
                                         key={s.id}
-                                        className="s-student-item sec-student-item"
+                                        className={`s-student-item sec-student-item ${!isPresent ? 'sec-student-absent' : ''} ${isFinalized ? 'sec-student-finalized' : ''}`}
                                         onClick={() => openDrawer(s, topic)}
                                     >
+                                        <label
+                                            className="sec-attendance-check"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={isPresent}
+                                                onChange={(e) => toggleAttendance(e, s.id)}
+                                                disabled={isFinalized}
+                                            />
+                                            <span className="sec-attendance-label">
+                                                {isPresent ? t('commission.present') : t('commission.absent')}
+                                            </span>
+                                        </label>
+
                                         <div className="sec-student-info">
                                             <span className="sec-student-name">{s.name}</span>
 
-                                            {s.averageScore && (
-                                                <span className="sec-avg-score">
-                                                    {t('journal.currentAverage')} {s.averageScore}
-                                                </span>
-                                            )}
+                                            <div className="sec-score-summary">
+                                                {s.averageScore ? (
+                                                    <>
+                                                        <span className="sec-avg-score">
+                                                            {t('commission.averageScore')}: {s.averageScore}
+                                                        </span>
+                                                        <span className="sec-score-status sec-score-complete">
+                                                            {t('commission.scoresComplete')}
+                                                        </span>
+                                                    </>
+                                                ) : (
+                                                    <span className="sec-score-status sec-score-waiting">
+                                                        {t('commission.waitingScores')}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
 
                                         <span className={`sec-status-tag ${statusBadge.class}`}>
@@ -115,7 +205,25 @@ export default function SecretaryStudentList() {
                     open={isDrawerOpen}
                     onClose={() => setIsDrawerOpen(false)}
                     student={selectedStudent}
+                    isFinalized={isFinalized}
                 />
+            )}
+
+            {showFinalizeConfirm && (
+                <div className="sec-modal-overlay">
+                    <div className="sec-modal-content">
+                        <h3>{t('commission.finalizeSession')}</h3>
+                        <p>{t('commission.confirmFinalize')}</p>
+                        <div className="sec-modal-actions">
+                            <button className="s-btn-secondary" onClick={() => setShowFinalizeConfirm(false)}>
+                                {t('common.cancel')}
+                            </button>
+                            <button className="s-btn-primary sec-btn-finalize" onClick={handleFinalize}>
+                                {t('common.confirm')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

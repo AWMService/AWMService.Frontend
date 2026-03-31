@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useRole, ROLES } from '@awm/shared';
 import './CommissionPage.css';
 
-// Mock data для комиссий
 const mockCommissions = [
     {
         id: 1,
@@ -40,10 +39,22 @@ const mockCommissions = [
     },
 ];
 
+const mockProtocolStudents = [
+    { id: 1, name: 'Ахметов Б.К.', thesis: 'Разработка системы управления задачами', avgScore: 87.4, decision: 'credit' },
+    { id: 2, name: 'Байжанова А.Т.', thesis: 'Мобильное приложение для мониторинга здоровья', avgScore: 92.1, decision: 'credit' },
+    { id: 3, name: 'Волков Д.С.', thesis: 'Анализ данных социальных сетей', avgScore: 78.6, decision: 'credit' },
+    { id: 4, name: 'Григорьева Е.А.', thesis: 'Платформа электронного обучения', avgScore: 54.2, decision: 'noCredit' },
+    { id: 5, name: 'Досымов Н.К.', thesis: 'Система распознавания лиц', avgScore: 83.0, decision: 'credit' },
+    { id: 6, name: 'Ермекова С.Б.', thesis: 'Оптимизация логистических маршрутов', avgScore: 90.5, decision: 'credit' },
+    { id: 7, name: 'Жумабеков И.М.', thesis: 'Чат-бот на основе ИИ', avgScore: 71.8, decision: 'credit' },
+    { id: 8, name: 'Зайцева О.В.', thesis: 'Веб-портал для управления проектами', avgScore: 88.3, decision: 'credit' },
+];
+
 function CommissionPage() {
     const { t } = useTranslation();
     const { currentRole } = useRole();
     const [activeTab, setActiveTab] = useState('upcoming');
+    const [protocolModal, setProtocolModal] = useState(null);
 
     const filteredCommissions = mockCommissions.filter(c => {
         if (activeTab === 'upcoming') return c.status === 'upcoming';
@@ -53,6 +64,14 @@ function CommissionPage() {
 
     const isChairman = currentRole === ROLES.CHAIRMAN;
     const isSecretary = currentRole === ROLES.SECRETARY;
+
+    const handleGenerateProtocol = (commission) => {
+        setProtocolModal(commission);
+    };
+
+    const handleDownloadPdf = () => {
+        alert('PDF download — mock action');
+    };
 
     return (
         <div className="commission-page">
@@ -125,7 +144,10 @@ function CommissionPage() {
                                 {t('commission.students')}
                             </button>
                             {isSecretary && commission.status === 'completed' && (
-                                <button className="action-btn secondary">
+                                <button
+                                    className="action-btn secondary"
+                                    onClick={() => handleGenerateProtocol(commission)}
+                                >
                                     {t('commission.generateProtocol')}
                                 </button>
                             )}
@@ -139,6 +161,61 @@ function CommissionPage() {
                     </div>
                 )}
             </div>
+
+            {protocolModal && (
+                <div className="protocol-modal-overlay" onClick={() => setProtocolModal(null)}>
+                    <div className="protocol-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="protocol-modal-header">
+                            <h2>{t('commission.protocolPreview')}</h2>
+                            <button className="protocol-close-btn" onClick={() => setProtocolModal(null)}>×</button>
+                        </div>
+
+                        <div className="protocol-modal-meta">
+                            <p><strong>{protocolModal.name}</strong></p>
+                            <p>{t('commission.date')}: {protocolModal.date} | {t('commission.time')}: {protocolModal.time} | {t('commission.room')}: {protocolModal.room}</p>
+                            <p>{t('commission.chairman')}: {protocolModal.chairman} | {t('commission.secretary')}: {protocolModal.secretary}</p>
+                        </div>
+
+                        <div className="protocol-table-wrapper">
+                            <table className="protocol-table">
+                                <thead>
+                                    <tr>
+                                        <th>№</th>
+                                        <th>{t('commission.studentFullName')}</th>
+                                        <th>{t('commission.thesisTitle')}</th>
+                                        <th>{t('commission.averageScore')}</th>
+                                        <th>{t('commission.decision')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {mockProtocolStudents.map((s, idx) => (
+                                        <tr key={s.id} className={idx % 2 === 0 ? 'protocol-row-even' : ''}>
+                                            <td>{idx + 1}</td>
+                                            <td>{s.name}</td>
+                                            <td>{s.thesis}</td>
+                                            <td className="protocol-score">{s.avgScore}</td>
+                                            <td>
+                                                <span className={`protocol-decision ${s.decision}`}>
+                                                    {s.decision === 'credit' ? t('status.credit') : t('status.noCredit')}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div className="protocol-modal-footer">
+                            <button className="action-btn secondary" onClick={() => setProtocolModal(null)}>
+                                {t('common.close')}
+                            </button>
+                            <button className="action-btn primary" onClick={handleDownloadPdf}>
+                                {t('commission.downloadPdf')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
