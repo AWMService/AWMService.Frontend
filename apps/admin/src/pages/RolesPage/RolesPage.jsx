@@ -1,82 +1,73 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ROLE_META } from '@awm/shared';
-import RoleEditModal from '../../components/RoleEditModal/RoleEditModal';
+import { useQuery } from '@tanstack/react-query';
+import { adminApi, useAuth } from '@awm/shared';
 import './RolesPage.css';
-
-const STORAGE_KEY = 'awm-admin-roles-extra';
-
-function loadRolesExtra() {
-    try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        return saved ? JSON.parse(saved) : {};
-    } catch {
-        return {};
-    }
-}
 
 function RolesPage() {
     const { t } = useTranslation();
-    const [rolesExtra, setRolesExtra] = useState(loadRolesExtra);
-    const [editingRole, setEditingRole] = useState(null);
-    const [isEditOpen, setIsEditOpen] = useState(false);
+    const { user } = useAuth();
+    
+    const universityId = user?.universityId || 1;
 
-    const roles = useMemo(() =>
-        Object.entries(ROLE_META).map(([key, meta]) => ({
-            id: key,
-            name: t(meta.labelKey),
-            color: meta.color,
-            usersCount: Math.floor(Math.random() * 50) + 1,
-            description: rolesExtra[key]?.description || '',
-            permissions: rolesExtra[key]?.permissions || [],
-        })),
-    [t, rolesExtra]);
+    // Fetch roles
+    const { data: roles = [], isLoading, error } = useQuery({
+        queryKey: ['admin-roles', universityId],
+        queryFn: () => adminApi.fetchRoles(universityId),
+        enabled: !!universityId
+    });
 
-    const handleEdit = (role) => {
-        setEditingRole(role);
-        setIsEditOpen(true);
-    };
-
-    const handleSave = ({ description, permissions }) => {
-        const updated = {
-            ...rolesExtra,
-            [editingRole.id]: { description, permissions },
-        };
-        setRolesExtra(updated);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-        setIsEditOpen(false);
-        setEditingRole(null);
-    };
+    if (error) return <div className="error-state">{t('common.error')}: {error.message}</div>;
 
     return (
         <div className="roles-page">
             <div className="page-header">
-                <h1>{t('nav.roles')}</h1>
-                <p className="page-subtitle">{roles.length} {t('nav.roles').toLowerCase()}</p>
+                <div>
+                    <h1>{t('nav.roles')}</h1>
+                    <p className="page-subtitle">{roles.length} {t('nav.roles').toLowerCase()} {t('admin.inSystem')}</p>
+                </div>
             </div>
 
             <div className="roles-grid">
-                {roles.map(role => (
-                    <div key={role.id} className="role-card">
-                        <div 
-                            className="role-indicator"
-                            style={{ background: role.color }}
-                        />
-                        <div className="role-info">
-                            <h3>{role.name}</h3>
-                            <span className="users-count">{role.usersCount} {t('admin.users').toLowerCase()}</span>
+                {isLoading ? (
+                    <div className="loading-state">{t('common.loading')}...</div>
+                ) : (
+                    roles.map(role => (
+                        <div key={role.roleId} className="role-card">
+                            <div className="role-card-header">
+                                <div className="role-icon">
+                                    <span className="material-icons">shield</span>
+                                </div>
+                                <div className="role-info">
+                                    <h3>{role.displayName}</h3>
+                                    <span className="role-system-name">{role.systemName}</span>
+                                </div>
+                            </div>
+                            
+                            <div className="role-stats">
+                                <div className="stat-item">
+                                    <span className="stat-value">{role.usersCount}</span>
+                                    <span className="stat-label">{t('admin.users')}</span>
+                                </div>
+                                <div className="stat-item">
+                                    <span className="stat-value">{role.scopeLevel}</span>
+                                    <span className="stat-label">{t('admin.scope')}</span>
+                                </div>
+                            </div>
+
+                            <div className="role-footer">
+                                <button className="btn-text" disabled>{t('common.details')}</button>
+                            </div>
                         </div>
-                        <button className="manage-btn" onClick={() => handleEdit(role)}>{t('common.edit')}</button>
-                    </div>
-                ))}
+                    ))
+                )}
             </div>
 
-            <RoleEditModal
-                isOpen={isEditOpen}
-                role={editingRole}
-                onClose={() => { setIsEditOpen(false); setEditingRole(null); }}
-                onSave={handleSave}
-            />
+            {!isLoading && roles.length === 0 && (
+                <div className="empty-state">
+                    <p>{t('common.noData')}</p>
+                </div>
+            )}
         </div>
     );
 }
