@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getIntlLocale, getLocalizedValue } from '@awm/shared';
 import DocumentPreviewModal from '../../components/DocumentPreviewModal/DocumentPreviewModal';
 import RemarksFormModal from '../../components/RemarksFormModal/RemarksFormModal';
 import './NormocontrolPage.css';
@@ -10,20 +11,36 @@ const initialDocuments = [
         id: 1,
         studentName: 'Иванов А.А.',
         group: 'ИС-21',
-        themeTitle: 'Разработка веб-приложения для управления задачами',
+        themeTitle: {
+            ru: 'Разработка веб-приложения для управления задачами',
+            kk: 'Тапсырмаларды басқаруға арналған веб-қосымша әзірлеу',
+            en: 'Development of a web application for task management',
+        },
+        documentType: {
+            ru: 'Пояснительная записка',
+            kk: 'Түсіндірме жазба',
+            en: 'Explanatory note',
+        },
         submittedDate: '2025-05-15',
         status: 'pending',
-        documentType: 'Пояснительная записка',
         version: 2,
     },
     {
         id: 2,
         studentName: 'Сидорова М.В.',
         group: 'ИС-21',
-        themeTitle: 'Мобильное приложение для учёта финансов',
+        themeTitle: {
+            ru: 'Мобильное приложение для учёта финансов',
+            kk: 'Қаржыны есепке алуға арналған мобильді қосымша',
+            en: 'Mobile application for financial tracking',
+        },
+        documentType: {
+            ru: 'Пояснительная записка',
+            kk: 'Түсіндірме жазба',
+            en: 'Explanatory note',
+        },
         submittedDate: '2025-05-14',
         status: 'revision',
-        documentType: 'Пояснительная записка',
         version: 1,
         remarks: 3,
     },
@@ -31,16 +48,25 @@ const initialDocuments = [
         id: 3,
         studentName: 'Петренко О.И.',
         group: 'ИС-20',
-        themeTitle: 'Система автоматизации документооборота',
+        themeTitle: {
+            ru: 'Система автоматизации документооборота',
+            kk: 'Құжат айналымын автоматтандыру жүйесі',
+            en: 'Document workflow automation system',
+        },
+        documentType: {
+            ru: 'Пояснительная записка',
+            kk: 'Түсіндірме жазба',
+            en: 'Explanatory note',
+        },
         submittedDate: '2025-05-10',
         status: 'approved',
-        documentType: 'Пояснительная записка',
         version: 3,
     },
 ];
 
 function NormocontrolPage() {
     const { t } = useTranslation();
+    const locale = getIntlLocale();
     const [activeTab, setActiveTab] = useState('pending');
     const [documents, setDocuments] = useState(initialDocuments);
     const [selectedDocument, setSelectedDocument] = useState(null);
@@ -98,6 +124,13 @@ function NormocontrolPage() {
         return statusMap[status] || { label: status, class: '' };
     };
 
+    const formatDate = (value) =>
+        new Intl.DateTimeFormat(locale, {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+        }).format(new Date(value));
+
     return (
         <div className="normocontrol-page">
             <div className="page-header">
@@ -143,15 +176,15 @@ function NormocontrolPage() {
                                 </span>
                             </div>
                             
-                            <p className="theme-title">{doc.themeTitle}</p>
+                            <p className="theme-title">{getLocalizedValue(doc.themeTitle)}</p>
                             
                             <div className="document-meta">
-                                <span className="doc-type">{doc.documentType}</span>
+                                <span className="doc-type">{t('normocontrol.documentType')}</span>
                                 <span className="version">v{doc.version}</span>
                             </div>
 
                             <div className="document-card-footer">
-                                <span>{t('common.date')}: {doc.submittedDate}</span>
+                                <span>{t('common.date')}: {formatDate(doc.submittedDate)}</span>
                                 {doc.remarks && (
                                     <span className="remarks">
                                         {t('normocontrol.remarksCount', { count: doc.remarks })}

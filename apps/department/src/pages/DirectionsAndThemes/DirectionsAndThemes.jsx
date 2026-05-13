@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { normalizeLanguage, getLocalizedValue } from "@awm/shared";
 import "./DirectionsAndThemes.css";
 import DirectionCard from "../../components/Directions/DirectionCard/DirectionCard.jsx";
 import DirectionModal from "../../components/Directions/DirectionModal/DirectionModal.jsx";
@@ -13,12 +14,12 @@ const initialDirections = [
         id: 1,
         title: {
             ru: "Исследование методов криптографической защиты в блокчейн-системах",
-            kz: "Блокчейн жүйелерінде криптографиялық қорғау әдістерін зерттеу",
+            kk: "Блокчейн жүйелерінде криптографиялық қорғау әдістерін зерттеу",
             en: "Study of Cryptographic Protection Methods in Blockchain Systems",
         },
         description: {
             ru: "Теоретическое исследование современных методов криптографической защиты данных...",
-            kz: "Деректерді қорғаудың заманауи криптографиялық әдістерін теориялық зерттеу...",
+            kk: "Деректерді қорғаудың заманауи криптографиялық әдістерін теориялық зерттеу...",
             en: "Theoretical study of modern methods of data cryptographic protection...",
         },
         status: "На рассмотрении",
@@ -33,12 +34,12 @@ const initialThemes = [
         id: 101,
         title: {
             ru: "Разработка веб-приложения для управления проектами",
-            kz: "Жобаларды басқару үшін веб-қосымшаны әзірлеу",
+            kk: "Жобаларды басқару үшін веб-қосымшаны әзірлеу",
             en: "Development of a Web Application for Project Management",
         },
         description: {
             ru: "Создание и внедрение веб-приложения с использованием React и Node.js...",
-            kz: "React және Node.js пайдалана отырып веб-қосымшаны жасау және енгізу...",
+            kk: "React және Node.js пайдалана отырып веб-қосымшаны жасау және енгізу...",
             en: "Creating and implementing a web application using React and Node.js...",
         },
         status: "На рассмотрении",
@@ -73,7 +74,8 @@ const TABS = {
 const DirectionsAndThemes = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const currentLanguage = normalizeLanguage(i18n.language);
 
     const query = new URLSearchParams(location.search);
     const activeTab = query.get("tab") || TABS.DIRECTIONS;
@@ -113,7 +115,7 @@ const DirectionsAndThemes = () => {
     const filterItems = (items) =>
         items.filter(
             (i) =>
-                i.title.ru.toLowerCase().includes(searchQuery.toLowerCase()) &&
+                getLocalizedValue(i.title, currentLanguage).toLowerCase().includes(searchQuery.toLowerCase()) &&
                 (filterStatus === "Все" || i.status === filterStatus)
         );
 

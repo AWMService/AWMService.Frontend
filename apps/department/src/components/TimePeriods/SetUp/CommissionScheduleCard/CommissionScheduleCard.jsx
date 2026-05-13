@@ -1,9 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
+import { getIntlLocale } from "@awm/shared";
 import "./CommissionScheduleCard.css";
 
 export default function CommissionScheduleCard({ commission }) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const locale = getIntlLocale(i18n.language);
 
     return (
         <div className="schedule-card">
@@ -22,7 +24,7 @@ export default function CommissionScheduleCard({ commission }) {
                         >
                             <div className="slot-header">
                                 <span>
-                                    {new Date(session.date).toLocaleDateString("ru-RU")}
+                                    {new Date(session.date).toLocaleDateString(locale)}
                                 </span>
                                 <span>{session.time}</span>
                                 <span className="slot-count">

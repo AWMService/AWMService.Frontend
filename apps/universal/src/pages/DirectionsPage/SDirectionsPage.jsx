@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { getIntlLocale, getLocalizedValue, normalizeLanguage } from "@awm/shared";
 import { Plus, BookOpen, Eye, Edit, Send, Calendar, AlertCircle } from "lucide-react";
 import CreateDirectionModal from "../../components/CreateDirectionModal/CreateDirectionModal";
 import DirectionViewModal from "../../components/directions/DirectionViewModal";
@@ -7,7 +8,9 @@ import DirectionEditModal from "../../components/directions/DirectionEditModal";
 import "./SDirectionsPage.css";
 
 export default function SDirectionsPage() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const locale = getIntlLocale(i18n.language);
+    const currentLanguage = normalizeLanguage(i18n.language);
 
     const statusLabels = {
         draft: t('status.draft'),
@@ -34,11 +37,15 @@ export default function SDirectionsPage() {
         },
         {
             id: "2",
-            title: { ru: "Веб-технологии и облачные вычисления" },
-            description: { ru: "Изучение современных веб-технологий и облачных платформ" },
+            title: { kk: "Веб-технологиялар және бұлтты есептеу", ru: "Веб-технологии и облачные вычисления", en: "Web Technologies and Cloud Computing" },
+            description: { kk: "Заманауи веб-технологиялар мен бұлтты платформаларды зерттеу", ru: "Изучение современных веб-технологий и облачных платформ", en: "Study of modern web technologies and cloud platforms" },
             status: "rejected",
             createdAt: "2024-01-20T14:30:00Z",
-            rejectionReason: "Необходимо более детально описать область исследования и добавить конкретные технологии",
+            rejectionReason: {
+                kk: "Зерттеу саласын және нақты технологияларды толығырақ сипаттау қажет",
+                ru: "Необходимо более детально описать область исследования и добавить конкретные технологии",
+                en: "The research area and specific technologies need to be described in more detail",
+            },
         },
     ]);
 
@@ -112,21 +119,21 @@ export default function SDirectionsPage() {
                                     </span>
                                     <span className="creation-date">
                                         <Calendar size={13} strokeWidth={2} />
-                                        {new Date(direction.createdAt).toLocaleDateString("ru-RU")}
+                                        {new Date(direction.createdAt).toLocaleDateString(locale)}
                                     </span>
                                 </div>
 
                                 <h3 className="direction-item-title">
-                                    {direction.title.ru ?? direction.title.kk ?? direction.title.en}
+                                    {getLocalizedValue(direction.title, currentLanguage)}
                                 </h3>
                                 <p className="direction-item-desc">
-                                    {direction.description.ru ?? direction.description.kk ?? direction.description.en}
+                                    {getLocalizedValue(direction.description, currentLanguage)}
                                 </p>
 
                                 {direction.status === "rejected" && (
                                     <div className="rejection-box">
                                         <AlertCircle size={14} />
-                                        <span>{direction.rejectionReason}</span>
+                                        <span>{getLocalizedValue(direction.rejectionReason, currentLanguage)}</span>
                                     </div>
                                 )}
                             </div>

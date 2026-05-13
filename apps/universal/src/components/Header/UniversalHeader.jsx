@@ -23,7 +23,7 @@ export function UniversalHeader() {
     const location = useLocation();
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const { currentRole, roleMeta } = useRole();
+    const { roleMeta } = useRole();
 
     // Динамическое название страницы на основе пути
     const getPageName = () => {

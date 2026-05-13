@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getIntlLocale } from '@awm/shared';
 import './ReviewStepPage.css';
 import warningIcon from '../../assets/icons/alert-circle-icon.svg';
 import infoIcon from '../../assets/icons/pre-defense/info-icon.svg';
@@ -13,7 +14,8 @@ import { ExpertCard } from '../../components/ExpertCard/ExpertCard.jsx';
 const REPO_URL_PATTERN = /^https?:\/\/(www\.)?(github\.com|gitlab\.com|bitbucket\.org)\/.+/i;
 
 const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const locale = getIntlLocale(i18n.language);
     const [status, setStatus] = useState(initialStatus || 'in_progress');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [file, setFile] = useState(null);
@@ -63,7 +65,7 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
 
     const handleUpload = () => {
         if (!file) return;
-        const newFile = { name: file.name, date: new Date().toLocaleDateString('ru-RU') };
+        const newFile = { name: file.name, date: new Date().toLocaleDateString(locale) };
         setUploadedFiles([...uploadedFiles, newFile]);
         setStatus('in_progress');
         setIsModalOpen(false);

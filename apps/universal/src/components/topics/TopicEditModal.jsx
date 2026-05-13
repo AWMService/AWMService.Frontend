@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { getLocalizedValue, normalizeLanguage } from "@awm/shared";
 import { X, Edit3, Globe, AlignLeft, Layers, Users, Info } from "lucide-react";
 import "./TopicEditModal.css";
 
 export default function TopicEditModal({ open, onClose, topic, onSave, directions }) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const currentLanguage = normalizeLanguage(i18n.language);
     const [form, setForm] = useState({
         titleRu: "",
         titleKk: "",
@@ -26,12 +28,12 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                 descRu: topic.description?.ru ?? "",
                 descKk: topic.description?.kk ?? "",
                 descEn: topic.description?.en ?? "",
-                direction: topic.directionTitle ?? "",
+                direction: getLocalizedValue(topic.directionTitle, currentLanguage) ?? "",
                 workType: topic.workType ?? "diploma_project",
                 participantCount: topic.participantCount ?? 1,
             });
         }
-    }, [topic]);
+    }, [topic, currentLanguage]);
 
     if (!open || !topic) return null;
 
@@ -91,7 +93,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                                     name="titleKk"
                                     value={form.titleKk}
                                     onChange={handleChange}
-                                    placeholder={t('supervisor.topicTitle') + '...'}
+                                    placeholder={`${t('common.title')}...`}
                                     className="tem-input"
                                 />
                             </div>
@@ -101,7 +103,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                                     name="titleRu"
                                     value={form.titleRu}
                                     onChange={handleChange}
-                                    placeholder={t('supervisor.topicTitle') + '...'}
+                                    placeholder={`${t('common.title')}...`}
                                     className="tem-input"
                                 />
                             </div>
@@ -111,7 +113,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                                     name="titleEn"
                                     value={form.titleEn}
                                     onChange={handleChange}
-                                    placeholder="Topic title..."
+                                    placeholder={`${t('common.title')}...`}
                                     className="tem-input"
                                 />
                             </div>
@@ -131,6 +133,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                                     name="descKk"
                                     value={form.descKk}
                                     onChange={handleChange}
+                                    placeholder={`${t('common.description')}...`}
                                     className="tem-textarea-fixed"
                                 />
                             </div>
@@ -141,6 +144,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                                     name="descRu"
                                     value={form.descRu}
                                     onChange={handleChange}
+                                    placeholder={`${t('common.description')}...`}
                                     className="tem-textarea-fixed"
                                 />
                             </div>
@@ -152,6 +156,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                                     name="descEn"
                                     value={form.descEn}
                                     onChange={handleChange}
+                                    placeholder={`${t('common.description')}...`}
                                     className="tem-textarea-fixed"
 
                                 />

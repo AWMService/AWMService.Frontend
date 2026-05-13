@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { normalizeLanguage } from "@awm/shared";
 import "./ThemeModal.css";
 
 const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [showRejection, setShowRejection] = useState(false);
     const [rejectionReason, setRejectionReason] = useState("");
-    const [language, setLanguage] = useState("ru");
+    const [language, setLanguage] = useState(() => normalizeLanguage(i18n.language));
+
+    useEffect(() => {
+        setLanguage(normalizeLanguage(i18n.language));
+    }, [i18n.language]);
 
     if (!theme) return null;
 
@@ -34,8 +39,10 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
         onClose();
     };
 
-    const getTitle = () => theme.title[language];
-    const getDescription = () => theme.description[language];
+    const getTitle = () =>
+        theme.title?.[language] || theme.title?.kk || theme.title?.kz || theme.title?.ru || theme.title?.en || "";
+    const getDescription = () =>
+        theme.description?.[language] || theme.description?.kk || theme.description?.kz || theme.description?.ru || theme.description?.en || "";
 
     return (
         <div className="tm-overlay" onClick={handleClose}>
@@ -56,7 +63,7 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                     </div>
 
                     <div className="tm-lang-switch">
-                        {["ru", "kz", "en"].map((lang) => (
+                        {["kk", "ru", "en"].map((lang) => (
                             <button
                                 key={lang}
                                 className={`tm-lang-btn ${

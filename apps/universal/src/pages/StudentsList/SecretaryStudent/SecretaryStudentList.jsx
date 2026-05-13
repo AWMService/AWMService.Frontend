@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import { getLocalizedValue } from "@awm/shared";
 import SecretaryJournalDrawer from "./SecretaryJournalDrawer";
 import "./Secretary.css";
 
@@ -30,18 +31,34 @@ export default function SecretaryStudentList() {
     // Stable mock data generated once
     const topics = useMemo(() => Array.from({ length: 24 }, (_, i) => ({
         id: i + 1,
-        title: `Тема диплома №${i + 1}`,
-        direction: "Информационные технологии",
+        title: {
+            kk: `Дипломдық жұмыс тақырыбы №${i + 1}`,
+            ru: `Тема диплома №${i + 1}`,
+            en: `Thesis Topic No. ${i + 1}`,
+        },
+        direction: {
+            kk: "Ақпараттық технологиялар",
+            ru: "Информационные технологии",
+            en: "Information Technology",
+        },
         students: [
             {
                 id: i * 10 + 1,
-                name: `Студент ${i + 1}А`,
+                name: {
+                    kk: `Студент ${i + 1}А`,
+                    ru: `Студент ${i + 1}А`,
+                    en: `Student ${i + 1}A`,
+                },
                 globalStatus: ["gathering", "ready_to_reveal", "reviewing", "ready_to_lock"][i % 4],
                 averageScore: i % 3 !== 0 ? (70 + (i * 3.7) % 25).toFixed(1) : null
             },
             {
                 id: i * 10 + 2,
-                name: `Студент ${i + 1}Б`,
+                name: {
+                    kk: `Студент ${i + 1}Б`,
+                    ru: `Студент ${i + 1}Б`,
+                    en: `Student ${i + 1}B`,
+                },
                 globalStatus: ["gathering", "ready_to_reveal", "reviewing", "ready_to_lock"][(i + 1) % 4],
                 averageScore: i % 5 !== 0 ? (72 + (i * 2.3) % 23).toFixed(1) : null
             }
@@ -140,8 +157,8 @@ export default function SecretaryStudentList() {
                 <div className="s-topics-grid">
                     {topics.map(topic => (
                         <div key={topic.id} className="s-topic-card">
-                            <div className="s-direction-badge">{topic.direction}</div>
-                            <h3 className="s-topic-title">{topic.title}</h3>
+                            <div className="s-direction-badge">{getLocalizedValue(topic.direction)}</div>
+                            <h3 className="s-topic-title">{getLocalizedValue(topic.title)}</h3>
 
                             {topic.students.map(s => {
                                 const statusBadge = getStatusLabel(s.globalStatus);
@@ -169,7 +186,7 @@ export default function SecretaryStudentList() {
                                         </label>
 
                                         <div className="sec-student-info">
-                                            <span className="sec-student-name">{s.name}</span>
+                                            <span className="sec-student-name">{getLocalizedValue(s.name)}</span>
 
                                             <div className="sec-score-summary">
                                                 {s.averageScore ? (

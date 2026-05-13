@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getLocalizedValue } from '@awm/shared';
 import './ReviewWritingModal.css';
 
 export default function ReviewWritingModal({ isOpen, work, onClose, onSubmit }) {
@@ -36,6 +37,8 @@ export default function ReviewWritingModal({ isOpen, work, onClose, onSubmit }) 
     };
 
     const isValid = reviewText.trim().length > 0 || file;
+    const workTitle = getLocalizedValue(work?.themeTitle || work?.title);
+    const studentName = getLocalizedValue(work?.studentName || work?.student);
 
     return (
         <div className="review-modal-backdrop" onClick={onClose}>
@@ -44,7 +47,7 @@ export default function ReviewWritingModal({ isOpen, work, onClose, onSubmit }) 
                     <>
                         <h2 className="review-modal__title">{t('reviewer.confirmSubmitReview')}</h2>
                         <p className="review-modal__message">{t('reviewer.confirmSubmitMessage')}</p>
-                        {work && <p className="review-modal__work-info">{work.title} — {work.student}</p>}
+                        {work && <p className="review-modal__work-info">{workTitle} — {studentName}</p>}
                         <div className="review-modal__actions">
                             <button className="button secondary-button" onClick={() => setShowConfirm(false)}>{t('common.cancel')}</button>
                             <button className="button primary-button" onClick={confirmSubmit}>{t('common.confirm')}</button>
@@ -53,7 +56,7 @@ export default function ReviewWritingModal({ isOpen, work, onClose, onSubmit }) 
                 ) : (
                     <>
                         <h2 className="review-modal__title">{t('reviewer.writeReview')}</h2>
-                        {work && <p className="review-modal__work-info">{work.themeTitle} — {work.studentName}</p>}
+                        {work && <p className="review-modal__work-info">{workTitle} — {studentName}</p>}
 
                         <div className="review-modal__field">
                             <label>{t('reviewer.reviewText')}</label>

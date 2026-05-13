@@ -80,7 +80,7 @@ export default function DirectionEditModal({ direction, onClose, onSave }) {
                                         className="dem-input"
                                         value={form.title[lang]}
                                         onChange={(e) => handleChange("title", lang, e.target.value)}
-                                        placeholder={`Название (${lang.toUpperCase()})...`}
+                                        placeholder={`${t('common.title')}...`}
                                     />
                                 </div>
                             ))}
@@ -102,7 +102,7 @@ export default function DirectionEditModal({ direction, onClose, onSave }) {
                                         className="dem-textarea"
                                         value={form.description[lang]}
                                         onChange={(e) => handleChange("description", lang, e.target.value)}
-                                        placeholder={`Описание (${lang.toUpperCase()})...`}
+                                        placeholder={`${t('common.description')}...`}
                                         rows={3}
                                     />
                                 </div>

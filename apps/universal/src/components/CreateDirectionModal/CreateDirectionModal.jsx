@@ -93,7 +93,7 @@ export default function CreateDirectionModal({ onClose, onCreate }) {
                                     <input
                                         value={title.en}
                                         onChange={(e) => handleChangeTitle("en", e.target.value)}
-                                        placeholder="Title in English..."
+                                        placeholder={`${t('common.title')}...`}
                                         className="cdm-input"
                                     />
                                 </div>
@@ -136,7 +136,7 @@ export default function CreateDirectionModal({ onClose, onCreate }) {
                                     <textarea
                                         value={description.en}
                                         onChange={(e) => handleChangeDesc("en", e.target.value)}
-                                        placeholder="Detailed description..."
+                                        placeholder={`${t('common.description')}...`}
                                         className="cdm-textarea"
                                         rows={3}
                                     />

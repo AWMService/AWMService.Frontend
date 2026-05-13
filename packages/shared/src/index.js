@@ -8,7 +8,10 @@ export {
   supportedLanguages, 
   defaultLanguage, 
   changeLanguage, 
-  getCurrentLanguage 
+  getCurrentLanguage,
+  getIntlLocale,
+  getLocalizedValue,
+  normalizeLanguage,
 } from './i18n';
 
 // Context

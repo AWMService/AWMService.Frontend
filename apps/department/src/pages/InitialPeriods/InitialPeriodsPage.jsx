@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { ConfirmModal } from "@awm/shared";
+import { ConfirmModal, getIntlLocale } from "@awm/shared";
 import { validateDateRange, validateAllPeriods } from "../../utils/periodValidation";
 import "./InitialPeriodsPage.css";
 
@@ -36,7 +36,8 @@ function loadFromStorage() {
 }
 
 export default function InitialPeriodsPage() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const locale = getIntlLocale(i18n.language);
 
     const [formData, setFormData] = useState(() => loadFromStorage().formData);
     const [isApproved, setIsApproved] = useState(() => loadFromStorage().isApproved);
@@ -114,7 +115,7 @@ export default function InitialPeriodsPage() {
 
     const formatDate = (dateStr) => {
         if (!dateStr) return "";
-        return new Date(dateStr).toLocaleDateString("ru-RU", {
+        return new Date(dateStr).toLocaleDateString(locale, {
             day: "2-digit",
             month: "2-digit",
             year: "numeric",

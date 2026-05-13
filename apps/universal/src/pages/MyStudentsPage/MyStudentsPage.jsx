@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Users } from "lucide-react"
+import { getLocalizedValue } from "@awm/shared"
 import "./MyStudentsPage.css"
 import StudentModal from "../../components/MyStudentsModal/StudentModal.jsx"
 
@@ -9,17 +10,80 @@ export default function MyStudentsPage() {
     const [students, setStudents] = useState([
         {
             id: 1,
-            topic: { title: "Разработка веб-приложения для управления задачами", direction: "Веб-технологии" },
-            stage: "Предзащита",
-            students: [{ id: 101, name: "Иванов Алексей Петрович", score: 85 }],
-            projectFiles: [
-                { id: "pf1", name: "Пояснительная_записка_v1.pdf", date: "01.02.2024", uploadedBy: "Иванов А.П." },
-                { id: "pf2", name: "Код_программы.zip", date: "03.02.2024", uploadedBy: "Иванов А.П." }
+            topic: {
+                title: {
+                    ru: "Разработка веб-приложения для управления задачами",
+                    kk: "Тапсырмаларды басқаруға арналған веб-қосымша әзірлеу",
+                    en: "Development of a web application for task management",
+                },
+                direction: {
+                    ru: "Веб-технологии",
+                    kk: "Веб-технологиялар",
+                    en: "Web Technologies",
+                },
+            },
+            stageKey: "preDefense",
+            students: [
+                {
+                    id: 101,
+                    name: {
+                        ru: "Иванов Алексей Петрович",
+                        kk: "Иванов Алексей Петрович",
+                        en: "Alexey Ivanov",
+                    },
+                    score: 85,
+                }
             ],
-            supervisorFiles: [{ id: "sf1", name: "Правки_по_структуре.docx", date: "04.02.2024" }],
+            projectFiles: [
+                {
+                    id: "pf1",
+                    name: {
+                        ru: "Пояснительная_записка_v1.pdf",
+                        kk: "Түсіндірме_жазба_v1.pdf",
+                        en: "Explanatory_Note_v1.pdf",
+                    },
+                    date: "01.02.2024",
+                    uploadedBy: "Иванов А.П.",
+                },
+                {
+                    id: "pf2",
+                    name: {
+                        ru: "Код_программы.zip",
+                        kk: "Бағдарлама_коды.zip",
+                        en: "Program_Code.zip",
+                    },
+                    date: "03.02.2024",
+                    uploadedBy: "Иванов А.П.",
+                }
+            ],
+            supervisorFiles: [{
+                id: "sf1",
+                name: {
+                    ru: "Правки_по_структуре.docx",
+                    kk: "Құрылым_бойынша_түзетулер.docx",
+                    en: "Structure_Notes.docx",
+                },
+                date: "04.02.2024"
+            }],
             notes: [
-                { id: 1, text: "Нужно доработать схему базы данных", date: "04.02.2024, 14:20" },
-                { id: 2, text: "Вводная часть оформлена верно", date: "05.02.2024, 10:15" }
+                {
+                    id: 1,
+                    text: {
+                        ru: "Нужно доработать схему базы данных",
+                        kk: "Деректер қорының сұлбасын жетілдіру қажет",
+                        en: "The database schema needs to be refined",
+                    },
+                    date: "04.02.2024, 14:20"
+                },
+                {
+                    id: 2,
+                    text: {
+                        ru: "Вводная часть оформлена верно",
+                        kk: "Кіріспе бөлімі дұрыс рәсімделген",
+                        en: "The introduction section is formatted correctly",
+                    },
+                    date: "05.02.2024, 10:15"
+                }
             ]
         },
         // ... другие студенты
@@ -27,11 +91,9 @@ export default function MyStudentsPage() {
 
     const [selectedStudent, setSelectedStudent] = useState(null)
 
-    const getCardStatusClass = (stageName) => {
-        const s = stageName ? stageName.toLowerCase() : "";
-        if (s.includes("предзащита")) return "sp-pill-purple";
-        if (s.includes("разработка")) return "sp-pill-orange";
-        if (s.includes("финал") || s.includes("защита")) return "sp-pill-green";
+    const getCardStatusClass = (stageKey) => {
+        if (stageKey === "preDefense") return "sp-pill-purple";
+        if (stageKey === "defense") return "sp-pill-green";
         return "sp-pill-gray";
     }
 
@@ -48,20 +110,20 @@ export default function MyStudentsPage() {
                 {students.map(student => (
                     <div key={student.id} className="sp-item-card">
                         <div className="sp-card-top">
-                            <span className={`sp-status-badge ${getCardStatusClass(student.stage)}`}>
-                                {student.stage}
+                            <span className={`sp-status-badge ${getCardStatusClass(student.stageKey)}`}>
+                                {t(`student.${student.stageKey}`)}
                             </span>
                             <div className="sp-users-count">
                                 <Users size={14} /> {student.students.length}
                             </div>
                         </div>
 
-                        <h3 className="sp-card-title">{student.topic.title}</h3>
-                        <p className="sp-card-dir">{student.topic.direction}</p>
+                        <h3 className="sp-card-title">{getLocalizedValue(student.topic.title)}</h3>
+                        <p className="sp-card-dir">{getLocalizedValue(student.topic.direction)}</p>
 
                         <div className="sp-card-names">
                             {student.students.map((s) => (
-                                <div key={s.id} className="sp-name-row">{s.name}</div>
+                                <div key={s.id} className="sp-name-row">{getLocalizedValue(s.name)}</div>
                             ))}
                         </div>
 

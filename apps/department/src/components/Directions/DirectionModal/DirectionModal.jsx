@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { normalizeLanguage } from "@awm/shared";
 import "./DirectionModal.css";
 
 const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [showRejection, setShowRejection] = useState(false);
     const [rejectionReason, setRejectionReason] = useState("");
-    const [language, setLanguage] = useState("ru");
+    const [language, setLanguage] = useState(() => normalizeLanguage(i18n.language));
+
+    useEffect(() => {
+        setLanguage(normalizeLanguage(i18n.language));
+    }, [i18n.language]);
 
     if (!direction) return null;
 
@@ -34,8 +39,10 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
         onClose();
     };
 
-    const getTitle = () => direction.title[language];
-    const getDescription = () => direction.description[language];
+    const getTitle = () =>
+        direction.title?.[language] || direction.title?.kk || direction.title?.kz || direction.title?.ru || direction.title?.en || "";
+    const getDescription = () =>
+        direction.description?.[language] || direction.description?.kk || direction.description?.kz || direction.description?.ru || direction.description?.en || "";
 
     return (
         <div className="dm-overlay" onClick={handleClose}>
@@ -58,7 +65,7 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                     </div>
 
                     <div className="dm-lang-switch">
-                        {["ru", "kz", "en"].map((lang) => (
+                        {["kk", "ru", "en"].map((lang) => (
                             <button
                                 key={lang}
                                 className={`dm-lang-btn ${

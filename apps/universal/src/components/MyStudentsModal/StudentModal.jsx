@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { useTranslation } from "react-i18next"
+import { getIntlLocale, getLocalizedValue } from "@awm/shared"
 import {
     X, Download, Plus,
     FileCheck, ClipboardList,
@@ -8,7 +9,8 @@ import {
 } from "lucide-react"
 
 export default function StudentModal({ student, setStudent, setStudents }) {
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
+    const locale = getIntlLocale(i18n.language)
     const [tempNote, setTempNote] = useState("")
     const [reviewStatus, setReviewStatus] = useState("not_written")
     const [reviewText, setReviewText] = useState("")
@@ -16,16 +18,23 @@ export default function StudentModal({ student, setStudent, setStudents }) {
     const [showConfirm, setShowConfirm] = useState(false)
 
     const getCurrentDate = () =>
-        new Date().toLocaleString("ru-RU", {
+        new Date().toLocaleString(locale, {
             day: "2-digit", month: "2-digit", year: "numeric",
             hour: "2-digit", minute: "2-digit"
         })
 
+    const getCurrentDateOnly = () =>
+        new Date().toLocaleDateString(locale, {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        })
+
     const getStageStyle = (stage) => {
-        const s = stage ? stage.toLowerCase() : "";
-        if (s.includes("предзащита")) return "sm-badge-purple";
-        if (s.includes("финал") || s.includes("защита")) return "sm-badge-green";
-        if (s.includes("разработка")) return "sm-badge-orange";
+        const s = stage ? stage.toString().toLowerCase() : "";
+        if (s === "predefense" || s === "pre1") return "sm-badge-purple";
+        if (s === "defense") return "sm-badge-green";
+        if (s === "development") return "sm-badge-orange";
         return "sm-badge-gray";
     }
 
@@ -51,7 +60,7 @@ export default function StudentModal({ student, setStudent, setStudents }) {
     const handleFileUpload = () => {
         const fileName = prompt(t('student.enterFileName'))
         if (!fileName) return
-        const newFile = { id: Date.now(), name: fileName, date: getCurrentDate().split(",")[0] }
+        const newFile = { id: Date.now(), name: fileName, date: getCurrentDateOnly() }
 
         setStudents(prev => prev.map(s =>
             s.id === student.id ? { ...s, supervisorFiles: [...s.supervisorFiles, newFile] } : s
@@ -94,6 +103,9 @@ export default function StudentModal({ student, setStudent, setStudents }) {
 
     if (!student) return null;
 
+    const stageKey = student.stageKey || student.stage
+    const stageLabel = stageKey ? t(`student.${stageKey}`) : t('common.noData')
+
     return (
         <div className="sm-overlay" onClick={() => setStudent(null)}>
             <div className="sm-window" onClick={e => e.stopPropagation()}>
@@ -101,13 +113,13 @@ export default function StudentModal({ student, setStudent, setStudents }) {
                 {/* HEADER */}
                 <div className="sm-header">
                     <div className="sm-header-info">
-                        <h2 className="sm-title">{student.students.map(s => s.name).join(", ")}</h2>
+                        <h2 className="sm-title">{student.students.map(s => getLocalizedValue(s.name)).join(", ")}</h2>
                         <div className="sm-header-meta">
-                            <span className={`sm-stage-tag ${getStageStyle(student.stage)}`}>
-                                {student.stage || t('common.noData')}
+                            <span className={`sm-stage-tag ${getStageStyle(stageKey)}`}>
+                                {stageLabel}
                             </span>
                             <span className="sm-dot">•</span>
-                            <p className="sm-subtitle">{student.topic.title}</p>
+                            <p className="sm-subtitle">{getLocalizedValue(student.topic.title)}</p>
                         </div>
                     </div>
                     <button className="sm-close-btn" onClick={() => setStudent(null)}>
@@ -127,8 +139,8 @@ export default function StudentModal({ student, setStudent, setStudents }) {
                                 {student.projectFiles.length ? (
                                     student.projectFiles.map(file => (
                                         <div key={file.id} className="sm-file-card">
-                                            <div className="sm-file-info">
-                                                <span className="sm-file-name">{file.name}</span>
+                                        <div className="sm-file-info">
+                                                <span className="sm-file-name">{getLocalizedValue(file.name)}</span>
                                                 <div className="sm-file-meta">
                                                     <span><Calendar size={10} /> {file.date}</span>
                                                     <span className="sm-author-tag"><User size={10} /> {file.uploadedBy}</span>
@@ -149,7 +161,7 @@ export default function StudentModal({ student, setStudent, setStudents }) {
                                 {student.supervisorFiles.map(file => (
                                     <div key={file.id} className="sm-file-card sm-border-blue">
                                         <div className="sm-file-info">
-                                            <span className="sm-file-name">{file.name}</span>
+                                            <span className="sm-file-name">{getLocalizedValue(file.name)}</span>
                                             <span className="sm-file-date"><Calendar size={10} /> {file.date}</span>
                                         </div>
                                         <button className="sm-icon-action"><Download size={14} /></button>
@@ -172,8 +184,8 @@ export default function StudentModal({ student, setStudent, setStudents }) {
                                 {student.students.map((s) => (
                                     <div key={s.id} className="sm-grade-item">
                                         <div className="sm-user-profile">
-                                            <div className="sm-avatar">{s.name.charAt(0)}</div>
-                                            <span className="sm-user-name">{s.name}</span>
+                                            <div className="sm-avatar">{getLocalizedValue(s.name).charAt(0)}</div>
+                                            <span className="sm-user-name">{getLocalizedValue(s.name)}</span>
                                         </div>
                                         <div className={`sm-score-pill ${getScoreColor(s.score)}`}>
                                             <span className="sm-score-num">{s.score ?? "-"}</span>
@@ -191,7 +203,7 @@ export default function StudentModal({ student, setStudent, setStudents }) {
                             {student.notes.length ? (
                                 student.notes.map(note => (
                                     <div key={note.id} className="sm-note-card">
-                                        <p className="sm-note-content">{note.text}</p>
+                                        <p className="sm-note-content">{getLocalizedValue(note.text)}</p>
                                         <span className="sm-note-timestamp">{note.date}</span>
                                     </div>
                                 ))

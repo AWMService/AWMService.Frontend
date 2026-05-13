@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getIntlLocale, getLocalizedValue } from '@awm/shared';
 import { X, MessageSquare, Clock } from 'lucide-react';
 import './RemarksFormModal.css';
 
@@ -7,13 +8,21 @@ const mockPreviousRemarks = [
     {
         id: 1,
         category: 'formatting',
-        text: 'Отступы на страницах 12-15 не соответствуют ГОСТ. Необходимо выровнять поля.',
+        text: {
+            ru: 'Отступы на страницах 12-15 не соответствуют ГОСТ. Необходимо выровнять поля.',
+            kk: '12-15 беттердегі шегіністер ГОСТ-қа сәйкес келмейді. Өрістерді туралау қажет.',
+            en: 'Margins on pages 12-15 do not meet the standard. The page layout needs to be aligned.',
+        },
         date: '2025-05-10',
     },
     {
         id: 2,
         category: 'citations',
-        text: 'Ссылка [3] не найдена в списке литературы.',
+        text: {
+            ru: 'Ссылка [3] не найдена в списке литературы.',
+            kk: '[3] сілтемесі әдебиеттер тізімінде табылмады.',
+            en: 'Reference [3] was not found in the bibliography list.',
+        },
         date: '2025-05-12',
     },
 ];
@@ -21,7 +30,8 @@ const mockPreviousRemarks = [
 const CATEGORIES = ['formatting', 'content', 'structure', 'citations', 'other'];
 
 export default function RemarksFormModal({ document, onClose, onSubmit }) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const locale = getIntlLocale(i18n.language);
     const [category, setCategory] = useState('');
     const [remarkText, setRemarkText] = useState('');
     const [touched, setTouched] = useState({ category: false, text: false });
@@ -63,7 +73,7 @@ export default function RemarksFormModal({ document, onClose, onSubmit }) {
                 <div className="rfm-header">
                     <div className="rfm-header-text">
                         <h2>{t('normocontrol.addRemark')}</h2>
-                        <p>{document.studentName} — {document.themeTitle}</p>
+                        <p>{document.studentName} — {getLocalizedValue(document.themeTitle, i18n.language)}</p>
                     </div>
                     <button className="rfm-close-btn" onClick={onClose}>
                         <X size={20} />
@@ -123,9 +133,11 @@ export default function RemarksFormModal({ document, onClose, onSubmit }) {
                                                 <span className="rfm-history-category">
                                                     {getCategoryLabel(remark.category)}
                                                 </span>
-                                                <span className="rfm-history-date">{remark.date}</span>
+                                                <span className="rfm-history-date">
+                                                    {new Date(remark.date).toLocaleDateString(locale)}
+                                                </span>
                                             </div>
-                                            <p className="rfm-history-text">{remark.text}</p>
+                                            <p className="rfm-history-text">{getLocalizedValue(remark.text, i18n.language)}</p>
                                         </div>
                                     ))}
                                 </div>

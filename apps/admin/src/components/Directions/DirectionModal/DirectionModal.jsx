@@ -52,7 +52,7 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                     </div>
 
                     <div className="dm-lang-switch">
-                        {["ru", "kz", "en"].map((lang) => (
+                        {["kk", "ru", "en"].map((lang) => (
                             <button
                                 key={lang}
                                 className={`dm-lang-btn ${

@@ -100,9 +100,9 @@
     outline: none;
 }
 
-.edu-status-select.зачет { background: #ecfdf5; color: #059669; border-color: #10b981; }
-.edu-status-select.незачет { background: #fef2f2; color: #dc2626; border-color: #ef4444; }
-.edu-status-select.ожидание { background: #fffbeb; color: #d97706; border-color: #f59e0b; }
+.edu-status-select.status-credit { background: #ecfdf5; color: #059669; border-color: #10b981; }
+.edu-status-select.status-noCredit { background: #fef2f2; color: #dc2626; border-color: #ef4444; }
+.edu-status-select.status-waiting { background: #fffbeb; color: #d97706; border-color: #f59e0b; }
 
 /* Кнопка загрузки */
 .edu-upload-btn {

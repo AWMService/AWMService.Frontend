@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { getIntlLocale, getLocalizedValue, normalizeLanguage } from "@awm/shared";
 import { X, Calendar, BookText, AlignLeft, AlertCircle } from "lucide-react";
 import "./DirectionViewModal.css";
 
 export default function DirectionViewModal({ onClose, direction }) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const locale = getIntlLocale(i18n.language);
+    const currentLanguage = normalizeLanguage(i18n.language);
 
     const statusLabels = {
         draft: t('status.draft'),
@@ -12,27 +15,24 @@ export default function DirectionViewModal({ onClose, direction }) {
         approved: t('status.approved'),
         rejected: t('status.rejected'),
     };
-    const [titleTab, setTitleTab] = useState("ru");
-    const [descTab, setDescTab] = useState("ru");
+    const [titleTab, setTitleTab] = useState(currentLanguage);
+    const [descTab, setDescTab] = useState(currentLanguage);
 
     useEffect(() => {
         if (direction) {
-            if (direction.title?.ru) setTitleTab("ru");
-            else if (direction.title?.kk) setTitleTab("kk");
-            else setTitleTab("en");
-
-            if (direction.description?.ru) setDescTab("ru");
-            else if (direction.description?.kk) setDescTab("kk");
-            else setDescTab("en");
+            const titleLangs = ["kk", "kz", "ru", "en"];
+            const descLangs = ["kk", "kz", "ru", "en"];
+            setTitleTab(direction.title?.[currentLanguage] ? currentLanguage : titleLangs.find((lang) => direction.title?.[lang]) || "en");
+            setDescTab(direction.description?.[currentLanguage] ? currentLanguage : descLangs.find((lang) => direction.description?.[lang]) || "en");
         }
-    }, [direction]);
+    }, [direction, currentLanguage]);
 
     if (!direction) return null;
 
     const formatDate = (iso) => {
         if (!iso) return "—";
         try {
-            return new Date(iso).toLocaleDateString("ru-RU", {
+            return new Date(iso).toLocaleDateString(locale, {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric'
@@ -64,7 +64,7 @@ export default function DirectionViewModal({ onClose, direction }) {
                             <AlertCircle size={20} />
                             <div className="dvm-rejection-content">
                                 <strong>{t('supervisor.rejectionReason')}</strong>
-                                <p>{direction.rejectionReason}</p>
+                                <p>{getLocalizedValue(direction.rejectionReason, currentLanguage)}</p>
                             </div>
                         </div>
                     )}

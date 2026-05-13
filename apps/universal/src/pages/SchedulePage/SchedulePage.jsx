@@ -3,11 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { MapPin, ChevronRight, UserCheck, Users, ShieldCheck } from 'lucide-react';
 import './SchedulePage.css';
 import { useNavigate } from "react-router-dom";
+import { getIntlLocale } from "@awm/shared";
 
 const scheduleData = [
     {
         id: 1,
-        type: 'Предзащита',
+        type: 'preDefense',
         stage: 1,
         chairman: 'д.т.н. Соколов А.П.',
         secretary: 'Петрова В.Д.',
@@ -18,7 +19,7 @@ const scheduleData = [
     },
     {
         id: 2,
-        type: 'Защита',
+        type: 'defense',
         stage: null,
         chairman: 'к.т.н. Волков С.М.',
         secretary: 'Лисицына К.А.',
@@ -30,11 +31,13 @@ const scheduleData = [
 ];
 
 export default function SchedulePage() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const locale = getIntlLocale(i18n.language);
     const [selectedDate, setSelectedDate] = useState('2024-05-15');
     const navigate = useNavigate();
     const uniqueDates = [...new Set(scheduleData.map(item => item.date))];
     const dailyEvent = scheduleData.find(event => event.date === selectedDate);
+    const stageSuffix = dailyEvent?.stage ? ` ${dailyEvent.stage}` : "";
 
     return (
         <div className="teacher-schedule-page">
@@ -58,7 +61,7 @@ export default function SchedulePage() {
                         >
                             <span className="date-tab-day">{new Date(date).getDate()}</span>
                             <span className="date-tab-month">
-                                {new Date(date).toLocaleDateString('ru-RU', { month: 'short' }).replace('.', '')}
+                                {new Date(date).toLocaleDateString(locale, { month: 'short' }).replace('.', '')}
                             </span>
                         </button>
                     ))}
@@ -75,18 +78,18 @@ export default function SchedulePage() {
 
                         <div className="card-wrapper" onClick={() => navigate(`/schedule/${dailyEvent.id}`)}>
                             <div className="sharp-card">
-                <div className={`card-accent ${dailyEvent.type === 'Защита' ? 'final' : 'pre'}`}></div>
+                <div className={`card-accent ${dailyEvent.type === 'defense' ? 'final' : 'pre'}`}></div>
 
                                 {/* Декоративная иконка на фоне карточки */}
                                 <div className="card-watermark">
-                                    {dailyEvent.type === 'Защита' ? <ShieldCheck size={100} /> : <Users size={100} />}
+                                    {dailyEvent.type === 'defense' ? <ShieldCheck size={100} /> : <Users size={100} />}
                                 </div>
 
                                 <div className="card-main-content">
                                     <div className="card-upper">
                                         <div className="card-tags">
-                                            <span className={`tag-pill ${dailyEvent.type === 'Защита' ? 'pill-final' : 'pill-pre'}`}>
-                                                {dailyEvent.type} {dailyEvent.stage}
+                                            <span className={`tag-pill ${dailyEvent.type === 'defense' ? 'pill-final' : 'pill-pre'}`}>
+                                                {dailyEvent.type === 'defense' ? t('commission.defense') : t('commission.preDefense')}{stageSuffix}
                                             </span>
                                             <span className="room-text">
                                                 <MapPin size={14} /> {t('commission.roomShort')} {dailyEvent.room}

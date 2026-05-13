@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRole, ROLES } from '@awm/shared';
+import { useRole, ROLES, getIntlLocale, getLocalizedValue } from '@awm/shared';
 import './CommissionPage.css';
 
 const mockCommissions = [
     {
         id: 1,
-        name: 'Комиссия ИС-21',
+        name: {
+            kk: 'ИС-21 комиссиясы',
+            ru: 'Комиссия ИС-21',
+            en: 'IS-21 Commission',
+        },
         date: '2025-06-15',
         time: '10:00',
         room: 'ГУК 723',
@@ -17,7 +21,11 @@ const mockCommissions = [
     },
     {
         id: 2,
-        name: 'Комиссия ИС-20',
+        name: {
+            kk: 'ИС-20 комиссиясы',
+            ru: 'Комиссия ИС-20',
+            en: 'IS-20 Commission',
+        },
         date: '2025-06-16',
         time: '14:00',
         room: 'ГУК 725',
@@ -28,7 +36,11 @@ const mockCommissions = [
     },
     {
         id: 3,
-        name: 'Комиссия ПИ-21',
+        name: {
+            kk: 'ПИ-21 комиссиясы',
+            ru: 'Комиссия ПИ-21',
+            en: 'PI-21 Commission',
+        },
         date: '2025-06-10',
         time: '10:00',
         room: 'ГУК 720',
@@ -40,18 +52,99 @@ const mockCommissions = [
 ];
 
 const mockProtocolStudents = [
-    { id: 1, name: 'Ахметов Б.К.', thesis: 'Разработка системы управления задачами', avgScore: 87.4, decision: 'credit' },
-    { id: 2, name: 'Байжанова А.Т.', thesis: 'Мобильное приложение для мониторинга здоровья', avgScore: 92.1, decision: 'credit' },
-    { id: 3, name: 'Волков Д.С.', thesis: 'Анализ данных социальных сетей', avgScore: 78.6, decision: 'credit' },
-    { id: 4, name: 'Григорьева Е.А.', thesis: 'Платформа электронного обучения', avgScore: 54.2, decision: 'noCredit' },
-    { id: 5, name: 'Досымов Н.К.', thesis: 'Система распознавания лиц', avgScore: 83.0, decision: 'credit' },
-    { id: 6, name: 'Ермекова С.Б.', thesis: 'Оптимизация логистических маршрутов', avgScore: 90.5, decision: 'credit' },
-    { id: 7, name: 'Жумабеков И.М.', thesis: 'Чат-бот на основе ИИ', avgScore: 71.8, decision: 'credit' },
-    { id: 8, name: 'Зайцева О.В.', thesis: 'Веб-портал для управления проектами', avgScore: 88.3, decision: 'credit' },
+    {
+        id: 1,
+        name: 'Ахметов Б.К.',
+        thesis: {
+            kk: 'Тапсырмаларды басқару жүйесін әзірлеу',
+            ru: 'Разработка системы управления задачами',
+            en: 'Development of a task management system',
+        },
+        avgScore: 87.4,
+        decision: 'credit'
+    },
+    {
+        id: 2,
+        name: 'Байжанова А.Т.',
+        thesis: {
+            kk: 'Денсаулықты бақылауға арналған мобильді қосымша',
+            ru: 'Мобильное приложение для мониторинга здоровья',
+            en: 'Mobile application for health monitoring',
+        },
+        avgScore: 92.1,
+        decision: 'credit'
+    },
+    {
+        id: 3,
+        name: 'Волков Д.С.',
+        thesis: {
+            kk: 'Әлеуметтік желілер деректерін талдау',
+            ru: 'Анализ данных социальных сетей',
+            en: 'Analysis of social network data',
+        },
+        avgScore: 78.6,
+        decision: 'credit'
+    },
+    {
+        id: 4,
+        name: 'Григорьева Е.А.',
+        thesis: {
+            kk: 'Электрондық оқыту платформасы',
+            ru: 'Платформа электронного обучения',
+            en: 'E-learning platform',
+        },
+        avgScore: 54.2,
+        decision: 'noCredit'
+    },
+    {
+        id: 5,
+        name: 'Досымов Н.К.',
+        thesis: {
+            kk: 'Беттерді тану жүйесі',
+            ru: 'Система распознавания лиц',
+            en: 'Face recognition system',
+        },
+        avgScore: 83.0,
+        decision: 'credit'
+    },
+    {
+        id: 6,
+        name: 'Ермекова С.Б.',
+        thesis: {
+            kk: 'Логистикалық бағыттарды оңтайландыру',
+            ru: 'Оптимизация логистических маршрутов',
+            en: 'Optimization of logistics routes',
+        },
+        avgScore: 90.5,
+        decision: 'credit'
+    },
+    {
+        id: 7,
+        name: 'Жумабеков И.М.',
+        thesis: {
+            kk: 'ЖИ негізіндегі чат-бот',
+            ru: 'Чат-бот на основе ИИ',
+            en: 'AI-based chatbot',
+        },
+        avgScore: 71.8,
+        decision: 'credit'
+    },
+    {
+        id: 8,
+        name: 'Зайцева О.В.',
+        thesis: {
+            kk: 'Жобаларды басқаруға арналған веб-портал',
+            ru: 'Веб-портал для управления проектами',
+            en: 'Web portal for project management',
+        },
+        avgScore: 88.3,
+        decision: 'credit'
+    },
 ];
 
 function CommissionPage() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const locale = getIntlLocale(i18n.language);
     const { currentRole } = useRole();
     const [activeTab, setActiveTab] = useState('upcoming');
     const [protocolModal, setProtocolModal] = useState(null);
@@ -70,7 +163,12 @@ function CommissionPage() {
     };
 
     const handleDownloadPdf = () => {
-        alert('PDF download — mock action');
+        alert(t('messages.pdfDownloadMock'));
+    };
+
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '—';
+        return new Date(dateStr).toLocaleDateString(locale);
     };
 
     return (
@@ -103,7 +201,7 @@ function CommissionPage() {
                 {filteredCommissions.map(commission => (
                     <div key={commission.id} className="commission-card">
                         <div className="commission-card-header">
-                            <h3>{commission.name}</h3>
+                            <h3>{getLocalizedValue(commission.name, i18n.language)}</h3>
                             <span className={`status-badge ${commission.status}`}>
                                 {commission.status === 'upcoming' ? t('commission.statusUpcoming') : t('commission.statusCompleted')}
                             </span>
@@ -112,7 +210,7 @@ function CommissionPage() {
                         <div className="commission-details">
                             <div className="detail-item">
                                 <span className="detail-label">{t('commission.date')}</span>
-                                <span className="detail-value">{commission.date}</span>
+                                <span className="detail-value">{formatDate(commission.date)}</span>
                             </div>
                             <div className="detail-item">
                                 <span className="detail-label">{t('commission.time')}</span>
@@ -171,8 +269,8 @@ function CommissionPage() {
                         </div>
 
                         <div className="protocol-modal-meta">
-                            <p><strong>{protocolModal.name}</strong></p>
-                            <p>{t('commission.date')}: {protocolModal.date} | {t('commission.time')}: {protocolModal.time} | {t('commission.room')}: {protocolModal.room}</p>
+                            <p><strong>{getLocalizedValue(protocolModal.name, i18n.language)}</strong></p>
+                            <p>{t('commission.date')}: {formatDate(protocolModal.date)} | {t('commission.time')}: {protocolModal.time} | {t('commission.room')}: {protocolModal.room}</p>
                             <p>{t('commission.chairman')}: {protocolModal.chairman} | {t('commission.secretary')}: {protocolModal.secretary}</p>
                         </div>
 
@@ -192,7 +290,7 @@ function CommissionPage() {
                                         <tr key={s.id} className={idx % 2 === 0 ? 'protocol-row-even' : ''}>
                                             <td>{idx + 1}</td>
                                             <td>{s.name}</td>
-                                            <td>{s.thesis}</td>
+                                            <td>{getLocalizedValue(s.thesis, i18n.language)}</td>
                                             <td className="protocol-score">{s.avgScore}</td>
                                             <td>
                                                 <span className={`protocol-decision ${s.decision}`}>

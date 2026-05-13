@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { getIntlLocale, getLocalizedValue, normalizeLanguage } from '@awm/shared';
 import './MyWorkPage.css';
 
 const workDetails = {
@@ -8,8 +9,16 @@ const workDetails = {
     topicEn: 'Development of a thesis defense process management system',
     supervisor: 'Иванов И.И.',
     supervisorContacts: 'ivanov@university.kz',
-    workType: 'Дипломная работа',
-    direction: 'Информационные технологии',
+    workType: {
+        ru: 'Дипломная работа',
+        kk: 'Дипломдық жұмыс',
+        en: 'Thesis work',
+    },
+    direction: {
+        ru: 'Информационные технологии',
+        kk: 'Ақпараттық технологиялар',
+        en: 'Information technologies',
+    },
     assignedDate: '2025-09-15',
 };
 
@@ -31,14 +40,16 @@ const timeline = [
     { id: '4', date: '', status: 'pending', titleKey: 'student.antiplagiarismPending', description: 'Ожидает прохождения нормоконтроля.' },
 ];
 
-function formatDate(dateString) {
+function formatDate(dateString, locale) {
     if (!dateString) return '—';
     const date = new Date(dateString);
-    return date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    return date.toLocaleDateString(locale, { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
 export default function MyWorkPage() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const locale = getIntlLocale(i18n.language);
+    const currentLanguage = normalizeLanguage(i18n.language);
 
     return (
         <div className="my-work-page">
@@ -67,15 +78,15 @@ export default function MyWorkPage() {
                         </div>
                         <div className="my-work-info-row">
                             <span className="my-work-info-label">{t('student.workTypeLabel')}</span>
-                            <span className="my-work-info-value">{workDetails.workType}</span>
+                            <span className="my-work-info-value">{getLocalizedValue(workDetails.workType, currentLanguage)}</span>
                         </div>
                         <div className="my-work-info-row">
                             <span className="my-work-info-label">{t('student.directionLabel')}</span>
-                            <span className="my-work-info-value">{workDetails.direction}</span>
+                            <span className="my-work-info-value">{getLocalizedValue(workDetails.direction, currentLanguage)}</span>
                         </div>
                         <div className="my-work-info-row">
                             <span className="my-work-info-label">{t('student.assignedDate')}</span>
-                            <span className="my-work-info-value">{formatDate(workDetails.assignedDate)}</span>
+                            <span className="my-work-info-value">{formatDate(workDetails.assignedDate, locale)}</span>
                         </div>
                     </div>
                 </div>
@@ -117,7 +128,7 @@ export default function MyWorkPage() {
                             <span className="my-work-file-icon">{file.icon}</span>
                             <div className="my-work-file-info">
                                 <span className="my-work-file-name">{file.name}</span>
-                                <span className="my-work-file-meta">{file.size} · {formatDate(file.date)}</span>
+                                <span className="my-work-file-meta">{file.size} · {formatDate(file.date, locale)}</span>
                             </div>
                             <button className="my-work-download-btn">{t('student.downloadReview')}</button>
                         </div>
@@ -138,7 +149,7 @@ export default function MyWorkPage() {
                             <div className="my-work-timeline-content">
                                 <div className="my-work-timeline-header">
                                     <span className="my-work-timeline-title">{t(item.titleKey)}</span>
-                                    <span className="my-work-timeline-date">{formatDate(item.date)}</span>
+                                    <span className="my-work-timeline-date">{formatDate(item.date, locale)}</span>
                                 </div>
                                 <p className="my-work-timeline-desc">{item.description}</p>
                             </div>

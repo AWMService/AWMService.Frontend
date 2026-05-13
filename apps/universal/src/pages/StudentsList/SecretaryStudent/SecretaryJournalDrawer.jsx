@@ -1,12 +1,53 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { getLocalizedValue } from "@awm/shared";
 
 const CRITERIA = [
-    { id: 1, name: "Актуальность темы", maxScore: 20 },
-    { id: 2, name: "Качество исследования", maxScore: 25 },
-    { id: 3, name: "Практическая значимость", maxScore: 20 },
-    { id: 4, name: "Качество доклада", maxScore: 15 },
-    { id: 5, name: "Ответы на вопросы", maxScore: 20 },
+    {
+        id: 1,
+        name: {
+            kk: "Тақырыптың өзектілігі",
+            ru: "Актуальность темы",
+            en: "Relevance of the topic",
+        },
+        maxScore: 20,
+    },
+    {
+        id: 2,
+        name: {
+            kk: "Зерттеу сапасы",
+            ru: "Качество исследования",
+            en: "Quality of the research",
+        },
+        maxScore: 25,
+    },
+    {
+        id: 3,
+        name: {
+            kk: "Практикалық маңыздылығы",
+            ru: "Практическая значимость",
+            en: "Practical significance",
+        },
+        maxScore: 20,
+    },
+    {
+        id: 4,
+        name: {
+            kk: "Баяндама сапасы",
+            ru: "Качество доклада",
+            en: "Presentation quality",
+        },
+        maxScore: 15,
+    },
+    {
+        id: 5,
+        name: {
+            kk: "Сұрақтарға жауаптар",
+            ru: "Ответы на вопросы",
+            en: "Answers to questions",
+        },
+        maxScore: 20,
+    },
 ];
 
 function generateCriteriaScores(memberId) {
@@ -23,11 +64,11 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isFinal
     const [reviewRequested, setReviewRequested] = useState({});
 
     const [members, setMembers] = useState([
-        { id: 1, name: "Иванов И.И.", role: "Председатель", status: "submitted", score: 88 },
-        { id: 2, name: "Смирнова А.В.", role: "Член комиссии", status: "submitted", score: 82 },
-        { id: 3, name: "Оспанов Д.К.", role: "Член комиссии", status: "submitted", score: 85 },
-        { id: 4, name: "Ким Е.В.", role: "Член комиссии", status: "submitted", score: 90 },
-        { id: 5, name: "Алиев М.М.", role: "Член комиссии", status: "submitted", score: 78 },
+        { id: 1, name: "Иванов И.И.", roleKey: "chairman", status: "submitted", score: 88 },
+        { id: 2, name: "Смирнова А.В.", roleKey: "member", status: "submitted", score: 82 },
+        { id: 3, name: "Оспанов Д.К.", roleKey: "member", status: "submitted", score: 85 },
+        { id: 4, name: "Ким Е.В.", roleKey: "member", status: "submitted", score: 90 },
+        { id: 5, name: "Алиев М.М.", roleKey: "member", status: "submitted", score: 78 },
     ]);
 
     // Per-criterion scores for reconciliation
@@ -99,8 +140,8 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isFinal
                     <h2 className="s-drawer-title">{t('commission.commissionManagement')}</h2>
                     {student && (
                         <div className="s-student-info">
-                            <div className="s-student-name-large">{student.name}</div>
-                            <div className="s-topic-sub">{student.topicTitle}</div>
+                            <div className="s-student-name-large">{getLocalizedValue(student.name)}</div>
+                            <div className="s-topic-sub">{getLocalizedValue(student.topicTitle)}</div>
                         </div>
                     )}
                 </div>
@@ -114,7 +155,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isFinal
                                 <li key={m.id} className={`sec-member-item ${m.status === 'locked' ? 'finalized' : ''}`}>
                                     <div className="sec-member-details">
                                         <span className="sec-member-name">
-                                            {m.name} <span className="sec-role-tag">{m.role}</span>
+                                            {m.name} <span className="sec-role-tag">{t(`commission.${m.roleKey}`)}</span>
                                         </span>
                                         {m.status === "editing" && <span className="sec-m-status editing">{t('status.inProgress')}</span>}
                                         {m.status === "submitted" && <span className="sec-m-status submitted">{t('status.submitted')}</span>}
@@ -152,7 +193,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isFinal
                                         return (
                                             <tr key={criterion.id} className={idx % 2 === 0 ? 'sec-row-even' : ''}>
                                                 <td className="sec-criterion-name">
-                                                    {criterion.name}
+                                                    {getLocalizedValue(criterion.name)}
                                                     <span className="sec-max-score">({t('journal.maxScore')} {criterion.maxScore})</span>
                                                 </td>
                                                 {criteriaScores.map(ms => {
@@ -208,10 +249,10 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isFinal
                         <div
                             className="s-status-message sec-msg-blue clickable-simulate"
                             onClick={simulateMembersFinalizing}
-                            title="Нажмите, чтобы симулировать подтверждение всеми членами комиссии"
+                            title={t('messages.simulateMembersConfirm')}
                         >
                             <span style={{cursor: "pointer", textDecoration: "underline"}}>
-                                (Тест) {t('messages.gradesRevealed')}
+                                {t('messages.gradesRevealed')}
                             </span>
                         </div>
                     )}

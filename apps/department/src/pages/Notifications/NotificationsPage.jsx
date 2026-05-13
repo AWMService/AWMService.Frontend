@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getIntlLocale } from '@awm/shared';
 import './NotificationsPage.css';
 
 const mockNotifications = [
@@ -20,9 +21,9 @@ const TYPE_ICONS = {
 
 const FILTER_TYPES = ['all', 'info', 'warning', 'action_required'];
 
-function formatDate(dateString) {
+function formatDate(dateString, locale) {
     const date = new Date(dateString);
-    return date.toLocaleString('ru-RU', {
+    return date.toLocaleString(locale, {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
@@ -32,7 +33,8 @@ function formatDate(dateString) {
 }
 
 export default function NotificationsPage() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const locale = getIntlLocale(i18n.language);
     const [notifications, setNotifications] = useState(mockNotifications);
     const [filterType, setFilterType] = useState('all');
 
@@ -133,7 +135,7 @@ export default function NotificationsPage() {
 
                             <div className="notification-footer">
                                 <span className="notification-date">
-                                    {formatDate(notification.date)}
+                                    {formatDate(notification.date, locale)}
                                 </span>
                                 {!notification.read && (
                                     <button

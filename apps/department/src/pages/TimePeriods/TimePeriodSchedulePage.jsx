@@ -4,6 +4,7 @@ import {
     MapPin, ChevronDown, ChevronUp,
     ShieldCheck, ArrowLeft
 } from 'lucide-react';
+import { getIntlLocale } from '@awm/shared';
 import './TimePeriodSchedulePage.css';
 
 /* ===== ДАННЫЕ (MOCK) ===== */
@@ -51,7 +52,8 @@ const mockSchedule = {
 };
 
 export default function TimePeriodSchedulePage() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const locale = getIntlLocale(i18n.language);
     const [selectedDate, setSelectedDate] = useState('2026-06-10');
     const [expandedCards, setExpandedCards] = useState({});
 
@@ -113,7 +115,7 @@ export default function TimePeriodSchedulePage() {
                         >
                             <span className="date-tab-day">{new Date(date).getDate()}</span>
                             <span className="date-tab-month">
-                                {new Date(date).toLocaleDateString('ru-RU', { month: 'short' }).replace('.', '')}
+                                {new Date(date).toLocaleDateString(locale, { month: 'short' }).replace('.', '')}
                             </span>
                         </button>
                     ))}

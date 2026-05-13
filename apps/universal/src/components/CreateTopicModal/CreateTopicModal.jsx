@@ -133,7 +133,7 @@ export default function CreateTopicModal({ open, onClose, onCreate, directions =
                                 <div className="ctm-lang-tag">EN</div>
                                 <input
                                     className="ctm-input"
-                                    placeholder="Topic title..."
+                                    placeholder={`${t('common.title')}...`}
                                     value={form.title.en}
                                     onChange={e => updateField("title.en", e.target.value)}
                                 />
@@ -173,7 +173,7 @@ export default function CreateTopicModal({ open, onClose, onCreate, directions =
                                 <div className="ctm-lang-tag">EN</div>
                                 <textarea
                                     className="ctm-textarea"
-                                    placeholder="Description..."
+                                    placeholder={`${t('common.description')}...`}
                                     value={form.description.en}
                                     onChange={e => updateField("description.en", e.target.value)}
                                 />

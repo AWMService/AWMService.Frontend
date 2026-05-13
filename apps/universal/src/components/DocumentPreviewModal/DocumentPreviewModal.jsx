@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { getIntlLocale, getLocalizedValue } from '@awm/shared';
 import { X, Download, FileText, Clock } from 'lucide-react';
 import './DocumentPreviewModal.css';
 
@@ -10,13 +11,21 @@ const mockVersions = [
 ];
 
 export default function DocumentPreviewModal({ document, onClose }) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const locale = getIntlLocale(i18n.language);
 
     if (!document) return null;
 
-    const docName = `${document.studentName.replace(/\s/g, '_')}_${document.documentType}.docx`;
+    const documentType = getLocalizedValue(document.documentType, i18n.language) || 'document';
+    const docName = `${document.studentName.replace(/\s/g, '_')}_${documentType}.docx`;
     const versions = mockVersions.slice(0, document.version);
     const currentVersion = versions[versions.length - 1];
+    const formatDate = (value) =>
+        new Date(value).toLocaleDateString(locale, {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+        });
 
     const handleDownload = () => {
         console.log('Download:', docName);
@@ -55,11 +64,11 @@ export default function DocumentPreviewModal({ document, onClose }) {
                         </div>
                         <div className="dpm-info-item">
                             <span className="dpm-info-label">{t('normocontrol.uploadDate')}</span>
-                            <span className="dpm-info-value">{document.submittedDate}</span>
+                            <span className="dpm-info-value">{formatDate(document.submittedDate)}</span>
                         </div>
                         <div className="dpm-info-item">
                             <span className="dpm-info-label">{t('normocontrol.documentType')}</span>
-                            <span className="dpm-info-value">{document.documentType}</span>
+                            <span className="dpm-info-value">{documentType}</span>
                         </div>
                     </div>
 
@@ -83,7 +92,7 @@ export default function DocumentPreviewModal({ document, onClose }) {
                                         )}
                                     </div>
                                     <div>
-                                        <span className="dpm-version-date">{v.date} · {v.size}</span>
+                                        <span className="dpm-version-date">{formatDate(v.date)} · {v.size}</span>
                                     </div>
                                 </div>
                             ))}

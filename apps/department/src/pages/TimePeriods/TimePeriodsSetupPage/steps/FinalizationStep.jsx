@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { getIntlLocale } from "@awm/shared";
 
 export default function FinalizationStep({
                                              commissions,
@@ -7,7 +8,8 @@ export default function FinalizationStep({
                                              totalStudents,
                                              onFinish
                                          }) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const locale = getIntlLocale(i18n.language);
     const distributedStudents = commissions.reduce((sum, c) => {
         return (
             sum +
@@ -45,7 +47,7 @@ export default function FinalizationStep({
                             <div key={s.sessionId} className="final-session">
                                 <div className="session-datetime">
                                     <span>
-                                        {new Date(s.date).toLocaleDateString("ru-RU", {
+                                        {new Date(s.date).toLocaleDateString(locale, {
                                             day: "numeric",
                                             month: "long",
                                             year: "numeric",

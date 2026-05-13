@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { getIntlLocale, getLocalizedValue, normalizeLanguage } from "@awm/shared";
 import { X, Calendar, BookOpen, Layers, Users, User, Info, Check, AlertCircle } from "lucide-react";
 import "./TopicViewModal.css";
 
@@ -7,12 +8,14 @@ export default function TopicViewModal({
                                            open,
                                            onClose,
                                            topic,
-                                           onApproveStudent,
-                                           onRejectStudent
-                                       }) {
-    const { t } = useTranslation();
-    const [titleTab, setTitleTab] = useState("ru");
-    const [descTab, setDescTab] = useState("ru");
+                                       onApproveStudent,
+                                       onRejectStudent
+                                   }) {
+    const { t, i18n } = useTranslation();
+    const locale = getIntlLocale(i18n.language);
+    const currentLanguage = normalizeLanguage(i18n.language);
+    const [titleTab, setTitleTab] = useState(currentLanguage);
+    const [descTab, setDescTab] = useState(currentLanguage);
 
     // Логика отказа
     const [rejectingId, setRejectingId] = useState(null); // ID заявки, которую отклоняем
@@ -22,14 +25,21 @@ export default function TopicViewModal({
         if (!topic) return;
         const availableTitles = topic.title || {};
         const availableDescriptions = topic.description || {};
-
-        setTitleTab(availableTitles.ru ? "ru" : availableTitles.kk ? "kk" : "en");
-        setDescTab(availableDescriptions.ru ? "ru" : availableDescriptions.kk ? "kk" : "en");
+        setTitleTab(
+            availableTitles[currentLanguage]
+                ? currentLanguage
+                : ["kk", "kz", "ru", "en"].find((lang) => availableTitles[lang]) || "en"
+        );
+        setDescTab(
+            availableDescriptions[currentLanguage]
+                ? currentLanguage
+                : ["kk", "kz", "ru", "en"].find((lang) => availableDescriptions[lang]) || "en"
+        );
 
         // Сброс состояния при открытии новой темы
         setRejectingId(null);
         setRejectReason("");
-    }, [topic]);
+    }, [topic, currentLanguage]);
 
     if (!open || !topic) return null;
 
@@ -58,7 +68,7 @@ export default function TopicViewModal({
     const formatDate = (iso) => {
         if (!iso) return "—";
         try {
-            return new Date(iso).toLocaleDateString("ru-RU", {
+            return new Date(iso).toLocaleDateString(locale, {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric'
@@ -81,7 +91,7 @@ export default function TopicViewModal({
 
     const handleSubmitReject = (reqId) => {
         if (!rejectReason.trim()) {
-            alert(t('supervisor.rejectionReason'));
+            alert(t('common.requiredFields'));
             return;
         }
         if (onRejectStudent) {
@@ -133,7 +143,7 @@ export default function TopicViewModal({
                             <Info size={16} />
                             <div className="tv-info-content">
                                 <label>{t('nav.directions')}</label>
-                                <span>{topic.directionTitle || t('common.noData')}</span>
+                                <span>{getLocalizedValue(topic.directionTitle, currentLanguage) || t('common.noData')}</span>
                             </div>
                         </div>
                     </div>
@@ -260,7 +270,7 @@ export default function TopicViewModal({
                                 ))}
                             </div>
                         </div>
-                        <div className="tv-text-box">
+                    <div className="tv-text-box">
                             {topic.title?.[titleTab] || <span className="tv-empty-text">{t('common.noData')}</span>}
                         </div>
                     </div>

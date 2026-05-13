@@ -20,6 +20,34 @@ export const supportedLanguages = [
 
 export const defaultLanguage = 'ru';
 
+export const normalizeLanguage = (lang) => {
+  if (!lang) return defaultLanguage;
+  const base = String(lang).toLowerCase().split('-')[0];
+  return supportedLanguages.some(({ code }) => code === base) ? base : defaultLanguage;
+};
+
+export const getIntlLocale = (lang) => {
+  const normalized = normalizeLanguage(lang || getCurrentLanguage());
+  if (normalized === 'en') return 'en-US';
+  if (normalized === 'kk') return 'kk-KZ';
+  return 'ru-RU';
+};
+
+export const getLocalizedValue = (value, lang) => {
+  if (value == null) return '';
+  if (typeof value !== 'object') return value;
+
+  const normalized = normalizeLanguage(lang || getCurrentLanguage());
+  return (
+    value[normalized] ||
+    value.kk ||
+    value.kz ||
+    value.ru ||
+    value.en ||
+    ''
+  );
+};
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -27,6 +55,8 @@ i18n
     resources,
     fallbackLng: defaultLanguage,
     supportedLngs: ['ru', 'en', 'kk'],
+    load: 'languageOnly',
+    nonExplicitSupportedLngs: true,
     
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag'],
@@ -47,11 +77,12 @@ export default i18n;
 
 // Hook for changing language
 export const changeLanguage = (lang) => {
-  i18n.changeLanguage(lang);
-  localStorage.setItem('awm-language', lang);
+  const normalized = normalizeLanguage(lang);
+  i18n.changeLanguage(normalized);
+  localStorage.setItem('awm-language', normalized);
 };
 
 // Get current language
 export const getCurrentLanguage = () => {
-  return i18n.language || defaultLanguage;
+  return normalizeLanguage(i18n.language || defaultLanguage);
 };

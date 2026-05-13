@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { getIntlLocale } from "@awm/shared";
 import "./SupervisorCard.css";
 
 export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = getIntlLocale(i18n.language);
   const loadPercent = Math.min(
       Math.round((supervisor.currentStudents / supervisor.maxStudents) * 100),
       100
@@ -148,7 +150,7 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
                 <div>
                   <h4 className="section-title">{t('department.assignedDate')}</h4>
                   <span>
-                {new Date(supervisor.assignedDate).toLocaleDateString("ru-RU")}
+                {new Date(supervisor.assignedDate).toLocaleDateString(locale)}
               </span>
                 </div>
             )}

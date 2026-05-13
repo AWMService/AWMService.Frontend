@@ -31,11 +31,11 @@ function SettingsPage() {
 
   const handleSave = () => {
     if (!form.platformName.trim() || !form.supportEmail.trim()) {
-      setFeedback({ type: 'error', message: t('common.requiredFields', 'Please fill in all required fields') });
+      setFeedback({ type: 'error', message: t('common.requiredFields') });
       return;
     }
     localStorage.setItem('adminSettings', JSON.stringify(form));
-    setFeedback({ type: 'success', message: t('common.saved', 'Settings saved successfully') });
+    setFeedback({ type: 'success', message: t('common.saved') });
   };
 
   const handleCancel = () => {
@@ -89,7 +89,7 @@ function SettingsPage() {
               checked={form.maintenanceMode}
               onChange={(e) => handleChange('maintenanceMode', e.target.checked)}
             />
-            <span>Maintenance mode</span>
+            <span>{t('admin.maintenanceMode')}</span>
           </label>
         </div>
 

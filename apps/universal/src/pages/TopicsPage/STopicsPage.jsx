@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { getIntlLocale, getLocalizedValue, normalizeLanguage } from "@awm/shared";
 import {
     Plus,
     BookText,
@@ -8,8 +9,7 @@ import {
     Eye,
     Edit3,
     Send,
-    Info,
-    Trash2
+    Info
 } from "lucide-react";
 
 import CreateTopicModal from "../../components/CreateTopicModal/CreateTopicModal.jsx";
@@ -22,9 +22,21 @@ import "./STopicsPage.css";
 const mockTopics = [
     {
         id: "1",
-        directionTitle: "Искусственный интеллект и машинное обучение",
-        title: { ru: "Алгоритмы машинного обучения" },
-        description: { ru: "Исследование алгоритмов для классификации и кластеризации данных." },
+        directionTitle: {
+            kk: "Жасанды интеллект және машиналық оқыту",
+            ru: "Искусственный интеллект и машинное обучение",
+            en: "Artificial Intelligence and Machine Learning",
+        },
+        title: {
+            kk: "Машиналық оқыту алгоритмдері",
+            ru: "Алгоритмы машинного обучения",
+            en: "Machine Learning Algorithms",
+        },
+        description: {
+            kk: "Деректерді жіктеу және кластерлеу үшін алгоритмдерді зерттеу.",
+            ru: "Исследование алгоритмов для классификации и кластеризации данных.",
+            en: "Research on algorithms for data classification and clustering.",
+        },
         workType: "diploma_project",
         participantCount: 3, // Увеличил лимит, чтобы можно было добавить студентов
         status: "approved",
@@ -45,21 +57,39 @@ const mockTopics = [
     },
     {
         id: "2",
-        directionTitle: "Веб-разработка и информационные системы",
-        title: { ru: "Разработка веб-приложений" },
-        description: { ru: "Создание современного веб-приложения с React и Node.js." },
+        directionTitle: {
+            kk: "Веб-әзірлеу және ақпараттық жүйелер",
+            ru: "Веб-разработка и информационные системы",
+            en: "Web Development and Information Systems",
+        },
+        title: {
+            kk: "Веб-қосымшаларды әзірлеу",
+            ru: "Разработка веб-приложений",
+            en: "Web Application Development",
+        },
+        description: {
+            kk: "React және Node.js көмегімен заманауи веб-қосымшаны құру.",
+            ru: "Создание современного веб-приложения с React и Node.js.",
+            en: "Creating a modern web application with React and Node.js.",
+        },
         workType: "diploma_work",
         participantCount: 2,
         status: "rejected",
         createdAt: "2024-01-10T09:00:00Z",
-        rejectionReason: "Необходимо более детально описать используемые технологии.",
+        rejectionReason: {
+            kk: "Қолданылатын технологияларды және зерттеу аясын толығырақ сипаттау қажет.",
+            ru: "Необходимо более детально описать используемые технологии и область исследования.",
+            en: "The technologies used and the research scope need to be described in more detail.",
+        },
         students: [],
         requests: []
     },
 ];
 
 export default function STopicsPage() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const locale = getIntlLocale(i18n.language);
+    const currentLanguage = normalizeLanguage(i18n.language);
 
     const workTypeLabels = {
         diploma_project: t('supervisor.diplomaProject'),
@@ -80,11 +110,31 @@ export default function STopicsPage() {
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [selectedTopic, setSelectedTopic] = useState(null);
 
+    const getDirectionTitleObject = (directionLabel) => {
+        if (!directionLabel) return null;
+        if (typeof directionLabel === "object") return directionLabel;
+
+        const matched = topics.find(
+            (topic) => getLocalizedValue(topic.directionTitle, currentLanguage) === directionLabel
+        );
+
+        return matched?.directionTitle || {
+            kk: directionLabel,
+            ru: directionLabel,
+            en: directionLabel,
+        };
+    };
+
+    const formatDate = (dateStr) => {
+        if (!dateStr) return "";
+        return new Date(dateStr).toLocaleDateString(locale);
+    };
+
     /* ===== CREATE ===== */
     const handleCreateTopic = (topic) => {
         const newTopic = {
             id: Date.now().toString(),
-            directionTitle: topic.direction,
+            directionTitle: getDirectionTitleObject(topic.direction),
             title: topic.title,
             description: topic.description,
             workType: topic.workType,
@@ -154,10 +204,6 @@ export default function STopicsPage() {
         setTopics(prev => prev.map(t => t.id === updatedTopic.id ? updatedTopic : t));
     };
 
-    const directions = Array.from(
-        new Set(topics.map(t => t.directionTitle).filter(Boolean))
-    );
-
     const openView = (topic) => {
         setSelectedTopic(topic);
         setIsViewOpen(true);
@@ -169,12 +215,26 @@ export default function STopicsPage() {
     };
 
     const handleSaveEdit = (updatedTopic) => {
+        const directionTitle = getDirectionTitleObject(updatedTopic.directionTitle);
+        const normalizedTopic = {
+            ...updatedTopic,
+            directionTitle,
+        };
+
         setTopics(prev =>
-            prev.map(t => (t.id === updatedTopic.id ? updatedTopic : t))
+            prev.map(t => (t.id === normalizedTopic.id ? normalizedTopic : t))
         );
         setIsEditOpen(false);
         setSelectedTopic(null);
     };
+
+    const directions = Array.from(
+        new Set(
+            topics
+                .map((topic) => getLocalizedValue(topic.directionTitle, currentLanguage))
+                .filter(Boolean)
+        )
+    );
 
     return (
         <div className="topics-page">
@@ -200,7 +260,7 @@ export default function STopicsPage() {
                                 <div className="card-top-row">
                                     <div className="card-date">
                                         <Calendar size={13} />
-                                        {new Date(topic.createdAt).toLocaleDateString("ru-RU")}
+                                        {formatDate(topic.createdAt)}
                                     </div>
                                     <span className={`status-pill pill-${topic.status}`}>
                                         {statusLabels[topic.status]}
@@ -208,16 +268,16 @@ export default function STopicsPage() {
                                 </div>
 
                                 <div className="card-direction-badge">
-                                    {topic.directionTitle}
+                                    {getLocalizedValue(topic.directionTitle, currentLanguage)}
                                 </div>
 
-                                <h3 className="card-title">{topic.title?.ru}</h3>
-                                <p className="card-description">{topic.description?.ru}</p>
+                                <h3 className="card-title">{getLocalizedValue(topic.title, currentLanguage)}</h3>
+                                <p className="card-description">{getLocalizedValue(topic.description, currentLanguage)}</p>
 
                                 {topic.status === "rejected" && (
                                     <div className="card-rejection-info">
                                         <Info size={14} />
-                                        <span>{topic.rejectionReason}</span>
+                                        <span>{getLocalizedValue(topic.rejectionReason, currentLanguage)}</span>
                                     </div>
                                 )}
 

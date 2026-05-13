@@ -50,7 +50,7 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                     </div>
 
                     <div className="tm-lang-switch">
-                        {["ru", "kz", "en"].map((lang) => (
+                        {["kk", "ru", "en"].map((lang) => (
                             <button
                                 key={lang}
                                 className={`tm-lang-btn ${

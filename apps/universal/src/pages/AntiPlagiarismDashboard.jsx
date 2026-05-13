@@ -7,6 +7,7 @@ import {
     FileText,
     CheckCircle2
 } from 'lucide-react';
+import { getLocalizedValue } from '@awm/shared';
 import './anti.css';
 
 const AntiPlagiarismDashboard = () => {
@@ -16,20 +17,28 @@ const AntiPlagiarismDashboard = () => {
     const [data, setData] = useState([
         {
             id: 1,
-            topicName: "Разработка высоконагруженных систем на Go",
+            topicName: {
+                ru: "Разработка высоконагруженных систем на Go",
+                kk: "Go тіліндегі жоғары жүктемелі жүйелерді әзірлеу",
+                en: "Development of high-load systems in Go",
+            },
             isClosed: false,
             students: [
-                { id: 101, name: "Александр Пушкин", status: "зачет", file: "diploma_final.pdf" },
-                { id: 102, name: "Сергей Есенин", status: "ожидание", file: null },
-                { id: 103, name: "Анна Ахматова", status: "незачет", file: "draft_v1.docx" },
+                { id: 101, name: "Александр Пушкин", status: "credit", file: "diploma_final.pdf" },
+                { id: 102, name: "Сергей Есенин", status: "waiting", file: null },
+                { id: 103, name: "Анна Ахматова", status: "noCredit", file: "draft_v1.docx" },
             ]
         },
         {
             id: 2,
-            topicName: "Методы защиты информации в сетях",
+            topicName: {
+                ru: "Методы защиты информации в сетях",
+                kk: "Желілердегі ақпаратты қорғау әдістері",
+                en: "Information Protection Methods in Networks",
+            },
             isClosed: false,
             students: [
-                { id: 201, name: "Владимир Маяковский", status: "ожидание", file: "report.pdf" }
+                { id: 201, name: "Владимир Маяковский", status: "waiting", file: "report.pdf" }
             ]
         }
     ]);
@@ -58,7 +67,7 @@ const AntiPlagiarismDashboard = () => {
         if (file) {
             setData(data.map(topic => topic.id === topicId ? {
                 ...topic,
-                students: topic.students.map(s => s.id === studentId ? { ...s, file: file.name, status: 'ожидание' } : s)
+                students: topic.students.map(s => s.id === studentId ? { ...s, file: file.name, status: 'waiting' } : s)
             } : topic));
             alert(t('messages.fileSelected', { filename: file.name }));
         }
@@ -74,7 +83,7 @@ const AntiPlagiarismDashboard = () => {
                         <div className="edu-topic-header">
                             <div className="edu-topic-info" onClick={() => toggleTopic(topic.id)}>
                                 {expandedTopics.includes(topic.id) ? <ChevronUp size={20} color="#94a3b8"/> : <ChevronDown size={20} color="#94a3b8"/>}
-                                <h3>{topic.topicName}</h3>
+                                <h3>{getLocalizedValue(topic.topicName)}</h3>
                                 {topic.isClosed && <CheckCircle2 size={18} color="#22c55e" />}
                             </div>
 
@@ -114,11 +123,11 @@ const AntiPlagiarismDashboard = () => {
                                                     disabled={topic.isClosed}
                                                     value={student.status}
                                                     onChange={(e) => updateStatus(topic.id, student.id, e.target.value)}
-                                                    className={`edu-status-select ${student.status}`}
+                                                    className={`edu-status-select status-${student.status}`}
                                                 >
-                                                    <option value="ожидание">{t('status.waiting')}</option>
-                                                    <option value="зачет">{t('status.credit')}</option>
-                                                    <option value="незачет">{t('status.noCredit')}</option>
+                                                    <option value="waiting">{t('status.waiting')}</option>
+                                                    <option value="credit">{t('status.credit')}</option>
+                                                    <option value="noCredit">{t('status.noCredit')}</option>
                                                 </select>
                                             </td>
                                             <td align="center">

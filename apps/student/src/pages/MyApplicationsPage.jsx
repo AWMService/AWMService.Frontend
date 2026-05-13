@@ -1,18 +1,27 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getIntlLocale, getLocalizedValue, normalizeLanguage } from '@awm/shared';
 import './StudentPage.css';
 
 const initialApplications = [
   {
     id: '1',
-    theme: 'Разработка веб-приложения для управления проектами',
+    theme: {
+      ru: 'Разработка веб-приложения для управления проектами',
+      kk: 'Жобаларды басқаруға арналған веб-қосымшаны әзірлеу',
+      en: 'Development of a project management web application',
+    },
     supervisor: 'Петров А.В.',
     status: 'pending',
     date: '2026-03-15',
   },
   {
     id: '2',
-    theme: 'Анализ данных с использованием машинного обучения',
+    theme: {
+      ru: 'Анализ данных с использованием машинного обучения',
+      kk: 'Машиналық оқытуды қолдана отырып деректерді талдау',
+      en: 'Data analysis using machine learning',
+    },
     supervisor: 'Сидорова М.И.',
     status: 'approved',
     date: '2026-03-10',
@@ -20,11 +29,19 @@ const initialApplications = [
   },
   {
     id: '3',
-    theme: 'Мобильное приложение для учебного расписания',
+    theme: {
+      ru: 'Мобильное приложение для учебного расписания',
+      kk: 'Оқу кестесіне арналған мобильді қосымша',
+      en: 'Mobile application for class scheduling',
+    },
     supervisor: 'Козлов В.П.',
     status: 'rejected',
     date: '2026-03-08',
-    rejectionReason: 'Тема не соответствует направлению кафедры',
+    rejectionReason: {
+      ru: 'Тема не соответствует направлению кафедры',
+      kk: 'Тақырып кафедра бағытына сәйкес келмейді',
+      en: 'The topic does not match the department direction',
+    },
   },
 ];
 
@@ -35,8 +52,15 @@ const statusConfig = {
 };
 
 export default function MyApplicationsPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = getIntlLocale(i18n.language);
+  const currentLanguage = normalizeLanguage(i18n.language);
   const [applications, setApplications] = useState(initialApplications);
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleDateString(locale);
+  };
 
   const handleCancel = (id) => {
     setApplications((prev) => prev.filter((app) => app.id !== id));
@@ -61,11 +85,11 @@ export default function MyApplicationsPage() {
               <div key={app.id} className="my-application-card">
                 <div className="my-app-card-body">
                   <div className="my-app-card-content">
-                    <h3 className="my-app-card-title">{app.theme}</h3>
+                    <h3 className="my-app-card-title">{getLocalizedValue(app.theme, currentLanguage)}</h3>
                     <p className="my-app-card-supervisor">
                       {t('student.scientificSupervisor')} {app.supervisor}
                     </p>
-                    <p className="my-app-card-date">{app.date}</p>
+                    <p className="my-app-card-date">{formatDate(app.date)}</p>
                   </div>
                   <div className="my-app-card-actions">
                     <span className={`status-badge ${config.className}`}>
@@ -84,13 +108,13 @@ export default function MyApplicationsPage() {
 
                 {app.status === 'approved' && app.approvedDate && (
                   <div className="my-app-card-extra approved-info">
-                    {t('student.approved')}: {app.approvedDate}
+                    {t('student.approved')}: {formatDate(app.approvedDate)}
                   </div>
                 )}
 
                 {app.status === 'rejected' && app.rejectionReason && (
                   <div className="my-app-card-extra rejected-info">
-                    {t('student.reason')} {app.rejectionReason}
+                    {t('student.reason')} {getLocalizedValue(app.rejectionReason, currentLanguage)}
                   </div>
                 )}
               </div>

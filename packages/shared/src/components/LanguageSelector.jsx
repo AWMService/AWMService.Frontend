@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { supportedLanguages, changeLanguage, getCurrentLanguage } from '../i18n';
+import { supportedLanguages, changeLanguage, normalizeLanguage } from '../i18n';
 import './LanguageSelector.css';
 
 export const LanguageSelector = ({ variant = 'dropdown' }) => {
@@ -8,7 +8,8 @@ export const LanguageSelector = ({ variant = 'dropdown' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const currentLang = supportedLanguages.find(l => l.code === i18n.language) 
+  const currentCode = normalizeLanguage(i18n.language);
+  const currentLang = supportedLanguages.find(l => l.code === currentCode) 
     || supportedLanguages.find(l => l.code === 'ru');
 
   useEffect(() => {
@@ -33,7 +34,7 @@ export const LanguageSelector = ({ variant = 'dropdown' }) => {
         {supportedLanguages.map((lang) => (
           <button
             key={lang.code}
-            className={`language-btn ${i18n.language === lang.code ? 'language-btn--active' : ''}`}
+            className={`language-btn ${currentCode === lang.code ? 'language-btn--active' : ''}`}
             onClick={() => handleLanguageChange(lang.code)}
           >
             {lang.short}
@@ -65,7 +66,7 @@ export const LanguageSelector = ({ variant = 'dropdown' }) => {
           {supportedLanguages.map((lang) => (
             <button
               key={lang.code}
-              className={`language-selector__option ${i18n.language === lang.code ? 'language-selector__option--active' : ''}`}
+              className={`language-selector__option ${currentCode === lang.code ? 'language-selector__option--active' : ''}`}
               onClick={() => handleLanguageChange(lang.code)}
             >
               <span className="language-selector__code">{lang.short}</span>

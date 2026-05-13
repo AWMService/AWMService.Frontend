@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { getLocalizedValue } from "@awm/shared";
 import "../../pages/StudentsList/StudentList.css";
 
 const FileIcon = () => <span style={{ marginRight: 8 }} />;
@@ -29,8 +30,8 @@ export default function StudentJournalDrawer({
 
                 {selectedStudent && (
                     <div className="s-student-info">
-                        <div className="s-student-name-large">{selectedStudent.name}</div>
-                        <div className="s-topic-sub">{selectedStudent.topicTitle}</div>
+                        <div className="s-student-name-large">{getLocalizedValue(selectedStudent.name)}</div>
+                        <div className="s-topic-sub">{getLocalizedValue(selectedStudent.topicTitle)}</div>
                     </div>
                 )}
             </div>
@@ -43,7 +44,7 @@ export default function StudentJournalDrawer({
                             <div key={i} className="s-doc-item">
                                 <FileIcon />
                                 <div className="s-doc-info">
-                                    <span className="s-doc-name">{doc.name}</span>
+                                    <span className="s-doc-name">{getLocalizedValue(doc.name)}</span>
                                     <span className="s-doc-size">{doc.size}</span>
                                 </div>
                             </div>
@@ -64,7 +65,7 @@ export default function StudentJournalDrawer({
                     <tbody>
                         {criteriaList.map(c => (
                             <tr key={c.id}>
-                                <td className="s-criteria-label">{c.label}</td>
+                                <td className="s-criteria-label">{getLocalizedValue(c.label)}</td>
                                 <td className="s-max-points">{c.max}</td>
                                 <td>
                                     <input

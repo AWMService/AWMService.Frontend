@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { getIntlLocale } from "@awm/shared";
 import "./StudentDistributionPage.css";
 import usersIcon from "../../assets/icons/users-icon.svg";
 
@@ -38,7 +39,8 @@ const INITIAL_STUDENTS = [
 ];
 
 export default function StudentDistributionPage() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const locale = getIntlLocale(i18n.language);
     const [students, setStudents] = useState(INITIAL_STUDENTS);
     const [filterCommission, setFilterCommission] = useState("all");
     const [filterDate, setFilterDate] = useState("");
@@ -83,6 +85,15 @@ export default function StudentDistributionPage() {
     };
 
     const getCommissionName = (id) => COMMISSIONS.find((c) => c.id === id)?.name || id;
+
+    const formatDate = (dateStr) => {
+        if (!dateStr) return "—";
+        return new Date(dateStr).toLocaleDateString(locale, {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        });
+    };
 
     return (
         <div className="student-distribution-page">
@@ -162,7 +173,7 @@ export default function StudentDistributionPage() {
                                 <td>
                                     {student.assignedSlot ? (
                                         <span className="sd-assigned-time">
-                                            {student.assignedDate} {student.assignedSlot}
+                                            {formatDate(student.assignedDate)} {student.assignedSlot}
                                         </span>
                                     ) : (
                                         "—"
