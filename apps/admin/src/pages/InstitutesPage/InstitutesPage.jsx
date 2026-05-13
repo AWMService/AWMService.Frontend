@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ConfirmModal } from '@awm/shared';
+import { ConfirmModal, useInstitutes, useCreateInstitute, useUpdateInstitute, useDeleteInstitute } from '@awm/shared';
 import './InstitutesPage.css';
-
-const initialData = [
-    { id: '1', name: 'Институт ИТ', address: 'ул. Сатпаева 22А, корпус 3', facultyCount: 5 },
-    { id: '2', name: 'Институт математики', address: 'ул. Аль-Фараби 71, корпус 6', facultyCount: 3 },
-    { id: '3', name: 'Институт естественных наук', address: 'ул. Тимирязева 46, корпус 2', facultyCount: 4 },
-];
 
 const emptyForm = { name: '', address: '' };
 
 export default function InstitutesPage() {
     const { t } = useTranslation();
-    const [items, setItems] = useState(initialData);
+    
+    // API Hooks
+    const { data: items = [], isLoading } = useInstitutes();
+    const createMutation = useCreateInstitute();
+    const updateMutation = useUpdateInstitute();
+    const deleteMutation = useDeleteInstitute();
+
     const [searchTerm, setSearchTerm] = useState('');
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
@@ -21,7 +21,7 @@ export default function InstitutesPage() {
     const [formData, setFormData] = useState(emptyForm);
 
     const filtered = items.filter(item =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+        item.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const openCreate = () => {
@@ -38,17 +38,20 @@ export default function InstitutesPage() {
 
     const handleSave = () => {
         if (!formData.name.trim()) return;
+        
         if (editingItem) {
-            setItems(prev => prev.map(i => i.id === editingItem.id ? { ...i, ...formData } : i));
+            updateMutation.mutate({ id: editingItem.id, name: formData.name, address: formData.address });
         } else {
-            setItems(prev => [...prev, { id: Date.now().toString(), ...formData, facultyCount: 0 }]);
+            createMutation.mutate({ name: formData.name, address: formData.address, universityId: 1 });
         }
         setIsFormOpen(false);
         setEditingItem(null);
     };
 
     const handleDelete = () => {
-        setItems(prev => prev.filter(i => i.id !== deleteItem.id));
+        if (deleteItem) {
+            deleteMutation.mutate(deleteItem.id);
+        }
         setDeleteItem(null);
     };
 
@@ -96,11 +99,15 @@ export default function InstitutesPage() {
                     </div>
                 ))}
 
-                {filtered.length === 0 && (
+                {isLoading ? (
+                    <div className="empty-state">
+                        <p>{t('common.loading') || 'Loading...'}</p>
+                    </div>
+                ) : filtered.length === 0 ? (
                     <div className="empty-state">
                         <p>{t('common.noData')}</p>
                     </div>
-                )}
+                ) : null}
             </div>
 
             {isFormOpen && (

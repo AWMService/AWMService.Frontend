@@ -1,24 +1,21 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ConfirmModal } from '@awm/shared';
+import { ConfirmModal, usePrograms, useCreateProgram, useUpdateProgram, useDeleteProgram, useDepartments, useDegreeLevels } from '@awm/shared';
 import './ProgramsPage.css';
 
-const initialData = [
-    { id: '1', name: 'Информационные системы', level: 'Бакалавриат', department: 'Кафедра ИС', code: '6B06101' },
-    { id: '2', name: 'Компьютерные науки', level: 'Бакалавриат', department: 'Кафедра КН', code: '6B06102' },
-    { id: '3', name: 'Математика', level: 'Магистратура', department: 'Кафедра математики', code: '7M05401' },
-    { id: '4', name: 'Физика', level: 'Бакалавриат', department: 'Кафедра физики', code: '6B05301' },
-    { id: '5', name: 'Биология', level: 'Докторантура PhD', department: 'Кафедра биологии', code: '8D05101' },
-];
-
-const levelOptions = ['Бакалавриат', 'Магистратура', 'Докторантура PhD'];
-const departmentOptions = ['Кафедра ИС', 'Кафедра КН', 'Кафедра математики', 'Кафедра физики', 'Кафедра биологии'];
-
-const emptyForm = { name: '', level: levelOptions[0], department: departmentOptions[0], code: '' };
+const emptyForm = { name: '', degreeLevelId: '', departmentId: '', code: '' };
 
 export default function ProgramsPage() {
     const { t } = useTranslation();
-    const [items, setItems] = useState(initialData);
+    
+    const { data: items = [], isLoading } = usePrograms();
+    const createMutation = useCreateProgram();
+    const updateMutation = useUpdateProgram();
+    const deleteMutation = useDeleteProgram();
+
+    const { data: departments = [] } = useDepartments();
+    const { data: degreeLevels = [] } = useDegreeLevels();
+
     const [searchTerm, setSearchTerm] = useState('');
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
@@ -26,7 +23,7 @@ export default function ProgramsPage() {
     const [formData, setFormData] = useState(emptyForm);
 
     const filtered = items.filter(item =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+        item.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const openCreate = () => {
@@ -37,23 +34,33 @@ export default function ProgramsPage() {
 
     const openEdit = (item) => {
         setEditingItem(item);
-        setFormData({ name: item.name, level: item.level, department: item.department, code: item.code });
+        setFormData({ name: item.name, degreeLevelId: item.degreeLevelId, departmentId: item.departmentId, code: item.code });
         setIsFormOpen(true);
     };
 
     const handleSave = () => {
         if (!formData.name.trim() || !formData.code.trim()) return;
+        
+        // Ensure ids are numbers if they exist
+        const payload = {
+            ...formData,
+            degreeLevelId: formData.degreeLevelId ? Number(formData.degreeLevelId) : null,
+            departmentId: formData.departmentId ? Number(formData.departmentId) : null,
+        };
+
         if (editingItem) {
-            setItems(prev => prev.map(i => i.id === editingItem.id ? { ...i, ...formData } : i));
+            updateMutation.mutate({ id: editingItem.id, ...payload });
         } else {
-            setItems(prev => [...prev, { id: Date.now().toString(), ...formData }]);
+            createMutation.mutate(payload);
         }
         setIsFormOpen(false);
         setEditingItem(null);
     };
 
     const handleDelete = () => {
-        setItems(prev => prev.filter(i => i.id !== deleteItem.id));
+        if (deleteItem) {
+            deleteMutation.mutate(deleteItem.id);
+        }
         setDeleteItem(null);
     };
 
@@ -89,27 +96,35 @@ export default function ProgramsPage() {
                     <div className="col-actions">{t('common.actions')}</div>
                 </div>
 
-                {filtered.map((item, idx) => (
-                    <div key={item.id} className="table-row">
-                        <div className="col-num">{idx + 1}</div>
-                        <div className="col-name">{item.name}</div>
-                        <div className="col-level">
-                            <span className="level-badge">{item.level}</span>
+                {filtered.map((item, idx) => {
+                    const levelName = degreeLevels.find(l => l.id === item.degreeLevelId)?.name || '';
+                    const deptName = departments.find(d => d.id === item.departmentId)?.name || '';
+                    return (
+                        <div key={item.id} className="table-row">
+                            <div className="col-num">{idx + 1}</div>
+                            <div className="col-name">{item.name}</div>
+                            <div className="col-level">
+                                <span className="level-badge">{levelName}</span>
+                            </div>
+                            <div className="col-department">{deptName}</div>
+                            <div className="col-code">{item.code}</div>
+                            <div className="col-actions">
+                                <button className="action-btn" onClick={() => openEdit(item)}>{t('common.edit')}</button>
+                                <button className="action-btn danger" onClick={() => setDeleteItem(item)}>{t('common.delete')}</button>
+                            </div>
                         </div>
-                        <div className="col-department">{item.department}</div>
-                        <div className="col-code">{item.code}</div>
-                        <div className="col-actions">
-                            <button className="action-btn" onClick={() => openEdit(item)}>{t('common.edit')}</button>
-                            <button className="action-btn danger" onClick={() => setDeleteItem(item)}>{t('common.delete')}</button>
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
 
-                {filtered.length === 0 && (
+                {isLoading ? (
+                    <div className="empty-state">
+                        <p>{t('common.loading') || 'Loading...'}</p>
+                    </div>
+                ) : filtered.length === 0 ? (
                     <div className="empty-state">
                         <p>{t('common.noData')}</p>
                     </div>
-                )}
+                ) : null}
             </div>
 
             {isFormOpen && (
@@ -132,11 +147,12 @@ export default function ProgramsPage() {
                                 {t('admin.level')}
                                 <select
                                     className="form-input"
-                                    value={formData.level}
-                                    onChange={(e) => setFormData({ ...formData, level: e.target.value })}
+                                    value={formData.degreeLevelId}
+                                    onChange={(e) => setFormData({ ...formData, degreeLevelId: e.target.value })}
                                 >
-                                    {levelOptions.map(opt => (
-                                        <option key={opt} value={opt}>{opt}</option>
+                                    <option value="">{t('common.select') || 'Select...'}</option>
+                                    {degreeLevels.map(opt => (
+                                        <option key={opt.id} value={opt.id}>{opt.name}</option>
                                     ))}
                                 </select>
                             </label>
@@ -144,11 +160,12 @@ export default function ProgramsPage() {
                                 {t('nav.departments')}
                                 <select
                                     className="form-input"
-                                    value={formData.department}
-                                    onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                                    value={formData.departmentId}
+                                    onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
                                 >
-                                    {departmentOptions.map(opt => (
-                                        <option key={opt} value={opt}>{opt}</option>
+                                    <option value="">{t('common.select') || 'Select...'}</option>
+                                    {departments.map(opt => (
+                                        <option key={opt.id} value={opt.id}>{opt.name}</option>
                                     ))}
                                 </select>
                             </label>

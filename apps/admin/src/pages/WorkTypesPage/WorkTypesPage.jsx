@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ConfirmModal } from '@awm/shared';
+import { ConfirmModal, useWorkTypes, useCreateWorkType, useUpdateWorkType, useDeleteWorkType, useDegreeLevels } from '@awm/shared';
 import './WorkTypesPage.css';
 
-const initialData = [
-    { id: '1', name: 'Дипломная работа', description: 'Выпускная квалификационная работа бакалавра' },
-    { id: '2', name: 'Курсовая работа', description: 'Промежуточная научно-исследовательская работа студента' },
-    { id: '3', name: 'Магистерская диссертация', description: 'Выпускная квалификационная работа магистра' },
-    { id: '4', name: 'Докторская диссертация', description: 'Выпускная квалификационная работа доктора PhD' },
-];
-
-const emptyForm = { name: '', description: '' };
+const emptyForm = { name: '', degreeLevelId: '' };
 
 export default function WorkTypesPage() {
     const { t } = useTranslation();
-    const [items, setItems] = useState(initialData);
+    
+    // API Hooks
+    const { data: items = [], isLoading } = useWorkTypes();
+    const createMutation = useCreateWorkType();
+    const updateMutation = useUpdateWorkType();
+    const deleteMutation = useDeleteWorkType();
+
+    const { data: degreeLevels = [] } = useDegreeLevels();
+
     const [searchTerm, setSearchTerm] = useState('');
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
@@ -22,7 +23,7 @@ export default function WorkTypesPage() {
     const [formData, setFormData] = useState(emptyForm);
 
     const filtered = items.filter(item =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+        item.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const openCreate = () => {
@@ -33,23 +34,31 @@ export default function WorkTypesPage() {
 
     const openEdit = (item) => {
         setEditingItem(item);
-        setFormData({ name: item.name, description: item.description });
+        setFormData({ name: item.name, degreeLevelId: item.degreeLevelId || '' });
         setIsFormOpen(true);
     };
 
     const handleSave = () => {
         if (!formData.name.trim()) return;
+        
+        const payload = {
+            ...formData,
+            degreeLevelId: formData.degreeLevelId ? Number(formData.degreeLevelId) : null,
+        };
+
         if (editingItem) {
-            setItems(prev => prev.map(i => i.id === editingItem.id ? { ...i, ...formData } : i));
+            updateMutation.mutate({ id: editingItem.id, ...payload });
         } else {
-            setItems(prev => [...prev, { id: Date.now().toString(), ...formData }]);
+            createMutation.mutate(payload);
         }
         setIsFormOpen(false);
         setEditingItem(null);
     };
 
     const handleDelete = () => {
-        setItems(prev => prev.filter(i => i.id !== deleteItem.id));
+        if (deleteItem) {
+            deleteMutation.mutate(deleteItem.id);
+        }
         setDeleteItem(null);
     };
 
@@ -79,27 +88,36 @@ export default function WorkTypesPage() {
                 <div className="table-header">
                     <div className="col-num">№</div>
                     <div className="col-name">{t('common.name')}</div>
-                    <div className="col-description">{t('common.description')}</div>
+                    <div className="col-level">{t('admin.level')}</div>
                     <div className="col-actions">{t('common.actions')}</div>
                 </div>
 
-                {filtered.map((item, idx) => (
-                    <div key={item.id} className="table-row">
-                        <div className="col-num">{idx + 1}</div>
-                        <div className="col-name">{item.name}</div>
-                        <div className="col-description">{item.description}</div>
-                        <div className="col-actions">
-                            <button className="action-btn" onClick={() => openEdit(item)}>{t('common.edit')}</button>
-                            <button className="action-btn danger" onClick={() => setDeleteItem(item)}>{t('common.delete')}</button>
+                {filtered.map((item, idx) => {
+                    const levelName = degreeLevels.find(l => l.id === item.degreeLevelId)?.name || '';
+                    return (
+                        <div key={item.id} className="table-row">
+                            <div className="col-num">{idx + 1}</div>
+                            <div className="col-name">{item.name}</div>
+                            <div className="col-level">
+                                {levelName && <span className="level-badge">{levelName}</span>}
+                            </div>
+                            <div className="col-actions">
+                                <button className="action-btn" onClick={() => openEdit(item)}>{t('common.edit')}</button>
+                                <button className="action-btn danger" onClick={() => setDeleteItem(item)}>{t('common.delete')}</button>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
 
-                {filtered.length === 0 && (
+                {isLoading ? (
+                    <div className="empty-state">
+                        <p>{t('common.loading') || 'Loading...'}</p>
+                    </div>
+                ) : filtered.length === 0 ? (
                     <div className="empty-state">
                         <p>{t('common.noData')}</p>
                     </div>
-                )}
+                ) : null}
             </div>
 
             {isFormOpen && (
@@ -119,13 +137,17 @@ export default function WorkTypesPage() {
                                 />
                             </label>
                             <label className="form-label">
-                                {t('common.description')}
-                                <textarea
-                                    className="form-input form-textarea"
-                                    value={formData.description}
-                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    rows={3}
-                                />
+                                {t('admin.level')}
+                                <select
+                                    className="form-input"
+                                    value={formData.degreeLevelId}
+                                    onChange={(e) => setFormData({ ...formData, degreeLevelId: e.target.value })}
+                                >
+                                    <option value="">{t('common.select') || 'Select...'}</option>
+                                    {degreeLevels.map(opt => (
+                                        <option key={opt.id} value={opt.id}>{opt.name}</option>
+                                    ))}
+                                </select>
                             </label>
                         </div>
                         <div className="dialog-buttons">
