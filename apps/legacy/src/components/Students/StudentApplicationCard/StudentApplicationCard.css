@@ -1,0 +1,51 @@
+
+.student-application-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #DDDFE4;
+    border-radius: 6px;
+}
+
+.app-card-content {
+    flex-grow: 1;
+}
+
+.app-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 0.25rem;
+}
+
+.app-card-supervisor {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+.app-card-status {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-pending { background-color: #fef3c7; color: #92400e; }
+.status-approved { background-color: #d1fae5; color: #065f46; }
+.status-rejected { background-color: #fee2e2; color: #991b1b; }
+
+.cancel-button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    background-color: transparent;
+    border-radius: 5px;
+    cursor: pointer;
+}

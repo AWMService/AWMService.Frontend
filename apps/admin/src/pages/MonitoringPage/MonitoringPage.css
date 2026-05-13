@@ -1,0 +1,130 @@
+.monitoring-page {
+    background-color: #F9FAFB;
+    flex: 1;
+    margin-top: 64px;
+    padding: 44px 52px;
+    font-family: "Inter", sans-serif;
+}
+
+.page-header {
+    margin-bottom: 20px;
+}
+
+.page-header h1 {
+    margin: 0 0 8px;
+    color: #0F172A;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.page-subtitle {
+    margin: 0;
+    color: #64748B;
+    font-size: 14px;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.kpi-card {
+    border: 1px solid #E5E7EB;
+    background: #FFFFFF;
+    border-radius: 14px;
+    padding: 14px;
+}
+
+.kpi-label {
+    color: #6B7280;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.kpi-value {
+    color: #111827;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.activity-card {
+    border: 1px solid #E5E7EB;
+    background: #FFFFFF;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.activity-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.activity-card-header h2 {
+    margin: 0;
+    color: #1F2937;
+    font-size: 16px;
+}
+
+.severity-filter {
+    background: #FFFFFF;
+    border: 1px solid #D1D5DB;
+    color: #1F2937;
+    border-radius: 8px;
+    padding: 8px 10px;
+}
+
+.activity-list {
+    padding: 8px;
+}
+
+.activity-item {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.activity-item:hover {
+    background: #F9FAFB;
+}
+
+.severity {
+    align-self: start;
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 4px 10px;
+    width: fit-content;
+}
+
+.severity-info { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+.severity-success { background: rgba(16, 185, 129, 0.2); color: #86efac; }
+.severity-warning { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+.severity-error { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+
+.activity-title {
+    color: #1F2937;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.activity-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    color: #6B7280;
+    font-size: 12px;
+}
+
+.empty-state {
+    color: #6B7280;
+    text-align: center;
+    padding: 24px;
+}

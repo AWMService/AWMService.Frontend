@@ -1,0 +1,614 @@
+/* ===== PAGE ===== */
+.setup-page {
+    font-family: "Segoe UI", Roboto, sans-serif;
+    padding: 40px;
+    background: #f5f7fb;
+    margin-top: 64px;
+}
+
+.custom-calendar {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e5e7eb;
+    padding: 16px;
+    width: 280px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    text-align: center;
+}
+
+.day-name {
+    font-size: 12px;
+    color: #9ca3af;
+    padding-bottom: 8px;
+}
+
+.day-cell {
+    padding: 8px 0;
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.day-cell:hover:not(.empty) {
+    background: #f3f4f6;
+}
+
+.day-cell.active {
+    background: #2563eb;
+    color: white;
+    font-weight: 600;
+}
+
+.calendar-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #f3f4f6;
+    color: #2563eb;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+
+
+.custom-time-picker {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    display: flex;
+    gap: 0;
+    overflow: hidden;
+    width: 140px;
+}
+
+.time-column {
+    flex: 1;
+    height: 200px;
+    overflow-y: auto;
+    scrollbar-width: none; /* Скрываем скролл для чистоты */
+}
+
+.time-column::-webkit-scrollbar { display: none; }
+
+.time-unit {
+    padding: 10px;
+    text-align: center;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.time-unit:hover {
+    background: #f9fafb;
+}
+
+.time-unit.selected {
+    background: #eff6ff;
+    color: #2563eb;
+    font-weight: 700;
+}
+
+.time-separator {
+    display: flex;
+    align-items: center;
+    color: #d1d5db;
+    font-weight: bold;
+}
+
+
+
+.custom-select-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    margin-top: 4px;
+    z-index: 100;
+    overflow: hidden;
+}
+
+.select-option {
+    padding: 12px 16px;
+    font-size: 14px;
+    color: #374151;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background 0.2s;
+}
+
+.select-option:hover {
+    background: #f3f4f6;
+}
+
+.select-option.active {
+    background: #eff6ff;
+    color: #2563eb;
+    font-weight: 500;
+}
+
+/* Эффект при клике на сам селект */
+.slot-form select {
+    /* Чтобы ваш текущий селект выглядел как кнопка для открытия меню */
+    border: 1px solid #c7d2fe;
+    background-color: white;
+}
+
+
+
+/* ===== BACK ===== */
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    color: #2563eb;
+    cursor: pointer;
+    font-weight: 500;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+}
+
+.back-button:hover {
+    background: #f9fafb;
+}
+
+/* ===== HEADERS ===== */
+h1 {
+    margin: 6px 0 10px;
+    font-size: 22px;
+    font-weight: 600;
+    color: #111827;
+}
+
+/* ===== PROGRESS ===== */
+.progress-section {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 16px;
+}
+
+.progress-bar {
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 999px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2563eb, #3b82f6);
+}
+
+.progress-label {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #2563eb;
+    font-weight: 500;
+}
+
+/* ===== LAYOUT ===== */
+.setup-content {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 20px;
+}
+
+/* ===== STEPS ===== */
+.setup-steps {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.setup-first {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+
+.setup-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    color: #374151;
+    transition: background 0.2s ease;
+}
+
+.setup-step:hover {
+    background: #f3f4f6;
+}
+
+.setup-step.active {
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-weight: 600;
+}
+
+.setup-step.done {
+    background: #f0f9ff;
+    color: #2563eb;
+    font-weight: 500;
+}
+
+.setup-step.done svg {
+    color: #2563eb;
+}
+
+.setup-step svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+/* ===== MAIN ===== */
+.setup-main {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+/* ===== TITLES ===== */
+.setup-main h3 {
+    margin-bottom: 12px;
+    font-size: 18px;
+}
+
+/* ===== BUTTONS ===== */
+.btn-primary {
+    background: linear-gradient(90deg, #2563eb, #3b82f6);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    height: 38px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+}
+
+.btn-primary:active {
+    transform: scale(0.97);
+}
+
+
+
+
+/* 🔥 FIXED OUTLINE BUTTON */
+.btn-outline {
+    background: #ffffff;
+    color: #2563eb;
+    border: 1px solid #c7d2fe;
+    border-radius: 8px;
+    padding: 8px 14px;
+    height: 38px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-outline:hover {
+    background: #eff6ff;
+    border-color: #2563eb;
+}
+
+.btn-outline:active {
+    transform: scale(0.97);
+}
+
+.btn-outline:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.btn-add-Commission {
+    background: #ffffff;
+    color: #2563eb;
+    border: 1px solid #c7d2fe;
+    border-radius: 10px;
+    padding: 8px 14px;
+    height: 38px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* hover */
+.btn-add-Commission:hover {
+    background: #eff6ff;
+    border-color: #2563eb;
+    color: #2563eb;
+}
+
+/* active — текст НЕ пропадает */
+.btn-add-Commission:active {
+    background: #dbeafe;
+    color: #1d4ed8;
+    transform: scale(0.97);
+}
+
+/* focus */
+.btn-add-Commission:focus {
+    outline: none;
+    background: #eff6ff;
+    color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+}
+
+/* disabled (на будущее) */
+.btn-add-Commission:disabled {
+    background: #f9fafb;
+    color: #9ca3af;
+    border-color: #e5e7eb;
+    cursor: not-allowed;
+}
+
+
+
+/* ===== ACTIONS ===== */
+.setup-actions {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+}
+
+/* ===== STEP 2 GRID ===== */
+.layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 20px;
+    margin-top: 16px;
+}
+
+/* ===== STUDENTS ===== */
+.students-column {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 12px;
+    height: calc(100vh - 240px);
+    overflow-y: auto;
+}
+
+.student-card {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.team-badge {
+    font-size: 10px;
+    color: #2563eb;
+    background: #e0e7ff;
+    padding: 2px 6px;
+    border-radius: 999px;
+}
+
+/* ===== SLOTS ===== */
+.slots-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* ===== CREATE SLOT ===== */
+.slot-create-card {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 12px;
+}
+
+/* ===== SLOT FORM ===== */
+.slot-form {
+    display: grid;
+    grid-template-columns:
+        minmax(120px, 1fr)
+        minmax(100px, 1fr)
+        minmax(140px, 1fr)
+        auto;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.slot-form input[type="date"],
+.slot-form input[type="time"] {
+    height: 38px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 13px;
+}
+
+.slot-form select {
+    appearance: none;
+    height: 38px;
+    padding: 0 34px 0 12px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 13px;
+    background:
+            linear-gradient(45deg, transparent 50%, #2563eb 50%),
+            linear-gradient(135deg, #2563eb 50%, transparent 50%);
+    background-position:
+            calc(100% - 16px) 16px,
+            calc(100% - 10px) 16px;
+    background-size: 6px 6px;
+    background-repeat: no-repeat;
+}
+
+
+
+/* ===== FINAL STEP ===== */
+.final-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+/* ===== SUMMARY CARDS ===== */
+.summary-card {
+    background: linear-gradient(180deg, #ffffff, #f9fafb);
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.summary-card span {
+    color: #6b7280;
+}
+
+.summary-card strong {
+    font-size: 26px;
+    font-weight: 700;
+}
+
+/* success / danger accents */
+.summary-card.success {
+    border-color: #bbf7d0;
+}
+
+.summary-card.success strong {
+    color: #059669;
+}
+
+.summary-card.danger {
+    border-color: #fecaca;
+}
+
+.summary-card.danger strong {
+    color: #dc2626;
+}
+
+/* ===== FINAL COMMISSIONS ===== */
+.final-commissions {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+/* ===== COMMISSION CARD ===== */
+.final-commission {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 20px;
+}
+
+.final-commission h4 {
+    margin-bottom: 14px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+}
+
+/* ===== SESSION ===== */
+.final-session {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    transition: background 0.2s ease;
+}
+
+.final-session:last-child {
+    margin-bottom: 0;
+}
+
+.final-session:hover {
+    background: #f3f4f6;
+}
+
+/* date & time */
+.session-datetime {
+    display: flex;
+    gap: 14px;
+    color: #374151;
+    font-weight: 500;
+}
+
+/* students */
+.session-students {
+    color: #374151;
+}
+
+.session-students strong {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+/* ===== FINAL BUTTON ===== */
+.final-approve {
+    margin-top: 10px;
+}
+
+/* disabled primary */
+.btn-primary:disabled {
+    background: #e5e7eb;
+    color: #9ca3af;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* ===== WARNING ===== */
+.final-warning {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #dc2626;
+    font-weight: 500;
+}

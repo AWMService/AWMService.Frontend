@@ -1,0 +1,207 @@
+.critique-container-compact {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px;
+    background-color: #F8FAFC;
+    min-height: auto;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #334155;
+}
+
+/* Header */
+.critique-header-compact {
+    margin-bottom: 20px;
+}
+
+.header-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-icon {
+    width: 24px;
+    height: 24px;
+    opacity: 0.8;
+}
+
+.critique-header-compact h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1E293B;
+    margin: 0;
+}
+
+/* Info Banner */
+.info-banner-compact {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #EFF6FF;
+    border: 1px solid #DBEAFE;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 24px;
+}
+
+.info-banner-compact img {
+    width: 18px;
+    height: 18px;
+}
+
+.info-banner-compact p {
+    margin: 0;
+    color: #1E40AF;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+/* Grid Layout */
+.critique-grid-compact {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+/* Боковая колонка */
+.critique-side-col {
+    display: flex;
+    flex-direction: column;
+    gap: 24px; /* Отступ между карточками периода и эксперта */
+}
+
+.spacer-20 {
+    height: 20px;
+}
+
+/* Общие стили для карточек (Card Base) */
+.card-compact {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.card-title-compact {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1E293B;
+    margin: 0 0 16px 0;
+}
+
+/* Status Badges */
+.critique-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+    margin-left: auto;
+}
+
+.critique-badge--warning {
+    background-color: #FEF3C7;
+    color: #92400E;
+    border: 1px solid #FDE68A;
+}
+
+.critique-badge--success {
+    background-color: #D1FAE5;
+    color: #065F46;
+    border: 1px solid #A7F3D0;
+}
+
+/* Reviewer Info Card */
+.critique-reviewer-card {
+    margin: 0;
+}
+
+.critique-reviewer-details {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.critique-reviewer-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: #E0E7FF;
+    color: #4338CA;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.critique-reviewer-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.critique-reviewer-name {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    color: #1F2937;
+}
+
+.critique-reviewer-meta {
+    font-size: 12px;
+    color: #6B7280;
+    margin: 0;
+}
+
+/* Review File Row */
+.critique-review-file-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: #F8FAFC;
+    border-radius: 8px;
+    border: 1px solid #F1F5F9;
+}
+
+.critique-download-btn {
+    width: auto;
+    padding: 8px 16px;
+    font-size: 13px;
+}
+
+.file-preview-compact {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #F1F5F9;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: #334155;
+}
+
+.file-preview-compact img {
+    width: 16px;
+    height: 16px;
+}
+
+.btn-text-only {
+    background: none;
+    border: none;
+    color: #566F9E;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .critique-grid-compact { grid-template-columns: 1fr; }
+}
