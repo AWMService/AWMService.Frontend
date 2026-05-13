@@ -136,3 +136,30 @@ export const wfApi = {
     return data;
   }
 };
+
+export const staffApi = {
+  fetchStaffByDepartment: async (departmentId) => {
+    const { data } = await apiClient.get('/Staff', { params: { departmentId } });
+    return data;
+  },
+  createStaff: async (staffData) => {
+    const { data } = await apiClient.post('/Staff', staffData);
+    return data;
+  },
+  updateStaff: async (staffId, staffData) => {
+    const { data } = await apiClient.put(`/Staff/${staffId}`, staffData);
+    return data;
+  },
+  updateWorkload: async (staffId, maxStudentsLoad) => {
+    const { data } = await apiClient.patch(`/Staff/${staffId}/workload`, { maxStudentsLoad });
+    return data;
+  },
+  approveSupervisors: async (departmentId, staffIds) => {
+    const { data } = await apiClient.post('/Staff/approve-supervisors', { departmentId, staffIds });
+    return data;
+  },
+  fetchSupervisors: async (departmentId) => {
+    const { data } = await apiClient.get('/Staff/supervisors', { params: { departmentId } });
+    return data;
+  }
+};
