@@ -1,38 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ConfirmModal } from '@awm/shared';
+import { ConfirmModal, useInstitutes, useCreateInstitute, useUpdateInstitute, useDeleteInstitute, useDepartments, useCreateDepartment, useUpdateDepartment, useDeleteDepartment } from '@awm/shared';
 import DepartmentFormModal from '../../components/DepartmentFormModal/DepartmentFormModal';
 import './DepartmentsPage.css';
-
-const DEPT_STORAGE_KEY = 'awm-admin-departments';
-const FAC_STORAGE_KEY = 'awm-admin-faculties';
-
-const defaultDepartments = [
-    { id: 1, name: 'Информационные системы', faculty: 'Факультет IT', head: 'Иванов И.И.', phone: '', email: '', supervisorsCount: 12, studentsCount: 85 },
-    { id: 2, name: 'Программная инженерия', faculty: 'Факультет IT', head: 'Петров П.П.', phone: '', email: '', supervisorsCount: 8, studentsCount: 64 },
-    { id: 3, name: 'Компьютерные науки', faculty: 'Факультет IT', head: 'Сидоров С.С.', phone: '', email: '', supervisorsCount: 15, studentsCount: 120 },
-    { id: 4, name: 'Автоматизация и управление', faculty: 'Инженерный факультет', head: 'Козлов К.К.', phone: '', email: '', supervisorsCount: 10, studentsCount: 78 },
-];
-
-const defaultFaculties = [
-    { id: 1, name: 'Факультет IT', address: '', departmentsCount: 3 },
-    { id: 2, name: 'Инженерный факультет', address: '', departmentsCount: 1 },
-];
-
-function loadData(key, fallback) {
-    try {
-        const saved = localStorage.getItem(key);
-        return saved ? JSON.parse(saved) : fallback;
-    } catch {
-        return fallback;
-    }
-}
 
 function DepartmentsPage() {
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState('departments');
-    const [departments, setDepartments] = useState(() => loadData(DEPT_STORAGE_KEY, defaultDepartments));
-    const [faculties, setFaculties] = useState(() => loadData(FAC_STORAGE_KEY, defaultFaculties));
+    
+    // API Hooks
+    const { data: departments = [], isLoading: isLoadingDepts } = useDepartments();
+    const createDeptMutation = useCreateDepartment();
+    const updateDeptMutation = useUpdateDepartment();
+    const deleteDeptMutation = useDeleteDepartment();
+
+    const { data: faculties = [], isLoading: isLoadingFacs } = useInstitutes();
+    const createFacMutation = useCreateInstitute();
+    const updateFacMutation = useUpdateInstitute();
+    const deleteFacMutation = useDeleteInstitute();
 
     // Department CRUD state
     const [isDeptFormOpen, setIsDeptFormOpen] = useState(false);
@@ -44,28 +29,22 @@ function DepartmentsPage() {
     const [editingFac, setEditingFac] = useState(null);
     const [deleteFac, setDeleteFac] = useState(null);
 
-    useEffect(() => {
-        localStorage.setItem(DEPT_STORAGE_KEY, JSON.stringify(departments));
-    }, [departments]);
-
-    useEffect(() => {
-        localStorage.setItem(FAC_STORAGE_KEY, JSON.stringify(faculties));
-    }, [faculties]);
-
     // Department handlers
     const handleCreateDept = () => { setEditingDept(null); setIsDeptFormOpen(true); };
     const handleEditDept = (dept) => { setEditingDept(dept); setIsDeptFormOpen(true); };
     const handleSaveDept = (formData) => {
         if (editingDept) {
-            setDepartments(prev => prev.map(d => d.id === editingDept.id ? { ...d, ...formData } : d));
+            updateDeptMutation.mutate({ id: editingDept.id, ...formData });
         } else {
-            setDepartments(prev => [...prev, { ...formData, id: Date.now(), supervisorsCount: 0, studentsCount: 0 }]);
+            // Need an instituteId. We'll default to 1 if not selected, but ideally DepartmentFormModal should provide it
+            const instituteId = formData.instituteId || 1; 
+            createDeptMutation.mutate({ instituteId, ...formData });
         }
         setIsDeptFormOpen(false);
         setEditingDept(null);
     };
     const handleDeleteDeptConfirm = () => {
-        setDepartments(prev => prev.filter(d => d.id !== deleteDept.id));
+        if (deleteDept) deleteDeptMutation.mutate(deleteDept.id);
         setDeleteDept(null);
     };
 
@@ -74,15 +53,15 @@ function DepartmentsPage() {
     const handleEditFac = (fac) => { setEditingFac(fac); setIsFacFormOpen(true); };
     const handleSaveFac = (formData) => {
         if (editingFac) {
-            setFaculties(prev => prev.map(f => f.id === editingFac.id ? { ...f, name: formData.name, address: formData.address } : f));
+            updateFacMutation.mutate({ id: editingFac.id, name: formData.name, address: formData.address });
         } else {
-            setFaculties(prev => [...prev, { id: Date.now(), name: formData.name, address: formData.address || '', departmentsCount: 0 }]);
+            createFacMutation.mutate({ name: formData.name, address: formData.address, universityId: 1 });
         }
         setIsFacFormOpen(false);
         setEditingFac(null);
     };
     const handleDeleteFacConfirm = () => {
-        setFaculties(prev => prev.filter(f => f.id !== deleteFac.id));
+        if (deleteFac) deleteFacMutation.mutate(deleteFac.id);
         setDeleteFac(null);
     };
 

@@ -72,16 +72,45 @@ export const ROLE_META = {
   },
 };
 
+import { useAuth } from './AuthContext';
+
 const RoleContext = createContext(null);
 
+const BACKEND_TO_FRONTEND_ROLE_MAP = {
+  'Student': ROLES.STUDENT,
+  'Supervisor': ROLES.SUPERVISOR,
+  'HeadOfDepartment': ROLES.DEPARTMENT,
+  'Secretary': ROLES.SECRETARY,
+  'Expert': ROLES.NORMOCONTROL,
+  'Admin': ROLES.ADMIN,
+  'CommissionMember': ROLES.COMMISSION_MEMBER,
+  'Reviewer': ROLES.REVIEWER,
+  'Chairman': ROLES.CHAIRMAN
+};
+
 export function RoleProvider({ children, availableRoles = [], defaultRole = null }) {
+  const { user, isLoading } = useAuth();
+  
+  // Map backend roles to frontend constants, fall back to toLowerCase()
+  const activeRoles = user?.roles?.length > 0 
+    ? user.roles.map(r => BACKEND_TO_FRONTEND_ROLE_MAP[r] || r.toLowerCase()) 
+    : availableRoles;
+
   const [currentRole, setCurrentRole] = useState(() => {
     const saved = localStorage.getItem('awm-current-role');
-    if (saved && availableRoles.includes(saved)) {
+    if (saved && activeRoles.includes(saved)) {
       return saved;
     }
-    return defaultRole || availableRoles[0] || null;
+    return defaultRole || activeRoles[0] || null;
   });
+
+  useEffect(() => {
+    if (!isLoading && activeRoles.length > 0) {
+      if (!currentRole || !activeRoles.includes(currentRole)) {
+        setCurrentRole(activeRoles[0]);
+      }
+    }
+  }, [activeRoles, currentRole, isLoading]);
 
   useEffect(() => {
     if (currentRole) {
@@ -90,16 +119,16 @@ export function RoleProvider({ children, availableRoles = [], defaultRole = null
   }, [currentRole]);
 
   const switchRole = (role) => {
-    if (availableRoles.includes(role)) {
+    if (activeRoles.includes(role)) {
       setCurrentRole(role);
     }
   };
 
-  const hasRole = (role) => availableRoles.includes(role);
+  const hasRole = (role) => activeRoles.includes(role);
 
   const value = {
     currentRole,
-    availableRoles,
+    availableRoles: activeRoles,
     switchRole,
     hasRole,
     roleMeta: ROLE_META[currentRole] || null,

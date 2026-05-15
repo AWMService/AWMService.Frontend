@@ -17,10 +17,10 @@ export default function TimePeriodFormDialog({
     const [error, setError] = useState("");
 
     const periodOptions = [
-        { value: "Предзащита 1", label: t('student.preDefense1') },
-        { value: "Предзащита 2", label: t('student.preDefense2') },
-        { value: "Предзащита 3", label: `${t('commission.preDefense')} 3` },
-        { value: "Защита", label: t('commission.defense') },
+        { value: "PreDefense1", label: t('student.preDefense1') },
+        { value: "PreDefense2", label: t('student.preDefense2') },
+        { value: "PreDefense3", label: `${t('commission.preDefense')} 3` },
+        { value: "FinalDefense", label: t('commission.defense') },
     ];
 
     useEffect(() => {

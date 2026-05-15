@@ -1,19 +1,45 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ConfirmModal } from "@awm/shared";
+import { 
+    ConfirmModal, 
+    useAuth, 
+    useCommissions, 
+    useStaffByDepartment, 
+    useCreateCommission, 
+    useUpdateCommission,
+    commissionApi
+} from "@awm/shared";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import CommissionFormModal from "../../components/Commissions/CommissionFormModal.jsx";
 import plusIcon from "../../assets/icons/plus-icon.svg";
 import "./CommissionsPage.css";
 
-const initialCommissions = [
-    { id: '1', name: 'Комиссия предзащиты №1', type: 'predefense', chairman: 'Петров А.В.', secretary: 'Козлова Е.В.', members: ['Иванов И.И.', 'Сидорова М.И.', 'Волков Д.С.', 'Морозова Е.А.'], date: '2026-05-15', time: '10:00', room: 'Ауд. 305' },
-    { id: '2', name: 'ГАК №1', type: 'defense', chairman: 'Сидорова М.И.', secretary: 'Морозова Е.А.', members: ['Петров А.В.', 'Козлов В.П.', 'Волков Д.С.'], date: '2026-06-20', time: '09:00', room: 'Ауд. 101' },
-    { id: '3', name: 'Комиссия предзащиты №2', type: 'predefense', chairman: 'Козлов В.П.', secretary: 'Иванова А.П.', members: ['Морозова Е.А.', 'Лебедева Н.Н.'], date: null, time: null, room: null },
-];
+// Temporary delete mutation until we add it to commissionQueries.js
+
+// We need to add deleteCommission to apiClient or commissionApi if not there.
+// I'll update commissionQueries.js to include it.
 
 function CommissionsPage() {
     const { t } = useTranslation();
-    const [commissions, setCommissions] = useState(initialCommissions);
+    const { user } = useAuth();
+    const queryClient = useQueryClient();
+    
+    const departmentId = user?.departmentId;
+    const academicYearId = user?.currentAcademicYearId;
+
+    const { data: commissions = [], isLoading: isCommsLoading } = useCommissions(departmentId, academicYearId);
+    const { data: staff = [], isLoading: isStaffLoading } = useStaffByDepartment(departmentId);
+
+    const createMutation = useCreateCommission(departmentId, academicYearId);
+    const updateMutation = useUpdateCommission(departmentId, academicYearId);
+    
+    const deleteMutation = useMutation({
+        mutationFn: (id) => commissionApi.deleteCommission(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['commissions', 'department', departmentId, academicYearId] });
+        }
+    });
+
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingCommission, setEditingCommission] = useState(null);
     const [deleteTarget, setDeleteTarget] = useState(null);
@@ -24,26 +50,30 @@ function CommissionsPage() {
     };
 
     const handleEdit = (commission) => {
-        setEditingCommission(commission);
+        // Prepare data for modal
+        setEditingCommission({
+            ...commission,
+            // We don't have IDs for members in the list view yet, so edit might be limited to name
+        });
         setIsFormOpen(true);
     };
 
-    const handleFormSubmit = (formData) => {
-        if (editingCommission) {
-            setCommissions((prev) =>
-                prev.map((c) =>
-                    c.id === editingCommission.id ? { ...c, ...formData } : c
-                )
-            );
-        } else {
-            const newCommission = {
-                ...formData,
-                id: String(Date.now()),
-            };
-            setCommissions((prev) => [...prev, newCommission]);
+    const handleFormSubmit = async (formData) => {
+        try {
+            if (editingCommission) {
+                await updateMutation.mutateAsync({ id: editingCommission.id, name: formData.name });
+            } else {
+                await createMutation.mutateAsync({
+                    ...formData,
+                    departmentId: departmentId,
+                    academicYearId: academicYearId
+                });
+            }
+            setIsFormOpen(false);
+            setEditingCommission(null);
+        } catch (error) {
+            console.error("Failed to submit commission", error);
         }
-        setIsFormOpen(false);
-        setEditingCommission(null);
     };
 
     const handleFormClose = () => {
@@ -51,17 +81,15 @@ function CommissionsPage() {
         setEditingCommission(null);
     };
 
-    const handleDeleteConfirm = () => {
+    const handleDeleteConfirm = async () => {
         if (deleteTarget) {
-            setCommissions((prev) => prev.filter((c) => c.id !== deleteTarget.id));
-            setDeleteTarget(null);
+            try {
+                await deleteMutation.mutateAsync(deleteTarget.id);
+                setDeleteTarget(null);
+            } catch (error) {
+                console.error("Failed to delete commission", error);
+            }
         }
-    };
-
-    const formatDate = (date) => {
-        if (!date) return null;
-        const [y, m, d] = date.split("-");
-        return `${d}.${m}.${y}`;
     };
 
     const getMembersLabel = (count) => {
@@ -69,6 +97,10 @@ function CommissionsPage() {
         if (count >= 2 && count <= 4) return `${count} члена`;
         return `${count} членов`;
     };
+
+    if (isCommsLoading || isStaffLoading) {
+        return <div className="commissions-page"><p>{t('common.loading')}</p></div>;
+    }
 
     return (
         <div className="commissions-page">
@@ -94,9 +126,9 @@ function CommissionsPage() {
                         <div className="commission-card__header">
                             <h3 className="commission-card__name">{commission.name}</h3>
                             <span
-                                className={`commission-card__type-badge commission-card__type-badge--${commission.type}`}
+                                className={`commission-card__type-badge commission-card__type-badge--${commission.commissionType.toLowerCase()}`}
                             >
-                                {commission.type === 'predefense'
+                                {commission.commissionType === 'PreDefense'
                                     ? t('department.predefense')
                                     : t('department.defenseCommission')}
                             </span>
@@ -107,31 +139,21 @@ function CommissionsPage() {
                                 <span className="commission-card__info-label">
                                     {t('commission.chairman')}:
                                 </span>
-                                <span>{commission.chairman}</span>
+                                <span>{commission.chairmanName || t('common.notAssigned', 'Not assigned')}</span>
                             </div>
                             <div className="commission-card__info-row">
                                 <span className="commission-card__info-label">
                                     {t('commission.secretary')}:
                                 </span>
-                                <span>{commission.secretary}</span>
+                                <span>{commission.secretaryName || t('common.notAssigned', 'Not assigned')}</span>
                             </div>
                             <div className="commission-card__info-row">
                                 <span className="commission-card__info-label">
                                     {t('commission.members')}:
                                 </span>
-                                <span>{getMembersLabel(commission.members.length)}</span>
+                                <span>{getMembersLabel(commission.memberCount)}</span>
                             </div>
                         </div>
-
-                        {commission.date && (
-                            <div className="commission-card__schedule">
-                                <span>{formatDate(commission.date)}</span>
-                                {commission.time && <span>·</span>}
-                                {commission.time && <span>{commission.time}</span>}
-                                {commission.room && <span>·</span>}
-                                {commission.room && <span>{commission.room}</span>}
-                            </div>
-                        )}
 
                         <div className="commission-card__actions">
                             <button
@@ -156,6 +178,7 @@ function CommissionsPage() {
                 onClose={handleFormClose}
                 onSubmit={handleFormSubmit}
                 editingCommission={editingCommission}
+                staff={staff}
             />
 
             <ConfirmModal

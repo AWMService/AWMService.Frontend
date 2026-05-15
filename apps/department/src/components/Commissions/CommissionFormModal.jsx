@@ -2,28 +2,16 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import "./CommissionFormModal.css";
 
-const mockStaff = [
-    { id: '1', name: 'Петров А.В.', position: 'Профессор' },
-    { id: '2', name: 'Сидорова М.И.', position: 'Доцент' },
-    { id: '3', name: 'Козлов В.П.', position: 'Доцент' },
-    { id: '4', name: 'Морозова Е.А.', position: 'Ст. преподаватель' },
-    { id: '5', name: 'Волков Д.С.', position: 'Профессор' },
-    { id: '6', name: 'Лебедева Н.Н.', position: 'Доцент' },
-    { id: '7', name: 'Иванова А.П.', position: 'Ассистент' },
-];
-
 const emptyForm = {
     name: '',
-    type: 'predefense',
-    chairman: '',
-    secretary: '',
-    members: [],
-    date: '',
-    time: '',
-    room: '',
+    type: 'PreDefense', // Matches backend enum string
+    chairmanId: '',
+    secretaryId: '',
+    memberIds: [],
+    preDefenseNumber: 1,
 };
 
-export default function CommissionFormModal({ isOpen, onClose, onSubmit, editingCommission }) {
+export default function CommissionFormModal({ isOpen, onClose, onSubmit, editingCommission, staff = [] }) {
     const { t } = useTranslation();
     const [formData, setFormData] = useState(emptyForm);
     const [memberSearch, setMemberSearch] = useState('');
@@ -32,13 +20,11 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
         if (editingCommission) {
             setFormData({
                 name: editingCommission.name || '',
-                type: editingCommission.type || 'predefense',
-                chairman: editingCommission.chairman || '',
-                secretary: editingCommission.secretary || '',
-                members: editingCommission.members || [],
-                date: editingCommission.date || '',
-                time: editingCommission.time || '',
-                room: editingCommission.room || '',
+                type: editingCommission.commissionType || 'PreDefense',
+                chairmanId: editingCommission.chairmanId || '',
+                secretaryId: editingCommission.secretaryId || '',
+                memberIds: editingCommission.memberIds || [],
+                preDefenseNumber: editingCommission.preDefenseNumber || 1,
             });
         } else {
             setFormData(emptyForm);
@@ -47,12 +33,12 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
     }, [editingCommission, isOpen]);
 
     const filteredStaff = useMemo(() => {
-        if (!memberSearch) return mockStaff;
+        if (!memberSearch) return staff;
         const q = memberSearch.toLowerCase();
-        return mockStaff.filter(
-            (s) => s.name.toLowerCase().includes(q) || s.position.toLowerCase().includes(q)
+        return staff.filter(
+            (s) => s.fullName.toLowerCase().includes(q) || s.positionName?.toLowerCase().includes(q)
         );
-    }, [memberSearch]);
+    }, [memberSearch, staff]);
 
     if (!isOpen) return null;
 
@@ -61,25 +47,32 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleMemberToggle = (staffName) => {
+    const handleMemberToggle = (userId) => {
         setFormData((prev) => {
-            const exists = prev.members.includes(staffName);
+            const exists = prev.memberIds.includes(userId);
             return {
                 ...prev,
-                members: exists
-                    ? prev.members.filter((m) => m !== staffName)
-                    : [...prev.members, staffName],
+                memberIds: exists
+                    ? prev.memberIds.filter((id) => id !== userId)
+                    : [...prev.memberIds, userId],
             };
         });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        
+        // Map to backend request format
+        const members = [];
+        if (formData.chairmanId) members.push({ userId: parseInt(formData.chairmanId), role: 0 }); // 0 = Chairman
+        if (formData.secretaryId) members.push({ userId: parseInt(formData.secretaryId), role: 1 }); // 1 = Secretary
+        formData.memberIds.forEach(id => members.push({ userId: parseInt(id), role: 2 })); // 2 = Member
+
         onSubmit({
-            ...formData,
-            date: formData.date || null,
-            time: formData.time || null,
-            room: formData.room || null,
+            name: formData.name,
+            commissionType: formData.type === 'PreDefense' ? 0 : 1,
+            preDefenseNumber: formData.type === 'PreDefense' ? parseInt(formData.preDefenseNumber) : null,
+            members: members
         });
     };
 
@@ -107,20 +100,29 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
                     <label className="commission-modal__field">
                         {t('commission.commissionList')}
                         <select name="type" value={formData.type} onChange={handleChange}>
-                            <option value="predefense">{t('department.predefense')}</option>
-                            <option value="defense">
-                                {t('department.defenseCommission')}
-                            </option>
+                            <option value="PreDefense">{t('department.predefense')}</option>
+                            <option value="GAK">{t('department.defenseCommission')}</option>
                         </select>
                     </label>
 
+                    {formData.type === 'PreDefense' && (
+                        <label className="commission-modal__field">
+                            {t('department.predefenseNumber', 'Round Number')}
+                            <select name="preDefenseNumber" value={formData.preDefenseNumber} onChange={handleChange}>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </label>
+                    )}
+
                     <label className="commission-modal__field">
                         {t('commission.chairman')}
-                        <select name="chairman" value={formData.chairman} onChange={handleChange} required>
+                        <select name="chairmanId" value={formData.chairmanId} onChange={handleChange} required>
                             <option value="">{t('department.selectTeacher')}</option>
-                            {mockStaff.map((s) => (
-                                <option key={s.id} value={s.name}>
-                                    {s.name} — {s.position}
+                            {staff.map((s) => (
+                                <option key={s.userId} value={s.userId}>
+                                    {s.fullName} {s.positionName ? `— ${s.positionName}` : ''}
                                 </option>
                             ))}
                         </select>
@@ -128,11 +130,11 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
 
                     <label className="commission-modal__field">
                         {t('commission.secretary')}
-                        <select name="secretary" value={formData.secretary} onChange={handleChange} required>
+                        <select name="secretaryId" value={formData.secretaryId} onChange={handleChange} required>
                             <option value="">{t('department.selectTeacher')}</option>
-                            {mockStaff.map((s) => (
-                                <option key={s.id} value={s.name}>
-                                    {s.name} — {s.position}
+                            {staff.map((s) => (
+                                <option key={s.userId} value={s.userId}>
+                                    {s.fullName} {s.positionName ? `— ${s.positionName}` : ''}
                                 </option>
                             ))}
                         </select>
@@ -149,49 +151,19 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
                                 onChange={(e) => setMemberSearch(e.target.value)}
                             />
                             {filteredStaff.map((s) => (
-                                <label key={s.id} className="commission-modal__member-item">
+                                <label key={s.userId} className="commission-modal__member-item">
                                     <input
                                         type="checkbox"
-                                        checked={formData.members.includes(s.name)}
-                                        onChange={() => handleMemberToggle(s.name)}
+                                        checked={formData.memberIds.includes(s.userId)}
+                                        onChange={() => handleMemberToggle(s.userId)}
                                     />
-                                    <span>{s.name}</span>
+                                    <span>{s.fullName}</span>
                                     <span className="commission-modal__member-position">
-                                        {s.position}
+                                        {s.positionName}
                                     </span>
                                 </label>
                             ))}
                         </div>
-                    </div>
-
-                    <div className="commission-modal__optional-row">
-                        <label className="commission-modal__field">
-                            {t('commission.date')}
-                            <input
-                                type="date"
-                                name="date"
-                                value={formData.date}
-                                onChange={handleChange}
-                            />
-                        </label>
-                        <label className="commission-modal__field">
-                            {t('commission.time')}
-                            <input
-                                type="time"
-                                name="time"
-                                value={formData.time}
-                                onChange={handleChange}
-                            />
-                        </label>
-                        <label className="commission-modal__field">
-                            {t('department.room')}
-                            <input
-                                type="text"
-                                name="room"
-                                value={formData.room}
-                                onChange={handleChange}
-                            />
-                        </label>
                     </div>
 
                     <div className="commission-modal__buttons">

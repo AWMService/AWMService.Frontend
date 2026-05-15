@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { ConfirmModal, getIntlLocale } from "@awm/shared";
+import { ConfirmModal, getIntlLocale, useAuth, usePeriods, useApproveInitialPeriods } from "@awm/shared";
 import { validateDateRange, validateAllPeriods } from "../../utils/periodValidation";
 import "./InitialPeriodsPage.css";
 
-const STORAGE_KEY = "initialPeriods";
-
-const PERIOD_KEYS = ["directions", "topics", "selection"];
-
 const PERIOD_CONFIG = [
-    { key: "directions", labelKey: "department.directionsFormationPeriod" },
-    { key: "topics", labelKey: "department.topicsFormationPeriod" },
-    { key: "selection", labelKey: "department.topicSelectionPeriod" },
+    { key: "directions", stage: "DirectionSubmission", labelKey: "department.directionsFormationPeriod" },
+    { key: "topics", stage: "TopicCreation", labelKey: "department.topicsFormationPeriod" },
+    { key: "selection", stage: "TopicSelection", labelKey: "department.topicSelectionPeriod" },
 ];
 
 function getEmptyFormData() {
@@ -22,34 +18,46 @@ function getEmptyFormData() {
     };
 }
 
-function loadFromStorage() {
-    try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            const parsed = JSON.parse(saved);
-            return { formData: parsed.formData, isApproved: parsed.isApproved };
-        }
-    } catch {
-        // ignore corrupt data
-    }
-    return { formData: getEmptyFormData(), isApproved: false };
-}
-
 export default function InitialPeriodsPage() {
     const { t, i18n } = useTranslation();
     const locale = getIntlLocale(i18n.language);
+    const { user } = useAuth();
+    
+    const departmentId = user?.departmentId;
+    const academicYearId = user?.currentAcademicYearId;
 
-    const [formData, setFormData] = useState(() => loadFromStorage().formData);
-    const [isApproved, setIsApproved] = useState(() => loadFromStorage().isApproved);
+    const { data: periodsData = [], isLoading } = usePeriods(departmentId, academicYearId);
+    const approveMutation = useApproveInitialPeriods(departmentId, academicYearId);
+
+    const [formData, setFormData] = useState(getEmptyFormData());
+    const [isApproved, setIsApproved] = useState(false);
     const [errors, setErrors] = useState({});
     const [orderError, setOrderError] = useState("");
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
     useEffect(() => {
-        if (isApproved) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({ formData, isApproved }));
+        if (periodsData && periodsData.length > 0) {
+            const initialPeriods = periodsData.filter(p => 
+                ["DirectionSubmission", "TopicCreation", "TopicSelection"].includes(p.workflowStage)
+            );
+            
+            if (initialPeriods.length > 0) {
+                const newFormData = getEmptyFormData();
+                initialPeriods.forEach(p => {
+                    const config = PERIOD_CONFIG.find(c => c.stage === p.workflowStage);
+                    if (config) {
+                        newFormData[config.key] = {
+                            startDate: p.startDate ? p.startDate.split('T')[0] : "",
+                            endDate: p.endDate ? p.endDate.split('T')[0] : "",
+                        };
+                    }
+                });
+                setFormData(newFormData);
+                // If periods exist in backend, they are considered approved for view mode
+                setIsApproved(true);
+            }
         }
-    }, [formData, isApproved]);
+    }, [periodsData]);
 
     const handleDateChange = (periodKey, field, value) => {
         setFormData((prev) => ({
@@ -60,8 +68,8 @@ export default function InitialPeriodsPage() {
         setOrderError("");
     };
 
-    const allDatesFilled = PERIOD_KEYS.every(
-        (key) => formData[key].startDate && formData[key].endDate
+    const allDatesFilled = PERIOD_CONFIG.every(
+        ({ key }) => formData[key].startDate && formData[key].endDate
     );
 
     const handleSubmit = () => {
@@ -85,13 +93,13 @@ export default function InitialPeriodsPage() {
             return;
         }
 
-        const periods = PERIOD_CONFIG.map(({ key }) => ({
+        const periodsForValidation = PERIOD_CONFIG.map(({ key }) => ({
             key,
             startDate: formData[key].startDate,
             endDate: formData[key].endDate,
         }));
 
-        const orderResult = validateAllPeriods(periods);
+        const orderResult = validateAllPeriods(periodsForValidation);
         if (!orderResult.valid) {
             setOrderError(t("department.validationPeriodsOverlap"));
             return;
@@ -101,10 +109,20 @@ export default function InitialPeriodsPage() {
         setIsConfirmOpen(true);
     };
 
-    const handleConfirm = () => {
-        setIsApproved(true);
-        setIsConfirmOpen(false);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ formData, isApproved: true }));
+    const handleConfirm = async () => {
+        const payload = PERIOD_CONFIG.map(({ key, stage }) => ({
+            workflowStage: stage,
+            startDate: new Date(formData[key].startDate).toISOString(),
+            endDate: new Date(formData[key].endDate).toISOString(),
+        }));
+
+        try {
+            await approveMutation.mutateAsync(payload);
+            setIsApproved(true);
+            setIsConfirmOpen(false);
+        } catch (error) {
+            setOrderError("Failed to save periods. Please try again.");
+        }
     };
 
     const handleEdit = () => {
@@ -121,6 +139,14 @@ export default function InitialPeriodsPage() {
             year: "numeric",
         });
     };
+
+    if (isLoading) {
+        return <div className="initial-periods-page"><p>{t('common.loading', 'Loading...')}</p></div>;
+    }
+
+    if (!departmentId || !academicYearId) {
+        return <div className="initial-periods-page"><p>{t('department.noDepartmentSelected', 'Department or Academic Year missing.')}</p></div>;
+    }
 
     // ===================== SUMMARY VIEW =====================
     if (isApproved) {
@@ -203,7 +229,7 @@ export default function InitialPeriodsPage() {
                 <div className="periods-form__actions">
                     <button
                         className="button primary-button"
-                        disabled={!allDatesFilled}
+                        disabled={!allDatesFilled || approveMutation.isPending}
                         onClick={handleSubmit}
                     >
                         {t("department.approveInitialPeriods")}
