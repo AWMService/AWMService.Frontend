@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { authService, consumeAuthTokensFromUrl, getToken, storeAuthTokens } from '../api';
-import { getLoginUrl } from '../auth/authRouting';
+import { getLoginUrl, getLogoutUrl } from '../auth/authRouting';
 
 const AuthContext = createContext(null);
 
@@ -48,7 +48,7 @@ export function AuthProvider({ children }) {
         setAccessToken(null);
         queryClient.setQueryData(['currentUser'], null);
         if (redirect) {
-            window.location.assign(getLoginUrl());
+            window.location.assign(getLogoutUrl());
         }
     };
 

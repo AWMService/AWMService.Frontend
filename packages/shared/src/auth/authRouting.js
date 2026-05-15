@@ -31,6 +31,11 @@ export const getLoginUrl = (returnTo = typeof window !== 'undefined' ? window.lo
   return url.toString();
 };
 
+export const getLogoutUrl = () => {
+  const url = new URL('/logout', getAuthBaseUrl());
+  return url.toString();
+};
+
 const ROLE_DESTINATIONS = {
   [ROLES.STUDENT]: {
     app: 'student',
