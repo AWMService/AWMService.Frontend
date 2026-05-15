@@ -1,33 +1,22 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { normalizeLanguage, getLocalizedValue } from "@awm/shared";
+import {
+    getIntlLocale,
+    getLocalizedValue,
+    normalizeLanguage,
+    useApproveDirection,
+    useAuth,
+    useDirectionsByDepartment,
+    useRejectDirection,
+    useRequestDirectionRevision,
+    useStaffByDepartment,
+    useWorkTypes,
+} from "@awm/shared";
 import "./DirectionsAndThemes.css";
 import DirectionCard from "../../components/Directions/DirectionCard/DirectionCard.jsx";
 import DirectionModal from "../../components/Directions/DirectionModal/DirectionModal.jsx";
 import ThemeModal from "../../components/Themes/ThemeModal/ThemeModal.jsx";
-
-
-
-const initialDirections = [
-    {
-        id: 1,
-        title: {
-            ru: "Исследование методов криптографической защиты в блокчейн-системах",
-            kk: "Блокчейн жүйелерінде криптографиялық қорғау әдістерін зерттеу",
-            en: "Study of Cryptographic Protection Methods in Blockchain Systems",
-        },
-        description: {
-            ru: "Теоретическое исследование современных методов криптографической защиты данных...",
-            kk: "Деректерді қорғаудың заманауи криптографиялық әдістерін теориялық зерттеу...",
-            en: "Theoretical study of modern methods of data cryptographic protection...",
-        },
-        status: "На рассмотрении",
-        type: "Дипломное исследование",
-        supervisor: "Волков Дмитрий Сергеевич",
-        submittedAt: "10.12.2024",
-    },
-];
 
 const initialThemes = [
     {
@@ -42,93 +31,111 @@ const initialThemes = [
             kk: "React және Node.js пайдалана отырып веб-қосымшаны жасау және енгізу...",
             en: "Creating and implementing a web application using React and Node.js...",
         },
-        status: "На рассмотрении",
+        status: "pending",
         type: "Дипломная работа",
         supervisor: "Иванов Иван Иванович",
         submittedAt: "01.09.2025",
-
         students: [
-            {
-                id: 1,
-                fullName: "Серикова Айгерим Нурлановна",
-                group: "SE-401",
-            },
-            {
-              id: 2,
-              fullName: "Ахметов Данияр Русланович",
-              group: "SE-402",
-            }
+            { id: 1, fullName: "Серикова Айгерим Нурлановна", group: "SE-401" },
+            { id: 2, fullName: "Ахметов Данияр Русланович", group: "SE-402" },
         ],
     },
 ];
-
-
 
 const TABS = {
     DIRECTIONS: "directions",
     THEMES: "themes",
 };
 
-
+const formatDate = (value, locale) => {
+    if (!value) return "—";
+    return new Date(value).toLocaleDateString(locale);
+};
 
 const DirectionsAndThemes = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { t, i18n } = useTranslation();
+    const { user } = useAuth();
     const currentLanguage = normalizeLanguage(i18n.language);
+    const locale = getIntlLocale(i18n.language);
+
+    const departmentId = user?.departmentId;
+    const academicYearId = user?.currentAcademicYearId;
 
     const query = new URLSearchParams(location.search);
     const activeTab = query.get("tab") || TABS.DIRECTIONS;
+    const isDirections = activeTab === TABS.DIRECTIONS;
 
-    /* ===================== STATE ===================== */
+    const { data: rawDirections = [], isLoading, error } = useDirectionsByDepartment(departmentId, academicYearId);
+    const { data: staff = [] } = useStaffByDepartment(departmentId);
+    const { data: workTypes = [] } = useWorkTypes();
 
-    const [directions, setDirections] = useState(initialDirections);
+    const approveMutation = useApproveDirection();
+    const rejectMutation = useRejectDirection();
+    const revisionMutation = useRequestDirectionRevision();
+
+    const staffById = useMemo(() => new Map(staff.map((item) => [item.id, item])), [staff]);
+    const workTypesById = useMemo(() => new Map(workTypes.map((item) => [item.id, item])), [workTypes]);
+
+    const directions = useMemo(() => rawDirections.map((direction) => {
+        const supervisor = staffById.get(direction.supervisorId);
+        const workType = workTypesById.get(direction.workTypeId);
+
+        return {
+            ...direction,
+            supervisor: supervisor?.fullName || supervisor?.email || `#${direction.supervisorId}`,
+            type: workType?.name || `#${direction.workTypeId}`,
+            submittedAt: formatDate(direction.submittedAt || direction.createdAt, locale),
+            rejectionReason: direction.reviewComment,
+        };
+    }), [rawDirections, staffById, workTypesById, locale]);
+
     const [themes, setThemes] = useState(initialThemes);
-
     const [selectedDirection, setSelectedDirection] = useState(null);
     const [selectedTheme, setSelectedTheme] = useState(null);
-
     const [searchQuery, setSearchQuery] = useState("");
-    const [filterStatus, setFilterStatus] = useState("Все");
+    const [filterStatus, setFilterStatus] = useState("all");
 
     const filterOptions = [
-        { value: "Все", label: t('common.all') },
-        { value: "На рассмотрении", label: t('status.underReview') },
-        { value: "Утверждено", label: t('status.approved') },
-        { value: "Отклонено", label: t('status.rejected') },
+        { value: "all", label: t('common.all') },
+        { value: "draft", label: t('status.draft') },
+        { value: "pending", label: t('status.underReview') },
+        { value: "approved", label: t('status.approved') },
+        { value: "rejected", label: t('status.rejected') },
+        { value: "revision", label: t('status.revision') },
     ];
-
 
     const changeTab = (tab) => {
         navigate(`?tab=${tab}`);
         setSearchQuery("");
-        setFilterStatus("Все");
+        setFilterStatus("all");
         setSelectedDirection(null);
         setSelectedTheme(null);
     };
 
-    const getCount = (items, status) => {
-        if (status === "Все") return items.length;
-        return items.filter((i) => i.status === status).length;
+    const items = isDirections ? directions : themes;
+
+    const getCount = (status) => {
+        if (status === "all") return items.length;
+        return items.filter((item) => item.status === status).length;
     };
 
-    const filterItems = (items) =>
-        items.filter(
-            (i) =>
-                getLocalizedValue(i.title, currentLanguage).toLowerCase().includes(searchQuery.toLowerCase()) &&
-                (filterStatus === "Все" || i.status === filterStatus)
-        );
+    const filteredItems = items.filter((item) => {
+        const title = getLocalizedValue(item.title, currentLanguage).toLowerCase();
+        return title.includes(searchQuery.toLowerCase()) && (filterStatus === "all" || item.status === filterStatus);
+    });
 
-
-
-    const updateDirectionStatus = (id, newStatus, rejectionReason = "") => {
-        setDirections((prev) =>
-            prev.map((dir) =>
-                dir.id === id
-                    ? { ...dir, status: newStatus, rejectionReason }
-                    : dir
-            )
-        );
+    const updateDirectionStatus = async (id, action, comment = "") => {
+        if (action === "approved") {
+            await approveMutation.mutateAsync(id);
+        }
+        if (action === "rejected") {
+            await rejectMutation.mutateAsync({ id, comment });
+        }
+        if (action === "revision") {
+            await revisionMutation.mutateAsync({ id, comment });
+        }
         setSelectedDirection(null);
     };
 
@@ -143,28 +150,19 @@ const DirectionsAndThemes = () => {
         setSelectedTheme(null);
     };
 
-
-
-    const isDirections = activeTab === TABS.DIRECTIONS;
-    const items = isDirections ? directions : themes;
-    const filteredItems = filterItems(items);
-
     return (
         <div className="projects-page">
-
             <div className="page-header-info">
                 <div>
                     <h1 className="page-title">
                         {isDirections ? t('supervisor.directionsDP') : t('supervisor.themesDP')}
                     </h1>
-
                     <p className="page-subtitle">
                         {isDirections
                             ? t('department.directionsSubtitle')
                             : t('department.themesSubtitle')}
                     </p>
                 </div>
-
             </div>
 
             <div className="projects-tabs">
@@ -183,7 +181,6 @@ const DirectionsAndThemes = () => {
                 </button>
             </div>
 
-
             <div className="projects-controls">
                 <input
                     type="text"
@@ -198,25 +195,30 @@ const DirectionsAndThemes = () => {
                 />
 
                 <div className="filter-buttons">
-                    {filterOptions.map(
-                        ({ value, label }) => (
-                            <button
-                                key={value}
-                                className={`filter-btn ${
-                                    filterStatus === value ? "active" : ""
-                                }`}
-                                onClick={() => setFilterStatus(value)}
-                            >
-                                {label} ({getCount(items, value)})
-                            </button>
-                        )
-                    )}
+                    {filterOptions.map(({ value, label }) => (
+                        <button
+                            key={value}
+                            className={`filter-btn ${filterStatus === value ? "active" : ""}`}
+                            onClick={() => setFilterStatus(value)}
+                        >
+                            {label} ({getCount(value)})
+                        </button>
+                    ))}
                 </div>
             </div>
 
+            {isDirections && (!departmentId || !academicYearId) && (
+                <p className="no-results">{t('department.noDepartmentSelected', 'Department or Academic Year missing.')}</p>
+            )}
+            {isDirections && error && (
+                <p className="no-results">{t('common.error')}: {error.message}</p>
+            )}
+            {isDirections && isLoading && (
+                <p className="no-results">{t('common.loading')}...</p>
+            )}
 
             <div className="projects-list">
-                {filteredItems.length === 0 && (
+                {!isLoading && filteredItems.length === 0 && (
                     <p className="no-results">{t('common.noResults')}</p>
                 )}
 
@@ -242,12 +244,12 @@ const DirectionsAndThemes = () => {
                     ))}
             </div>
 
-
             {selectedDirection && (
                 <DirectionModal
                     direction={selectedDirection}
                     onClose={() => setSelectedDirection(null)}
                     onUpdateStatus={updateDirectionStatus}
+                    isSaving={approveMutation.isPending || rejectMutation.isPending || revisionMutation.isPending}
                 />
             )}
 

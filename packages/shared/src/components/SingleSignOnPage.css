@@ -1,0 +1,135 @@
+.sso-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 64, 175, 0.72)),
+    url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1800&q=80');
+  background-size: cover;
+  background-position: center;
+  color: #0f172a;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.sso-panel {
+  width: min(100%, 430px);
+  padding: 32px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(226, 232, 240, 0.78);
+  border-radius: 8px;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.28);
+}
+
+.sso-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.sso-brand__mark {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #0f766e;
+  color: white;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.sso-brand__caption {
+  margin: 0 0 4px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.sso-brand h1 {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.sso-form {
+  display: grid;
+  gap: 16px;
+}
+
+.sso-field {
+  display: grid;
+  gap: 8px;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.sso-field input {
+  width: 100%;
+  min-height: 46px;
+  box-sizing: border-box;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 0 14px;
+  color: #0f172a;
+  font: inherit;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.sso-field input:focus {
+  border-color: #0f766e;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.16);
+}
+
+.sso-error {
+  padding: 12px 14px;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 14px;
+}
+
+.sso-submit {
+  min-height: 48px;
+  border: 0;
+  border-radius: 6px;
+  background: #0f766e;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  transition: background 0.16s ease, transform 0.16s ease;
+}
+
+.sso-submit:hover:not(:disabled) {
+  background: #115e59;
+  transform: translateY(-1px);
+}
+
+.sso-submit:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+@media (max-width: 520px) {
+  .sso-page {
+    padding: 18px;
+  }
+
+  .sso-panel {
+    padding: 24px;
+  }
+
+  .sso-brand {
+    align-items: flex-start;
+  }
+
+  .sso-brand h1 {
+    font-size: 26px;
+  }
+}

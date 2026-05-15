@@ -52,6 +52,15 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.btn-create-new:disabled,
+.btn-empty-action:disabled,
+.send-for-review-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    transform: none;
+    box-shadow: none;
+}
+
 /* Grid Layout */
 .directions-grid-layout {
     display: grid;
@@ -93,6 +102,7 @@
 .status-border-pending::after { background: #f59e0b; }
 .status-border-rejected::after { background: #ef4444; }
 .status-border-draft::after { background: #94a3b8; }
+.status-border-revision::after { background: #8b5cf6; }
 
 .card-inner-content {
     padding: 24px;
@@ -119,6 +129,7 @@
 .badge-pending { background: #fffbeb; color: #d97706; }
 .badge-rejected { background: #fef2f2; color: #dc2626; }
 .badge-draft { background: #f8fafc; color: #64748b; }
+.badge-revision { background: #f5f3ff; color: #7c3aed; }
 
 .creation-date {
     font-size: 12px;

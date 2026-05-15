@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getToken, removeToken } from './tokenStorage';
+import { clearAuthTokens, getToken } from './tokenStorage';
 
 export const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'https://localhost:7009/api/v1',
@@ -35,7 +35,7 @@ apiClient.interceptors.response.use(
       };
 
       if (status === 401) {
-        removeToken();
+        clearAuthTokens();
         // Optional: trigger a global event or redirect
         window.dispatchEvent(new Event('awm:unauthorized'));
       }

@@ -59,6 +59,7 @@
 .st-pending { background: #fffbeb; color: #f59e0b; }
 .st-rejected { background: #fef2f2; color: #ef4444; }
 .st-draft { background: #f8fafc; color: #64748b; }
+.st-revision { background: #f5f3ff; color: #7c3aed; }
 
 .dvm-close-btn {
     background: transparent;

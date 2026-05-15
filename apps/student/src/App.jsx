@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { RequireAuth, ROLES } from '@awm/shared';
 import { StudentLayout } from './pages/StudentLayout.jsx';
 import ChooseThemePage from './pages/ChooseThemePage.jsx';
 import MyApplicationsPage from './pages/MyApplicationsPage.jsx';
@@ -103,24 +104,26 @@ function App() {
     };
 
     return (
-        <Routes>
-            <Route path="/" element={<StudentLayout />}>
-                <Route index element={<Navigate to="/choose-theme" replace />} />
-                <Route path="choose-theme" element={<ChooseThemePage />} />
-                <Route path="my-applications" element={<MyApplicationsPage />} />
-                <Route path="pre-defense-1" element={<DefenseStepPage {...preDefense1Data} />} />
-                <Route path="pre-defense-2" element={<DefenseStepPage {...preDefense2Data} />} />
-                <Route path="normocontrol" element={<ReviewStepPage {...normocontrolData} />} />
-                <Route path="software-check" element={<ReviewStepPage {...softwareCheckData} />} />
-                <Route path="antiplagiarism" element={<AntiplagiarismPage />} />
-                <Route path="critique" element={<CritiquePage />} />
-                <Route path="defense" element={<DefenseStepPage {...defenseData} />} />
-                <Route path="profile" element={<ProfilePage />} />
-                <Route path="my-work" element={<MyWorkPage />} />
-                <Route path="notifications" element={<NotificationsPage />} />
-            </Route>
-            <Route path="*" element={<Navigate to="/choose-theme" replace />} />
-        </Routes>
+        <RequireAuth allowedRoles={[ROLES.STUDENT]}>
+            <Routes>
+                <Route path="/" element={<StudentLayout />}>
+                    <Route index element={<Navigate to="/choose-theme" replace />} />
+                    <Route path="choose-theme" element={<ChooseThemePage />} />
+                    <Route path="my-applications" element={<MyApplicationsPage />} />
+                    <Route path="pre-defense-1" element={<DefenseStepPage {...preDefense1Data} />} />
+                    <Route path="pre-defense-2" element={<DefenseStepPage {...preDefense2Data} />} />
+                    <Route path="normocontrol" element={<ReviewStepPage {...normocontrolData} />} />
+                    <Route path="software-check" element={<ReviewStepPage {...softwareCheckData} />} />
+                    <Route path="antiplagiarism" element={<AntiplagiarismPage />} />
+                    <Route path="critique" element={<CritiquePage />} />
+                    <Route path="defense" element={<DefenseStepPage {...defenseData} />} />
+                    <Route path="profile" element={<ProfilePage />} />
+                    <Route path="my-work" element={<MyWorkPage />} />
+                    <Route path="notifications" element={<NotificationsPage />} />
+                </Route>
+                <Route path="*" element={<Navigate to="/choose-theme" replace />} />
+            </Routes>
+        </RequireAuth>
     );
 }
 

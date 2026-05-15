@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { RoleProvider, UNIVERSAL_ROLES, useRole, ROLES, ProtectedRoute } from '@awm/shared';
+import { RequireAuth, RoleProvider, UNIVERSAL_ROLES, useRole, ROLES, ProtectedRoute } from '@awm/shared';
 import { UniversalHeader } from './components/Header/UniversalHeader';
 import { UniversalSidebar } from './components/Sidebar/UniversalSidebar';
 import STopicsPage from './pages/TopicsPage/STopicsPage.jsx';
@@ -124,12 +124,14 @@ function AppContent() {
 
 function App() {
     return (
-        <RoleProvider 
-            availableRoles={UNIVERSAL_ROLES} 
-            defaultRole={ROLES.SUPERVISOR}
-        >
-            <AppContent />
-        </RoleProvider>
+        <RequireAuth allowedRoles={UNIVERSAL_ROLES}>
+            <RoleProvider 
+                availableRoles={UNIVERSAL_ROLES} 
+                defaultRole={ROLES.SUPERVISOR}
+            >
+                <AppContent />
+            </RoleProvider>
+        </RequireAuth>
     );
 }
 

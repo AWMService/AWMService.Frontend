@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LanguageSelector } from '@awm/shared';
+import { LanguageSelector, useAuth } from '@awm/shared';
 import './Header.css';
 
 import arrowDownIcon from '../../assets/icons/arrow-down-icon.svg';
@@ -23,8 +23,8 @@ const Icon = ({ src, alt, size = 16, className = "" }) => (
 
 export function AdminHeader() {
   const location = useLocation();
-  const navigate = useNavigate();
   const { t } = useTranslation();
+  const { logout } = useAuth();
 
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -57,8 +57,7 @@ export function AdminHeader() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/login');
+    logout();
   };
 
   return (

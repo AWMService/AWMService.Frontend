@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LanguageSelector } from '@awm/shared';
+import { LanguageSelector, useAuth } from '@awm/shared';
 import './StudentHeader.css';
 
 // Импорт иконок
@@ -24,8 +24,8 @@ const Icon = ({ src, alt, size = 16, className = "" }) => (
 );
 
 export function StudentHeader() {
-  const navigate = useNavigate();
   const { t } = useTranslation();
+  const { logout } = useAuth();
 
   // Состояния для меню
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -46,7 +46,7 @@ export function StudentHeader() {
   }, []);
 
   const handleLogout = () => {
-    navigate('/login');
+    logout();
   };
 
   return (
