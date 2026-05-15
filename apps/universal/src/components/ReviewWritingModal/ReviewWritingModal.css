@@ -1,0 +1,120 @@
+.review-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.review-modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    width: 540px;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.review-modal__title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: #111827;
+}
+
+.review-modal__work-info {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0 0 20px 0;
+}
+
+.review-modal__message {
+    font-size: 14px;
+    color: #374151;
+    margin: 0 0 12px 0;
+}
+
+.review-modal__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.review-modal__field label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.review-modal__field textarea {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.review-modal__field textarea:focus {
+    border-color: #3b82f6;
+}
+
+.review-modal__field input[type="file"] {
+    font-size: 14px;
+    color: #374151;
+}
+
+.review-modal__filename {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.review-modal__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.review-modal__actions .primary-button {
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.review-modal__actions .primary-button:hover:not(:disabled) {
+    background: #2563eb;
+}
+
+.review-modal__actions .primary-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.review-modal__actions .secondary-button {
+    background: transparent;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.review-modal__actions .secondary-button:hover {
+    background: #f3f4f6;
+}

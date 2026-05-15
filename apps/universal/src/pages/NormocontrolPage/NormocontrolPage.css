@@ -1,0 +1,201 @@
+.normocontrol-page {
+    padding: 24px;
+}
+
+.page-header {
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: white;
+    margin: 0 0 8px 0;
+}
+
+.page-subtitle {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    margin: 0;
+}
+
+.tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    padding: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    width: fit-content;
+}
+
+.tab {
+    padding: 10px 20px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tab:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.tab.active {
+    background: rgba(139, 92, 246, 0.2);
+    color: white;
+}
+
+.documents-list {
+    display: grid;
+    gap: 16px;
+}
+
+.document-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    transition: all 0.2s;
+}
+
+.document-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.document-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.student-info h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    margin: 0 0 4px 0;
+}
+
+.student-info .group {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-pending {
+    background: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+}
+
+.status-revision {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.status-approved {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.theme-title {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0 0 12px 0;
+    line-height: 1.5;
+}
+
+.document-meta {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.doc-type {
+    padding: 4px 10px;
+    background: rgba(139, 92, 246, 0.15);
+    border-radius: 6px;
+    font-size: 12px;
+    color: #a78bfa;
+}
+
+.version {
+    padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.document-card-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 16px;
+}
+
+.remarks {
+    color: #ef4444;
+}
+
+.document-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-btn.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.action-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.action-btn.success {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.action-btn.success:hover {
+    background: rgba(16, 185, 129, 0.3);
+}
+
+.action-btn.warning {
+    background: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+}
+
+.action-btn.warning:hover {
+    background: rgba(245, 158, 11, 0.3);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: rgba(255, 255, 255, 0.5);
+}

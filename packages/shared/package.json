@@ -1,0 +1,25 @@
+{
+    "name": "@awm/shared",
+    "private": true,
+    "version": "1.0.0",
+    "type": "module",
+    "main": "src/index.js",
+    "exports": {
+        ".": "./src/index.js",
+        "./src/i18n": "./src/i18n/index.js",
+        "./src/i18n/*": "./src/i18n/*",
+        "./src/components/*": "./src/components/*",
+        "./src/assets/*": "./src/assets/*"
+    },
+    "dependencies": {
+        "@tanstack/react-query": "^5.100.10",
+        "axios": "^1.16.0",
+        "i18next": "^26.0.2",
+        "i18next-browser-languagedetector": "^8.2.1",
+        "react-i18next": "^17.0.1"
+    },
+    "peerDependencies": {
+        "react": ">=18.0.0",
+        "react-router-dom": ">=6.0.0"
+    }
+}

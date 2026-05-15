@@ -1,0 +1,112 @@
+.students-page {
+    background-color: #F9FAFB;
+    flex: 1;
+    margin-top: 64px;
+    padding: 44px 52px;
+    font-family: "Inter", sans-serif;
+}
+
+.students-table {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.students-table .table-header {
+    display: grid;
+    grid-template-columns: 60px 1.5fr 100px 1fr 70px 120px 150px;
+    gap: 16px;
+    padding: 16px 20px;
+    background: #F9FAFB;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6B7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.students-table .table-row {
+    display: grid;
+    grid-template-columns: 60px 1.5fr 100px 1fr 70px 120px 150px;
+    gap: 16px;
+    padding: 16px 20px;
+    border-top: 1px solid #F3F4F6;
+    align-items: center;
+    transition: background 0.2s;
+}
+
+.students-table .table-row:hover {
+    background: #F9FAFB;
+}
+
+.students-table .col-num {
+    color: #6B7280;
+    font-size: 14px;
+}
+
+.students-table .col-name {
+    color: #1F2937;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.students-table .col-group {
+    color: #4B5563;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.students-table .col-program {
+    color: #4B5563;
+    font-size: 14px;
+}
+
+.students-table .col-year {
+    color: #1F2937;
+    font-size: 14px;
+    text-align: center;
+}
+
+.students-table .col-status {
+    font-size: 14px;
+}
+
+.students-table .status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.students-table .status-active {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.students-table .status-graduated {
+    background: rgba(99, 102, 241, 0.15);
+    color: #6366f1;
+}
+
+.students-table .status-expelled {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+
+@media (max-width: 1024px) {
+    .students-table .table-header,
+    .students-table .table-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .students-table .table-header {
+        display: none;
+    }
+
+    .students-table .table-row {
+        padding: 16px;
+    }
+}

@@ -1,0 +1,150 @@
+.commissions-page {
+    background-color: #F9FAFB;
+    flex: 1;
+    margin-top: 64px;
+    padding: 56px;
+}
+
+.commissions-page .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.commissions-page .page-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1F2937;
+    line-height: 1.55;
+}
+
+.commissions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+    .commissions-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .commissions-page {
+        padding: 24px 16px;
+    }
+}
+
+/* Commission Card */
+.commission-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.commission-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.commission-card__name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+}
+
+.commission-card__type-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.commission-card__type-badge--predefense {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+}
+
+.commission-card__type-badge--defense {
+    background-color: #f3e8ff;
+    color: #7c3aed;
+}
+
+.commission-card__info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 14px;
+    color: #374151;
+}
+
+.commission-card__info-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.commission-card__info-label {
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.commission-card__schedule {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #6b7280;
+    padding-top: 4px;
+    border-top: 1px solid #f3f4f6;
+}
+
+.commission-card__actions {
+    display: flex;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #f3f4f6;
+}
+
+.commission-card__action-btn {
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid #d1d5db;
+    background: transparent;
+    color: #374151;
+    transition: background-color 0.15s;
+}
+
+.commission-card__action-btn:hover {
+    background-color: #f3f4f6;
+}
+
+.commission-card__action-btn--danger {
+    color: #dc2626;
+    border-color: #fecaca;
+}
+
+.commission-card__action-btn--danger:hover {
+    background-color: #fef2f2;
+}
+
+.commissions-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 48px 20px;
+    color: #6b7280;
+    font-size: 15px;
+}

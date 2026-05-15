@@ -1,0 +1,43 @@
+.schedule-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.slot-card {
+    border: 1px dashed #c7d2fe;
+    border-radius: 10px;
+    padding: 12px;
+    margin-top: 12px;
+}
+
+.slot-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.slot-count {
+    color: #6b7280;
+}
+
+.slot-empty {
+    font-size: 13px;
+    color: #9ca3af;
+    text-align: center;
+    padding: 12px 0;
+}
+
+.student-chip {
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    margin-right: 6px;
+    margin-bottom: 6px;
+    display: inline-block;
+}

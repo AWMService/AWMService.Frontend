@@ -1,30 +1,37 @@
 {
   "name": "awmservice-frontend",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@hello-pangea/dnd": "^18.0.1",
-    "lucide-react": "^0.545.0",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "react-router-dom": "^7.9.2"
+    "dev": "turbo run dev",
+    "dev:auth": "turbo run dev --filter=@awm/auth",
+    "dev:student": "turbo run dev --filter=@awm/student",
+    "dev:universal": "turbo run dev --filter=@awm/universal",
+    "dev:department": "turbo run dev --filter=@awm/department",
+    "dev:admin": "turbo run dev --filter=@awm/admin",
+    "build": "turbo run build",
+    "build:auth": "turbo run build --filter=@awm/auth",
+    "build:student": "turbo run build --filter=@awm/student",
+    "build:universal": "turbo run build --filter=@awm/universal",
+    "build:department": "turbo run build --filter=@awm/department",
+    "build:admin": "turbo run build --filter=@awm/admin",
+    "lint": "turbo run lint"
   },
   "devDependencies": {
-    "@eslint/js": "^9.33.0",
-    "@types/react": "^19.1.10",
-    "@types/react-dom": "^19.1.7",
-    "@vitejs/plugin-react": "^5.0.0",
-    "eslint": "^9.33.0",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.20",
-    "globals": "^16.3.0",
-    "vite": "^7.1.2"
+    "turbo": "^2"
+  },
+  "packageManager": "pnpm@10.30.3",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.100.10",
+    "axios": "^1.16.0",
+    "i18next": "^26.0.2",
+    "i18next-browser-languagedetector": "^8.2.1",
+    "react-i18next": "^17.0.1"
   }
 }

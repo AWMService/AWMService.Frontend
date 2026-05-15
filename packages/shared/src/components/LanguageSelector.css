@@ -1,0 +1,160 @@
+.language-selector {
+  position: relative;
+  display: inline-flex;
+}
+
+.language-selector__trigger {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.language-selector__trigger:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.language-selector__current {
+  font-weight: 600;
+}
+
+.language-selector__arrow {
+  transition: transform 0.2s ease;
+}
+
+.language-selector__arrow--open {
+  transform: rotate(180deg);
+}
+
+.language-selector__dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 140px;
+  background: rgba(30, 30, 40, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.language-selector__option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.language-selector__option:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.language-selector__option--active {
+  background: rgba(99, 102, 241, 0.2);
+  color: white;
+}
+
+.language-selector__code {
+  font-weight: 600;
+  min-width: 24px;
+}
+
+.language-selector__name {
+  opacity: 0.8;
+}
+
+/* Buttons variant */
+.language-selector--buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.language-btn {
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.language-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.language-btn--active {
+  background: rgba(99, 102, 241, 0.3);
+  border-color: rgba(99, 102, 241, 0.5);
+  color: white;
+}
+
+/* Light theme support */
+[data-theme="light"] .language-selector__trigger {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+[data-theme="light"] .language-selector__trigger:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .language-selector__dropdown {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .language-selector__option {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="light"] .language-selector__option:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #333;
+}
+
+[data-theme="light"] .language-selector__option--active {
+  background: rgba(99, 102, 241, 0.1);
+  color: #333;
+}
+
+[data-theme="light"] .language-btn {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="light"] .language-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="light"] .language-btn--active {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: rgba(99, 102, 241, 0.3);
+  color: #333;
+}
