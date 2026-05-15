@@ -72,7 +72,12 @@
         "login": "Login",
         "logout": "Logout",
         "profile": "Profile",
-        "settings": "Settings"
+        "settings": "Settings",
+        "learningSystem": "Learning system",
+        "signIn": "Sign In",
+        "loading": "Signing in...",
+        "usernamePlaceholder": "Username",
+        "passwordPlaceholder": "Password"
     },
     "roles": {
         "student": "Student",
@@ -83,7 +88,8 @@
         "secretary": "Commission Secretary",
         "commissionMember": "Commission Member",
         "department": "Department Head",
-        "admin": "Administrator"
+        "admin": "Administrator",
+        "viceRector": "Vice Rector"
     },
     "nav": {
         "home": "Home",

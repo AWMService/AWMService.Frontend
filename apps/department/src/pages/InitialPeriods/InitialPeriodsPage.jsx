@@ -120,7 +120,7 @@ export default function InitialPeriodsPage() {
             await approveMutation.mutateAsync(payload);
             setIsApproved(true);
             setIsConfirmOpen(false);
-        } catch (error) {
+        } catch {
             setOrderError("Failed to save periods. Please try again.");
         }
     };

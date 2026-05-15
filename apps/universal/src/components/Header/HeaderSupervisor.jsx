@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@awm/shared';
 import './Header.css';
 import bellIcon from '../../assets/icons/bell-icon.svg';
 import globeIcon from '../../assets/icons/globe-icon.svg';
@@ -21,8 +22,8 @@ const Icon = ({ src, size = 16, className = "" }) => (
 
 export function HeaderSupervisor() {
     const location = useLocation();
-    const navigate = useNavigate();
     const { t } = useTranslation();
+    const { logout } = useAuth();
 
     const pageNames = {
         "/super/my-topics": t('nav.myTopics'),
@@ -62,7 +63,7 @@ export function HeaderSupervisor() {
     }, []);
 
     const handleLogout = () => {
-        navigate('/login');
+        logout();
     };
 
     return (

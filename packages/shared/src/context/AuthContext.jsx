@@ -1,12 +1,18 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { authService, getToken, setToken, removeToken } from '../api';
+import { authService, clearAuthTokens, consumeAuthTokensFromUrl, getToken, storeAuthTokens } from '../api';
+import { getLoginUrl, getLogoutUrl } from '../auth/authRouting';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
     const queryClient = useQueryClient();
-    const token = getToken();
+    const isLoggingOut = useRef(false);
+
+    const [token, setAccessToken] = useState(() => {
+        const consumed = consumeAuthTokensFromUrl();
+        return consumed.token || getToken();
+    });
 
     const { data: user, isLoading, error } = useQuery({
         queryKey: ['currentUser'],
@@ -15,19 +21,38 @@ export function AuthProvider({ children }) {
         retry: false,
     });
 
+    useEffect(() => {
+        const handleUnauthorized = () => {
+            setAccessToken(null);
+            queryClient.setQueryData(['currentUser'], null);
+        };
+
+        window.addEventListener('awm:unauthorized', handleUnauthorized);
+        return () => window.removeEventListener('awm:unauthorized', handleUnauthorized);
+    }, [queryClient]);
+
     const login = async (credentials) => {
         const response = await authService.login(credentials);
         if (response?.token) {
-            setToken(response.token);
-            await queryClient.invalidateQueries(['currentUser']);
+            storeAuthTokens(response);
+            setAccessToken(response.token);
+            const currentUser = await queryClient.fetchQuery({
+                queryKey: ['currentUser'],
+                queryFn: authService.getCurrentUser,
+            });
+            return { ...response, user: currentUser };
         }
         return response;
     };
 
-    const logout = () => {
-        removeToken();
+    const logout = ({ redirect = true } = {}) => {
+        isLoggingOut.current = true;
+        clearAuthTokens();
+        setAccessToken(null);
         queryClient.setQueryData(['currentUser'], null);
-        window.location.href = '/login'; 
+        if (redirect) {
+            window.location.assign(getLogoutUrl());
+        }
     };
 
     const value = {
@@ -36,7 +61,9 @@ export function AuthProvider({ children }) {
         error,
         login,
         logout,
-        isAuthenticated: !!user,
+        hasToken: !!token,
+        isAuthenticated: !!token && !!user,
+        isLoggingOut,
     };
 
     return (

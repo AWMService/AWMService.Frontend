@@ -5,11 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "turbo run dev",
+    "dev:auth": "turbo run dev --filter=@awm/auth",
     "dev:student": "turbo run dev --filter=@awm/student",
     "dev:universal": "turbo run dev --filter=@awm/universal",
     "dev:department": "turbo run dev --filter=@awm/department",
     "dev:admin": "turbo run dev --filter=@awm/admin",
     "build": "turbo run build",
+    "build:auth": "turbo run build --filter=@awm/auth",
     "build:student": "turbo run build --filter=@awm/student",
     "build:universal": "turbo run build --filter=@awm/universal",
     "build:department": "turbo run build --filter=@awm/department",

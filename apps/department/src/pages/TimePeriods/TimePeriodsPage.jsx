@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth, usePeriods, useApproveDefensePeriods, ConfirmModal } from "@awm/shared";
 import "./TimePeriodsPage.css";

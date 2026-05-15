@@ -72,7 +72,12 @@
         "login": "Кіру",
         "logout": "Шығу",
         "profile": "Профиль",
-        "settings": "Баптаулар"
+        "settings": "Баптаулар",
+        "learningSystem": "Оқу жүйесі",
+        "signIn": "Кіру",
+        "loading": "Кірудеміз...",
+        "usernamePlaceholder": "Логин",
+        "passwordPlaceholder": "Құпиясөз"
     },
     "roles": {
         "student": "Студент",
@@ -83,7 +88,8 @@
         "secretary": "Комиссия хатшысы",
         "commissionMember": "Комиссия мүшесі",
         "department": "Кафедра меңгерушісі",
-        "admin": "Әкімші"
+        "admin": "Әкімші",
+        "viceRector": "Проректор"
     },
     "nav": {
         "home": "Басты бет",

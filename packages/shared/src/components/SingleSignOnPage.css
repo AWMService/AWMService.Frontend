@@ -1,0 +1,172 @@
+.sso-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f4f8;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  padding: 20px;
+}
+
+.sso-panel {
+  background: white;
+  width: 100%;
+  max-width: 440px;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.sso-tabs {
+  display: flex;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.sso-tab {
+  flex: 1;
+  padding: 16px 10px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  color: #999;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.sso-tab:hover {
+  color: #666;
+}
+
+.sso-tab--active {
+  color: #3b60c0;
+  font-weight: 500;
+}
+
+.sso-tab--active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 3px;
+  background-color: #3b60c0;
+  border-radius: 2px 2px 0 0;
+}
+
+.sso-content {
+  padding: 48px 40px;
+}
+
+.sso-title {
+  font-size: 15px;
+  font-weight: 400;
+  text-align: center;
+  margin-bottom: 48px;
+  color: #333;
+}
+
+.sso-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sso-field {
+  position: relative;
+}
+
+.sso-field input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #fafafa;
+  color: #333;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.sso-field input::placeholder {
+  color: #ccc;
+}
+
+.sso-field input:focus {
+  outline: none;
+  border-color: #3b60c0;
+  background-color: #fff;
+  box-shadow: 0 0 0 2px rgba(59, 96, 192, 0.1);
+}
+
+.sso-field--password input {
+  padding-right: 44px;
+}
+
+.sso-toggle-password {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  padding: 4px;
+  color: #bbb;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.sso-toggle-password:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #888;
+}
+
+.sso-eye-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.sso-error {
+  color: #e53e3e;
+  font-size: 13px;
+  margin-top: -4px;
+  text-align: left;
+}
+
+.sso-submit {
+  margin-top: 12px;
+  padding: 14px;
+  background-color: #3b60c0;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sso-submit:hover:not(:disabled) {
+  background-color: #2d4ca8;
+}
+
+.sso-submit:active:not(:disabled) {
+  background-color: #1e3d8c;
+}
+
+.sso-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .sso-content {
+    padding: 40px 24px;
+  }
+}

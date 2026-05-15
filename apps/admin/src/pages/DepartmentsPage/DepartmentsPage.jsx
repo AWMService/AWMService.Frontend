@@ -9,12 +9,12 @@ function DepartmentsPage() {
     const [activeTab, setActiveTab] = useState('departments');
     
     // API Hooks
-    const { data: departments = [], isLoading: isLoadingDepts } = useDepartments();
+    const { data: departments = [] } = useDepartments();
     const createDeptMutation = useCreateDepartment();
     const updateDeptMutation = useUpdateDepartment();
     const deleteDeptMutation = useDeleteDepartment();
 
-    const { data: faculties = [], isLoading: isLoadingFacs } = useInstitutes();
+    const { data: faculties = [] } = useInstitutes();
     const createFacMutation = useCreateInstitute();
     const updateFacMutation = useUpdateInstitute();
     const deleteFacMutation = useDeleteInstitute();

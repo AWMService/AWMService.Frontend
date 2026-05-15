@@ -1,17 +1,15 @@
 import { apiClient } from './apiClient';
-import { setToken, removeToken } from './tokenStorage';
+import { clearAuthTokens, storeAuthTokens } from './tokenStorage';
 
 export const authService = {
   login: async (credentials) => {
     const { data } = await apiClient.post('/Auth/login', credentials);
-    if (data && data.token) {
-      setToken(data.token);
-    }
+    storeAuthTokens(data);
     return data;
   },
   
   logout: () => {
-    removeToken();
+    clearAuthTokens();
   },
 
   getCurrentUser: async () => {

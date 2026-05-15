@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LanguageSelector, RoleSelector, useRole, ROLE_META } from '@awm/shared';
+import { LanguageSelector, RoleSelector, useAuth, useRole } from '@awm/shared';
 import './Header.css';
 import bellIcon from '../../assets/icons/bell-icon.svg';
 import arrowDownIcon from '../../assets/icons/arrow-down-icon.svg';
@@ -21,9 +21,9 @@ const Icon = ({ src, size = 16, className = "" }) => (
 
 export function UniversalHeader() {
     const location = useLocation();
-    const navigate = useNavigate();
     const { t } = useTranslation();
     const { roleMeta } = useRole();
+    const { logout } = useAuth();
 
     // Динамическое название страницы на основе пути
     const getPageName = () => {
@@ -62,7 +62,7 @@ export function UniversalHeader() {
     }, []);
 
     const handleLogout = () => {
-        navigate('/login');
+        logout();
     };
 
     return (

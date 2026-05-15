@@ -14,6 +14,7 @@ export default function DirectionViewModal({ onClose, direction }) {
         pending: t('status.underReview'),
         approved: t('status.approved'),
         rejected: t('status.rejected'),
+        revision: t('status.revision'),
     };
     const [titleTab, setTitleTab] = useState(currentLanguage);
     const [descTab, setDescTab] = useState(currentLanguage);
@@ -59,12 +60,12 @@ export default function DirectionViewModal({ onClose, direction }) {
 
                 <div className="dvm-content">
                     {/* Если статус отклонен — показываем причину сразу сверху */}
-                    {direction.status === "rejected" && direction.rejectionReason && (
+                    {(direction.status === "rejected" || direction.status === "revision") && (direction.rejectionReason || direction.reviewComment) && (
                         <div className="dvm-rejection-alert">
                             <AlertCircle size={20} />
                             <div className="dvm-rejection-content">
                                 <strong>{t('supervisor.rejectionReason')}</strong>
-                                <p>{getLocalizedValue(direction.rejectionReason, currentLanguage)}</p>
+                                <p>{direction.reviewComment || getLocalizedValue(direction.rejectionReason, currentLanguage)}</p>
                             </div>
                         </div>
                     )}
