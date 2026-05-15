@@ -72,7 +72,12 @@
         "login": "Кіру",
         "logout": "Шығу",
         "profile": "Профиль",
-        "settings": "Баптаулар"
+        "settings": "Баптаулар",
+        "learningSystem": "Оқу жүйесі",
+        "signIn": "Кіру",
+        "loading": "Кірудеміз...",
+        "usernamePlaceholder": "Логин",
+        "passwordPlaceholder": "Құпиясөз"
     },
     "roles": {
         "student": "Студент",

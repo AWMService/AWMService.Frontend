@@ -72,7 +72,12 @@
         "login": "Вход",
         "logout": "Выход",
         "profile": "Профиль",
-        "settings": "Настройки"
+        "settings": "Настройки",
+        "learningSystem": "Учебная система",
+        "signIn": "Войти",
+        "loading": "Входим...",
+        "usernamePlaceholder": "Логин",
+        "passwordPlaceholder": "Пароль"
     },
     "roles": {
         "student": "Студент",
