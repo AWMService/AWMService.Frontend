@@ -23,13 +23,13 @@ const DefaultAuthFallback = ({ text = 'Загрузка...' }) => (
 );
 
 export function RequireAuth({ allowedRoles = [], children, fallback }) {
-  const { user, isLoading, hasToken, isAuthenticated } = useAuth();
+  const { user, isLoading, hasToken, isAuthenticated, isLoggingOut } = useAuth();
   const fallbackContent = fallback || <DefaultAuthFallback />;
 
   const isAllowed = !allowedRoles.length || hasAnyRole(user?.roles, allowedRoles);
 
   useEffect(() => {
-    if (isLoading) {
+    if (isLoading || isLoggingOut?.current) {
       return;
     }
 

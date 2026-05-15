@@ -1,12 +1,14 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { authService, consumeAuthTokensFromUrl, getToken, storeAuthTokens } from '../api';
+import { authService, clearAuthTokens, consumeAuthTokensFromUrl, getToken, storeAuthTokens } from '../api';
 import { getLoginUrl, getLogoutUrl } from '../auth/authRouting';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
     const queryClient = useQueryClient();
+    const isLoggingOut = useRef(false);
+
     const [token, setAccessToken] = useState(() => {
         const consumed = consumeAuthTokensFromUrl();
         return consumed.token || getToken();
@@ -44,7 +46,8 @@ export function AuthProvider({ children }) {
     };
 
     const logout = ({ redirect = true } = {}) => {
-        authService.logout();
+        isLoggingOut.current = true;
+        clearAuthTokens();
         setAccessToken(null);
         queryClient.setQueryData(['currentUser'], null);
         if (redirect) {
@@ -60,6 +63,7 @@ export function AuthProvider({ children }) {
         logout,
         hasToken: !!token,
         isAuthenticated: !!token && !!user,
+        isLoggingOut,
     };
 
     return (

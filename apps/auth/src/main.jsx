@@ -1,43 +1,37 @@
-import { StrictMode, useEffect } from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
 import '@awm/shared/src/i18n/index.js'
 import './index.css'
-import { ApiProvider, AuthProvider, SingleSignOnPage, useAuth, authService, getLoginUrl } from '@awm/shared'
+import { ApiProvider, AuthProvider, SingleSignOnPage, authService, clearAuthTokens } from '@awm/shared'
 
-function Logout() {
-  const { logout } = useAuth()
-  
-  useEffect(() => {
-    // We use a direct call to clear tokens for this specific domain (port 3000)
-    // and then redirect to login.
-    authService.logout()
-    window.location.assign('/login')
-  }, [])
+// Pre-render logout: clear ALL tokens and redirect to /login
+// This runs BEFORE React mounts, so AuthProvider never sees stale tokens.
+if (window.location.pathname === '/logout') {
+  clearAuthTokens();
+  // Replace (not assign) so the user can't "back" into /logout
+  window.location.replace('/login');
+} else {
+  function App() {
+    return (
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<SingleSignOnPage />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    )
+  }
 
-  return null
-}
-
-function App() {
-  return (
-    <Routes>
-      <Route path="/" element={<Navigate to="/login" replace />} />
-      <Route path="/login" element={<SingleSignOnPage />} />
-      <Route path="/logout" element={<Logout />} />
-      <Route path="*" element={<Navigate to="/login" replace />} />
-    </Routes>
+  createRoot(document.getElementById('root')).render(
+    <StrictMode>
+      <ApiProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </AuthProvider>
+      </ApiProvider>
+    </StrictMode>,
   )
 }
-
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <ApiProvider>
-      <AuthProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </AuthProvider>
-    </ApiProvider>
-  </StrictMode>,
-)
