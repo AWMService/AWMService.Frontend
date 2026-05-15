@@ -4,7 +4,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
 import '@awm/shared/src/i18n/index.js'
 import './index.css'
-import { ApiProvider, AuthProvider, SingleSignOnPage, authService, clearAuthTokens } from '@awm/shared'
+import { ApiProvider, AuthProvider, SingleSignOnPage, clearAuthTokens } from '@awm/shared'
 
 // Pre-render logout: clear ALL tokens and redirect to /login
 // This runs BEFORE React mounts, so AuthProvider never sees stale tokens.
