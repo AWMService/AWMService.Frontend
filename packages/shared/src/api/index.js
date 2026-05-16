@@ -22,3 +22,6 @@ export * from './topicQueries';
 export * from './workQueries';
 export * from './attachmentQueries';
 export * from './qualityCheckQueries';
+export * from './notificationQueries';
+export * from './reviewQueries';
+export * from './defenseQueries';
