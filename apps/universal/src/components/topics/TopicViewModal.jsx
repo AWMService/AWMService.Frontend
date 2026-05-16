@@ -20,6 +20,7 @@ export default function TopicViewModal({
     // Логика отказа
     const [rejectingId, setRejectingId] = useState(null); // ID заявки, которую отклоняем
     const [rejectReason, setRejectReason] = useState(""); // Текст причины
+    const [rejectError, setRejectError] = useState(false);
 
     useEffect(() => {
         if (!topic) return;
@@ -39,6 +40,7 @@ export default function TopicViewModal({
         // Сброс состояния при открытии новой темы
         setRejectingId(null);
         setRejectReason("");
+        setRejectError(false);
     }, [topic, currentLanguage]);
 
     if (!open || !topic) return null;
@@ -82,16 +84,18 @@ export default function TopicViewModal({
     const handleStartReject = (reqId) => {
         setRejectingId(reqId);
         setRejectReason("");
+        setRejectError(false);
     };
 
     const handleCancelReject = () => {
         setRejectingId(null);
         setRejectReason("");
+        setRejectError(false);
     };
 
     const handleSubmitReject = (reqId) => {
         if (!rejectReason.trim()) {
-            alert(t('common.requiredFields'));
+            setRejectError(true);
             return;
         }
         if (onRejectStudent) {
@@ -199,9 +203,15 @@ export default function TopicViewModal({
                                                 <textarea
                                                     placeholder={t('supervisor.rejectionReason')}
                                                     value={rejectReason}
-                                                    onChange={(e) => setRejectReason(e.target.value)}
+                                                    onChange={(e) => {
+                                                        setRejectReason(e.target.value);
+                                                        if (e.target.value.trim()) setRejectError(false);
+                                                    }}
                                                     autoFocus
                                                 />
+                                                {rejectError && (
+                                                    <p className="tv-empty-text">{t('common.requiredFields')}</p>
+                                                )}
                                                 <div className="tv-reject-actions">
                                                     <button className="tv-btn-small btn-cancel" onClick={handleCancelReject}>
                                                         {t('common.cancel')}

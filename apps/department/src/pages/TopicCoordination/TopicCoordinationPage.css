@@ -179,6 +179,11 @@
     color: #dc2626;
 }
 
+.tc-status-badge--closed {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
 /* ===================== ACTION BUTTONS ===================== */
 
 .tc-btn {

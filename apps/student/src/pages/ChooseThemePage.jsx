@@ -1,45 +1,25 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StudentThemeCard } from '../components/StudentThemeCard/StudentThemeCard';
+import {
+  getLocalizedValue,
+  normalizeLanguage,
+  useAuth,
+  useAvailableTopics,
+  useCreateApplication,
+  useMyApplications,
+  useWithdrawApplication,
+} from '@awm/shared';
 import './StudentPage.css';
 
-const initialThemes = [
-    {
-        id: 1,
-        title: "Разработка сайта, продукта, базы данных",
-        description: "Разработка сайта включает в себя проектирование, реализацию и тестирование веб-ресурса...",
-        supervisor: "Иванов И.И",
-        availableSlots: 2,
-        direction: "Машинное обучение",
-        workType: "Дипломная работа",
-        status: 'default',
-    },
-    {
-        id: 2,
-        title: "Анализ больших данных для предсказания оттока клиентов",
-        description: "Исследование и применение моделей машинного обучения для анализа данных и выявления факторов, влияющих на отток клиентов.",
-        supervisor: "Петров А.В.",
-        availableSlots: 1,
-        direction: "Анализ данных",
-        workType: "Магистерская диссертация",
-        status: 'applied',
-    },
-    {
-        id: 3,
-        title: "Разработка мобильного приложения для фитнес-трекинга",
-        description: "Создание кросс-платформенного мобильного приложения для отслеживания физической активности и питания.",
-        supervisor: "Сидорова М.А.",
-        availableSlots: 0,
-        direction: "Мобильные технологии",
-        workType: "Дипломная работа",
-        status: 'rejected',
-        rejectionReason: "Выбранная тема уже занята другим студентом."
-    }
-];
-
 export default function ChooseThemePage() {
-  const { t } = useTranslation();
-  const [themes, setThemes] = useState(initialThemes);
+  const { t, i18n } = useTranslation();
+  const { user } = useAuth();
+  const currentLanguage = normalizeLanguage(i18n.language);
+  const { data: availableTopics = [], isLoading, error } = useAvailableTopics(user?.departmentId, user?.currentAcademicYearId);
+  const { data: myApplications = [] } = useMyApplications(user?.currentAcademicYearId);
+  const createApplication = useCreateApplication();
+  const withdrawApplication = useWithdrawApplication();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterSupervisor, setFilterSupervisor] = useState('all');
@@ -49,6 +29,40 @@ export default function ChooseThemePage() {
 
   const [applyingThemeId, setApplyingThemeId] = useState(null);
   const [motivationLetter, setMotivationLetter] = useState('');
+
+  const applicationByTopicId = useMemo(() => {
+    const map = new Map();
+    myApplications.forEach((application) => {
+      if (!map.has(application.topicId) || application.status === 'pending') {
+        map.set(application.topicId, application);
+      }
+    });
+    return map;
+  }, [myApplications]);
+
+  const themes = useMemo(() => availableTopics.map((topic) => {
+    const application = applicationByTopicId.get(topic.id);
+    const status = application?.status === 'approved'
+      ? 'approved'
+      : application?.status === 'rejected'
+        ? 'rejected'
+        : application?.status === 'pending'
+          ? 'applied'
+          : 'default';
+
+    return {
+      id: topic.id,
+      applicationId: application?.id,
+      title: getLocalizedValue(topic.title, currentLanguage),
+      description: getLocalizedValue(topic.description, currentLanguage),
+      supervisor: topic.supervisorName || `#${topic.supervisorId}`,
+      availableSlots: topic.availableSpots,
+      direction: getLocalizedValue(topic.directionTitle, currentLanguage) || t('common.noData'),
+      workType: topic.workTypeName || topic.workTypeId,
+      status,
+      rejectionReason: application?.reviewComment,
+    };
+  }), [availableTopics, applicationByTopicId, currentLanguage, t]);
 
   const supervisors = useMemo(() => [...new Set(themes.map(t => t.supervisor))], [themes]);
   const directions = useMemo(() => [...new Set(themes.map(t => t.direction))], [themes]);
@@ -82,11 +96,12 @@ export default function ChooseThemePage() {
     setMotivationLetter('');
   };
 
-  const handleConfirmApply = () => {
+  const handleConfirmApply = async () => {
     if (applyingThemeId == null) return;
-    setThemes(prev => prev.map(th =>
-        th.id === applyingThemeId ? { ...th, status: 'applied' } : th
-    ));
+    await createApplication.mutateAsync({
+      topicId: applyingThemeId,
+      motivationLetter,
+    });
     setApplyingThemeId(null);
     setMotivationLetter('');
   };
@@ -96,14 +111,14 @@ export default function ChooseThemePage() {
     setMotivationLetter('');
   };
 
-  const handleCancel = (themeId) => {
-    setThemes(prev => prev.map(th => th.id === themeId ? { ...th, status: 'default' } : th));
+  const handleCancel = async (themeId) => {
+    const application = applicationByTopicId.get(themeId);
+    if (!application?.id) return;
+    await withdrawApplication.mutateAsync(application.id);
   };
 
   const handleReapply = (themeId) => {
-    setThemes(prev => prev.map(th =>
-        th.id === themeId ? { ...th, status: 'applied', rejectionReason: undefined } : th
-    ));
+    handleApplyClick(themeId);
   };
 
   return (
@@ -157,7 +172,11 @@ export default function ChooseThemePage() {
       </div>
 
       <div className="themes-list-container">
-        {filteredThemes.length > 0 ? (
+        {isLoading ? (
+          <div className="no-themes-message">{t('common.loading')}...</div>
+        ) : error ? (
+          <div className="no-themes-message">{error.message}</div>
+        ) : filteredThemes.length > 0 ? (
           filteredThemes.map(theme => (
             <StudentThemeCard
               key={theme.id}
@@ -188,7 +207,11 @@ export default function ChooseThemePage() {
               <button className="btn-compact btn-outline-primary" onClick={handleCancelApply}>
                 {t('common.cancel')}
               </button>
-              <button className="btn-compact btn-primary" onClick={handleConfirmApply}>
+              <button
+                className="btn-compact btn-primary"
+                onClick={handleConfirmApply}
+                disabled={createApplication.isPending}
+              >
                 {t('common.confirm')}
               </button>
             </div>

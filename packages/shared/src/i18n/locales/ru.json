@@ -747,6 +747,7 @@
         "rejected": "Отклонено",
         "revision": "На доработке",
         "draft": "Черновик",
+        "closed": "Закрыто",
         "published": "Опубликовано",
         "archived": "В архиве",
         "underReview": "На рассмотрении",
