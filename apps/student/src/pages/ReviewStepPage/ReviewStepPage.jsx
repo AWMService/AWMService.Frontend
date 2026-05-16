@@ -102,7 +102,7 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
         }
     };
 
-    const handleDeleteFile = (indexToDelete) => {
+    const handleDeleteFile = () => {
         // Delete handled by UploadedFilesCard via API
     };
 
