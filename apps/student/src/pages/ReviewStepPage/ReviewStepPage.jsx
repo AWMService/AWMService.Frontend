@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getIntlLocale } from '@awm/shared';
+import { getIntlLocale, useUploadAttachment, useCurrentWorkId, useAttachments } from '@awm/shared';
 import './ReviewStepPage.css';
 import warningIcon from '../../assets/icons/alert-circle-icon.svg';
 import infoIcon from '../../assets/icons/pre-defense/info-icon.svg';
@@ -16,12 +16,13 @@ const REPO_URL_PATTERN = /^https?:\/\/(www\.)?(github\.com|gitlab\.com|bitbucket
 const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) => {
     const { t, i18n } = useTranslation();
     const locale = getIntlLocale(i18n.language);
+    const { data: workId } = useCurrentWorkId();
+    const { data: apiAttachments = [] } = useAttachments(workId);
+    const uploadMutation = useUploadAttachment(workId);
     const [status, setStatus] = useState(initialStatus || 'in_progress');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [file, setFile] = useState(null);
-    const [uploadedFiles, setUploadedFiles] = useState([
-        { name: 'Диплом_Иванов_v1.docx', date: '20.05.2025' },
-    ]);
+    const [uploadError, setUploadError] = useState(null);
 
     const isSoftwareCheck = route === 'software-check';
     const [submitMode, setSubmitMode] = useState('file');
@@ -63,18 +64,21 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
         }
     };
 
-    const handleUpload = () => {
-        if (!file) return;
-        const newFile = { name: file.name, date: new Date().toLocaleDateString(locale) };
-        setUploadedFiles([...uploadedFiles, newFile]);
-        setStatus('in_progress');
-        setIsModalOpen(false);
-        setFile(null);
+    const handleUpload = async () => {
+        if (!file || !workId) return;
+        setUploadError(null);
+        try {
+            await uploadMutation.mutateAsync({ file, attachmentType: 'Draft' });
+            setStatus('in_progress');
+            setIsModalOpen(false);
+            setFile(null);
+        } catch (err) {
+            setUploadError(err.message || t('common.error'));
+        }
     };
 
     const handleDeleteFile = (indexToDelete) => {
-        const updatedFiles = uploadedFiles.filter((_, index) => index !== indexToDelete);
-        setUploadedFiles(updatedFiles);
+        // Delete handled by UploadedFilesCard via API
     };
 
     const handleRepoSubmit = () => {
@@ -151,7 +155,7 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
                     <div className="review-step-left">
                         {(!isSoftwareCheck || submitMode === 'file') && (
                             <UploadedFilesCard
-                                uploadedFiles={uploadedFiles}
+                                uploadedFiles={apiAttachments.map(a => ({ name: a.fileName, date: new Date(a.createdAt).toLocaleDateString(locale), id: a.id }))}
                                 onUploadClick={() => setIsModalOpen(true)}
                                 onDeleteFile={handleDeleteFile}
                                 status={status}
@@ -173,6 +177,8 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
                 onFileChange={handleFileChange}
                 onUpload={handleUpload}
                 file={file}
+                isUploading={uploadMutation.isPending}
+                uploadError={uploadError}
             />
         </div>
     );

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import './UploadModal.css';
 import uploadIcon from '../../assets/icons/pre-defense/upload-icon.svg';
 
-export const UploadModal = ({ isOpen, onClose, onFileChange, onUpload, file }) => {
+export const UploadModal = ({ isOpen, onClose, onFileChange, onUpload, file, isUploading, uploadError }) => {
     const { t } = useTranslation();
     if (!isOpen) return null;
 
@@ -12,7 +12,7 @@ export const UploadModal = ({ isOpen, onClose, onFileChange, onUpload, file }) =
             <div className="modal-content" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
                     <h4>{t('student.uploadDocument')}</h4>
-                    <button className="close-btn" onClick={onClose}>&times;</button>
+                    <button className="close-btn" onClick={onClose} disabled={isUploading}>&times;</button>
                 </div>
 
                 <div className="modal-body">
@@ -22,6 +22,7 @@ export const UploadModal = ({ isOpen, onClose, onFileChange, onUpload, file }) =
                             onChange={onFileChange}
                             id="file-upload-modal"
                             className="file-input"
+                            disabled={isUploading}
                         />
                         <label htmlFor="file-upload-modal" className="drop-zone-label">
                             {file ? (
@@ -29,7 +30,7 @@ export const UploadModal = ({ isOpen, onClose, onFileChange, onUpload, file }) =
                                     <div className="icon-wrapper check">✓</div>
                                     <div className="file-info">
                                         <p className="file-name-large">{file.name}</p>
-                                        <p className="file-size">{t('student.readyToSend')}</p>
+                                        <p className="file-size">{(file.size / 1024).toFixed(1)} KB</p>
                                     </div>
                                 </div>
                             ) : (
@@ -45,10 +46,11 @@ export const UploadModal = ({ isOpen, onClose, onFileChange, onUpload, file }) =
                     </div>
                 </div>
 
+                {uploadError && <div className="upload-error">{uploadError}</div>}
                 <div className="modal-actions">
-                    <button className="btn-secondary" onClick={onClose}>{t('common.cancel')}</button>
-                    <button className="btn-primary" onClick={onUpload} disabled={!file}>
-                        {t('common.upload')}
+                    <button className="btn-secondary" onClick={onClose} disabled={isUploading}>{t('common.cancel')}</button>
+                    <button className="btn-primary" onClick={onUpload} disabled={!file || isUploading}>
+                        {isUploading ? t('common.loading') : t('common.upload')}
                     </button>
                 </div>
             </div>
