@@ -6,12 +6,16 @@ import { ScheduleCard } from '../../components/ScheduleCard/ScheduleCard.jsx';
 import { Results } from '../../components/Results/Results.jsx';
 import { CommissionCard } from '../../components/CommissionCard/CommissionCard.jsx';
 import { DownloadableMaterialsCard } from '../../components/DownloadableMaterialsCard/DownloadableMaterialsCard.jsx';
+import { useUploadAttachment, useCurrentWorkId } from '@awm/shared';
 const DefenseStepPage = ({ pageTitle, schedule, commission, infoText, initialResults, resultsType, attemptNumber, previousAttempts }) => {
   const { t } = useTranslation();
+  const { data: workId } = useCurrentWorkId();
+  const uploadMutation = useUploadAttachment(workId);
   const [isSubmitted, setIsSubmitted] = useState(!!initialResults);
   const [file, setFile] = useState(null);
   const [pageResults, setPageResults] = useState(initialResults);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
 
   const hasAttemptTracking = attemptNumber != null && resultsType !== 'defense';
 
@@ -21,22 +25,19 @@ const DefenseStepPage = ({ pageTitle, schedule, commission, infoText, initialRes
     }
   };
 
-  const handleSubmit = () => {
-    if (file) {
+  const handleSubmit = async () => {
+    if (!file || !workId) return;
+    setUploadError(null);
+    try {
+      await uploadMutation.mutateAsync({ file, attachmentType: 'Final' });
       setIsSubmitted(true);
-      if (resultsType === 'defense') {
-          setPageResults({
-              finalGrade: 'A',
-              commissionGrade: 95,
-              commentsKey: 'student.excellentWork'
-          });
-      } else {
-          setPageResults({
-              finalScore: Math.floor(Math.random() * (100 - 60 + 1)) + 60,
-              readiness: Math.floor(Math.random() * (100 - 70 + 1)) + 70,
-              commentsKey: 'student.fileUploaded'
-          });
-      }
+      // Removed Math.random simulation. 
+      // In real integration, pageResults should come from a hook (e.g. useDefenseResult).
+      setPageResults({
+          commentsKey: 'student.fileSentForReview'
+      });
+    } catch (err) {
+      setUploadError(err.message || t('common.error'));
     }
   };
   
@@ -65,6 +66,8 @@ const DefenseStepPage = ({ pageTitle, schedule, commission, infoText, initialRes
             handleFileChange={handleFileChange}
             handleSubmit={handleSubmit}
             handleFileDelete={handleFileDelete}
+            isUploading={uploadMutation.isPending}
+            uploadError={uploadError}
           />
           {isSubmitted && <Results results={pageResults} resultsType={resultsType} />}
         </div>

@@ -5,7 +5,7 @@ import uploadIcon from '../../assets/icons/pre-defense/upload-icon.svg';
 import fileIcon from '../../assets/icons/pre-defense/file-icon.svg';
 import deleteIcon from '../../assets/icons/pre-defense/delete-icon.svg';
 
-export const SubmissionCard = ({ isSubmitted, file, infoText, handleFileChange, handleSubmit, handleFileDelete }) => {
+export const SubmissionCard = ({ isSubmitted, file, infoText, handleFileChange, handleSubmit, handleFileDelete, isUploading, uploadError }) => {
     const { t } = useTranslation();
     return (
         <div className="card submission-card">
@@ -46,13 +46,14 @@ export const SubmissionCard = ({ isSubmitted, file, infoText, handleFileChange, 
                             </div>
                         )}
 
+                        {uploadError && <div className="upload-error">{uploadError}</div>}
                         <div className="card-actions">
                             <button
                                 className="btn btn-primary"
                                 onClick={handleSubmit}
-                                disabled={!file}
+                                disabled={!file || isUploading}
                             >
-                                {t('student.sendForReview')}
+                                {isUploading ? t('common.loading') : t('student.sendForReview')}
                             </button>
                         </div>
                     </>

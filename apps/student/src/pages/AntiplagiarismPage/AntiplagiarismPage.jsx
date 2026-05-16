@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useCurrentWorkId, useQualityChecks, useUploadAttachment, useSubmitForCheck, useMyWorkProgress, useActivePeriod } from '@awm/shared';
 import './AntiplagiarismPage.css';
 import infoIcon from '../../assets/icons/pre-defense/info-icon.svg';
 import warningIcon from '../../assets/icons/alert-circle-icon.svg';
@@ -33,30 +34,69 @@ const CircularProgress = ({ percentage, color }) => {
 
 const AntiplagiarismPage = () => {
     const { t } = useTranslation();
-    const [status, setStatus] = useState('in_progress');
-    const [originality, setOriginality] = useState(50);
-    const [comments] = useState("1. Высокий процент цитирования во 2 главе.\n2. Перефразируйте выводы в практической части.\n3. Обновите список источников.");
-    const [currentFile, setCurrentFile] = useState({ name: 'Дипломка_финал_v2.docx', size: '1.2 MB' });
+    const { data: workId } = useCurrentWorkId();
+    const { data: workProgress } = useMyWorkProgress();
+    const { data: checks = [] } = useQualityChecks(workId);
+    const { data: activePeriod } = useActivePeriod(
+        workProgress?.departmentId,
+        workProgress?.academicYearId,
+        'AntiPlagiarism'
+    );
+
+    const uploadMutation = useUploadAttachment(workId);
+    const submitMutation = useSubmitForCheck(workId);
+
+    const antiChecks = checks.filter(c => c.checkType === 'AntiPlagiarism').sort((a, b) => b.attemptNumber - a.attemptNumber);
+    const latestCheck = antiChecks[0];
+
+    const derivedStatus = latestCheck
+        ? (latestCheck.isPassed ? 'success' : (latestCheck.resultValue != null ? 'failed' : 'in_progress'))
+        : 'in_progress';
+
+    const [status, setStatus] = useState(derivedStatus);
+    const originality = latestCheck?.resultValue != null ? Math.round(Number(latestCheck.resultValue)) : 0;
+    const comments = latestCheck?.comment || '';
+    
+    // Get latest attachment of type 'Final' or 'Draft' as current file
+    const latestFile = workProgress?.attachments
+        ?.filter(a => a.attachmentType === 'Final' || a.attachmentType === 'Draft')
+        ?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+
+    const currentFile = latestFile 
+        ? { name: latestFile.fileName, size: '?? KB' } // Size is not in WorkProgressAttachmentResponse currently
+        : { name: t('common.noData'), size: '' };
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [fileToUpload, setFileToUpload] = useState(null);
+    const [uploadError, setUploadError] = useState(null);
 
-    const periodData = { startDate: '21.05.2025', endDate: '10.06.2025' };
-    const expertData = { name: 'Паленшеев Н.П.', position: 'Преподаватель', degree: 'PhD', avatar: null };
+    const periodData = activePeriod ? {
+        startDate: new Date(activePeriod.startDate).toLocaleDateString(),
+        endDate: new Date(activePeriod.endDate).toLocaleDateString()
+    } : { startDate: '—', endDate: '—' };
+
+    const expertData = { 
+        name: workProgress?.supervisorName || t('common.noData'), 
+        position: t('student.assignedExpert'),
+        degree: '',
+        avatar: null 
+    };
 
     const handleFileChange = (e) => {
         if (e.target.files.length > 0) setFileToUpload(e.target.files[0]);
     };
 
-    const handleUpload = () => {
-        if (!fileToUpload) return;
-        setCurrentFile({ name: fileToUpload.name, size: t('common.loading') });
+    const handleUpload = async () => {
+        if (!fileToUpload || !workId) return;
+        setUploadError(null);
         setIsModalOpen(false);
-        setTimeout(() => {
-            const newPct = Math.floor(Math.random() * (95 - 40 + 1)) + 40;
-            setOriginality(newPct);
-            setStatus(newPct >= 70 ? 'success' : 'failed');
-            setCurrentFile(prev => ({ ...prev, size: '1.4 MB' }));
-        }, 1500);
+        try {
+            await uploadMutation.mutateAsync({ file: fileToUpload, attachmentType: 'Final' });
+            await submitMutation.mutateAsync('AntiPlagiarism');
+            setStatus('in_progress');
+        } catch (err) {
+            setUploadError(err.message || t('common.error'));
+        }
     };
 
     const renderInfoBox = () => {
@@ -153,7 +193,7 @@ const AntiplagiarismPage = () => {
                 </aside>
             </div>
 
-            <UploadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onFileChange={handleFileChange} onUpload={handleUpload} file={fileToUpload} />
+            <UploadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onFileChange={handleFileChange} onUpload={handleUpload} file={fileToUpload} isUploading={uploadMutation.isPending} uploadError={uploadError} />
         </div>
     );
 };

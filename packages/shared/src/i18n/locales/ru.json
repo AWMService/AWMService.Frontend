@@ -282,7 +282,9 @@
         "unreadCount": "{{count}} новых",
         "markAllRead": "Отметить все как прочитанные",
         "markAsRead": "Отметить как прочитанное",
-        "noNotifications": "Нет уведомлений"
+        "noNotifications": "Нет уведомлений",
+        "noMaterials": "Материалы еще не загружены",
+        "noTimeline": "История активности пуста"
     },
     "supervisor": {
         "topics": "Темы",
