@@ -6,41 +6,20 @@ import {
     getLocalizedValue,
     normalizeLanguage,
     useApproveDirection,
+    useApproveTopic,
     useAuth,
+    useDeactivateTopic,
     useDirectionsByDepartment,
     useRejectDirection,
     useRequestDirectionRevision,
     useStaffByDepartment,
+    useTopicCoordinationSummary,
     useWorkTypes,
 } from "@awm/shared";
 import "./DirectionsAndThemes.css";
 import DirectionCard from "../../components/Directions/DirectionCard/DirectionCard.jsx";
 import DirectionModal from "../../components/Directions/DirectionModal/DirectionModal.jsx";
 import ThemeModal from "../../components/Themes/ThemeModal/ThemeModal.jsx";
-
-const initialThemes = [
-    {
-        id: 101,
-        title: {
-            ru: "Разработка веб-приложения для управления проектами",
-            kk: "Жобаларды басқару үшін веб-қосымшаны әзірлеу",
-            en: "Development of a Web Application for Project Management",
-        },
-        description: {
-            ru: "Создание и внедрение веб-приложения с использованием React и Node.js...",
-            kk: "React және Node.js пайдалана отырып веб-қосымшаны жасау және енгізу...",
-            en: "Creating and implementing a web application using React and Node.js...",
-        },
-        status: "pending",
-        type: "Дипломная работа",
-        supervisor: "Иванов Иван Иванович",
-        submittedAt: "01.09.2025",
-        students: [
-            { id: 1, fullName: "Серикова Айгерим Нурлановна", group: "SE-401" },
-            { id: 2, fullName: "Ахметов Данияр Русланович", group: "SE-402" },
-        ],
-    },
-];
 
 const TABS = {
     DIRECTIONS: "directions",
@@ -67,13 +46,16 @@ const DirectionsAndThemes = () => {
     const activeTab = query.get("tab") || TABS.DIRECTIONS;
     const isDirections = activeTab === TABS.DIRECTIONS;
 
-    const { data: rawDirections = [], isLoading, error } = useDirectionsByDepartment(departmentId, academicYearId);
+    const { data: rawDirections = [], isLoading: directionsLoading, error: directionsError } = useDirectionsByDepartment(departmentId, academicYearId);
+    const { data: coordinationSummary, isLoading: topicsLoading, error: topicsError } = useTopicCoordinationSummary(departmentId, academicYearId);
     const { data: staff = [] } = useStaffByDepartment(departmentId);
     const { data: workTypes = [] } = useWorkTypes();
 
     const approveMutation = useApproveDirection();
     const rejectMutation = useRejectDirection();
     const revisionMutation = useRequestDirectionRevision();
+    const approveTopicMutation = useApproveTopic();
+    const deactivateTopicMutation = useDeactivateTopic();
 
     const staffById = useMemo(() => new Map(staff.map((item) => [item.id, item])), [staff]);
     const workTypesById = useMemo(() => new Map(workTypes.map((item) => [item.id, item])), [workTypes]);
@@ -91,7 +73,24 @@ const DirectionsAndThemes = () => {
         };
     }), [rawDirections, staffById, workTypesById, locale]);
 
-    const [themes, setThemes] = useState(initialThemes);
+    const themes = useMemo(() => (coordinationSummary?.topics || []).map((topic) => ({
+        id: topic.topicId,
+        title: topic.title,
+        description: {
+            ru: topic.lastRejectionReason || "",
+            kk: topic.lastRejectionReason || "",
+            en: topic.lastRejectionReason || "",
+        },
+        status: topic.isClosed ? "closed" : topic.isApproved ? "approved" : "pending",
+        type: t('department.themeOfDiplomaWork'),
+        supervisor: topic.supervisorName || `#${topic.supervisorId}`,
+        submittedAt: "—",
+        rejectionReason: topic.lastRejectionReason,
+        acceptedCount: topic.acceptedCount,
+        pendingCount: topic.pendingCount,
+        maxParticipants: topic.maxParticipants,
+    })), [coordinationSummary, t]);
+
     const [selectedDirection, setSelectedDirection] = useState(null);
     const [selectedTheme, setSelectedTheme] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
@@ -104,6 +103,7 @@ const DirectionsAndThemes = () => {
         { value: "approved", label: t('status.approved') },
         { value: "rejected", label: t('status.rejected') },
         { value: "revision", label: t('status.revision') },
+        { value: "closed", label: t('status.closed', t('student.occupied')) },
     ];
 
     const changeTab = (tab) => {
@@ -139,16 +139,18 @@ const DirectionsAndThemes = () => {
         setSelectedDirection(null);
     };
 
-    const updateThemeStatus = (id, newStatus, rejectionReason = "") => {
-        setThemes((prev) =>
-            prev.map((theme) =>
-                theme.id === id
-                    ? { ...theme, status: newStatus, rejectionReason }
-                    : theme
-            )
-        );
+    const updateThemeStatus = async (id, newStatus) => {
+        if (newStatus === "approved") {
+            await approveTopicMutation.mutateAsync(id);
+        }
+        if (newStatus === "rejected") {
+            await deactivateTopicMutation.mutateAsync(id);
+        }
         setSelectedTheme(null);
     };
+
+    const isLoading = isDirections ? directionsLoading : topicsLoading;
+    const error = isDirections ? directionsError : topicsError;
 
     return (
         <div className="projects-page">
@@ -210,10 +212,10 @@ const DirectionsAndThemes = () => {
             {isDirections && (!departmentId || !academicYearId) && (
                 <p className="no-results">{t('department.noDepartmentSelected', 'Department or Academic Year missing.')}</p>
             )}
-            {isDirections && error && (
+            {error && (
                 <p className="no-results">{t('common.error')}: {error.message}</p>
             )}
-            {isDirections && isLoading && (
+            {isLoading && (
                 <p className="no-results">{t('common.loading')}...</p>
             )}
 
@@ -258,6 +260,7 @@ const DirectionsAndThemes = () => {
                     theme={selectedTheme}
                     onClose={() => setSelectedTheme(null)}
                     onUpdateStatus={updateThemeStatus}
+                    isSaving={approveTopicMutation.isPending || deactivateTopicMutation.isPending}
                 />
             )}
         </div>

@@ -8,6 +8,7 @@ export function StudentThemeCard({ theme, onApply, onCancel, onReapply }) {
 
     const renderStatusLabel = () => {
         if (status === 'applied') return <span className="status-text text-pending">● {t('student.pending')}</span>;
+        if (status === 'approved') return <span className="status-text text-approved">● {t('student.approved')}</span>;
         if (status === 'rejected') return <span className="status-text text-rejected">● {t('student.rejected')}</span>;
         return null;
     };
@@ -28,6 +29,9 @@ export function StudentThemeCard({ theme, onApply, onCancel, onReapply }) {
                     {t('student.reapply')}
                 </button>
             );
+        }
+        if (status === 'approved') {
+            return null;
         }
 
         return (

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { normalizeLanguage } from "@awm/shared";
 import "./ThemeModal.css";
 
-const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
+const ThemeModal = ({ theme, onClose, onUpdateStatus, isSaving = false }) => {
     const { t, i18n } = useTranslation();
     const [showRejection, setShowRejection] = useState(false);
     const [rejectionReason, setRejectionReason] = useState("");
@@ -19,6 +19,7 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
         pending: t('status.underReview'),
         approved: t('status.approved'),
         rejected: t('status.rejected'),
+        closed: t('status.closed', t('student.occupied')),
         "На рассмотрении": t('status.underReview'),
         "Утверждено": t('status.approved'),
         "Отклонено": t('status.rejected'),
@@ -26,6 +27,7 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
 
     const isPending = theme.status === "pending" || theme.status === "На рассмотрении";
     const isRejected = theme.status === "rejected" || theme.status === "Отклонено";
+    const isClosed = theme.status === "closed";
 
     const handleReject = () => {
         if (!rejectionReason.trim()) {
@@ -57,7 +59,7 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                         className={`tm-status ${
                             isPending
                                 ? "tm-status--pending"
-                                : isRejected
+                                : isRejected || isClosed
                                     ? "tm-status--rejected"
                                     : "tm-status--approved"
                         }`}
@@ -139,6 +141,7 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                                     <button
                                         className="tm-btn tm-btn--reject"
                                         onClick={() => setShowRejection(true)}
+                                        disabled={isSaving}
                                     >
                                         {t('department.reject')}
                                     </button>
@@ -150,6 +153,7 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                                                 "approved"
                                             )
                                         }
+                                        disabled={isSaving}
                                     >
                                         {t('department.approve')}
                                     </button>
@@ -175,13 +179,14 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                                                 setShowRejection(false);
                                                 setRejectionReason("");
                                             }}
+                                            disabled={isSaving}
                                         >
                                             {t('common.cancel')}
                                         </button>
                                         <button
                                             className="tm-btn tm-btn--confirm-reject"
                                             onClick={handleReject}
-                                            disabled={!rejectionReason.trim()}
+                                            disabled={!rejectionReason.trim() || isSaving}
                                         >
                                             {t('department.confirmRejection')}
                                         </button>

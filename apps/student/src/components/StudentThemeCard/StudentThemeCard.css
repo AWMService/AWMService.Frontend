@@ -42,6 +42,7 @@
     font-weight: 600;
 }
 .text-pending { color: #D97706; } /* Оранжевый */
+.text-approved { color: #059669; }
 .text-rejected { color: #DC2626; } /* Красный */
 
 /* --- ТЕЛО (Контент) --- */

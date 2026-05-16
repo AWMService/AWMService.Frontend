@@ -747,6 +747,7 @@
         "rejected": "Rejected",
         "revision": "Revision",
         "draft": "Draft",
+        "closed": "Closed",
         "published": "Published",
         "archived": "Archived",
         "underReview": "Under Review",

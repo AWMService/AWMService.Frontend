@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { getLocalizedValue, normalizeLanguage } from "@awm/shared";
 import { X, Edit3, Globe, AlignLeft, Layers, Users, Info } from "lucide-react";
 import "./TopicEditModal.css";
 
-export default function TopicEditModal({ open, onClose, topic, onSave, directions }) {
-    const { t, i18n } = useTranslation();
-    const currentLanguage = normalizeLanguage(i18n.language);
+export default function TopicEditModal({ open, onClose, topic, onSave, directions = [], workTypes = [] }) {
+    const { t } = useTranslation();
     const [form, setForm] = useState({
         titleRu: "",
         titleKk: "",
@@ -14,8 +12,8 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
         descRu: "",
         descKk: "",
         descEn: "",
-        direction: "",
-        workType: "diploma_project",
+        directionId: "",
+        workTypeId: "",
         participantCount: 1,
     });
 
@@ -28,12 +26,12 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                 descRu: topic.description?.ru ?? "",
                 descKk: topic.description?.kk ?? "",
                 descEn: topic.description?.en ?? "",
-                direction: getLocalizedValue(topic.directionTitle, currentLanguage) ?? "",
-                workType: topic.workType ?? "diploma_project",
+                directionId: topic.directionId ?? "",
+                workTypeId: topic.workTypeId ?? "",
                 participantCount: topic.participantCount ?? 1,
             });
         }
-    }, [topic, currentLanguage]);
+    }, [topic]);
 
     if (!open || !topic) return null;
 
@@ -55,8 +53,8 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                 kk: form.descKk,
                 en: form.descEn,
             },
-            directionTitle: form.direction,
-            workType: form.workType,
+            directionId: form.directionId,
+            workTypeId: form.workTypeId,
             participantCount: Number(form.participantCount),
         };
 
@@ -172,14 +170,16 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                                 <h3>{t('nav.directions')}</h3>
                             </div>
                             <select
-                                name="direction"
-                                value={form.direction}
+                                name="directionId"
+                                value={form.directionId}
                                 onChange={handleChange}
                                 className="tem-select"
                             >
                                 <option value="">{t('common.select')}</option>
-                                {directions.map((d) => (
-                                    <option key={d} value={d}>{d}</option>
+                                {directions.map((direction) => (
+                                    <option key={direction.id ?? direction.value ?? direction} value={direction.id ?? direction.value ?? direction}>
+                                        {direction.label ?? direction.title ?? direction}
+                                    </option>
                                 ))}
                             </select>
                         </div>
@@ -190,14 +190,16 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                                 <h3>{t('supervisor.workType')}</h3>
                             </div>
                             <select
-                                name="workType"
-                                value={form.workType}
+                                name="workTypeId"
+                                value={form.workTypeId}
                                 onChange={handleChange}
                                 className="tem-select"
                             >
-                                <option value="diploma_project">{t('supervisor.diplomaProject')}</option>
-                                <option value="diploma_work">{t('supervisor.diplomaWork')}</option>
-                                <option value="course_work">{t('supervisor.courseWork')}</option>
+                                {workTypes.map((workType) => (
+                                    <option key={workType.id} value={workType.id}>
+                                        {workType.name}
+                                    </option>
+                                ))}
                             </select>
                         </div>
 
