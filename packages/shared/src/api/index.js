@@ -19,3 +19,4 @@ export * from './periodQueries';
 export * from './commissionQueries';
 export * from './directionQueries';
 export * from './topicQueries';
+export * from './workQueries';
