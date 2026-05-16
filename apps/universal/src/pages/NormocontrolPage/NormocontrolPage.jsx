@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getIntlLocale, getLocalizedValue } from '@awm/shared';
+import { getIntlLocale, getLocalizedValue, useAuth, usePendingChecks } from '@awm/shared';
 import DocumentPreviewModal from '../../components/DocumentPreviewModal/DocumentPreviewModal';
 import RemarksFormModal from '../../components/RemarksFormModal/RemarksFormModal';
 import './NormocontrolPage.css';
@@ -67,11 +67,31 @@ const initialDocuments = [
 function NormocontrolPage() {
     const { t } = useTranslation();
     const locale = getIntlLocale();
+    const { user } = useAuth();
+    const departmentId = user?.departmentId;
+    const academicYearId = user?.academicYearId;
+    const { data: pendingChecks = [] } = usePendingChecks(departmentId, academicYearId, 'NormControl');
+
+    const apiDocuments = useMemo(() => pendingChecks.map(check => ({
+        id: check.id,
+        workId: check.workId,
+        studentName: `Work #${check.workId}`,
+        group: '-',
+        themeTitle: { ru: `Check #${check.id}`, kk: `Check #${check.id}`, en: `Check #${check.id}` },
+        documentType: { ru: 'Документ', kk: 'Құжат', en: 'Document' },
+        submittedDate: check.checkedAt || new Date().toISOString(),
+        status: check.isPassed ? 'approved' : 'revision',
+        version: check.attemptNumber || 1,
+        remarks: check.comment ? 1 : 0,
+    })), [pendingChecks]);
+
     const [activeTab, setActiveTab] = useState('pending');
     const [documents, setDocuments] = useState(initialDocuments);
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [remarkOpen, setRemarkOpen] = useState(false);
+
+    const displayDocuments = apiDocuments.length > 0 ? apiDocuments : documents;
 
     const openPreview = (doc) => {
         setSelectedDocument(doc);
@@ -108,7 +128,7 @@ function NormocontrolPage() {
         );
     };
 
-    const filteredDocs = documents.filter(doc => {
+    const filteredDocs = displayDocuments.filter(doc => {
         if (activeTab === 'pending') return doc.status === 'pending';
         if (activeTab === 'revision') return doc.status === 'revision';
         if (activeTab === 'approved') return doc.status === 'approved';
@@ -136,7 +156,7 @@ function NormocontrolPage() {
             <div className="page-header">
                 <h1>{t('normocontrol.documentsCheck')}</h1>
                 <p className="page-subtitle">
-                    {t('normocontrol.pendingCheck')}: {documents.filter(d => d.status === 'pending').length}
+                    {t('normocontrol.pendingCheck')}: {displayDocuments.filter(d => d.status === 'pending').length}
                 </p>
             </div>
 
@@ -145,19 +165,19 @@ function NormocontrolPage() {
                     className={`tab ${activeTab === 'pending' ? 'active' : ''}`}
                     onClick={() => setActiveTab('pending')}
                 >
-                    {t('normocontrol.pendingCheck')} ({documents.filter(d => d.status === 'pending').length})
+                    {t('normocontrol.pendingCheck')} ({displayDocuments.filter(d => d.status === 'pending').length})
                 </button>
                 <button 
                     className={`tab ${activeTab === 'revision' ? 'active' : ''}`}
                     onClick={() => setActiveTab('revision')}
                 >
-                    {t('normocontrol.revision')} ({documents.filter(d => d.status === 'revision').length})
+                    {t('normocontrol.revision')} ({displayDocuments.filter(d => d.status === 'revision').length})
                 </button>
                 <button 
                     className={`tab ${activeTab === 'approved' ? 'active' : ''}`}
                     onClick={() => setActiveTab('approved')}
                 >
-                    {t('normocontrol.checked')} ({documents.filter(d => d.status === 'approved').length})
+                    {t('normocontrol.checked')} ({displayDocuments.filter(d => d.status === 'approved').length})
                 </button>
             </div>
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useCurrentWorkId, useQualityChecks, useUploadAttachment, useSubmitForCheck } from '@awm/shared';
 import './AntiplagiarismPage.css';
 import infoIcon from '../../assets/icons/pre-defense/info-icon.svg';
 import warningIcon from '../../assets/icons/alert-circle-icon.svg';
@@ -33,12 +34,24 @@ const CircularProgress = ({ percentage, color }) => {
 
 const AntiplagiarismPage = () => {
     const { t } = useTranslation();
-    const [status, setStatus] = useState('in_progress');
-    const [originality, setOriginality] = useState(50);
-    const [comments] = useState("1. Высокий процент цитирования во 2 главе.\n2. Перефразируйте выводы в практической части.\n3. Обновите список источников.");
+    const { data: workId } = useCurrentWorkId();
+    const { data: checks = [] } = useQualityChecks(workId);
+    const uploadMutation = useUploadAttachment(workId);
+    const submitMutation = useSubmitForCheck(workId);
+
+    const antiChecks = checks.filter(c => c.checkType === 'AntiPlagiarism').sort((a, b) => b.attemptNumber - a.attemptNumber);
+    const latestCheck = antiChecks[0];
+
+    const derivedStatus = latestCheck
+        ? latestCheck.isPassed ? 'success' : 'failed'
+        : 'in_progress';
+    const [status, setStatus] = useState(derivedStatus);
+    const originality = latestCheck?.resultValue != null ? Math.round(Number(latestCheck.resultValue)) : 50;
+    const comments = latestCheck?.comment || '';
     const [currentFile, setCurrentFile] = useState({ name: 'Дипломка_финал_v2.docx', size: '1.2 MB' });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [fileToUpload, setFileToUpload] = useState(null);
+    const [uploadError, setUploadError] = useState(null);
 
     const periodData = { startDate: '21.05.2025', endDate: '10.06.2025' };
     const expertData = { name: 'Паленшеев Н.П.', position: 'Преподаватель', degree: 'PhD', avatar: null };
@@ -47,16 +60,19 @@ const AntiplagiarismPage = () => {
         if (e.target.files.length > 0) setFileToUpload(e.target.files[0]);
     };
 
-    const handleUpload = () => {
-        if (!fileToUpload) return;
+    const handleUpload = async () => {
+        if (!fileToUpload || !workId) return;
+        setUploadError(null);
         setCurrentFile({ name: fileToUpload.name, size: t('common.loading') });
         setIsModalOpen(false);
-        setTimeout(() => {
-            const newPct = Math.floor(Math.random() * (95 - 40 + 1)) + 40;
-            setOriginality(newPct);
-            setStatus(newPct >= 70 ? 'success' : 'failed');
-            setCurrentFile(prev => ({ ...prev, size: '1.4 MB' }));
-        }, 1500);
+        try {
+            await uploadMutation.mutateAsync({ file: fileToUpload, attachmentType: 'Final' });
+            await submitMutation.mutateAsync('AntiPlagiarism');
+            setStatus('in_progress');
+            setCurrentFile(prev => ({ ...prev, size: (fileToUpload.size / 1024).toFixed(1) + ' KB' }));
+        } catch (err) {
+            setUploadError(err.message || t('common.error'));
+        }
     };
 
     const renderInfoBox = () => {
@@ -153,7 +169,7 @@ const AntiplagiarismPage = () => {
                 </aside>
             </div>
 
-            <UploadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onFileChange={handleFileChange} onUpload={handleUpload} file={fileToUpload} />
+            <UploadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onFileChange={handleFileChange} onUpload={handleUpload} file={fileToUpload} isUploading={uploadMutation.isPending} uploadError={uploadError} />
         </div>
     );
 };

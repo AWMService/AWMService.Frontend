@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getIntlLocale, useUploadAttachment, useCurrentWorkId, useAttachments } from '@awm/shared';
+import { getIntlLocale, useUploadAttachment, useCurrentWorkId, useAttachments, useQualityChecks, useSubmitForCheck } from '@awm/shared';
 import './ReviewStepPage.css';
 import warningIcon from '../../assets/icons/alert-circle-icon.svg';
 import infoIcon from '../../assets/icons/pre-defense/info-icon.svg';
@@ -19,7 +19,14 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
     const { data: workId } = useCurrentWorkId();
     const { data: apiAttachments = [] } = useAttachments(workId);
     const uploadMutation = useUploadAttachment(workId);
-    const [status, setStatus] = useState(initialStatus || 'in_progress');
+    const checkType = route === 'software-check' ? 'SoftwareCheck' : 'NormControl';
+    const { data: checks = [] } = useQualityChecks(workId);
+    const submitMutation = useSubmitForCheck(workId);
+    const latestCheck = checks.filter(c => c.checkType === checkType).sort((a, b) => b.attemptNumber - a.attemptNumber)[0];
+    const derivedStatus = latestCheck
+        ? latestCheck.isPassed ? 'success' : 'failed'
+        : initialStatus || 'in_progress';
+    const [status, setStatus] = useState(derivedStatus);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [file, setFile] = useState(null);
     const [uploadError, setUploadError] = useState(null);
@@ -30,7 +37,7 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
     const [repoUrlError, setRepoUrlError] = useState('');
 
     const period = { start: '20.05.2025', end: '10.06.2025' };
-    const comments = "1. Отредактировать введение.\n2. Список литературы не по ГОСТу.\n3. Убрать опечатки в 3 разделе.";
+    const comments = latestCheck?.comment || null;
 
     const renderInfoBox = () => {
         switch (status) {
@@ -69,6 +76,7 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
         setUploadError(null);
         try {
             await uploadMutation.mutateAsync({ file, attachmentType: 'Draft' });
+            await submitMutation.mutateAsync(checkType);
             setStatus('in_progress');
             setIsModalOpen(false);
             setFile(null);
