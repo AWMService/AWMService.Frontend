@@ -2,15 +2,9 @@
 
 import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { getIntlLocale } from "@awm/shared";
+import { getIntlLocale, useAuth, useCommissions, usePreDefenseSchedule } from "@awm/shared";
 import "./StudentDistributionPage.css";
 import usersIcon from "../../assets/icons/users-icon.svg";
-
-const COMMISSIONS = [
-    { id: "c1", name: "Комиссия №1" },
-    { id: "c2", name: "Комиссия №2" },
-    { id: "c3", name: "Комиссия №3" },
-];
 
 function generateTimeSlots() {
     const slots = [];
@@ -25,29 +19,40 @@ function generateTimeSlots() {
 
 const TIME_SLOTS = generateTimeSlots();
 
-const INITIAL_STUDENTS = [
-    { id: 1, name: "Иванов Алексей Петрович", topic: "Разработка веб-приложения для управления проектами", commissionId: "c1", assignedSlot: "09:30", assignedDate: "2025-06-15" },
-    { id: 2, name: "Петрова Мария Сергеевна", topic: "Анализ данных с использованием машинного обучения", commissionId: "c1", assignedSlot: "10:00", assignedDate: "2025-06-15" },
-    { id: 3, name: "Сидоров Дмитрий Николаевич", topic: "Мобильное приложение для мониторинга здоровья", commissionId: "c1", assignedSlot: null, assignedDate: null },
-    { id: 4, name: "Козлова Анна Владимировна", topic: "Система автоматического тестирования ПО", commissionId: "c2", assignedSlot: "11:00", assignedDate: "2025-06-16" },
-    { id: 5, name: "Морозов Артём Игоревич", topic: "Нейросетевой подход к распознаванию образов", commissionId: "c2", assignedSlot: null, assignedDate: null },
-    { id: 6, name: "Волкова Елена Дмитриевна", topic: "Блокчейн-платформа для верификации документов", commissionId: "c2", assignedSlot: "14:00", assignedDate: "2025-06-16" },
-    { id: 7, name: "Новиков Кирилл Андреевич", topic: "Оптимизация баз данных для высоконагруженных систем", commissionId: "c3", assignedSlot: null, assignedDate: null },
-    { id: 8, name: "Фёдорова Ольга Михайловна", topic: "IoT-система умного дома на базе Raspberry Pi", commissionId: "c3", assignedSlot: "09:00", assignedDate: "2025-06-17" },
-    { id: 9, name: "Егоров Максим Юрьевич", topic: "Платформа электронного обучения с элементами геймификации", commissionId: "c3", assignedSlot: "10:30", assignedDate: "2025-06-17" },
-    { id: 10, name: "Соколова Виктория Александровна", topic: "Разработка CRM-системы для малого бизнеса", commissionId: "c1", assignedSlot: null, assignedDate: null },
-];
-
 export default function StudentDistributionPage() {
     const { t, i18n } = useTranslation();
     const locale = getIntlLocale(i18n.language);
-    const [students, setStudents] = useState(INITIAL_STUDENTS);
+    const { user } = useAuth();
     const [filterCommission, setFilterCommission] = useState("all");
     const [filterDate, setFilterDate] = useState("");
 
+    const departmentId = user?.departmentId;
+    const academicYearId = user?.currentAcademicYearId;
+
+    const { data: commissions = [], isLoading: isCommissionsLoading } = useCommissions(departmentId, academicYearId);
+
+    // Get selected commission ID
+    const selectedCommissionId = filterCommission !== "all" ? Number(filterCommission) : commissions[0]?.id;
+    const { data: schedule = [], isLoading: isScheduleLoading } = usePreDefenseSchedule(selectedCommissionId);
+
+    // Build students from schedule data (assigned works)
+    const students = useMemo(() => {
+        if (!schedule) return [];
+        return schedule
+            .filter(slot => slot.studentWorkId)
+            .map((slot, idx) => ({
+                id: slot.studentWorkId || idx,
+                name: slot.studentName || t('department.student'),
+                topic: slot.topicTitle || t('department.topic'),
+                commissionId: String(selectedCommissionId),
+                assignedSlot: slot.startTime,
+                assignedDate: slot.date || slot.defenseDate,
+            }));
+    }, [schedule, selectedCommissionId, t]);
+
     const filteredStudents = useMemo(() => {
         return students.filter((s) => {
-            if (filterCommission !== "all" && s.commissionId !== filterCommission) return false;
+            if (filterCommission !== "all" && String(s.commissionId) !== filterCommission) return false;
             if (filterDate && s.assignedDate !== filterDate) return false;
             return true;
         });
@@ -55,36 +60,15 @@ export default function StudentDistributionPage() {
 
     const slotCounts = useMemo(() => {
         const counts = {};
-        COMMISSIONS.forEach((c) => {
-            const commStudents = students.filter((s) => s.commissionId === c.id);
+        commissions.forEach((c) => {
+            const commStudents = students.filter((s) => String(s.commissionId) === String(c.id));
             const assigned = commStudents.filter((s) => s.assignedSlot).length;
             counts[c.id] = { assigned, total: TIME_SLOTS.length };
         });
         return counts;
-    }, [students]);
+    }, [commissions, students]);
 
-    const handleAssignSlot = (studentId, slot) => {
-        setStudents((prev) =>
-            prev.map((s) => {
-                if (s.id !== studentId) return s;
-                const comm = COMMISSIONS.find((c) => c.id === s.commissionId);
-                const defaultDate = comm
-                    ? s.commissionId === "c1" ? "2025-06-15"
-                        : s.commissionId === "c2" ? "2025-06-16"
-                            : "2025-06-17"
-                    : "2025-06-15";
-                return { ...s, assignedSlot: slot, assignedDate: s.assignedDate || defaultDate };
-            })
-        );
-    };
-
-    const handleReassign = (studentId) => {
-        setStudents((prev) =>
-            prev.map((s) => (s.id === studentId ? { ...s, assignedSlot: null } : s))
-        );
-    };
-
-    const getCommissionName = (id) => COMMISSIONS.find((c) => c.id === id)?.name || id;
+    const getCommissionName = (id) => commissions.find((c) => String(c.id) === String(id))?.name || id;
 
     const formatDate = (dateStr) => {
         if (!dateStr) return "—";
@@ -94,6 +78,14 @@ export default function StudentDistributionPage() {
             year: "numeric",
         });
     };
+
+    if (isCommissionsLoading || isScheduleLoading) {
+        return (
+            <div className="student-distribution-page">
+                <p>{t('common.loading')}</p>
+            </div>
+        );
+    }
 
     return (
         <div className="student-distribution-page">
@@ -117,8 +109,8 @@ export default function StudentDistributionPage() {
                     onChange={(e) => setFilterCommission(e.target.value)}
                 >
                     <option value="all">{t("department.allCommissions")}</option>
-                    {COMMISSIONS.map((c) => (
-                        <option key={c.id} value={c.id}>{c.name}</option>
+                    {commissions.map((c) => (
+                        <option key={c.id} value={String(c.id)}>{c.name}</option>
                     ))}
                 </select>
                 <input
@@ -131,7 +123,7 @@ export default function StudentDistributionPage() {
 
             {/* Slot fill indicators */}
             <div className="sd-slot-indicators">
-                {COMMISSIONS.map((c) => {
+                {commissions.map((c) => {
                     const { assigned, total } = slotCounts[c.id] || { assigned: 0, total: 0 };
                     const pct = total > 0 ? (assigned / total) * 100 : 0;
                     return (
@@ -180,32 +172,17 @@ export default function StudentDistributionPage() {
                                     )}
                                 </td>
                                 <td>
-                                    {student.assignedSlot ? (
-                                        <div className="sd-assigned-slot">
-                                            <button
-                                                className="sd-reassign-btn"
-                                                onClick={() => handleReassign(student.id)}
-                                            >
-                                                {t("department.reassignSlot")}
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <select
-                                            className="sd-slot-select"
-                                            value=""
-                                            onChange={(e) => handleAssignSlot(student.id, e.target.value)}
-                                        >
-                                            <option value="" disabled>
-                                                {t("department.assignSlot")}
-                                            </option>
-                                            {TIME_SLOTS.map((slot) => (
-                                                <option key={slot} value={slot}>{slot}</option>
-                                            ))}
-                                        </select>
-                                    )}
+                                    <span className="sd-assigned-slot">
+                                        {t("department.assigned")}
+                                    </span>
                                 </td>
                             </tr>
                         ))}
+                        {filteredStudents.length === 0 && (
+                            <tr>
+                                <td colSpan={6} style={{ textAlign: 'center' }}>{t('common.noData')}</td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>

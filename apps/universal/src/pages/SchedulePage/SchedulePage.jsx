@@ -1,47 +1,69 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MapPin, ChevronRight, UserCheck, Users, ShieldCheck } from 'lucide-react';
 import './SchedulePage.css';
 import { useNavigate } from "react-router-dom";
-import { getIntlLocale } from "@awm/shared";
-
-const scheduleData = [
-    {
-        id: 1,
-        type: 'preDefense',
-        stage: 1,
-        chairman: 'д.т.н. Соколов А.П.',
-        secretary: 'Петрова В.Д.',
-        members: ['Иванов И.И.', 'Сидоров С.С.', 'Кузнецов А.А.', 'Смирнов П.П.'],
-        date: '2024-05-15',
-        time: '09:00',
-        room: '402'
-    },
-    {
-        id: 2,
-        type: 'defense',
-        stage: null,
-        chairman: 'к.т.н. Волков С.М.',
-        secretary: 'Лисицына К.А.',
-        members: ['Антонов А.А.', 'Борисов Б.Б.', 'Викторов В.В.', 'Григорьев Г.Г.'],
-        date: '2024-05-16',
-        time: '10:30',
-        room: '101'
-    },
-];
+import { getIntlLocale, useAuth, useCommissions, usePreDefenseSchedule, useDefenseSchedule } from "@awm/shared";
 
 export default function SchedulePage() {
     const { t, i18n } = useTranslation();
     const locale = getIntlLocale(i18n.language);
-    const [selectedDate, setSelectedDate] = useState('2024-05-15');
     const navigate = useNavigate();
-    const uniqueDates = [...new Set(scheduleData.map(item => item.date))];
-    const dailyEvent = scheduleData.find(event => event.date === selectedDate);
+    const { user } = useAuth();
+    const [selectedCommissionId, setSelectedCommissionId] = useState(null);
+    const [selectedDate, setSelectedDate] = useState('');
+
+    const departmentId = user?.departmentId;
+    const academicYearId = user?.currentAcademicYearId;
+
+    const { data: commissions = [], isLoading: isCommissionsLoading } = useCommissions(departmentId, academicYearId);
+
+    // Auto-select first commission if none selected
+    React.useEffect(() => {
+        if (commissions.length > 0 && !selectedCommissionId) {
+            setSelectedCommissionId(commissions[0].id);
+        }
+    }, [commissions, selectedCommissionId]);
+
+    const selectedCommission = commissions.find(c => c.id === selectedCommissionId);
+
+    const { data: preDefenseSchedule = [], isLoading: isPreDefenseLoading } = usePreDefenseSchedule(selectedCommissionId);
+    const { data: defenseSchedule = [], isLoading: isDefenseLoading } = useDefenseSchedule(selectedCommissionId);
+
+    const scheduleData = useMemo(() => {
+        const combined = [
+            ...preDefenseSchedule.map(s => ({ ...s, type: 'preDefense' })),
+            ...defenseSchedule.map(s => ({ ...s, type: 'defense' })),
+        ];
+        return combined.sort((a, b) => new Date(a.date || a.defenseDate) - new Date(b.date || b.defenseDate));
+    }, [preDefenseSchedule, defenseSchedule]);
+
+    const uniqueDates = useMemo(() => {
+        const dates = scheduleData.map(item => item.date || item.defenseDate);
+        return [...new Set(dates)].filter(Boolean);
+    }, [scheduleData]);
+
+    // Auto-select first date if none selected
+    React.useEffect(() => {
+        if (uniqueDates.length > 0 && (!selectedDate || !uniqueDates.includes(selectedDate))) {
+            setSelectedDate(uniqueDates[0]);
+        }
+    }, [uniqueDates, selectedDate]);
+
+    const dailyEvent = scheduleData.find(event => (event.date || event.defenseDate) === selectedDate);
+
+    if (isCommissionsLoading || isPreDefenseLoading || isDefenseLoading) {
+        return (
+            <div className="teacher-schedule-page">
+                <p>{t('common.loading')}</p>
+            </div>
+        );
+    }
+
     const stageSuffix = dailyEvent?.stage ? ` ${dailyEvent.stage}` : "";
 
     return (
         <div className="teacher-schedule-page">
-            {/* Фоновые плавающие сферы */}
             <div className="bg-sphere sphere-1"></div>
             <div className="bg-sphere sphere-2"></div>
             <div className="bg-sphere sphere-3"></div>
@@ -51,6 +73,20 @@ export default function SchedulePage() {
                     <h1>{t('commission.scheduleTitle')}</h1>
                     <p className="subtitle">{t('commission.scheduleSubtitle')}</p>
                 </div>
+
+                {commissions.length > 0 && (
+                    <div className="commission-selector-row">
+                        <select 
+                            className="commission-select"
+                            value={selectedCommissionId || ''}
+                            onChange={(e) => setSelectedCommissionId(Number(e.target.value))}
+                        >
+                            {commissions.map(c => (
+                                <option key={c.id} value={c.id}>{c.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                )}
 
                 <div className="date-picker-row">
                     {uniqueDates.map(date => (
@@ -72,15 +108,14 @@ export default function SchedulePage() {
                 {dailyEvent ? (
                     <div className="timeline-item">
                         <div className="timeline-time">
-                            <span className="time-main">{dailyEvent.time}</span>
+                            <span className="time-main">{dailyEvent.time || dailyEvent.startTime}</span>
                             <div className="timeline-dot"></div>
                         </div>
 
-                        <div className="card-wrapper" onClick={() => navigate(`/schedule/${dailyEvent.id}`)}>
+                        <div className="card-wrapper" onClick={() => navigate(`/schedule/${selectedCommissionId}`)}>
                             <div className="sharp-card">
-                <div className={`card-accent ${dailyEvent.type === 'defense' ? 'final' : 'pre'}`}></div>
+                                <div className={`card-accent ${dailyEvent.type === 'defense' ? 'final' : 'pre'}`}></div>
 
-                                {/* Декоративная иконка на фоне карточки */}
                                 <div className="card-watermark">
                                     {dailyEvent.type === 'defense' ? <ShieldCheck size={100} /> : <Users size={100} />}
                                 </div>
@@ -92,7 +127,7 @@ export default function SchedulePage() {
                                                 {dailyEvent.type === 'defense' ? t('commission.defense') : t('commission.preDefense')}{stageSuffix}
                                             </span>
                                             <span className="room-text">
-                                                <MapPin size={14} /> {t('commission.roomShort')} {dailyEvent.room}
+                                                <MapPin size={14} /> {t('commission.roomShort')} {dailyEvent.room || dailyEvent.location}
                                             </span>
                                         </div>
                                         <ChevronRight className="mobile-arrow" size={20} />
@@ -101,19 +136,19 @@ export default function SchedulePage() {
                                     <div className="commission-info">
                                         <div className="member-row chairman">
                                             <ShieldCheck size={16} className="icon-blue" />
-                                            <span><strong>{t('commission.chairmanLabel')}</strong> {dailyEvent.chairman}</span>
+                                            <span><strong>{t('commission.chairmanLabel')}</strong> {selectedCommission?.chairmanName || dailyEvent.chairman || '—'}</span>
                                         </div>
 
                                         <div className="dropdown-content">
                                             <div className="members-grid">
                                                 <div className="member-row">
                                                     <UserCheck size={16} className="icon-gray" />
-                                                    <span><strong>{t('commission.secretaryLabel')}</strong> {dailyEvent.secretary}</span>
+                                                    <span><strong>{t('commission.secretaryLabel')}</strong> {selectedCommission?.secretaryName || dailyEvent.secretary || '—'}</span>
                                                 </div>
                                                 <div className="members-list">
                                                     <div className="list-label"><Users size={16} /> {t('commission.membersLabel')}</div>
                                                     <ul>
-                                                        {dailyEvent.members.map((m, i) => <li key={i}>{m}</li>)}
+                                                        {(dailyEvent.members || []).map((m, i) => <li key={i}>{m}</li>)}
                                                     </ul>
                                                 </div>
                                             </div>

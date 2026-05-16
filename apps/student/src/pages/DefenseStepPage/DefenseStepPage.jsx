@@ -5,19 +5,34 @@ import { SubmissionCard } from '../../components/SubmissionCard/SubmissionCard.j
 import { ScheduleCard } from '../../components/ScheduleCard/ScheduleCard.jsx';
 import { Results } from '../../components/Results/Results.jsx';
 import { CommissionCard } from '../../components/CommissionCard/CommissionCard.jsx';
-import { DownloadableMaterialsCard } from '../../components/DownloadableMaterialsCard/DownloadableMaterialsCard.jsx';
-import { useUploadAttachment, useCurrentWorkId } from '@awm/shared';
-const DefenseStepPage = ({ pageTitle, schedule, commission, infoText, initialResults, resultsType, attemptNumber, previousAttempts }) => {
+import { useUploadAttachment, useCurrentWorkId, useStudentDefenseStep } from '@awm/shared';
+
+const DefenseStepPage = () => {
   const { t } = useTranslation();
+  const { data: defenseStep, isLoading } = useStudentDefenseStep();
   const { data: workId } = useCurrentWorkId();
   const uploadMutation = useUploadAttachment(workId);
-  const [isSubmitted, setIsSubmitted] = useState(!!initialResults);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [file, setFile] = useState(null);
-  const [pageResults, setPageResults] = useState(initialResults);
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [uploadError, setUploadError] = useState(null);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
-  const hasAttemptTracking = attemptNumber != null && resultsType !== 'defense';
+  const schedule = defenseStep?.schedule
+    ? {
+        date: defenseStep.schedule.date,
+        time: defenseStep.schedule.time,
+        location: defenseStep.schedule.location,
+      }
+    : null;
+
+  const commission = defenseStep?.commission || [];
+  const previousAttempts = defenseStep?.previousAttempts || [];
+  const attemptNumber = defenseStep?.attemptNumber;
+  const results = defenseStep?.results;
+  const resultsType = defenseStep?.stepType === 'defense' ? 'defense' : 'pre-defense';
+  const pageTitle = defenseStep?.stepType === 'defense' ? t('student.defense') : t('student.preDefense');
+  const infoText = t('student.uploadFinalVersion');
+  const hasAttemptTracking = defenseStep?.stepType === 'pre-defense' && attemptNumber != null;
 
   const handleFileChange = (e) => {
     if (e.target.files.length > 0) {
@@ -31,20 +46,22 @@ const DefenseStepPage = ({ pageTitle, schedule, commission, infoText, initialRes
     try {
       await uploadMutation.mutateAsync({ file, attachmentType: 'Final' });
       setIsSubmitted(true);
-      // Removed Math.random simulation. 
-      // In real integration, pageResults should come from a hook (e.g. useDefenseResult).
-      setPageResults({
-          commentsKey: 'student.fileSentForReview'
-      });
     } catch (err) {
       setUploadError(err.message || t('common.error'));
     }
   };
-  
+
   const handleFileDelete = () => {
-      setFile(null);
-      setIsSubmitted(false);
-      setPageResults(null);
+    setFile(null);
+    setIsSubmitted(false);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="defense-step-page">
+        <p>{t('common.loading')}</p>
+      </div>
+    );
   }
 
   return (
@@ -69,15 +86,15 @@ const DefenseStepPage = ({ pageTitle, schedule, commission, infoText, initialRes
             isUploading={uploadMutation.isPending}
             uploadError={uploadError}
           />
-          {isSubmitted && <Results results={pageResults} resultsType={resultsType} />}
+          {isSubmitted && <Results results={results} resultsType={resultsType} />}
         </div>
         <div className="defense-step-right">
-          <ScheduleCard title={`${t('nav.schedule')} ${pageTitle}`} schedule={schedule} />
+          {schedule && <ScheduleCard title={`${t('nav.schedule')} ${pageTitle}`} schedule={schedule} />}
           <CommissionCard commission={commission} />
         </div>
       </div>
 
-      {hasAttemptTracking && previousAttempts && previousAttempts.length > 0 && (
+      {hasAttemptTracking && previousAttempts.length > 0 && (
         <div className="attempt-history-section">
           <button
             className="attempt-history-toggle"
@@ -96,7 +113,7 @@ const DefenseStepPage = ({ pageTitle, schedule, commission, infoText, initialRes
                       {t('student.attemptNumber')} #{attempt.attemptNumber}
                     </span>
                     <span className={`attempt-result-badge ${attempt.score >= 70 ? 'passed' : 'not-passed'}`}>
-                      {attempt.score >= 70 ? t('student.passed') : t('student.notPassed')}
+                      {attempt.isPassed ? t('student.passed') : t('student.notPassed')}
                     </span>
                   </div>
                   <div className="attempt-history-details">

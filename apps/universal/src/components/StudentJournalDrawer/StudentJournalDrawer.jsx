@@ -9,7 +9,7 @@ export default function StudentJournalDrawer({
     open,
     onClose,
     selectedStudent,
-    mockDocs,
+    mockDocs = [],
     criteriaList,
     scores,
     status,

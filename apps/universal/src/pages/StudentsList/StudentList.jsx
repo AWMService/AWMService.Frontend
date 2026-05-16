@@ -1,115 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { getLocalizedValue } from "@awm/shared";
+import { getLocalizedValue, useAuth, useDefenseSchedule, useEvaluationCriteria, useSubmitGrade, useGradesBySchedule } from "@awm/shared";
 import StudentJournalDrawer from "../../components/StudentJournalDrawer/StudentJournalDrawer.jsx";
 import "./StudentList.css";
-
-const mockDocs = [
-    {
-        name: {
-            kk: "Түсіндірме_жазба_v1.pdf",
-            ru: "Пояснительная_записка_v1.pdf",
-            en: "Explanatory_Note_v1.pdf",
-        },
-        size: "2.4 MB",
-    },
-    {
-        name: {
-            kk: "Қорғау_презентациясы.pptx",
-            ru: "Презентация_финал.pptx",
-            en: "Final_Presentation.pptx",
-        },
-        size: "12 MB",
-    },
-    {
-        name: {
-            kk: "Жетекші_пікірі.pdf",
-            ru: "Отзыв_руководителя.pdf",
-            en: "Supervisor_Review.pdf",
-        },
-        size: "0.5 MB",
-    },
-];
-
-const criteriaList = [
-    {
-        id: "c1",
-        label: {
-            kk: "Мақсатқа жету, тапсырмаларды орындау",
-            ru: "Достижение цели, выполнение задач",
-            en: "Goal achievement, task completion",
-        },
-        max: 25,
-    },
-    {
-        id: "c2",
-        label: {
-            kk: "Қорытындылардың қисындылығы және негізділігі",
-            ru: "Логичность и обоснованность выводов",
-            en: "Logical and well-grounded conclusions",
-        },
-        max: 10,
-    },
-    {
-        id: "c3",
-        label: {
-            kk: "Өзекті тәсілдерді қолдану",
-            ru: "Использование актуальных подходов",
-            en: "Use of current approaches",
-        },
-        max: 10,
-    },
-    {
-        id: "c4",
-        label: {
-            kk: "Нәтижелерді практикалық қолдану",
-            ru: "Практическое применение результатов",
-            en: "Practical application of results",
-        },
-        max: 10,
-    },
-    {
-        id: "c5",
-        label: {
-            kk: "Өзектілік, тиімділік",
-            ru: "Релевантность, эффективность",
-            en: "Relevance, efficiency",
-        },
-        max: 15,
-    },
-    {
-        id: "c6",
-        label: {
-            kk: "Команданы үйлестіру деңгейі",
-            ru: "Уровень координации команды",
-            en: "Team coordination level",
-        },
-        max: 5,
-    },
-    {
-        id: "c7",
-        label: {
-            kk: "Демо-материалдың сапасы",
-            ru: "Качество демо-материала",
-            en: "Demo material quality",
-        },
-        max: 5,
-    },
-    {
-        id: "c8",
-        label: {
-            kk: "Жеке үлес",
-            ru: "Индивидуальный вклад",
-            en: "Individual contribution",
-        },
-        max: 20,
-    },
-];
 
 export default function StudentList() {
     const { t } = useTranslation();
     const { commissionId } = useParams();
+    const { user } = useAuth();
 
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [isJournalOpen, setIsJournalOpen] = useState(false);
@@ -117,6 +16,60 @@ export default function StudentList() {
     const [status, setStatus] = useState("editing");
 
     const currentStageKey = "defense";
+
+    const { data: defenseSchedule = [], isLoading: isScheduleLoading } = useDefenseSchedule(Number(commissionId));
+
+    // Build topics/students from defense schedule slots that have assigned works
+    const topics = useMemo(() => {
+        if (!defenseSchedule) return [];
+        const slotsWithWorks = defenseSchedule.filter(slot => slot.studentWorkId);
+        
+        // Group by topic or keep as individual items
+        return slotsWithWorks.map((slot, i) => ({
+            id: slot.id || i,
+            title: {
+                kk: slot.topicTitleKz || slot.topicTitle || `Дипломдық жұмыс тақырыбы №${i + 1}`,
+                ru: slot.topicTitleRu || slot.topicTitle || `Тема диплома №${i + 1}`,
+                en: slot.topicTitleEn || slot.topicTitle || `Thesis Topic No. ${i + 1}`,
+            },
+            direction: {
+                kk: "Ақпараттық технологиялар",
+                ru: "Информационные технологии",
+                en: "Information Technology",
+            },
+            students: [
+                {
+                    id: slot.studentWorkId,
+                    name: {
+                        kk: slot.studentName || `Студент ${i + 1}`,
+                        ru: slot.studentName || `Студент ${i + 1}`,
+                        en: slot.studentName || `Student ${i + 1}`,
+                    },
+                    readiness: slot.status === 'Graded' ? 100 : 0,
+                    scheduleId: slot.id,
+                }
+            ],
+        }));
+    }, [defenseSchedule]);
+
+    // Load criteria for grading
+    const workTypeId = user?.workTypeId || 1;
+    const departmentId = user?.departmentId;
+    const { data: criteriaList = [], isLoading: isCriteriaLoading } = useEvaluationCriteria(workTypeId, departmentId);
+
+    // Load existing grades for selected schedule
+    const selectedScheduleId = selectedStudent?.scheduleId;
+    const { data: existingGrades = [] } = useGradesBySchedule(selectedScheduleId);
+
+    useEffect(() => {
+        if (existingGrades.length > 0) {
+            const gradeMap = {};
+            existingGrades.forEach(g => {
+                gradeMap[g.criteriaId || g.id] = g.score;
+            });
+            setScores(gradeMap);
+        }
+    }, [existingGrades]);
 
     // Блокировка прокрутки страницы при открытом drawer
     useEffect(() => {
@@ -131,43 +84,7 @@ export default function StudentList() {
         };
     }, [isJournalOpen]);
 
-    const topics = useMemo(
-        () =>
-            Array.from({ length: 24 }, (_, i) => ({
-                id: i + 1,
-                title: {
-                    kk: `Дипломдық жұмыс тақырыбы №${i + 1}`,
-                    ru: `Тема диплома №${i + 1}`,
-                    en: `Thesis Topic No. ${i + 1}`,
-                },
-                direction: {
-                    kk: "Ақпараттық технологиялар",
-                    ru: "Информационные технологии",
-                    en: "Information Technology",
-                },
-                students: [
-                    {
-                        id: i * 10 + 1,
-                        name: {
-                            kk: `Студент ${i + 1}A`,
-                            ru: `Студент ${i + 1}А`,
-                            en: `Student ${i + 1}A`,
-                        },
-                        readiness: Math.floor(Math.random() * 100),
-                    },
-                    {
-                        id: i * 10 + 2,
-                        name: {
-                            kk: `Студент ${i + 1}B`,
-                            ru: `Студент ${i + 1}Б`,
-                            en: `Student ${i + 1}B`,
-                        },
-                        readiness: Math.floor(Math.random() * 100),
-                    },
-                ],
-            })),
-        []
-    );
+    const submitGradeMutation = useSubmitGrade();
 
     const handleScoreChange = (id, val, max) => {
         if (status !== "editing") return;
@@ -178,11 +95,36 @@ export default function StudentList() {
     const totalScore = Object.values(scores).reduce((a, b) => a + b, 0);
 
     const openJournal = (student, topic) => {
-        setSelectedStudent({ ...student, topicTitle: topic.title });
+        setSelectedStudent({ ...student, topicTitle: topic.title, scheduleId: student.scheduleId });
         setScores({});
         setStatus("editing");
         setIsJournalOpen(true);
     };
+
+    const handleSendGrades = async () => {
+        if (!selectedScheduleId) return;
+        try {
+            // Submit each criteria score
+            for (const [criteriaId, score] of Object.entries(scores)) {
+                await submitGradeMutation.mutateAsync({
+                    scheduleId: selectedScheduleId,
+                    criteriaId: Number(criteriaId),
+                    score: Number(score),
+                });
+            }
+            setStatus("waiting");
+        } catch (error) {
+            console.error('Failed to submit grades', error);
+        }
+    };
+
+    if (isScheduleLoading || isCriteriaLoading) {
+        return (
+            <div className="s-page-container">
+                <p>{t('common.loading')}</p>
+            </div>
+        );
+    }
 
     return (
         <div className={`s-page-container ${isJournalOpen ? "s-drawer-open" : ""}`}>
@@ -211,6 +153,12 @@ export default function StudentList() {
                             ))}
                         </div>
                     ))}
+
+                    {topics.length === 0 && (
+                        <div className="s-empty-state">
+                            <p>{t('common.noData')}</p>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -218,16 +166,20 @@ export default function StudentList() {
                 open={isJournalOpen}
                 onClose={() => setIsJournalOpen(false)}
                 selectedStudent={selectedStudent}
-                mockDocs={mockDocs}
-                criteriaList={criteriaList}
+                criteriaList={criteriaList.map(c => ({
+                    id: String(c.id || c.criteriaId),
+                    label: { ru: c.nameRu || c.name, kk: c.nameKz || c.name, en: c.nameEn || c.name },
+                    max: c.maxScore || 10,
+                }))}
                 scores={scores}
                 status={status}
                 totalScore={totalScore}
                 onScoreChange={handleScoreChange}
-                onSend={() => setStatus("waiting")}
+                onSend={handleSendGrades}
                 onFinalize={() => setStatus("locked")}
                 onEdit={() => setStatus("editing")}
                 onSimulateSecretary={() => status === "waiting" && setStatus("finalizing")}
+                isSubmitting={submitGradeMutation.isPending}
             />
         </div>
     );
