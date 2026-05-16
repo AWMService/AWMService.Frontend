@@ -171,21 +171,24 @@ export default function MyWorkPage() {
                     {timeline.length === 0 && (
                         <div className="my-work-empty">{t('student.noTimeline')}</div>
                     )}
-                    {timeline.map((item, idx) => (
-                        <div key={item.id} className={`my-work-timeline-item status-${item.status}`}>
-                            <div className="my-work-timeline-marker">
-                                <div className={`my-work-timeline-dot ${item.status}`} />
-                                {idx < timeline.length - 1 && <div className="my-work-timeline-line" />}
-                            </div>
-                            <div className="my-work-timeline-content">
-                                <div className="my-work-timeline-header">
-                                    <span className="my-work-timeline-title">{item.title}</span>
-                                    <span className="my-work-timeline-date">{formatDate(item.date, locale)}</span>
+                    {timeline.map((item, idx) => {
+                        const statusClass = item.status?.toLowerCase().replace(' ', '_') || 'pending';
+                        return (
+                            <div key={item.id} className={`my-work-timeline-item status-${statusClass}`}>
+                                <div className="my-work-timeline-marker">
+                                    <div className={`my-work-timeline-dot ${statusClass}`} />
+                                    {idx < timeline.length - 1 && <div className="my-work-timeline-line" />}
                                 </div>
-                                <p className="my-work-timeline-desc">{item.description || ''}</p>
+                                <div className="my-work-timeline-content">
+                                    <div className="my-work-timeline-header">
+                                        <span className="my-work-timeline-title">{item.title}</span>
+                                        <span className="my-work-timeline-date">{formatDate(item.date, locale)}</span>
+                                    </div>
+                                    <p className="my-work-timeline-desc">{item.description || ''}</p>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
         </div>

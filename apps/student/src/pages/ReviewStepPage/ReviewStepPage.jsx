@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getIntlLocale, useUploadAttachment, useCurrentWorkId, useAttachments, useQualityChecks, useSubmitForCheck } from '@awm/shared';
+import { getIntlLocale, useUploadAttachment, useCurrentWorkId, useAttachments, useQualityChecks, useSubmitForCheck, useMyWorkProgress, useActivePeriod } from '@awm/shared';
 import './ReviewStepPage.css';
 import warningIcon from '../../assets/icons/alert-circle-icon.svg';
 import infoIcon from '../../assets/icons/pre-defense/info-icon.svg';
@@ -17,10 +17,16 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
     const { t, i18n } = useTranslation();
     const locale = getIntlLocale(i18n.language);
     const { data: workId } = useCurrentWorkId();
+    const { data: workProgress } = useMyWorkProgress();
     const { data: apiAttachments = [] } = useAttachments(workId);
     const uploadMutation = useUploadAttachment(workId);
     const checkType = route === 'software-check' ? 'SoftwareCheck' : 'NormControl';
     const { data: checks = [] } = useQualityChecks(workId);
+    const { data: activePeriod } = useActivePeriod(
+        workProgress?.departmentId,
+        workProgress?.academicYearId,
+        checkType
+    );
     const submitMutation = useSubmitForCheck(workId);
     const latestCheck = checks.filter(c => c.checkType === checkType).sort((a, b) => b.attemptNumber - a.attemptNumber)[0];
     const derivedStatus = latestCheck
@@ -36,7 +42,18 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
     const [repoUrl, setRepoUrl] = useState('');
     const [repoUrlError, setRepoUrlError] = useState('');
 
-    const period = { start: '20.05.2025', end: '10.06.2025' };
+    const period = activePeriod ? {
+        start: new Date(activePeriod.startDate).toLocaleDateString(),
+        end: new Date(activePeriod.endDate).toLocaleDateString()
+    } : { start: '—', end: '—' };
+
+    const expertData = {
+        name: workProgress?.supervisorName || t('common.noData'),
+        position: t('student.assignedExpert'),
+        degree: '',
+        ...expert
+    };
+
     const comments = latestCheck?.comment || null;
 
     const renderInfoBox = () => {
@@ -174,7 +191,7 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
 
                     <div className="review-step-right">
                         <PeriodCard period={period} />
-                        <ExpertCard expert={expert} />
+                        <ExpertCard expert={expertData} />
                     </div>
                 </div>
             </div>

@@ -282,7 +282,9 @@
         "unreadCount": "{{count}} new",
         "markAllRead": "Mark all as read",
         "markAsRead": "Mark as read",
-        "noNotifications": "No notifications"
+        "noNotifications": "No notifications",
+        "noMaterials": "No materials uploaded yet",
+        "noTimeline": "Activity history is empty"
     },
     "supervisor": {
         "topics": "Topics",

@@ -31,19 +31,11 @@ const DefenseStepPage = ({ pageTitle, schedule, commission, infoText, initialRes
     try {
       await uploadMutation.mutateAsync({ file, attachmentType: 'Final' });
       setIsSubmitted(true);
-      if (resultsType === 'defense') {
-          setPageResults({
-              finalGrade: 'A',
-              commissionGrade: 95,
-              commentsKey: 'student.excellentWork'
-          });
-      } else {
-          setPageResults({
-              finalScore: Math.floor(Math.random() * (100 - 60 + 1)) + 60,
-              readiness: Math.floor(Math.random() * (100 - 70 + 1)) + 70,
-              commentsKey: 'student.fileUploaded'
-          });
-      }
+      // Removed Math.random simulation. 
+      // In real integration, pageResults should come from a hook (e.g. useDefenseResult).
+      setPageResults({
+          commentsKey: 'student.fileSentForReview'
+      });
     } catch (err) {
       setUploadError(err.message || t('common.error'));
     }

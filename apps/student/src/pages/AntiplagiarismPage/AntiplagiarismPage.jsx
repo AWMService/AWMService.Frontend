@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCurrentWorkId, useQualityChecks, useUploadAttachment, useSubmitForCheck } from '@awm/shared';
+import { useCurrentWorkId, useQualityChecks, useUploadAttachment, useSubmitForCheck, useMyWorkProgress, useActivePeriod } from '@awm/shared';
 import './AntiplagiarismPage.css';
 import infoIcon from '../../assets/icons/pre-defense/info-icon.svg';
 import warningIcon from '../../assets/icons/alert-circle-icon.svg';
@@ -35,7 +35,14 @@ const CircularProgress = ({ percentage, color }) => {
 const AntiplagiarismPage = () => {
     const { t } = useTranslation();
     const { data: workId } = useCurrentWorkId();
+    const { data: workProgress } = useMyWorkProgress();
     const { data: checks = [] } = useQualityChecks(workId);
+    const { data: activePeriod } = useActivePeriod(
+        workProgress?.departmentId,
+        workProgress?.academicYearId,
+        'AntiPlagiarism'
+    );
+
     const uploadMutation = useUploadAttachment(workId);
     const submitMutation = useSubmitForCheck(workId);
 
@@ -43,18 +50,37 @@ const AntiplagiarismPage = () => {
     const latestCheck = antiChecks[0];
 
     const derivedStatus = latestCheck
-        ? latestCheck.isPassed ? 'success' : 'failed'
+        ? (latestCheck.isPassed ? 'success' : (latestCheck.resultValue != null ? 'failed' : 'in_progress'))
         : 'in_progress';
+
     const [status, setStatus] = useState(derivedStatus);
-    const originality = latestCheck?.resultValue != null ? Math.round(Number(latestCheck.resultValue)) : 50;
+    const originality = latestCheck?.resultValue != null ? Math.round(Number(latestCheck.resultValue)) : 0;
     const comments = latestCheck?.comment || '';
-    const [currentFile, setCurrentFile] = useState({ name: 'Дипломка_финал_v2.docx', size: '1.2 MB' });
+    
+    // Get latest attachment of type 'Final' or 'Draft' as current file
+    const latestFile = workProgress?.attachments
+        ?.filter(a => a.attachmentType === 'Final' || a.attachmentType === 'Draft')
+        ?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+
+    const currentFile = latestFile 
+        ? { name: latestFile.fileName, size: '?? KB' } // Size is not in WorkProgressAttachmentResponse currently
+        : { name: t('common.noData'), size: '' };
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [fileToUpload, setFileToUpload] = useState(null);
     const [uploadError, setUploadError] = useState(null);
 
-    const periodData = { startDate: '21.05.2025', endDate: '10.06.2025' };
-    const expertData = { name: 'Паленшеев Н.П.', position: 'Преподаватель', degree: 'PhD', avatar: null };
+    const periodData = activePeriod ? {
+        startDate: new Date(activePeriod.startDate).toLocaleDateString(),
+        endDate: new Date(activePeriod.endDate).toLocaleDateString()
+    } : { startDate: '—', endDate: '—' };
+
+    const expertData = { 
+        name: workProgress?.supervisorName || t('common.noData'), 
+        position: t('student.assignedExpert'),
+        degree: '',
+        avatar: null 
+    };
 
     const handleFileChange = (e) => {
         if (e.target.files.length > 0) setFileToUpload(e.target.files[0]);
@@ -63,13 +89,11 @@ const AntiplagiarismPage = () => {
     const handleUpload = async () => {
         if (!fileToUpload || !workId) return;
         setUploadError(null);
-        setCurrentFile({ name: fileToUpload.name, size: t('common.loading') });
         setIsModalOpen(false);
         try {
             await uploadMutation.mutateAsync({ file: fileToUpload, attachmentType: 'Final' });
             await submitMutation.mutateAsync('AntiPlagiarism');
             setStatus('in_progress');
-            setCurrentFile(prev => ({ ...prev, size: (fileToUpload.size / 1024).toFixed(1) + ' KB' }));
         } catch (err) {
             setUploadError(err.message || t('common.error'));
         }
