@@ -1,8 +1,8 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { RequireAuth, ROLES } from '@awm/shared';
-import { AdminHeader } from './components/Header/AdminHeader';
-import { AdminSidebar } from './components/Sidebar/AdminSidebar';
+import { AdminHeader } from './components/Header/Header';
+import { AdminSidebar } from './components/Sidebar/Sidebar';
 import UsersPage from './pages/UsersPage/UsersPage.jsx';
 import RolesPage from './pages/RolesPage/RolesPage.jsx';
 import SettingsPage from './pages/SettingsPage/SettingsPage.jsx';

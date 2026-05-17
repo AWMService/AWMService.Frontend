@@ -1,121 +1,39 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LanguageSelector, useAuth } from '@awm/shared';
-import './StudentHeader.css';
-
-// Импорт иконок
-import logoutIcon from '../assets/icons/logout-icon.svg';
-import arrowDownIcon from '../assets/icons/arrow-down-icon.svg';
-
-// Вспомогательный компонент для иконок
-const Icon = ({ src, alt, size = 16, className = "" }) => (
-    <img
-        src={src}
-        alt={alt || ""}
-        className={className}
-        style={{
-          width: size,
-          height: size,
-          display: 'block',
-          filter: 'brightness(0) invert(1)',
-        }}
-    />
-);
+import { LanguageSelector, useAuth, SharedHeader } from '@awm/shared';
 
 export function StudentHeader() {
   const { t } = useTranslation();
-  const { logout } = useAuth();
-
-  // Состояния для меню
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
-
-  // Refs для отслеживания кликов вне элементов
-  const userRef = useRef(null);
-
-  // Обработчик клика вне меню
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (userRef.current && !userRef.current.contains(e.target)) {
-        setUserMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const handleLogout = () => {
-    logout();
-  };
+  const { logout, user } = useAuth();
 
   return (
-      <header className="student-header">
-        <div className="header-content">
-
-          {/* ЛЕВАЯ ЧАСТЬ */}
-          <div className="header-left">
-            <div className="logo-section">
-              <div className="logo-box">{t('roles.student').charAt(0)}</div>
-              <div>
-                <div className="logo-main">{t('roles.student')}</div>
-                <div className="logo-sub">{t('student.thesisTitle')}</div>
-              </div>
-            </div>
-          </div>
-
-          {/* ПРАВАЯ ЧАСТЬ */}
-          <div className="header-right">
-
-            {/* --- ЯЗЫКОВОЕ МЕНЮ --- */}
-            <LanguageSelector />
-
-            {/* --- ПРОФИЛЬ СТУДЕНТА --- */}
-            <div className="nav-item-dropdown" ref={userRef}>
-              <div
-                  className="user-profile"
-                  onClick={() => setUserMenuOpen(!userMenuOpen)}
-              >
-                <div className="avatar-circle">СН</div>
-
-                <div className="user-info-box">
-                  <div className="u-name">Сергеев Н.С.</div>
-                  <div className="u-role">{t('roles.student')}</div>
-                </div>
-
-                <Icon
-                    src={arrowDownIcon}
-                    size={10}
-                    className={userMenuOpen ? 'rotate' : ''}
-                />
-              </div>
-
-              {/* DROPDOWN ПРОФИЛЯ */}
-              {userMenuOpen && (
-                  <div className="dropdown-menu align-right">
-                    <Link to="/profile" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
-                      {t('student.profileTitle')}
-                    </Link>
-                    <Link to="/my-work" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
-                      {t('student.myWorkTitle')}
-                    </Link>
-                    <Link to="/notifications" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
-                      {t('student.notificationsTitle')}
-                    </Link>
-                    <div className="dropdown-item logout" onClick={handleLogout}>
-                      <img
-                          src={logoutIcon}
-                          alt=""
-                          style={{ width: 14, height: 14, marginRight: 8 }}
-                      />
-                      {t('auth.logout')}
-                    </div>
-                  </div>
-              )}
-            </div>
-
-          </div>
-        </div>
-      </header>
+    <SharedHeader
+      appLogoBox={t('roles.student').charAt(0)}
+      appLogoBoxColor="#4f46e5"
+      appTitle={t('roles.student')}
+      appSubtitle={t('student.thesisTitle')}
+      userProfile={{
+        initials: 'СН',
+        name: user?.name || 'Сергеев Н.С.',
+        role: t('roles.student'),
+      }}
+      userDropdownItems={
+        <>
+            <Link to="/profile" className="dropdown-item">
+                {t('student.profileTitle')}
+            </Link>
+            <Link to="/my-work" className="dropdown-item">
+                {t('student.myWorkTitle')}
+            </Link>
+            <Link to="/notifications" className="dropdown-item">
+                {t('student.notificationsTitle')}
+            </Link>
+        </>
+      }
+      onLogout={logout}
+      notificationCount={0}
+      actions={<LanguageSelector />}
+    />
   );
 }

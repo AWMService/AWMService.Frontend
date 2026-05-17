@@ -3,8 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth, usePeriods, useApproveDefensePeriods, ConfirmModal } from "@awm/shared";
 import "./TimePeriodsPage.css";
 
-import TimePeriodCard from "../../components/TimePeriods/TimePeriodCard/TimePeriodCard.jsx";
-import TimePeriodFormDialog from "../../components/TimePeriods/TimePeriodFormDialog/TimePeriodFormDialog.jsx";
+import { TimePeriodCard, TimePeriodFormDialog } from "@awm/shared";
 
 import plusIcon from "../../assets/icons/plus-icon.svg";
 

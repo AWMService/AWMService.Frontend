@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import "./Sidebar.css";
+import { SharedSidebar } from "@awm/shared";
 
 import supervisorsIcon from "../../assets/icons/supervisors-sidebar-icon.svg";
 import periodsIcon from "../../assets/icons/periods-sidebar-icon.svg";
@@ -11,20 +10,10 @@ import documentCheckIcon from "../../assets/icons/document-check-icon.svg";
 import bellIcon from "../../assets/icons/bell-icon.svg";
 import usersIcon from "../../assets/icons/users-icon.svg";
 import shieldCheckIcon from "../../assets/icons/shield-check-icon.svg";
-import menuIcon from "../../assets/icons/menu-icon.svg";
-import xIcon from "../../assets/icons/x-icon.svg";
-
-/* ===================== COMPONENT ===================== */
 
 export function Sidebar() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
   const { t } = useTranslation();
 
-  const pathname = location.pathname;
-
-  // Навигационные пункты с переводами
   const navigationItems = [
     {
       href: "/supervisors",
@@ -94,112 +83,5 @@ export function Sidebar() {
     },
   ];
 
-  const handleNavClick = (e, href) => {
-    e.preventDefault();
-    navigate(href);
-    setIsMobileMenuOpen(false);
-  };
-
-  const isItemActive = (href) => {
-    const basePath = href.split("?")[0];
-    return pathname.startsWith(basePath);
-  };
-
-  return (
-    <>
-      {/* ===================== DESKTOP SIDEBAR ===================== */}
-      <aside className="sidebar-desktop">
-        <div className="sidebar-desktop-content">
-          <nav className="sidebar-nav">
-            <div className="sidebar-header">
-              <h2>{t('nav.dashboard')}</h2>
-            </div>
-
-            {navigationItems.map((item) => {
-              const isActive = isItemActive(item.href);
-
-              return (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  onClick={(e) => handleNavClick(e, item.href)}
-                  className={`nav-item ${isActive ? "active" : ""}`}
-                >
-                  <img
-                    src={item.icon}
-                    alt=""
-                    className={`nav-icon ${isActive ? "active-icon" : ""}`}
-                  />
-                  <div className="nav-item-text">
-                    <div className="nav-item-label">{t(item.labelKey)}</div>
-                    <div className="nav-item-description">
-                      {t(item.descriptionKey)}
-                    </div>
-                  </div>
-                </a>
-              );
-            })}
-          </nav>
-        </div>
-      </aside>
-
-      {/* ===================== MOBILE MENU BUTTON ===================== */}
-      <div className="mobile-menu-button-wrapper">
-        <button
-          className="mobile-menu-button"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          <img
-            src={isMobileMenuOpen ? xIcon : menuIcon}
-            alt="menu"
-            className="menu-icon"
-          />
-        </button>
-      </div>
-
-      {/* ===================== MOBILE OVERLAY ===================== */}
-      {isMobileMenuOpen && (
-        <div
-          className="mobile-menu-overlay"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-      )}
-
-      {/* ===================== MOBILE SIDEBAR ===================== */}
-      <div className={`sidebar-mobile ${isMobileMenuOpen ? "open" : ""}`}>
-        <div className="sidebar-mobile-content">
-          <nav className="sidebar-nav">
-            <div className="sidebar-header">
-              <h2>{t('nav.dashboard')}</h2>
-            </div>
-
-            {navigationItems.map((item) => {
-              const isActive = isItemActive(item.href);
-
-              return (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  onClick={(e) => handleNavClick(e, item.href)}
-                  className={`nav-item ${isActive ? "active" : ""}`}
-                >
-                  <img
-                    src={item.icon}
-                    alt=""
-                    className={`nav-icon ${isActive ? "active-icon" : ""}`}
-                  />
-                  <div className="nav-item-text">
-                    <div className="nav-item-label">{t(item.labelKey)}</div>
-                    <div className="nav-item-description">
-                      {t(item.descriptionKey)}
-                    </div>
-                  </div>
-                </a>
-              );
-            })}
-          </nav>
-        </div>
-      </div>
-    </>
-  );
+  return <SharedSidebar navigationItems={navigationItems} headerTitle={t('nav.dashboard')} />;
 }

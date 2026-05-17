@@ -11,7 +11,7 @@ import AntiplagiarismPage from './pages/AntiplagiarismPage/AntiplagiarismPage.js
 import CritiquePage from './pages/CritiquePage/CritiquePage.jsx';
 import ProfilePage from './pages/ProfilePage/ProfilePage.jsx';
 import MyWorkPage from './pages/MyWorkPage/MyWorkPage.jsx';
-import NotificationsPage from './pages/NotificationsPage/NotificationsPage.jsx';
+import { NotificationsPage } from '@awm/shared';
 import documentCheckIcon from './assets/icons/document-check-icon.svg';
 import codeIcon from './assets/icons/code-icon.svg';
 
@@ -49,7 +49,7 @@ function App() {
                     <Route path="defense" element={<DefenseStepPage />} />
                     <Route path="profile" element={<ProfilePage />} />
                     <Route path="my-work" element={<MyWorkPage />} />
-                    <Route path="notifications" element={<NotificationsPage />} />
+                    <Route path="notifications" element={<NotificationsPage translationPrefix="student" />} />
                 </Route>
                 <Route path="*" element={<Navigate to="/choose-theme" replace />} />
             </Routes>

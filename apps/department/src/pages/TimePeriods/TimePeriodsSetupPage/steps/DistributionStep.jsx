@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import CommissionScheduleCard from "../../../../components/TimePeriods/SetUp/CommissionScheduleCard/CommissionScheduleCard";
+import { CommissionScheduleCard } from "@awm/shared";
 
 export default function DistributionStep({
                                              commissions,

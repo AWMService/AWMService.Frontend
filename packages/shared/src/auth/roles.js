@@ -93,6 +93,22 @@ export const normalizeRole = (role) => {
     return null;
   }
 
+  // Map database PK IDs (from DbSeeder insertion order) to frontend roles
+  const idMap = {
+    1: ROLES.ADMIN,
+    2: ROLES.VICE_RECTOR,
+    3: ROLES.DEPARTMENT,
+    4: ROLES.SUPERVISOR,
+    5: ROLES.SECRETARY,
+    6: ROLES.NORMOCONTROL,
+    7: ROLES.STUDENT,
+    8: ROLES.COMMISSION_MEMBER,
+  };
+
+  if (idMap[role]) {
+    return idMap[role];
+  }
+
   if (FRONTEND_ROLE_KEYS.has(role)) {
     return role;
   }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ConfirmModal, adminApi, useAuth } from '@awm/shared';
+import { ConfirmModal, adminApi, useAuth, normalizeRole } from '@awm/shared';
 import UserFormModal from '../../components/UserFormModal/UserFormModal';
 import './UsersPage.css';
 
@@ -149,11 +149,14 @@ function UsersPage() {
                                 </div>
                                 <div className="col-email">{u.email}</div>
                                 <div className="col-roles">
-                                    {u.roles.map(role => (
-                                        <span key={role} className="role-badge">
-                                            {t(`roles.${role}`)}
-                                        </span>
-                                    ))}
+                                    {u.roles.map(role => {
+                                        const normalized = normalizeRole(role);
+                                        return (
+                                            <span key={role} className="role-badge">
+                                                {t(`roles.${normalized}`)}
+                                            </span>
+                                        );
+                                    })}
                                 </div>
                                 <div className="col-status">
                                     <span className={`status-badge ${statusBadge.class}`}>

@@ -11,7 +11,7 @@ import DirectionsAndThemes from './pages/DirectionsAndThemes/DirectionsAndThemes
 import TimePeriodSchedulePage from './pages/TimePeriods/TimePeriodSchedulePage.jsx';
 import InitialPeriodsPage from './pages/InitialPeriods/InitialPeriodsPage.jsx';
 import TopicCoordinationPage from './pages/TopicCoordination/TopicCoordinationPage.jsx';
-import NotificationsPage from './pages/Notifications/NotificationsPage.jsx';
+import { NotificationsPage } from '@awm/shared';
 import CommissionsPage from './pages/Commissions/CommissionsPage.jsx';
 import StudentDistributionPage from './pages/StudentDistribution/StudentDistributionPage.jsx';
 import ExpertAssignmentPage from './pages/ExpertAssignment/ExpertAssignmentPage.jsx';
@@ -36,7 +36,7 @@ function App() {
                             <Route path="/directions-topics" element={<DirectionsAndThemes />} />
                             <Route path="/topic-coordination" element={<TopicCoordinationPage />} />
                             <Route path="/time-periods/:id/schedule" element={<TimePeriodSchedulePage />} />
-                            <Route path="/notifications" element={<NotificationsPage />} />
+                            <Route path="/notifications" element={<NotificationsPage translationPrefix="department" />} />
                             <Route path="/commissions" element={<CommissionsPage />} />
                             <Route path="/student-distribution" element={<StudentDistributionPage />} />
                             <Route path="/expert-assignment" element={<ExpertAssignmentPage />} />

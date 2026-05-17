@@ -46,3 +46,24 @@ export * from './auth/roles';
 
 // Utils
 export { getLocalizedText } from './utils/localization';
+
+// Shared Pages
+export { default as NotificationsPage } from './pages/NotificationsPage/NotificationsPage';
+
+// Shared Layouts
+export { SharedHeader } from './layouts/SharedHeader';
+export { SharedSidebar } from './layouts/SharedSidebar';
+
+// Domain Components
+export { default as DirectionCard } from './components/domain/Directions/DirectionCard/DirectionCard';
+export { default as DirectionModal } from './components/domain/Directions/DirectionModal/DirectionModal';
+export { default as DirectionStatusBadge } from './components/domain/Directions/DirectionStatusBadge/DirectionStatusBadge';
+export { default as ThemeModal } from './components/domain/Themes/ThemeModal/ThemeModal';
+export { default as CommissionCard } from './components/domain/TimePeriods/SetUp/CommissionCard';
+export { default as CommissionScheduleCard } from './components/domain/TimePeriods/SetUp/CommissionScheduleCard/CommissionScheduleCard';
+export { default as MembersModal } from './components/domain/TimePeriods/SetUp/MembersModal';
+export { default as TimePeriodCard } from './components/domain/TimePeriods/TimePeriodCard/TimePeriodCard';
+export { default as TimePeriodFormDialog } from './components/domain/TimePeriods/TimePeriodFormDialog/TimePeriodFormDialog';
+export { SupervisorCard } from './components/domain/supervisors/SupervisorCard';
+export { SupervisorSelectionDialog } from './components/domain/supervisors/SupervisorSelectionDialog';
+export { TeacherSelectionItem } from './components/domain/supervisors/TeacherSelectionItem';

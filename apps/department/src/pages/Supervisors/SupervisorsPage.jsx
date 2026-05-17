@@ -10,8 +10,7 @@ import {
     useApproveSupervisors 
 } from "@awm/shared";
 import "./SupervisorsPage.css";
-import { SupervisorCard } from "../../components/supervisors/SupervisorCard.jsx";
-import { SupervisorSelectionDialog } from "../../components/supervisors/SupervisorSelectionDialog.jsx";
+import { SupervisorCard, SupervisorSelectionDialog } from "@awm/shared";
 import plusIcon from "../../assets/icons/plus-icon.svg";
 import searchIcon from "../../assets/icons/search-icon.svg";
 

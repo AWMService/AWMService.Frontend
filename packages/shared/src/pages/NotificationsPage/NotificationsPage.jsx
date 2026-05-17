@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { getIntlLocale, useNotifications, useMarkAsRead, useMarkAllAsRead } from '@awm/shared';
+import { getIntlLocale } from '../../i18n';
+import { useNotifications, useMarkAsRead, useMarkAllAsRead } from '../../api';
 import './NotificationsPage.css';
 
 function formatDate(dateString, locale) {
@@ -14,7 +15,7 @@ function formatDate(dateString, locale) {
     });
 }
 
-export default function NotificationsPage() {
+export default function NotificationsPage({ translationPrefix = 'department' }) {
     const { t, i18n } = useTranslation();
     const locale = getIntlLocale(i18n.language);
     const { data, isLoading } = useNotifications();
@@ -42,17 +43,21 @@ export default function NotificationsPage() {
 
     return (
         <div className="notifications-page">
+            {/* Header */}
             <div className="notifications-header">
-                <h1>{t('universal.notificationsTitle')}</h1>
+                <h1>{t(`${translationPrefix}.notificationsTitle`, 'Уведомления')}</h1>
                 {unreadCount > 0 && (
-                    <span className="unread-badge">{unreadCount}</span>
+                    <span className="unread-badge">
+                        {t(`${translationPrefix}.unreadCount`, { count: unreadCount, defaultValue: '{{count}} новых' })}
+                    </span>
                 )}
             </div>
 
+            {/* Filter bar */}
             <div className="notifications-filter-bar">
                 <div className="filter-pills">
                     <span className="filter-pill active">
-                        {t('universal.filterAll')}
+                        {t(`${translationPrefix}.filterAll`, 'Все')}
                     </span>
                 </div>
                 <button
@@ -60,14 +65,15 @@ export default function NotificationsPage() {
                     onClick={handleMarkAllRead}
                     disabled={unreadCount === 0 || markAllAsReadMutation.isPending}
                 >
-                    {t('universal.markAllRead')}
+                    {t(`${translationPrefix}.markAllRead`, 'Отметить все как прочитанные')}
                 </button>
             </div>
 
+            {/* Notification list */}
             <div className="notifications-list">
                 {notifications.length === 0 && (
                     <div className="notifications-empty">
-                        {t('universal.noNotifications')}
+                        {t(`${translationPrefix}.noNotifications`, 'Нет уведомлений')}
                     </div>
                 )}
 
@@ -100,7 +106,7 @@ export default function NotificationsPage() {
                                         onClick={() => handleMarkAsRead(notification.id)}
                                         disabled={markAsReadMutation.isPending}
                                     >
-                                        {t('universal.markAsRead')}
+                                        {t(`${translationPrefix}.markAsRead`, 'Отметить как прочитанное')}
                                     </button>
                                 )}
                             </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import CommissionCard from "../../../../components/TimePeriods/SetUp/CommissionCard";
+import { CommissionCard } from "@awm/shared";
 
 export default function CommissionSetupStep({
                                                 commissions,

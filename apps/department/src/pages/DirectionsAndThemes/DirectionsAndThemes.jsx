@@ -17,9 +17,7 @@ import {
     useWorkTypes,
 } from "@awm/shared";
 import "./DirectionsAndThemes.css";
-import DirectionCard from "../../components/Directions/DirectionCard/DirectionCard.jsx";
-import DirectionModal from "../../components/Directions/DirectionModal/DirectionModal.jsx";
-import ThemeModal from "../../components/Themes/ThemeModal/ThemeModal.jsx";
+import { DirectionCard, DirectionModal, ThemeModal } from "@awm/shared";
 
 const TABS = {
     DIRECTIONS: "directions",
