@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './apiClient';
 
-// ================= Pre-Defense =================
+// Pre-Defense
 
 export async function fetchPreDefenseSchedule(commissionId) {
   const { data } = await apiClient.get('/pre-defense/schedule', {
@@ -163,7 +163,7 @@ export function useGeneratePreDefenseProtocol() {
   });
 }
 
-// ================= Final Defense Schedule =================
+// Final Defense Schedule
 
 export async function fetchDefenseSchedule(commissionId) {
   const { data } = await apiClient.get('/defense-schedule', {
@@ -265,7 +265,7 @@ export function useStartDefenseReconciliation() {
   });
 }
 
-// ================= Evaluation =================
+// Evaluation
 
 export async function fetchEvaluationCriteria(workTypeId, departmentId = null) {
   const params = { workTypeId };
@@ -324,7 +324,7 @@ export function useFinalizeDefense() {
   });
 }
 
-// ================= Protocols =================
+// Protocols
 
 export async function fetchProtocol(protocolId) {
   const { data } = await apiClient.get(`/protocols/${protocolId}`);

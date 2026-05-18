@@ -124,12 +124,10 @@ export default function TimePeriodSetupPage() {
     const [slotTime, setSlotTime] = useState("");
     const [slotCommissionId, setSlotCommissionId] = useState("");
 
-    // --- ЛОГИКА НАВИГАЦИИ НАЗАД ---
     const handleBack = () => {
         if (currentStep > 1) {
             setCurrentStep(prev => prev - 1);
         } else {
-            // Если мы на первом шаге, выходим со страницы
             navigate(-1);
         }
     };
@@ -226,13 +224,11 @@ export default function TimePeriodSetupPage() {
 
         let movedStudent = null;
 
-        // FROM FREE
         if (source.droppableId === "free") {
             movedStudent = freeStudents.find(s => s.id === draggableId);
             setFreeStudents(prev => prev.filter(s => s.id !== draggableId));
         }
 
-        // FROM COMMISSION
         if (source.droppableId !== "free") {
             const [fromCommissionId, fromSessionId] = source.droppableId.split("|");
 
@@ -258,13 +254,11 @@ export default function TimePeriodSetupPage() {
 
         if (!movedStudent) return;
 
-        // TO FREE
         if (destination.droppableId === "free") {
             setFreeStudents(prev => [...prev, movedStudent]);
             return;
         }
 
-        // TO COMMISSION
         const [toCommissionId, toSessionId] = destination.droppableId.split("|");
 
         setCommissions(prev =>
@@ -298,7 +292,6 @@ export default function TimePeriodSetupPage() {
 
     return (
         <div className="setup-page">
-            {/* ИСПОЛЬЗУЕМ НОВУЮ ФУНКЦИЮ handleBack */}
             <button className="back-button" onClick={handleBack}>
                 <ArrowLeft size={18} /> {t('common.back')}
             </button>

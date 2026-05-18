@@ -8,7 +8,6 @@ function DepartmentsPage() {
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState('departments');
     
-    // API Hooks
     const { data: departments = [] } = useDepartments();
     const createDeptMutation = useCreateDepartment();
     const updateDeptMutation = useUpdateDepartment();
@@ -19,24 +18,20 @@ function DepartmentsPage() {
     const updateFacMutation = useUpdateInstitute();
     const deleteFacMutation = useDeleteInstitute();
 
-    // Department CRUD state
     const [isDeptFormOpen, setIsDeptFormOpen] = useState(false);
     const [editingDept, setEditingDept] = useState(null);
     const [deleteDept, setDeleteDept] = useState(null);
 
-    // Faculty CRUD state
     const [isFacFormOpen, setIsFacFormOpen] = useState(false);
     const [editingFac, setEditingFac] = useState(null);
     const [deleteFac, setDeleteFac] = useState(null);
 
-    // Department handlers
     const handleCreateDept = () => { setEditingDept(null); setIsDeptFormOpen(true); };
     const handleEditDept = (dept) => { setEditingDept(dept); setIsDeptFormOpen(true); };
     const handleSaveDept = (formData) => {
         if (editingDept) {
             updateDeptMutation.mutate({ id: editingDept.id, ...formData });
         } else {
-            // Need an instituteId. We'll default to 1 if not selected, but ideally DepartmentFormModal should provide it
             const instituteId = formData.instituteId || 1; 
             createDeptMutation.mutate({ instituteId, ...formData });
         }
@@ -48,7 +43,6 @@ function DepartmentsPage() {
         setDeleteDept(null);
     };
 
-    // Faculty handlers
     const handleCreateFac = () => { setEditingFac(null); setIsFacFormOpen(true); };
     const handleEditFac = (fac) => { setEditingFac(fac); setIsFacFormOpen(true); };
     const handleSaveFac = (formData) => {

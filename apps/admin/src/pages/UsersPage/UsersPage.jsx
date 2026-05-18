@@ -17,7 +17,6 @@ function UsersPage() {
 
     const universityId = user?.universityId || 1;
 
-    // Fetch users
     const { data: users = [], isLoading, error } = useQuery({
         queryKey: ['admin-users', universityId, statusFilter, searchQuery],
         queryFn: () => adminApi.fetchUsers({ 
@@ -28,7 +27,6 @@ function UsersPage() {
         enabled: !!universityId
     });
 
-    // Mutations
     const createMutation = useMutation({
         mutationFn: adminApi.createUser,
         onSuccess: () => {

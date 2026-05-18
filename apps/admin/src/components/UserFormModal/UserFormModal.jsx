@@ -12,7 +12,6 @@ function UserFormModal({ isOpen, user, onClose, onSave, isLoading: isSaving }) {
 
     const universityId = currentUser?.universityId || 1;
 
-    // Fetch roles and departments
     const { data: roles = [] } = useQuery({
         queryKey: ['admin-roles', universityId],
         queryFn: () => adminApi.fetchRoles(universityId),
@@ -32,7 +31,7 @@ function UserFormModal({ isOpen, user, onClose, onSave, isLoading: isSaving }) {
                     login: user.login || '',
                     name: user.name || user.login || '',
                     email: user.email || '',
-                    password: '', // Don't show password on edit
+                    password: '',
                     roleId: user.roleId || '',
                     departmentId: user.departmentId || '',
                     status: user.isActive ? 'active' : 'inactive',

@@ -148,7 +148,6 @@ export default function InitialPeriodsPage() {
         return <div className="initial-periods-page"><p>{t('department.noDepartmentSelected', 'Department or Academic Year missing.')}</p></div>;
     }
 
-    // ===================== SUMMARY VIEW =====================
     if (isApproved) {
         return (
             <div className="initial-periods-page">
@@ -184,7 +183,6 @@ export default function InitialPeriodsPage() {
         );
     }
 
-    // ===================== FORM VIEW =====================
     return (
         <div className="initial-periods-page">
             <div className="page-header">

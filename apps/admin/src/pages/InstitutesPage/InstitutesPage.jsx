@@ -8,7 +8,6 @@ const emptyForm = { name: '', address: '' };
 export default function InstitutesPage() {
     const { t } = useTranslation();
     
-    // API Hooks
     const { data: items = [], isLoading } = useInstitutes();
     const createMutation = useCreateInstitute();
     const updateMutation = useUpdateInstitute();

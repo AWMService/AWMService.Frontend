@@ -14,11 +14,6 @@ import CommissionFormModal from "../../components/Commissions/CommissionFormModa
 import plusIcon from "../../assets/icons/plus-icon.svg";
 import "./CommissionsPage.css";
 
-// Temporary delete mutation until we add it to commissionQueries.js
-
-// We need to add deleteCommission to apiClient or commissionApi if not there.
-// I'll update commissionQueries.js to include it.
-
 function CommissionsPage() {
     const { t } = useTranslation();
     const { user } = useAuth();

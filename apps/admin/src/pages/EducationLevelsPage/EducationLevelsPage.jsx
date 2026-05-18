@@ -8,7 +8,6 @@ const emptyForm = { name: '', durationYears: '' };
 export default function EducationLevelsPage() {
     const { t } = useTranslation();
     
-    // API Hooks
     const { data: items = [], isLoading } = useDegreeLevels();
     const createMutation = useCreateDegreeLevel();
     const updateMutation = useUpdateDegreeLevel();

@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orgApi, eduApi, wfApi } from './adminApi';
 
-// Institutes
 export const useInstitutes = (universityId = 1) => {
   return useQuery({
     queryKey: ['institutes', universityId],
@@ -33,7 +32,6 @@ export const useDeleteInstitute = () => {
   });
 };
 
-// Departments
 export const useDepartments = (universityId = 1) => {
   return useQuery({
     queryKey: ['departments', universityId],
@@ -65,7 +63,6 @@ export const useDeleteDepartment = () => {
   });
 };
 
-// Programs
 export const usePrograms = () => {
   return useQuery({
     queryKey: ['programs'],
@@ -97,7 +94,6 @@ export const useDeleteProgram = () => {
   });
 };
 
-// Degree Levels
 export const useDegreeLevels = () => {
   return useQuery({
     queryKey: ['degreeLevels'],
@@ -116,7 +112,7 @@ export const useCreateDegreeLevel = () => {
 export const useUpdateDegreeLevel = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, ...data }) => eduApi.updateDegreeLevel(id, data),
+    mutationFn: ({ id, ...data }) => updateDegreeLevel(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['degreeLevels'] }),
   });
 };
@@ -129,7 +125,6 @@ export const useDeleteDegreeLevel = () => {
   });
 };
 
-// Work Types
 export const useWorkTypes = () => {
   return useQuery({
     queryKey: ['workTypes'],
