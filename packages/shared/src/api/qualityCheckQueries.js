@@ -1,17 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './apiClient';
-
 const CHECK_TYPES = {
   NormControl: 0,
   SoftwareCheck: 1,
   AntiPlagiarism: 2,
 };
-
 export async function fetchQualityChecks(workId) {
   const { data } = await apiClient.get(`/quality-checks/by-work/${workId}`);
   return data;
 }
-
 export function useQualityChecks(workId) {
   return useQuery({
     queryKey: ['qualityChecks', workId],
@@ -19,7 +16,6 @@ export function useQualityChecks(workId) {
     enabled: !!workId,
   });
 }
-
 export async function submitForCheck(workId, checkType) {
   const typeValue = CHECK_TYPES[checkType] ?? 0;
   const { data } = await apiClient.post(`/quality-checks/works/${workId}/submit`, {
@@ -27,7 +23,6 @@ export async function submitForCheck(workId, checkType) {
   });
   return data;
 }
-
 export function useSubmitForCheck(workId) {
   const queryClient = useQueryClient();
   return useMutation({
@@ -37,14 +32,12 @@ export function useSubmitForCheck(workId) {
     },
   });
 }
-
 export async function fetchPendingChecks(departmentId, academicYearId, checkType) {
   const params = { departmentId, academicYearId };
   if (checkType != null) params.checkType = CHECK_TYPES[checkType] ?? checkType;
   const { data } = await apiClient.get('/quality-checks/pending', { params });
   return data;
 }
-
 export function usePendingChecks(departmentId, academicYearId, checkType) {
   return useQuery({
     queryKey: ['pendingChecks', departmentId, academicYearId, checkType],

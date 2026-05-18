@@ -4,14 +4,12 @@ import { useTranslation } from "react-i18next";
 import "./SharedSidebar.css";
 import menuIcon from "../assets/icons/menu-icon.svg";
 import xIcon from "../assets/icons/x-icon.svg";
-
 export function SharedSidebar({ navigationItems, headerTitle }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
     const { t } = useTranslation();
     const pathname = location.pathname;
-
     const isItemActive = (item) => {
         if (pathname === item.href || pathname.startsWith(item.href.split("?")[0])) {
             return true;
@@ -21,18 +19,14 @@ export function SharedSidebar({ navigationItems, headerTitle }) {
         }
         return false;
     };
-
     const handleNavClick = (e, item) => {
         if (!item.onClick) {
-            // Let Link handle it natively, or use navigate if it's an a-tag
         }
         setIsMobileMenuOpen(false);
     };
-
     const renderNavItems = () => (
         navigationItems.map((item) => {
             const isActive = isItemActive(item);
-
             return (
                 <Link
                     key={item.href}
@@ -53,10 +47,8 @@ export function SharedSidebar({ navigationItems, headerTitle }) {
             );
         })
     );
-
     return (
         <>
-            {/* Desktop Sidebar */}
             <aside className="shared-sidebar-desktop">
                 <div className="shared-sidebar-desktop-content">
                     <nav className="shared-sidebar-nav">
@@ -69,8 +61,6 @@ export function SharedSidebar({ navigationItems, headerTitle }) {
                     </nav>
                 </div>
             </aside>
-
-            {/* Mobile Menu Button */}
             <div className="shared-mobile-menu-button-wrapper">
                 <button
                     className="shared-mobile-menu-button"
@@ -84,16 +74,12 @@ export function SharedSidebar({ navigationItems, headerTitle }) {
                     />
                 </button>
             </div>
-
-            {/* Overlay */}
             {isMobileMenuOpen && (
                 <div
                     className="shared-mobile-menu-overlay"
                     onClick={() => setIsMobileMenuOpen(false)}
                 />
             )}
-
-            {/* Mobile Sidebar */}
             <div className={`shared-sidebar-mobile ${isMobileMenuOpen ? "open" : ""}`}>
                 <div className="shared-sidebar-mobile-content">
                     <nav className="shared-sidebar-nav">

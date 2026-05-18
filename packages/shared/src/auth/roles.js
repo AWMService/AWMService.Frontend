@@ -10,7 +10,6 @@ export const ROLES = {
   ADMIN: 'admin',
   VICE_RECTOR: 'viceRector',
 };
-
 export const UNIVERSAL_ROLES = [
   ROLES.SUPERVISOR,
   ROLES.REVIEWER,
@@ -19,7 +18,6 @@ export const UNIVERSAL_ROLES = [
   ROLES.SECRETARY,
   ROLES.COMMISSION_MEMBER,
 ];
-
 export const ROLE_META = {
   [ROLES.STUDENT]: {
     labelKey: 'roles.student',
@@ -72,7 +70,6 @@ export const ROLE_META = {
     icon: 'BarChart3',
   },
 };
-
 export const BACKEND_TO_FRONTEND_ROLE_MAP = {
   Student: ROLES.STUDENT,
   Supervisor: ROLES.SUPERVISOR,
@@ -85,15 +82,11 @@ export const BACKEND_TO_FRONTEND_ROLE_MAP = {
   Chairman: ROLES.CHAIRMAN,
   ViceRector: ROLES.VICE_RECTOR,
 };
-
 const FRONTEND_ROLE_KEYS = new Set(Object.values(ROLES));
-
 export const normalizeRole = (role) => {
   if (!role) {
     return null;
   }
-
-  // Map database PK IDs (from DbSeeder insertion order) to frontend roles
   const idMap = {
     1: ROLES.ADMIN,
     2: ROLES.VICE_RECTOR,
@@ -104,18 +97,14 @@ export const normalizeRole = (role) => {
     7: ROLES.STUDENT,
     8: ROLES.COMMISSION_MEMBER,
   };
-
   if (idMap[role]) {
     return idMap[role];
   }
-
   if (FRONTEND_ROLE_KEYS.has(role)) {
     return role;
   }
-
   return BACKEND_TO_FRONTEND_ROLE_MAP[role] || role.charAt(0).toLowerCase() + role.slice(1);
 };
-
 export const normalizeRoles = (roles = []) => (
   roles
     .map(normalizeRole)

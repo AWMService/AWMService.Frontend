@@ -10,19 +10,15 @@ const DirectionCard = ({ direction, onView, language = "ru" }) => {
                 <h2 className="direction-title">{direction.title[language]}</h2>
                 <DirectionStatusBadge status={direction.status} />
             </div>
-
             <p className="direction-desc">{direction.description[language]}</p>
-
             <div className="direction-footer">
                 <div className="direction-supervisor">{direction.supervisor}</div>
                 <div className="direction-date">{t('department.submitted')}{direction.submittedAt}</div>
             </div>
-
             <button className="view-btn" onClick={() => onView(direction)}>
                 {t('department.viewDetails')}
             </button>
         </div>
     );
 };
-
 export default DirectionCard;

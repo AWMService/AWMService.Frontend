@@ -2,35 +2,28 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRole, ROLE_META } from '../context/RoleContext';
 import './RoleSelector.css';
-
 export function RoleSelector({ variant = 'dropdown' }) {
   const { t } = useTranslation();
   const { currentRole, availableRoles, switchRole } = useRole();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
-
   const currentMeta = ROLE_META[currentRole];
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
   const handleRoleChange = (role) => {
     switchRole(role);
     setIsOpen(false);
   };
-
   if (availableRoles.length <= 1) {
-    return null; // Не показывать если только одна роль
+    return null; 
   }
-
   if (variant === 'tabs') {
     return (
       <div className="role-selector role-selector--tabs">
@@ -52,7 +45,6 @@ export function RoleSelector({ variant = 'dropdown' }) {
       </div>
     );
   }
-
   return (
     <div className="role-selector" ref={dropdownRef}>
       <button
@@ -76,7 +68,6 @@ export function RoleSelector({ variant = 'dropdown' }) {
           <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" fill="none" />
         </svg>
       </button>
-
       {isOpen && (
         <div className="role-selector__dropdown">
           {availableRoles.map((role) => {
@@ -102,5 +93,4 @@ export function RoleSelector({ variant = 'dropdown' }) {
     </div>
   );
 }
-
 export default RoleSelector;

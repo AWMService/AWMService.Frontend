@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getIntlLocale } from "@awm/shared";
 import "./SupervisorCard.css";
-
 export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
   const { t, i18n } = useTranslation();
   const locale = getIntlLocale(i18n.language);
@@ -10,25 +9,20 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
       Math.round((supervisor.currentStudents / supervisor.maxStudents) * 100),
       100
   );
-
   const loadLevel =
       loadPercent < 60 ? "low" : loadPercent < 85 ? "medium" : "high";
-
   const [isEditingWorkload, setIsEditingWorkload] = useState(false);
   const [newMaxStudents, setNewMaxStudents] = useState(
       supervisor.maxStudents
   );
-
   const handleSaveWorkload = () => {
     onUpdateWorkload(supervisor.id, newMaxStudents);
     setIsEditingWorkload(false);
   };
-
   const handleCancelEdit = () => {
     setNewMaxStudents(supervisor.maxStudents);
     setIsEditingWorkload(false);
   };
-
   return (
       <div className="supervisor-card">
         <div className="card-header">
@@ -39,7 +33,6 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
               {supervisor.specialization}
             </p>
           </div>
-
           <div className="card-actions">
             {onUpdateWorkload && (
                 <button
@@ -53,7 +46,6 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
                   </svg>
                 </button>
             )}
-
             {onRemove && (
                 <button
                     className="icon-button danger"
@@ -71,12 +63,10 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
             )}
           </div>
         </div>
-
         <div className="card-content">
           <div className="grid-section">
             <div>
               <h4 className="section-title">{t('common.contactInfo')}</h4>
-
               <div className="contact-item">
                 <svg viewBox="0 0 24 24">
                   <path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" />
@@ -84,7 +74,6 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
                 </svg>
                 <span>{supervisor.email}</span>
               </div>
-
               <div className="contact-item">
                 <svg viewBox="0 0 24 24">
                   <path d="M22 16.92V21a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2H7a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92Z" />
@@ -92,11 +81,9 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
                 <span>{supervisor.phone}</span>
               </div>
             </div>
-
             <div>
               <h4 className="section-title">{t('department.workload')}</h4>
               <p>{t('supervisor.currentStudents')}: {supervisor.currentStudents}</p>
-
               {isEditingWorkload ? (
                   <div className="edit-workload-input">
                     <input
@@ -107,7 +94,6 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
                             setNewMaxStudents(Number(e.target.value) || 1)
                         }
                     />
-
                     <button
                         className="icon-button success"
                         title={t('common.save')}
@@ -117,7 +103,6 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
                         <path d="M5 13l4 4L19 7" />
                       </svg>
                     </button>
-
                     <button
                         className="icon-button"
                         title={t('common.cancel')}
@@ -132,7 +117,6 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
               ) : (
                   <div>
                     <p>{t('supervisor.maxStudents')}: {supervisor.maxStudents}</p>
-
                     <div className="progress-wrapper">
                       <div className="progress-bar">
                         <div
@@ -145,7 +129,6 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
                   </div>
               )}
             </div>
-
             {supervisor.assignedDate && (
                 <div>
                   <h4 className="section-title">{t('department.assignedDate')}</h4>

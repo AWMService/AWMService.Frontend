@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './apiClient';
-
 export const commissionApi = {
   fetchCommissions: async (departmentId, academicYearId) => {
     const { data } = await apiClient.get('/commissions', {
@@ -33,13 +32,11 @@ export const commissionApi = {
     return data;
   }
 };
-
 export const commissionKeys = {
   all: ['commissions'],
   byDepartment: (departmentId, academicYearId) => [...commissionKeys.all, 'department', departmentId, academicYearId],
   detail: (commissionId) => [...commissionKeys.all, 'detail', commissionId]
 };
-
 export const useCommissions = (departmentId, academicYearId) => {
   return useQuery({
     queryKey: commissionKeys.byDepartment(departmentId, academicYearId),
@@ -47,7 +44,6 @@ export const useCommissions = (departmentId, academicYearId) => {
     enabled: !!departmentId && !!academicYearId,
   });
 };
-
 export const useCommissionDetail = (commissionId) => {
   return useQuery({
     queryKey: commissionKeys.detail(commissionId),
@@ -55,7 +51,6 @@ export const useCommissionDetail = (commissionId) => {
     enabled: !!commissionId,
   });
 };
-
 export const useCreateCommission = (departmentId, academicYearId) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -65,7 +60,6 @@ export const useCreateCommission = (departmentId, academicYearId) => {
     },
   });
 };
-
 export const useUpdateCommission = (departmentId, academicYearId) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -76,7 +70,6 @@ export const useUpdateCommission = (departmentId, academicYearId) => {
     },
   });
 };
-
 export const useAddCommissionMember = (commissionId) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -86,7 +79,6 @@ export const useAddCommissionMember = (commissionId) => {
     },
   });
 };
-
 export const useRemoveCommissionMember = (commissionId) => {
   const queryClient = useQueryClient();
   return useMutation({

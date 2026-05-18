@@ -2,18 +2,14 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "./TimePeriodCard.css";
-
 export default function TimePeriodCard({ period, onDelete }) {
     const navigate = useNavigate();
     const { t } = useTranslation();
-
     const handleSetupClick = () => {
         navigate(`/time-periods/${period.id}/setup`);
     };
-
     return (
         <div className="tp-card">
-            {/* ===== Header ===== */}
             <div className="tp-card__header">
                 <div>
                     <h3 className="tp-card__title">
@@ -24,10 +20,8 @@ export default function TimePeriodCard({ period, onDelete }) {
                         <strong>{period.endDate}</strong>
                     </p>
                 </div>
-
                 <div className="tp-card__header-actions">
                     <span className="tp-card__status">{t('commission.statusUpcoming')}</span>
-
                     <button
                         className="tp-card__icon-btn tp-card__icon-btn--danger"
                         title={t('department.deletePeriod')}
@@ -43,8 +37,6 @@ export default function TimePeriodCard({ period, onDelete }) {
                     </button>
                 </div>
             </div>
-
-            {/* ===== Progress ===== */}
             <div className="tp-card__progress-wrapper">
                 <div className="tp-card__progress-bar">
                     <div
@@ -54,15 +46,11 @@ export default function TimePeriodCard({ period, onDelete }) {
                 </div>
                 <span className="tp-card__progress-text">{period.progress}%</span>
             </div>
-
-            {/* ===== Summary ===== */}
             <div className="tp-card__summary">
                 <span>{t('commission.commissions')}: {period.commissions}</span>
                 <span>{t('commission.students')}: {period.students}</span>
                 <span>{t('common.date')}: {period.dates}</span>
             </div>
-
-            {/* ===== Actions ===== */}
             <div className="tp-card__actions">
                 <button
                     className="tp-card__action-btn"
@@ -74,7 +62,6 @@ export default function TimePeriodCard({ period, onDelete }) {
                     </svg>
                     {t('department.setupPeriod')}
                 </button>
-
                 <button
                     className="tp-card__action-btn"
                     onClick={() =>
@@ -89,7 +76,6 @@ export default function TimePeriodCard({ period, onDelete }) {
                     </svg>
                     {t('commission.schedule')}
                 </button>
-
             </div>
         </div>
     );

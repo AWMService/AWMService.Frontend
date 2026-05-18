@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import MembersModal from "./MembersModal";
 import "./CommissionCard.css";
-
 const teachers = [
     "Доцент Сидоров П.П.",
     "Профессор Козлова М.М.",
@@ -10,16 +9,13 @@ const teachers = [
     "Профессор Лебедева Н.Н.",
     "Доцент Иванова Е.Е.",
 ];
-
 function SelectBox({ label, value, onChange, placeholder }) {
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState("");
     const ref = useRef(null);
-
     const filtered = teachers.filter((t) =>
         t.toLowerCase().includes(query.toLowerCase())
     );
-
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (ref.current && !ref.current.contains(e.target)) {
@@ -31,11 +27,9 @@ function SelectBox({ label, value, onChange, placeholder }) {
         return () =>
             document.removeEventListener("mousedown", handleClickOutside);
     }, []);
-
     return (
         <div className="field" ref={ref}>
             <label>{label}</label>
-
             <div className={`select-box ${open ? "open" : ""}`}>
                 <input
                     value={open ? query : value || ""}
@@ -47,7 +41,6 @@ function SelectBox({ label, value, onChange, placeholder }) {
                         setOpen(true);
                     }}
                 />
-
                 {value && (
                     <button
                         className="clear-btn"
@@ -61,7 +54,6 @@ function SelectBox({ label, value, onChange, placeholder }) {
                         ✕
                     </button>
                 )}
-
                 {open && (
                     <div className="select-dropdown">
                         {filtered.map((t) => (
@@ -83,14 +75,11 @@ function SelectBox({ label, value, onChange, placeholder }) {
         </div>
     );
 }
-
 export default function CommissionCard({ commission, onChange, onRemove }) {
     const { t } = useTranslation();
     const [membersOpen, setMembersOpen] = useState(false);
-
     return (
         <div className="commission-card">
-            {/* ===== HEADER ===== */}
             <div className="commission-header">
                 <input
                     className="commission-name"
@@ -99,7 +88,6 @@ export default function CommissionCard({ commission, onChange, onRemove }) {
                         onChange({ ...commission, name: e.target.value })
                     }
                 />
-
                 {onRemove && (
                     <button
                         className="icon-button danger"
@@ -116,7 +104,6 @@ export default function CommissionCard({ commission, onChange, onRemove }) {
                     </button>
                 )}
             </div>
-
             <SelectBox
                 label={t('commission.chairman')}
                 value={commission.chairman}
@@ -125,7 +112,6 @@ export default function CommissionCard({ commission, onChange, onRemove }) {
                     onChange({ ...commission, chairman: value })
                 }
             />
-
             <SelectBox
                 label={t('department.technicalSecretary')}
                 value={commission.secretary}
@@ -134,7 +120,6 @@ export default function CommissionCard({ commission, onChange, onRemove }) {
                     onChange({ ...commission, secretary: value })
                 }
             />
-
             <div className="members-row">
                 <span>{t('commission.members')}</span>
                 <button
@@ -144,7 +129,6 @@ export default function CommissionCard({ commission, onChange, onRemove }) {
                     {t('common.select')}
                 </button>
             </div>
-
             {commission.members.length > 0 && (
                 <div className="members-chips">
                     {commission.members.map((m) => (
@@ -154,7 +138,6 @@ export default function CommissionCard({ commission, onChange, onRemove }) {
                     ))}
                 </div>
             )}
-
             <MembersModal
                 isOpen={membersOpen}
                 selected={commission.members}

@@ -1,41 +1,31 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import "./ThemeModal.css";
-
 const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
     const { t } = useTranslation();
     const [showRejection, setShowRejection] = useState(false);
     const [rejectionReason, setRejectionReason] = useState("");
     const [language, setLanguage] = useState("ru");
-
     if (!theme) return null;
-
     const isPending = theme.status === "На рассмотрении";
     const isRejected = theme.status === "Отклонено";
-
     const handleReject = () => {
         if (!rejectionReason.trim()) {
             return;
         }
-
         onUpdateStatus(theme.id, "Отклонено", rejectionReason);
         handleClose();
     };
-
     const handleClose = () => {
         setShowRejection(false);
         setRejectionReason("");
         onClose();
     };
-
     const getTitle = () => theme.title[language];
     const getDescription = () => theme.description[language];
-
     return (
         <div className="tm-overlay" onClick={handleClose}>
             <div className="tm-content" onClick={(e) => e.stopPropagation()}>
-
-                {/* HEADER */}
                 <div className="tm-header">
                     <div
                         className={`tm-status ${
@@ -48,7 +38,6 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                     >
                         {theme.status}
                     </div>
-
                     <div className="tm-lang-switch">
                         {["kk", "ru", "en"].map((lang) => (
                             <button
@@ -63,14 +52,11 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                         ))}
                     </div>
                 </div>
-
-                {/* SCROLL */}
                 <div className="tm-scroll-area">
                     <h2 className="tm-title">{getTitle()}</h2>
                     <p className="tm-subtitle">
                         {t('department.themeInfo')}
                     </p>
-
                     <div className="tm-body">
                         <div className="tm-info-grid">
                             <div className="tm-info-item">
@@ -92,7 +78,6 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                                 </span>
                             </div>
                         </div>
-
                         <div className="tm-section">
                             <span className="tm-section__title">
                                 {t('department.themeDescription')}
@@ -101,8 +86,6 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                                 <p>{getDescription()}</p>
                             </div>
                         </div>
-
-                        {/* ПРИЧИНА ОТКАЗА (READ ONLY) */}
                         {isRejected && theme.rejectionReason && (
                             <div className="tm-rejected-info">
                                 <span className="tm-rejected-info__label">
@@ -114,8 +97,6 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                             </div>
                         )}
                     </div>
-
-                    {/* FOOTER */}
                     <div className="tm-footer">
                         {isPending ? (
                             !showRejection ? (
@@ -186,5 +167,4 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
         </div>
     );
 };
-
 export default ThemeModal;

@@ -7,7 +7,6 @@
     align-items: center;
     z-index: 1000;
 }
-
 .confirm-modal {
     background: #ffffff;
     border-radius: 12px;
@@ -18,28 +17,24 @@
     animation: fadeInScale 0.2s ease-out;
     font-family: "Segoe UI", Roboto, Arial, sans-serif;
 }
-
 .confirm-modal__title {
     margin: 0;
     font-size: 20px;
     font-weight: 600;
     color: #111827;
 }
-
 .confirm-modal__message {
     font-size: 14px;
     color: #374151;
     margin: 8px 0 0;
     line-height: 1.5;
 }
-
 .confirm-modal__actions {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
     margin-top: 20px;
 }
-
 .confirm-modal__actions .button {
     font-family: inherit;
     font-size: 14px;
@@ -50,35 +45,28 @@
     border: none;
     transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
-
 .confirm-modal__actions .primary-button {
     background: #3b82f6;
     color: #ffffff;
 }
-
 .confirm-modal__actions .primary-button:hover {
     background: #2563eb;
 }
-
 .confirm-modal__actions .danger-button {
     background: #dc2626;
     color: #ffffff;
 }
-
 .confirm-modal__actions .danger-button:hover {
     background: #b91c1c;
 }
-
 .confirm-modal__actions .secondary-button {
     background: transparent;
     border: 1px solid #d1d5db;
     color: #374151;
 }
-
 .confirm-modal__actions .secondary-button:hover {
     background: #f3f4f6;
 }
-
 @keyframes fadeInScale {
     from {
         opacity: 0;

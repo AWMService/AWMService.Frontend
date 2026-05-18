@@ -1,13 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orgApi, eduApi, wfApi } from './adminApi';
-
 export const useInstitutes = (universityId = 1) => {
   return useQuery({
     queryKey: ['institutes', universityId],
     queryFn: () => orgApi.fetchInstitutes(universityId),
   });
 };
-
 export const useCreateInstitute = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -15,7 +13,6 @@ export const useCreateInstitute = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['institutes'] }),
   });
 };
-
 export const useUpdateInstitute = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -23,7 +20,6 @@ export const useUpdateInstitute = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['institutes'] }),
   });
 };
-
 export const useDeleteInstitute = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -31,14 +27,12 @@ export const useDeleteInstitute = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['institutes'] }),
   });
 };
-
 export const useDepartments = (universityId = 1) => {
   return useQuery({
     queryKey: ['departments', universityId],
     queryFn: () => orgApi.fetchDepartments(universityId),
   });
 };
-
 export const useCreateDepartment = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -46,7 +40,6 @@ export const useCreateDepartment = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['departments'] }),
   });
 };
-
 export const useUpdateDepartment = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -54,7 +47,6 @@ export const useUpdateDepartment = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['departments'] }),
   });
 };
-
 export const useDeleteDepartment = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -62,14 +54,12 @@ export const useDeleteDepartment = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['departments'] }),
   });
 };
-
 export const usePrograms = () => {
   return useQuery({
     queryKey: ['programs'],
     queryFn: eduApi.fetchPrograms,
   });
 };
-
 export const useCreateProgram = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -77,7 +67,6 @@ export const useCreateProgram = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['programs'] }),
   });
 };
-
 export const useUpdateProgram = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -85,7 +74,6 @@ export const useUpdateProgram = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['programs'] }),
   });
 };
-
 export const useDeleteProgram = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -93,14 +81,12 @@ export const useDeleteProgram = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['programs'] }),
   });
 };
-
 export const useDegreeLevels = () => {
   return useQuery({
     queryKey: ['degreeLevels'],
     queryFn: eduApi.fetchDegreeLevels,
   });
 };
-
 export const useCreateDegreeLevel = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -108,7 +94,6 @@ export const useCreateDegreeLevel = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['degreeLevels'] }),
   });
 };
-
 export const useUpdateDegreeLevel = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -116,7 +101,6 @@ export const useUpdateDegreeLevel = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['degreeLevels'] }),
   });
 };
-
 export const useDeleteDegreeLevel = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -124,14 +108,12 @@ export const useDeleteDegreeLevel = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['degreeLevels'] }),
   });
 };
-
 export const useWorkTypes = () => {
   return useQuery({
     queryKey: ['workTypes'],
     queryFn: wfApi.fetchWorkTypes,
   });
 };
-
 export const useCreateWorkType = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -139,7 +121,6 @@ export const useCreateWorkType = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['workTypes'] }),
   });
 };
-
 export const useUpdateWorkType = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -147,7 +128,6 @@ export const useUpdateWorkType = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['workTypes'] }),
   });
 };
-
 export const useDeleteWorkType = () => {
   const queryClient = useQueryClient();
   return useMutation({

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import "./SupervisorSelectionDialog.css";
 import { TeacherSelectionItem } from "./TeacherSelectionItem.jsx";
-
 export function SupervisorSelectionDialog({
                                             availableTeachers,
                                             isOpen,
@@ -12,13 +11,11 @@ export function SupervisorSelectionDialog({
   const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState("");
   const [selectedTeacherIds, setSelectedTeacherIds] = useState([]);
-
   const filteredTeachers = availableTeachers.filter(
       (teacher) =>
           teacher.name.toLowerCase().includes(searchValue.toLowerCase()) ||
           teacher.specialization.toLowerCase().includes(searchValue.toLowerCase())
   );
-
   const toggleTeacher = (teacherId) => {
     setSelectedTeacherIds((prev) =>
         prev.includes(teacherId)
@@ -26,26 +23,20 @@ export function SupervisorSelectionDialog({
             : [...prev, teacherId]
     );
   };
-
   const handleConfirm = () => {
     onConfirm(selectedTeacherIds);
     setSelectedTeacherIds([]);
     setSearchValue("");
   };
-
   const handleCancel = () => {
     onOpenChange(false);
     setSelectedTeacherIds([]);
     setSearchValue("");
   };
-
   if (!isOpen) return null;
-
   return (
       <div className="supervisor-dialog-overlay">
         <div className="supervisor-dialog">
-
-
           <div className="supervisor-dialog-header">
             <div className="supervisor-dialog-header-row">
               <div>
@@ -56,8 +47,6 @@ export function SupervisorSelectionDialog({
                   {t('department.supervisorsSubtitle')}
                 </p>
               </div>
-
-
               <button
                   className="supervisor-dialog-close"
                   onClick={handleCancel}
@@ -70,17 +59,12 @@ export function SupervisorSelectionDialog({
               </button>
             </div>
           </div>
-
-
           <div className="supervisor-dialog-body">
-
-
             <div className="supervisor-search">
               <svg viewBox="0 0 24 24" className="supervisor-search-icon">
                 <circle cx="11" cy="11" r="8" />
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
-
               <input
                   type="text"
                   placeholder={t('department.searchSupervisors')}
@@ -89,8 +73,6 @@ export function SupervisorSelectionDialog({
                   className="supervisor-search-input"
               />
             </div>
-
-
             {selectedTeacherIds.length > 0 && (
                 <div className="supervisor-selection-info">
               <span>
@@ -104,8 +86,6 @@ export function SupervisorSelectionDialog({
                   </button>
                 </div>
             )}
-
-
             <div className="supervisor-teachers-scroll">
               <div className="supervisor-teachers-list">
                 {filteredTeachers.length > 0 ? (
@@ -126,8 +106,6 @@ export function SupervisorSelectionDialog({
                 )}
               </div>
             </div>
-
-
             <div className="supervisor-dialog-actions">
               <button
                   className="supervisor-button outline"

@@ -1,12 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { staffApi } from './adminApi';
-
 export const staffKeys = {
   all: ['staff'],
   byDepartment: (departmentId) => [...staffKeys.all, 'department', departmentId],
   supervisors: (departmentId) => [...staffKeys.all, 'supervisors', departmentId],
 };
-
 export const useStaffByDepartment = (departmentId) => {
   return useQuery({
     queryKey: staffKeys.byDepartment(departmentId),
@@ -14,7 +12,6 @@ export const useStaffByDepartment = (departmentId) => {
     enabled: !!departmentId,
   });
 };
-
 export const useSupervisors = (departmentId) => {
   return useQuery({
     queryKey: staffKeys.supervisors(departmentId),
@@ -22,7 +19,6 @@ export const useSupervisors = (departmentId) => {
     enabled: !!departmentId,
   });
 };
-
 export const useCreateStaff = (departmentId) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -32,7 +28,6 @@ export const useCreateStaff = (departmentId) => {
     },
   });
 };
-
 export const useUpdateStaff = (departmentId) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -43,7 +38,6 @@ export const useUpdateStaff = (departmentId) => {
     },
   });
 };
-
 export const useUpdateStaffWorkload = (departmentId) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -54,7 +48,6 @@ export const useUpdateStaffWorkload = (departmentId) => {
     },
   });
 };
-
 export const useApproveSupervisors = (departmentId) => {
   const queryClient = useQueryClient();
   return useMutation({

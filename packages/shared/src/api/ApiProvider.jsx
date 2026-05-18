@@ -1,7 +1,5 @@
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
-// Default configuration for react-query
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -10,7 +8,6 @@ export const queryClient = new QueryClient({
     },
   },
 });
-
 export const ApiProvider = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>

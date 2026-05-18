@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import './ConfirmModal.css';
-
 export function ConfirmModal({ 
     isOpen, 
     title, 
@@ -10,12 +9,10 @@ export function ConfirmModal({
     onCancel, 
     confirmText,
     cancelText,
-    variant = 'primary' // 'primary' | 'danger'
+    variant = 'primary' 
 }) {
     const { t } = useTranslation();
-    
     if (!isOpen) return null;
-    
     return (
         <div className="confirm-modal-backdrop" onClick={onCancel}>
             <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>

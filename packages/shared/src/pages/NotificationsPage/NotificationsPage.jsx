@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { getIntlLocale } from '../../i18n';
 import { useNotifications, useMarkAsRead, useMarkAllAsRead } from '../../api';
 import './NotificationsPage.css';
-
 function formatDate(dateString, locale) {
     const date = new Date(dateString);
     return date.toLocaleString(locale, {
@@ -14,25 +13,20 @@ function formatDate(dateString, locale) {
         minute: '2-digit',
     });
 }
-
 export default function NotificationsPage({ translationPrefix = 'department' }) {
     const { t, i18n } = useTranslation();
     const locale = getIntlLocale(i18n.language);
     const { data, isLoading } = useNotifications();
     const notifications = data?.items ?? [];
     const unreadCount = data?.unreadCount ?? 0;
-
     const markAsReadMutation = useMarkAsRead();
     const markAllAsReadMutation = useMarkAllAsRead();
-
     const handleMarkAsRead = (id) => {
         markAsReadMutation.mutate(id);
     };
-
     const handleMarkAllRead = () => {
         markAllAsReadMutation.mutate();
     };
-
     if (isLoading) {
         return (
             <div className="notifications-page">
@@ -40,10 +34,8 @@ export default function NotificationsPage({ translationPrefix = 'department' }) 
             </div>
         );
     }
-
     return (
         <div className="notifications-page">
-            {/* Header */}
             <div className="notifications-header">
                 <h1>{t(`${translationPrefix}.notificationsTitle`, 'Уведомления')}</h1>
                 {unreadCount > 0 && (
@@ -52,8 +44,6 @@ export default function NotificationsPage({ translationPrefix = 'department' }) 
                     </span>
                 )}
             </div>
-
-            {/* Filter bar */}
             <div className="notifications-filter-bar">
                 <div className="filter-pills">
                     <span className="filter-pill active">
@@ -68,15 +58,12 @@ export default function NotificationsPage({ translationPrefix = 'department' }) 
                     {t(`${translationPrefix}.markAllRead`, 'Отметить все как прочитанные')}
                 </button>
             </div>
-
-            {/* Notification list */}
             <div className="notifications-list">
                 {notifications.length === 0 && (
                     <div className="notifications-empty">
                         {t(`${translationPrefix}.noNotifications`, 'Нет уведомлений')}
                     </div>
                 )}
-
                 {notifications.map((notification) => (
                     <div
                         key={notification.id}
@@ -91,11 +78,9 @@ export default function NotificationsPage({ translationPrefix = 'department' }) 
                                     <span className="unread-dot" />
                                 )}
                             </div>
-
                             <div className="notification-message">
                                 {notification.body}
                             </div>
-
                             <div className="notification-footer">
                                 <span className="notification-date">
                                     {formatDate(notification.createdAt, locale)}

@@ -4,14 +4,12 @@
     border-radius: 12px;
     padding: 16px;
 }
-
 .slot-card {
     border: 1px dashed #c7d2fe;
     border-radius: 10px;
     padding: 12px;
     margin-top: 12px;
 }
-
 .slot-header {
     display: flex;
     justify-content: space-between;
@@ -19,18 +17,15 @@
     color: #374151;
     margin-bottom: 8px;
 }
-
 .slot-count {
     color: #6b7280;
 }
-
 .slot-empty {
     font-size: 13px;
     color: #9ca3af;
     text-align: center;
     padding: 12px 0;
 }
-
 .student-chip {
     background: #eff6ff;
     color: #2563eb;

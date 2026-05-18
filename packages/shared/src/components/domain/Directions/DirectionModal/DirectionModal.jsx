@@ -1,43 +1,34 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import "./DirectionModal.css";
-
 const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
     const { t } = useTranslation();
     const [showRejection, setShowRejection] = useState(false);
     const [rejectionReason, setRejectionReason] = useState("");
     const [language, setLanguage] = useState("ru");
-
     if (!direction) return null;
-
     const isPending = direction.status === "На рассмотрении";
     const isRejected = direction.status === "Отклонено";
-
     const handleReject = () => {
         if (!rejectionReason.trim()) {
-            return; // Дополнительная защита
+            return; 
         }
-
         onUpdateStatus(direction.id, "Отклонено", rejectionReason);
         handleClose();
     };
-
     const handleClose = () => {
         setShowRejection(false);
         setRejectionReason("");
         onClose();
     };
-
     const getTitle = () => direction.title[language];
     const getDescription = () => direction.description[language];
-
     return (
         <div className="dm-overlay" onClick={handleClose}>
             <div
                 className="dm-content"
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* HEADER */}
                 <div className="dm-header">
                     <div
                         className={`dm-status ${
@@ -50,7 +41,6 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                     >
                         {direction.status}
                     </div>
-
                     <div className="dm-lang-switch">
                         {["kk", "ru", "en"].map((lang) => (
                             <button
@@ -65,14 +55,11 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                         ))}
                     </div>
                 </div>
-
-                {/* SCROLL AREA */}
                 <div className="dm-scroll-area">
                     <h2 className="dm-title">{getTitle()}</h2>
                     <p className="dm-subtitle">
                         {t('department.directionInfo')}
                     </p>
-
                     <div className="dm-body">
                         <div className="dm-info-grid">
                             <div className="dm-info-item">
@@ -94,7 +81,6 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                                 </span>
                             </div>
                         </div>
-
                         <div className="dm-section">
                             <span className="dm-section__title">
                                 {t('department.directionDescription')}
@@ -103,8 +89,6 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                                 <p>{getDescription()}</p>
                             </div>
                         </div>
-
-                        {/* ПРИЧИНА ОТКАЗА (ПОСЛЕ ОТКЛОНЕНИЯ) */}
                         {isRejected && direction.rejectionReason && (
                             <div className="dm-rejected-info">
                                 <span className="dm-rejected-info__label">
@@ -116,8 +100,6 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                             </div>
                         )}
                     </div>
-
-                    {/* FOOTER */}
                     <div className="dm-footer">
                         {isPending ? (
                             !showRejection ? (
@@ -190,5 +172,4 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
         </div>
     );
 };
-
 export default DirectionModal;

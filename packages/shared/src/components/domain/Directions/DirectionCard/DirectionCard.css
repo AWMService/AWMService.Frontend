@@ -6,30 +6,25 @@
     transition: transform 0.2s ease;
     margin-bottom: 16px;
 }
-
 .direction-card:hover {
     box-shadow: 0 6px 12px rgba(0,0,0,0.12);
 }
-
 .direction-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-
 .direction-title {
     font-size: 16px;
     font-weight: 600;
     margin: 0;
     flex: 1;
 }
-
 .direction-desc {
     font-size: 14px;
     color: #4b5563;
     margin: 12px 0;
 }
-
 .direction-footer {
     display: flex;
     justify-content: space-between;
@@ -38,16 +33,13 @@
     font-size: 14px;
     color: #374151;
 }
-
 .direction-supervisor {
     font-weight: 500;
 }
-
 .direction-date {
     color: #6b7280;
     font-size: 13px;
 }
-
 .view-btn {
     margin-top: 12px;
     padding: 8px 14px;
@@ -60,7 +52,6 @@
     cursor: pointer;
     transition: background 0.2s ease;
 }
-
 .view-btn:hover {
     background: #1e40af;
 }

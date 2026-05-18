@@ -1,26 +1,21 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './apiClient';
-
 const read = (value, key) => value?.[key] ?? value?.[key.charAt(0).toUpperCase() + key.slice(1)];
-
 const readLocalized = (item, field) => {
   const value = read(item, field);
   const pascal = field.charAt(0).toUpperCase() + field.slice(1);
-
   return {
     ru: value?.ru ?? value?.Ru ?? read(item, `${field}Ru`) ?? read(item, `${pascal}Ru`) ?? '',
     kk: value?.kk ?? value?.Kk ?? value?.kz ?? value?.Kz ?? read(item, `${field}Kz`) ?? read(item, `${pascal}Kz`) ?? '',
     en: value?.en ?? value?.En ?? read(item, `${field}En`) ?? read(item, `${pascal}En`) ?? '',
   };
 };
-
 const normalizeTopicStatus = (item) => {
   if (read(item, 'isClosed') || read(item, 'isDeleted')) return 'closed';
   if (read(item, 'isApproved')) return 'approved';
   if (read(item, 'isSubmittedForApproval')) return 'pending';
   return 'draft';
 };
-
 export const normalizeApplicationStatus = (status) => {
   const raw = String(status || '').toLowerCase();
   if (raw.includes('accept') || raw.includes('approved')) return 'approved';
@@ -28,12 +23,10 @@ export const normalizeApplicationStatus = (status) => {
   if (raw.includes('withdraw')) return 'withdrawn';
   return 'pending';
 };
-
 export const normalizeTopicApplication = (item) => {
   const status = normalizeApplicationStatus(read(item, 'statusText') ?? read(item, 'status'));
   const topicTitle = readLocalized(item, 'topicTitle');
   const directionTitle = readLocalized(item, 'directionTitle');
-
   return {
     ...item,
     id: read(item, 'id'),
@@ -59,13 +52,11 @@ export const normalizeTopicApplication = (item) => {
     topicAvailableSpots: read(item, 'topicAvailableSpots'),
   };
 };
-
 export const normalizeTopic = (item) => {
   const applications = (read(item, 'applications') || []).map(normalizeTopicApplication);
   const pendingApplicationsCount = read(item, 'pendingApplicationsCount') ?? applications.filter((app) => app.status === 'pending').length;
   const acceptedApplicationsCount = read(item, 'acceptedApplicationsCount') ?? applications.filter((app) => app.status === 'approved').length;
   const maxParticipants = read(item, 'maxParticipants') ?? 1;
-
   return {
     ...item,
     id: read(item, 'id'),
@@ -112,7 +103,6 @@ export const normalizeTopic = (item) => {
       })),
   };
 };
-
 export const normalizeCoordinationSummary = (summary) => ({
   totalTopics: read(summary, 'totalTopics') ?? 0,
   approvedTopics: read(summary, 'approvedTopics') ?? 0,
@@ -138,10 +128,8 @@ export const normalizeCoordinationSummary = (summary) => ({
     isClosed: read(item, 'isClosed') ?? false,
   })),
 });
-
 export const topicPayloadFromForm = ({ form, user, workTypeId }) => {
   const titleRu = form.title?.ru?.trim() || form.title?.kk?.trim() || form.title?.en?.trim() || '';
-
   return {
     departmentId: user?.departmentId,
     supervisorId: user?.staffId,
@@ -157,7 +145,6 @@ export const topicPayloadFromForm = ({ form, user, workTypeId }) => {
     maxParticipants: Number(form.maxParticipants || form.studentCount || form.participantCount || 1),
   };
 };
-
 export const topicsApi = {
   fetchBySupervisor: async ({ supervisorId, academicYearId }) => {
     const { data } = await apiClient.get('/Topics/by-supervisor', {
@@ -165,104 +152,85 @@ export const topicsApi = {
     });
     return data.map(normalizeTopic);
   },
-
   fetchByDirection: async (directionId) => {
     const { data } = await apiClient.get(`/Topics/by-direction/${directionId}`);
     return data.map(normalizeTopic);
   },
-
   fetchAvailable: async ({ departmentId, academicYearId } = {}) => {
     const { data } = await apiClient.get('/Topics/available', {
       params: { departmentId, academicYearId },
     });
     return data.map(normalizeTopic);
   },
-
   fetchById: async (id) => {
     const { data } = await apiClient.get(`/Topics/${id}`);
     return normalizeTopic(data);
   },
-
   create: async (payload) => {
     const { data } = await apiClient.post('/Topics', payload);
     return data;
   },
-
   update: async (id, payload) => {
     const { data } = await apiClient.put(`/Topics/${id}`, payload);
     return data;
   },
-
   submitForApproval: async (topicIds) => {
     const { data } = await apiClient.post('/Topics/submit-for-approval', { topicIds });
     return data;
   },
-
   approve: async (id) => {
     const { data } = await apiClient.post(`/Topics/${id}/approve`);
     return data;
   },
-
   close: async (id) => {
     const { data } = await apiClient.post(`/Topics/${id}/close`);
     return data;
   },
-
   deactivate: async (id) => {
     const { data } = await apiClient.post(`/Topics/${id}/deactivate`);
     return data;
   },
-
   fetchCoordinationSummary: async ({ departmentId, academicYearId }) => {
     const { data } = await apiClient.get('/Topics/coordination-summary', {
       params: { departmentId, academicYearId },
     });
     return normalizeCoordinationSummary(data);
   },
-
   bulkApprove: async (topicIds) => {
     const { data } = await apiClient.post('/Topics/bulk-approve', { topicIds });
     return data;
   },
-
   completeCoordination: async ({ departmentId, academicYearId }) => {
     const { data } = await apiClient.post('/Topics/complete-coordination', { departmentId, academicYearId });
     return data;
   },
 };
-
 export const applicationsApi = {
   fetchMy: async ({ academicYearId } = {}) => {
     const { data } = await apiClient.get('/applications/my', { params: { academicYearId } });
     return data.map(normalizeTopicApplication);
   },
-
   fetchByTopic: async (topicId) => {
     const { data } = await apiClient.get(`/applications/by-topic/${topicId}`);
     return data.map(normalizeTopicApplication);
   },
-
   create: async ({ topicId, motivationLetter }) => {
     const { data } = await apiClient.post('/applications', { topicId, motivationLetter });
     return data;
   },
-
   accept: async (id) => {
     const { data } = await apiClient.post(`/applications/${id}/accept`);
     return data;
   },
-
   reject: async ({ id, rejectReason }) => {
     const { data } = await apiClient.post(`/applications/${id}/reject`, { rejectReason });
     return data;
   },
-
   withdraw: async (id) => {
     const { data } = await apiClient.delete(`/applications/${id}`);
     return data;
   },
 };
-
 export const topicKeys = {
   all: ['topics'],
   supervisor: (supervisorId, academicYearId) => [...topicKeys.all, 'supervisor', supervisorId, academicYearId],
@@ -271,47 +239,39 @@ export const topicKeys = {
   detail: (id) => [...topicKeys.all, 'detail', id],
   coordination: (departmentId, academicYearId) => [...topicKeys.all, 'coordination', departmentId, academicYearId],
 };
-
 export const applicationKeys = {
   all: ['applications'],
   my: (academicYearId) => [...applicationKeys.all, 'my', academicYearId],
   topic: (topicId) => [...applicationKeys.all, 'topic', topicId],
 };
-
 export const useTopicsBySupervisor = (supervisorId, academicYearId) => useQuery({
   queryKey: topicKeys.supervisor(supervisorId, academicYearId),
   queryFn: () => topicsApi.fetchBySupervisor({ supervisorId, academicYearId }),
   enabled: !!supervisorId && !!academicYearId,
 });
-
 export const useTopicsByDirection = (directionId) => useQuery({
   queryKey: topicKeys.direction(directionId),
   queryFn: () => topicsApi.fetchByDirection(directionId),
   enabled: !!directionId,
 });
-
 export const useAvailableTopics = (departmentId, academicYearId) => useQuery({
   queryKey: topicKeys.available(departmentId, academicYearId),
   queryFn: () => topicsApi.fetchAvailable({ departmentId, academicYearId }),
 });
-
 export const useTopicDetail = (id) => useQuery({
   queryKey: topicKeys.detail(id),
   queryFn: () => topicsApi.fetchById(id),
   enabled: !!id,
 });
-
 export const useTopicCoordinationSummary = (departmentId, academicYearId) => useQuery({
   queryKey: topicKeys.coordination(departmentId, academicYearId),
   queryFn: () => topicsApi.fetchCoordinationSummary({ departmentId, academicYearId }),
   enabled: !!departmentId && !!academicYearId,
 });
-
 const invalidateTopics = (queryClient) => {
   queryClient.invalidateQueries({ queryKey: topicKeys.all });
   queryClient.invalidateQueries({ queryKey: applicationKeys.all });
 };
-
 export const useCreateTopic = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -319,7 +279,6 @@ export const useCreateTopic = () => {
     onSuccess: () => invalidateTopics(queryClient),
   });
 };
-
 export const useUpdateTopic = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -327,7 +286,6 @@ export const useUpdateTopic = () => {
     onSuccess: () => invalidateTopics(queryClient),
   });
 };
-
 export const useSubmitTopicsForApproval = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -335,7 +293,6 @@ export const useSubmitTopicsForApproval = () => {
     onSuccess: () => invalidateTopics(queryClient),
   });
 };
-
 export const useApproveTopic = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -343,7 +300,6 @@ export const useApproveTopic = () => {
     onSuccess: () => invalidateTopics(queryClient),
   });
 };
-
 export const useCloseTopic = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -351,7 +307,6 @@ export const useCloseTopic = () => {
     onSuccess: () => invalidateTopics(queryClient),
   });
 };
-
 export const useDeactivateTopic = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -359,7 +314,6 @@ export const useDeactivateTopic = () => {
     onSuccess: () => invalidateTopics(queryClient),
   });
 };
-
 export const useBulkApproveTopics = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -367,7 +321,6 @@ export const useBulkApproveTopics = () => {
     onSuccess: () => invalidateTopics(queryClient),
   });
 };
-
 export const useCompleteTopicCoordination = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -375,18 +328,15 @@ export const useCompleteTopicCoordination = () => {
     onSuccess: () => invalidateTopics(queryClient),
   });
 };
-
 export const useMyApplications = (academicYearId) => useQuery({
   queryKey: applicationKeys.my(academicYearId),
   queryFn: () => applicationsApi.fetchMy({ academicYearId }),
 });
-
 export const useApplicationsByTopic = (topicId) => useQuery({
   queryKey: applicationKeys.topic(topicId),
   queryFn: () => applicationsApi.fetchByTopic(topicId),
   enabled: !!topicId,
 });
-
 export const useCreateApplication = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -394,7 +344,6 @@ export const useCreateApplication = () => {
     onSuccess: () => invalidateTopics(queryClient),
   });
 };
-
 export const useAcceptApplication = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -402,7 +351,6 @@ export const useAcceptApplication = () => {
     onSuccess: () => invalidateTopics(queryClient),
   });
 };
-
 export const useRejectApplication = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -410,7 +358,6 @@ export const useRejectApplication = () => {
     onSuccess: () => invalidateTopics(queryClient),
   });
 };
-
 export const useWithdrawApplication = () => {
   const queryClient = useQueryClient();
   return useMutation({

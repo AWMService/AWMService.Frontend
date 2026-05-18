@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './apiClient';
-
 export const periodApi = {
   fetchPeriods: async (departmentId, academicYearId) => {
     const { data } = await apiClient.get(`/departments/${departmentId}/Periods`, {
@@ -35,13 +34,11 @@ export const periodApi = {
     return data;
   }
 };
-
 export const periodKeys = {
   all: ['periods'],
   byDepartment: (departmentId, academicYearId) => [...periodKeys.all, 'department', departmentId, academicYearId],
   active: (departmentId, academicYearId, stage) => [...periodKeys.all, 'active', departmentId, academicYearId, stage]
 };
-
 export const usePeriods = (departmentId, academicYearId) => {
   return useQuery({
     queryKey: periodKeys.byDepartment(departmentId, academicYearId),
@@ -49,7 +46,6 @@ export const usePeriods = (departmentId, academicYearId) => {
     enabled: !!departmentId && !!academicYearId,
   });
 };
-
 export const useActivePeriod = (departmentId, academicYearId, stage) => {
   return useQuery({
     queryKey: periodKeys.active(departmentId, academicYearId, stage),
@@ -57,7 +53,6 @@ export const useActivePeriod = (departmentId, academicYearId, stage) => {
     enabled: !!departmentId && !!academicYearId && !!stage,
   });
 };
-
 export const useApproveInitialPeriods = (departmentId, academicYearId) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -67,7 +62,6 @@ export const useApproveInitialPeriods = (departmentId, academicYearId) => {
     },
   });
 };
-
 export const useApproveDefensePeriods = (departmentId, academicYearId) => {
   const queryClient = useQueryClient();
   return useMutation({

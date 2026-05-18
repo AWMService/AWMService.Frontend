@@ -1,5 +1,4 @@
 import { apiClient } from './apiClient';
-
 export const adminApi = {
   fetchUsers: async ({ universityId, isActive, search }) => {
     const params = { universityId };
@@ -12,33 +11,27 @@ export const adminApi = {
     const { data } = await apiClient.get('/Users', { params });
     return data;
   },
-
   fetchUserById: async (userId) => {
     const { data } = await apiClient.get(`/Users/${userId}`);
     return data;
   },
-
   createUser: async (userData) => {
     const { data } = await apiClient.post('/Users', userData);
     return data;
   },
-
   updateUser: async (userId, userData) => {
     const { data } = await apiClient.put(`/Users/${userId}`, userData);
     return data;
   },
-
   toggleUserStatus: async (userId, isActive) => {
     const { data } = await apiClient.patch(`/Users/${userId}/status`, { isActive });
     return data;
   },
-
   fetchRoles: async (universityId) => {
     const { data } = await apiClient.get('/Roles', { params: { universityId } });
     return data;
   }
 };
-
 export const orgApi = {
   fetchInstitutes: async (universityId) => {
     const { data } = await apiClient.get('/Institutes', { params: { universityId } });
@@ -56,7 +49,6 @@ export const orgApi = {
     const { data } = await apiClient.delete(`/Institutes/${id}`);
     return data;
   },
-  
   fetchDepartments: async (universityId) => {
     const { data } = await apiClient.get('/Departments', { params: { universityId } });
     return data;
@@ -74,7 +66,6 @@ export const orgApi = {
     return data;
   }
 };
-
 export const eduApi = {
   fetchPrograms: async () => {
     const { data } = await apiClient.get('/academic-programs');
@@ -92,7 +83,6 @@ export const eduApi = {
     const { data } = await apiClient.delete(`/academic-programs/${id}`);
     return data;
   },
-
   fetchDegreeLevels: async () => {
     const { data } = await apiClient.get('/degree-levels');
     return data;
@@ -110,7 +100,6 @@ export const eduApi = {
     return data;
   }
 };
-
 export const wfApi = {
   fetchWorkTypes: async () => {
     const { data } = await apiClient.get('/WorkTypes');
@@ -129,7 +118,6 @@ export const wfApi = {
     return data;
   }
 };
-
 export const staffApi = {
   fetchStaffByDepartment: async (departmentId) => {
     const { data } = await apiClient.get('/Staff', { params: { departmentId } });
