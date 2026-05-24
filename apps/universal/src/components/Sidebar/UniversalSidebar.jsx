@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useRole, ROLES, SharedSidebar } from "@awm/shared";
 

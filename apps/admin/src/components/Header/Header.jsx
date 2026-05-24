@@ -25,8 +25,7 @@ export function AdminHeader() {
       appSubtitle={t('nav.dashboard')}
       pageTitle={getPageName()}
       userProfile={{
-        initials: 'А',
-        name: user?.name || 'Admin',
+        name: user?.name || user?.login || 'Admin',
         role: t('roles.admin', 'Администратор'),
       }}
       userDropdownItems={

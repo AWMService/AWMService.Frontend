@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import './SharedHeader.css';
+import { getInitials } from '../utils/user';
 import arrowDownIcon from '../assets/icons/arrow-down-icon.svg';
 import bellIcon from '../assets/icons/bell-icon.svg';
 
@@ -115,7 +116,9 @@ export function SharedHeader({
                                 setNotificationsOpen(false);
                             }}
                         >
-                            <div className="avatar-circle">{userProfile?.initials || 'ИИ'}</div>
+                            <div className="avatar-circle">
+                                {userProfile?.initials || (userProfile?.name ? getInitials(userProfile.name) : 'ИИ')}
+                            </div>
                             <div className="user-info-box">
                                 <div className="u-name">{userProfile?.name || 'Пользователь'}</div>
                                 <div className="u-role">{userProfile?.role || ''}</div>

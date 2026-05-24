@@ -17,7 +17,7 @@ import searchIcon from "../../assets/icons/search-icon.svg";
 function SupervisorsPage() {
     const { t } = useTranslation();
     const { user } = useAuth();
-    const departmentId = user?.departmentId;
+    const departmentId = user?.orgUnitId;
 
     const { data: allTeachers = [], isLoading: isLoadingTeachers } = useStaffByDepartment(departmentId);
     const { data: rawSupervisors = [], isLoading: isLoadingSupervisors } = useSupervisors(departmentId);

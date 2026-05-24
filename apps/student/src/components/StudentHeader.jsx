@@ -14,8 +14,7 @@ export function StudentHeader() {
       appTitle={t('roles.student')}
       appSubtitle={t('student.thesisTitle')}
       userProfile={{
-        initials: 'СН',
-        name: user?.name || 'Сергеев Н.С.',
+        name: user?.name || user?.login || 'Студент',
         role: t('roles.student'),
       }}
       userDropdownItems={

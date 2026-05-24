@@ -30,8 +30,7 @@ export function UniversalHeader() {
             appSubtitle={t('nav.dashboard')}
             pageTitle={getPageName()}
             userProfile={{
-                initials: 'РР',
-                name: user?.name || 'Рахимов Р.Р.',
+                name: user?.name || user?.login || 'Пользователь',
                 role: t(roleMeta?.labelKey || 'roles.supervisor'),
             }}
             userDropdownItems={

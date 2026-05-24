@@ -34,7 +34,7 @@ function UserFormModal({ isOpen, user, onClose, onSave, isLoading: isSaving }) {
                     email: user.email || '',
                     password: '', // Don't show password on edit
                     roleId: user.roleId || '',
-                    departmentId: user.departmentId || '',
+                    departmentId: user.orgUnitId || user.departmentId || '',
                     status: user.isActive ? 'active' : 'inactive',
                 });
             } else {

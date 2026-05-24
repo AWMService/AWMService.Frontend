@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { normalizeRoles, ROLE_META, ROLES, UNIVERSAL_ROLES } from '../auth/roles';
-
+import { getCabinetTarget, appendAuthTokensToUrl } from '../auth/authRouting';
+import { getToken, getRefreshToken } from '../api';
 export { ROLE_META, ROLES, UNIVERSAL_ROLES };
 
 const RoleContext = createContext(null);
@@ -37,6 +38,24 @@ export function RoleProvider({ children, availableRoles = [], defaultRole = null
 
   const switchRole = (role) => {
     if (activeRoles.includes(role)) {
+      if (typeof window !== 'undefined') {
+        const target = getCabinetTarget(user || { roles: activeRoles }, role);
+        if (target) {
+          try {
+            const targetUrl = new URL(target.href);
+            if (targetUrl.origin !== window.location.origin) {
+              const ssoUrl = appendAuthTokensToUrl(target.href, {
+                token: getToken(),
+                refreshToken: getRefreshToken()
+              });
+              window.location.assign(ssoUrl);
+              return;
+            }
+          } catch (e) {
+            console.error('Error calculating redirect target:', e);
+          }
+        }
+      }
       setCurrentRole(role);
     }
   };

@@ -84,6 +84,8 @@ export const BACKEND_TO_FRONTEND_ROLE_MAP = {
   Reviewer: ROLES.REVIEWER,
   Chairman: ROLES.CHAIRMAN,
   ViceRector: ROLES.VICE_RECTOR,
+  CommissionChairman: ROLES.CHAIRMAN,
+  CommissionSecretary: ROLES.SECRETARY,
 };
 
 const FRONTEND_ROLE_KEYS = new Set(Object.values(ROLES));
@@ -108,11 +110,18 @@ export const normalizeRole = (role) => {
   if (idMap[role]) {
     return idMap[role];
   }
-
+  const upperRole = String(role).toUpperCase();
+  const dbRole = Object.keys(BACKEND_TO_FRONTEND_ROLE_MAP).find(k => k.toUpperCase() === upperRole);
+  if (dbRole) {
+    return BACKEND_TO_FRONTEND_ROLE_MAP[dbRole];
+  }
   if (FRONTEND_ROLE_KEYS.has(role)) {
     return role;
   }
-
+  const lowered = String(role).toLowerCase();
+  if (FRONTEND_ROLE_KEYS.has(lowered)) {
+    return lowered;
+  }
   return BACKEND_TO_FRONTEND_ROLE_MAP[role] || role.charAt(0).toLowerCase() + role.slice(1);
 };
 

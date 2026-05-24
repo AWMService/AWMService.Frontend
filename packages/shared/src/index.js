@@ -67,3 +67,4 @@ export { default as TimePeriodFormDialog } from './components/domain/TimePeriods
 export { SupervisorCard } from './components/domain/supervisors/SupervisorCard';
 export { SupervisorSelectionDialog } from './components/domain/supervisors/SupervisorSelectionDialog';
 export { TeacherSelectionItem } from './components/domain/supervisors/TeacherSelectionItem';
+export { getInitials } from './utils/user';
