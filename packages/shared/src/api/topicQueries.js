@@ -234,32 +234,32 @@ export const topicsApi = {
 
 export const applicationsApi = {
   fetchMy: async ({ semesterId } = {}) => {
-    const { data } = await apiClient.get('/applications/my', { params: { semesterId } });
+    const { data } = await apiClient.get('/v1/applications/my', { params: { semesterId } });
     return data.map(normalizeTopicApplication);
   },
 
   fetchByTopic: async (topicId) => {
-    const { data } = await apiClient.get(`/applications/by-topic/${topicId}`);
+    const { data } = await apiClient.get(`/v1/applications/by-topic/${topicId}`);
     return data.map(normalizeTopicApplication);
   },
 
   create: async ({ topicId, motivationLetter }) => {
-    const { data } = await apiClient.post('/applications', { topicId, motivationLetter });
+    const { data } = await apiClient.post('/v1/applications', { topicId, motivationLetter });
     return data;
   },
 
   accept: async (id) => {
-    const { data } = await apiClient.post(`/applications/${id}/accept`);
+    const { data } = await apiClient.post(`/v1/applications/${id}/accept`);
     return data;
   },
 
   reject: async ({ id, rejectReason }) => {
-    const { data } = await apiClient.post(`/applications/${id}/reject`, { rejectReason });
+    const { data } = await apiClient.post(`/v1/applications/${id}/reject`, { reason: rejectReason });
     return data;
   },
 
   withdraw: async (id) => {
-    const { data } = await apiClient.delete(`/applications/${id}`);
+    const { data } = await apiClient.delete(`/v1/applications/${id}`);
     return data;
   },
 };
