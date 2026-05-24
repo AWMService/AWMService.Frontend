@@ -6,14 +6,12 @@ import "./InitialPeriodsPage.css";
 
 const PERIOD_CONFIG = [
     { key: "directions", stage: "DirectionSubmission", labelKey: "department.directionsFormationPeriod" },
-    { key: "topics", stage: "TopicCreation", labelKey: "department.topicsFormationPeriod" },
     { key: "selection", stage: "TopicSelection", labelKey: "department.topicSelectionPeriod" },
 ];
 
 function getEmptyFormData() {
     return {
         directions: { startDate: "", endDate: "" },
-        topics: { startDate: "", endDate: "" },
         selection: { startDate: "", endDate: "" },
     };
 }
@@ -38,7 +36,7 @@ export default function InitialPeriodsPage() {
     useEffect(() => {
         if (periodsData && periodsData.length > 0) {
             const initialPeriods = periodsData.filter(p => 
-                ["DirectionSubmission", "TopicCreation", "TopicSelection"].includes(p.workflowStage)
+                ["DirectionSubmission", "TopicSelection"].includes(p.workflowStage)
             );
             
             if (initialPeriods.length > 0) {

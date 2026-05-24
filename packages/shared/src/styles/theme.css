@@ -1,0 +1,10 @@
+/* Theme styles and custom variables */
+:root {
+  --primary-color: #6366f1;
+  --primary-hover: #4f46e5;
+  --primary-light: #eef2ff;
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  --bg-main: #f9fafb;
+  --border-light: #e5e7eb;
+}

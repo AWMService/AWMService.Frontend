@@ -31,12 +31,6 @@ export {
   useAuth
 } from './context/AuthContext';
 
-// UI Components
-export { Button } from './components/ui/Button/Button';
-export { Card } from './components/ui/Card/Card';
-export { Badge } from './components/ui/Badge/Badge';
-export { Skeleton } from './components/ui/Skeleton/Skeleton';
-
 // Components
 export { LanguageSelector } from './components/LanguageSelector';
 export { RoleSelector } from './components/RoleSelector';

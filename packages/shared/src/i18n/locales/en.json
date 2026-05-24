@@ -642,7 +642,7 @@
         "studentDistributionSubtitle": "Assign students to commissions and defense slots",
         "initialPeriodsTitle": "Initial Periods",
         "initialPeriodsSubtitle": "Configure direction, topic, and topic-selection deadlines",
-        "directionsFormationPeriod": "Directions formation period",
+        "directionsFormationPeriod": "Directions and topics formation period",
         "topicsFormationPeriod": "Topics formation period",
         "topicSelectionPeriod": "Topic selection period",
         "validationStartBeforeEnd": "The start date must be earlier than the end date",

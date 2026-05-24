@@ -164,3 +164,27 @@ export const useReviewDirection = () => {
     onSuccess: () => invalidateDirections(queryClient),
   });
 };
+
+export const useApproveDirection = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id) => directionsApi.review({ id, decisionId: 1, comment: null }),
+    onSuccess: () => invalidateDirections(queryClient),
+  });
+};
+
+export const useRejectDirection = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, comment }) => directionsApi.review({ id, decisionId: 2, comment }),
+    onSuccess: () => invalidateDirections(queryClient),
+  });
+};
+
+export const useRequestDirectionRevision = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, comment }) => directionsApi.review({ id, decisionId: 3, comment }),
+    onSuccess: () => invalidateDirections(queryClient),
+  });
+};

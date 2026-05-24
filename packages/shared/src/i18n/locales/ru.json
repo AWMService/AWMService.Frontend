@@ -642,7 +642,7 @@
         "studentDistributionSubtitle": "Назначение студентов по комиссиям и слотам защиты",
         "initialPeriodsTitle": "Начальные периоды",
         "initialPeriodsSubtitle": "Настройка сроков формирования направлений, тем и выбора тем",
-        "directionsFormationPeriod": "Период формирования направлений",
+        "directionsFormationPeriod": "Период формирования направлений и тем",
         "topicsFormationPeriod": "Период формирования тем",
         "topicSelectionPeriod": "Период выбора тем",
         "validationStartBeforeEnd": "Дата начала должна быть раньше даты окончания",
