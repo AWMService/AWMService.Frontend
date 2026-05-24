@@ -17,6 +17,7 @@ const readLocalized = (item, field) => {
 const normalizeTopicStatus = (item) => {
   if (read(item, 'isClosed') || read(item, 'isDeleted')) return 'closed';
   if (read(item, 'isApproved')) return 'approved';
+  if (read(item, 'isRejected')) return 'rejected';
   if (read(item, 'isSubmittedForApproval')) return 'pending';
   return 'draft';
 };
@@ -159,74 +160,74 @@ export const topicPayloadFromForm = ({ form, user, workTypeId }) => {
 };
 
 export const topicsApi = {
-  fetchBySupervisor: async ({ supervisorId, semesterId }) => {
-    const { data } = await apiClient.get('/Topics/by-supervisor', {
-      params: { supervisorId, semesterId },
+  fetchBySupervisor: async ({ semesterId }) => {
+    const { data } = await apiClient.get('/v1/topics/my', {
+      params: { semesterId },
     });
     return data.map(normalizeTopic);
   },
 
   fetchByDirection: async (directionId) => {
-    const { data } = await apiClient.get(`/Topics/by-direction/${directionId}`);
+    const { data } = await apiClient.get(`/v1/topics/by-direction/${directionId}`);
     return data.map(normalizeTopic);
   },
 
   fetchAvailable: async ({ orgUnitId, semesterId } = {}) => {
-    const { data } = await apiClient.get('/Topics/available', {
+    const { data } = await apiClient.get('/v1/topics/available', {
       params: { orgUnitId, semesterId },
     });
     return data.map(normalizeTopic);
   },
 
   fetchById: async (id) => {
-    const { data } = await apiClient.get(`/Topics/${id}`);
+    const { data } = await apiClient.get(`/v1/topics/${id}`);
     return normalizeTopic(data);
   },
 
   create: async (payload) => {
-    const { data } = await apiClient.post('/Topics', payload);
+    const { data } = await apiClient.post('/v1/topics', payload);
     return data;
   },
 
   update: async (id, payload) => {
-    const { data } = await apiClient.put(`/Topics/${id}`, payload);
+    const { data } = await apiClient.put(`/v1/topics/${id}`, payload);
     return data;
   },
 
   submitForApproval: async (topicIds) => {
-    const { data } = await apiClient.post('/Topics/submit-for-approval', { topicIds });
+    const { data } = await apiClient.post('/v1/topics/submit', topicIds);
     return data;
   },
 
-  approve: async (id) => {
-    const { data } = await apiClient.post(`/Topics/${id}/approve`);
+  approve: async (id, payload = { isApproved: true }) => {
+    const { data } = await apiClient.post(`/v1/topics/${id}/review`, payload);
     return data;
   },
 
   close: async (id) => {
-    const { data } = await apiClient.post(`/Topics/${id}/close`);
+    const { data } = await apiClient.post(`/v1/topics/${id}/close`);
     return data;
   },
 
   deactivate: async (id) => {
-    const { data } = await apiClient.post(`/Topics/${id}/deactivate`);
+    const { data } = await apiClient.post(`/v1/topics/${id}/deactivate`);
     return data;
   },
 
   fetchCoordinationSummary: async ({ orgUnitId, semesterId }) => {
-    const { data } = await apiClient.get('/Topics/coordination-summary', {
+    const { data } = await apiClient.get('/v1/topics/department', {
       params: { orgUnitId, semesterId },
     });
     return normalizeCoordinationSummary(data);
   },
 
   bulkApprove: async (topicIds) => {
-    const { data } = await apiClient.post('/Topics/bulk-approve', { topicIds });
+    const { data } = await apiClient.post('/v1/topics/bulk-approve', { topicIds });
     return data;
   },
 
   completeCoordination: async ({ orgUnitId, semesterId }) => {
-    const { data } = await apiClient.post('/Topics/complete-coordination', { orgUnitId, semesterId });
+    const { data } = await apiClient.post('/v1/topics/complete-coordination', { orgUnitId, semesterId });
     return data;
   },
 };

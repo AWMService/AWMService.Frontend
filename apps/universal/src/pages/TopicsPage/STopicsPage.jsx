@@ -178,7 +178,7 @@ export default function STopicsPage() {
                                 {topic.status === "rejected" && (
                                     <div className="card-rejection-info">
                                         <Info size={14} />
-                                        <span>{getLocalizedValue(topic.rejectionReason, currentLanguage)}</span>
+                                        <span>{getLocalizedValue(topic.reviewComment, currentLanguage)}</span>
                                     </div>
                                 )}
 

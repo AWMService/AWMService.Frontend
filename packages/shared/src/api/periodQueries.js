@@ -6,10 +6,11 @@ const STAGE_MAP = {
   "DirectionSubmission": 1,
   "TopicCreation": 2,
   "TopicSelection": 3,
-  "PreDefense1": 4,
-  "PreDefense2": 5,
-  "PreDefense3": 6,
-  "FinalDefense": 7
+  "Preparation": 4,
+  "PreDefense1": 5,
+  "PreDefense2": 6,
+  "PreDefense3": 7,
+  "FinalDefense": 8
 };
 
 const STAGE_MAP_REV = {
@@ -17,10 +18,11 @@ const STAGE_MAP_REV = {
   1: "DirectionSubmission",
   2: "TopicCreation",
   3: "TopicSelection",
-  4: "PreDefense1",
-  5: "PreDefense2",
-  6: "PreDefense3",
-  7: "FinalDefense"
+  4: "Preparation",
+  5: "PreDefense1",
+  6: "PreDefense2",
+  7: "PreDefense3",
+  8: "FinalDefense"
 };
 
 export const periodApi = {
