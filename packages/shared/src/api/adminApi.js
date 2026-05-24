@@ -70,11 +70,11 @@ export const orgApi = {
     return data;
   },
   updateDepartment: async (id, deptData) => {
-    const { data } = await apiClient.put(`/Departments/${id}`, deptData);
+    const { data } = await apiClient.put(`/org-units/${id}`, deptData);
     return data;
   },
   deleteDepartment: async (id) => {
-    const { data } = await apiClient.delete(`/Departments/${id}`);
+    const { data } = await apiClient.delete(`/org-units/${id}`);
     return data;
   }
 };
@@ -138,8 +138,8 @@ export const wfApi = {
 };
 
 export const staffApi = {
-  fetchStaffByDepartment: async (departmentId) => {
-    const { data } = await apiClient.get('/Staff', { params: { departmentId } });
+  fetchStaffByDepartment: async (orgUnitId) => {
+    const { data } = await apiClient.get(`/org-units/${orgUnitId}/supervisors/available`);
     return data;
   },
   createStaff: async (staffData) => {
@@ -150,16 +150,31 @@ export const staffApi = {
     const { data } = await apiClient.put(`/Staff/${staffId}`, staffData);
     return data;
   },
-  updateWorkload: async (staffId, maxStudentsLoad) => {
-    const { data } = await apiClient.patch(`/Staff/${staffId}/workload`, { maxStudentsLoad });
+  updateWorkload: async (orgUnitId, userId, semesterId, specialityId, maxWorkload) => {
+    const { data } = await apiClient.put(`/org-units/${orgUnitId}/supervisors/${userId}/workload`, 
+      { maxWorkload },
+      { params: { semesterId, specialityId } }
+    );
     return data;
   },
-  approveSupervisors: async (departmentId, staffIds) => {
-    const { data } = await apiClient.post('/Staff/approve-supervisors', { departmentId, staffIds });
+  approveSupervisors: async (orgUnitId, semesterId, specialityId, assignments) => {
+    const { data } = await apiClient.post(`/org-units/${orgUnitId}/supervisors/approve`, {
+      semesterId,
+      specialityId,
+      assignments
+    });
     return data;
   },
-  fetchSupervisors: async (departmentId) => {
-    const { data } = await apiClient.get('/Staff/supervisors', { params: { departmentId } });
+  fetchSupervisors: async (orgUnitId, semesterId, specialityId = null) => {
+    const { data } = await apiClient.get(`/org-units/${orgUnitId}/supervisors/approved`, {
+      params: { semesterId, specialityId }
+    });
+    return data;
+  },
+  removeSupervisor: async (orgUnitId, userId, semesterId, specialityId = null) => {
+    const { data } = await apiClient.delete(`/org-units/${orgUnitId}/supervisors/${userId}`, {
+      params: { semesterId, specialityId }
+    });
     return data;
   }
 };

@@ -31,18 +31,18 @@ export function usePreDefenseAttempts(workId) {
   });
 }
 
-export async function fetchFailedPreDefenseStudents(departmentId, academicYearId, preDefenseNumber = null) {
-  const params = { departmentId, academicYearId };
+export async function fetchFailedPreDefenseStudents(orgUnitId, semesterId, preDefenseNumber = null) {
+  const params = { orgUnitId, semesterId };
   if (preDefenseNumber != null) params.preDefenseNumber = preDefenseNumber;
   const { data } = await apiClient.get('/pre-defense/failed-students', { params });
   return data;
 }
 
-export function useFailedPreDefenseStudents(departmentId, academicYearId, preDefenseNumber) {
+export function useFailedPreDefenseStudents(orgUnitId, semesterId, preDefenseNumber) {
   return useQuery({
-    queryKey: ['preDefense', 'failed', departmentId, academicYearId, preDefenseNumber],
-    queryFn: () => fetchFailedPreDefenseStudents(departmentId, academicYearId, preDefenseNumber),
-    enabled: !!departmentId && !!academicYearId,
+    queryKey: ['preDefense', 'failed', orgUnitId, semesterId, preDefenseNumber],
+    queryFn: () => fetchFailedPreDefenseStudents(orgUnitId, semesterId, preDefenseNumber),
+    enabled: !!orgUnitId && !!semesterId,
   });
 }
 
@@ -267,17 +267,17 @@ export function useStartDefenseReconciliation() {
 
 // ================= Evaluation =================
 
-export async function fetchEvaluationCriteria(workTypeId, departmentId = null) {
+export async function fetchEvaluationCriteria(workTypeId, orgUnitId = null) {
   const params = { workTypeId };
-  if (departmentId != null) params.departmentId = departmentId;
+  if (orgUnitId != null) params.orgUnitId = orgUnitId;
   const { data } = await apiClient.get('/evaluation/criteria', { params });
   return data;
 }
 
-export function useEvaluationCriteria(workTypeId, departmentId) {
+export function useEvaluationCriteria(workTypeId, orgUnitId) {
   return useQuery({
-    queryKey: ['evaluation', 'criteria', workTypeId, departmentId],
-    queryFn: () => fetchEvaluationCriteria(workTypeId, departmentId),
+    queryKey: ['evaluation', 'criteria', workTypeId, orgUnitId],
+    queryFn: () => fetchEvaluationCriteria(workTypeId, orgUnitId),
     enabled: !!workTypeId,
   });
 }

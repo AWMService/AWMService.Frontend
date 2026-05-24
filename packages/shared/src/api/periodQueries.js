@@ -1,79 +1,129 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './apiClient';
 
+const STAGE_MAP = {
+  // Frontend String -> Backend Int
+  "DirectionSubmission": 1,
+  "TopicCreation": 2,
+  "TopicSelection": 3,
+  "PreDefense1": 4,
+  "PreDefense2": 5,
+  "PreDefense3": 6,
+  "FinalDefense": 7
+};
+
+const STAGE_MAP_REV = {
+  // Backend Int -> Frontend String
+  1: "DirectionSubmission",
+  2: "TopicCreation",
+  3: "TopicSelection",
+  4: "PreDefense1",
+  5: "PreDefense2",
+  6: "PreDefense3",
+  7: "FinalDefense"
+};
+
 export const periodApi = {
-  fetchPeriods: async (departmentId, academicYearId) => {
-    const { data } = await apiClient.get(`/departments/${departmentId}/Periods`, {
-      params: { academicYearId }
+  fetchPeriods: async (orgUnitId, semesterId) => {
+    const { data } = await apiClient.get('/stages/periods', {
+      params: { semesterId: semesterId, orgUnitId: orgUnitId }
     });
-    return data;
+    return data.map(p => ({
+      id: p.workflowStageId,
+      workflowStage: STAGE_MAP_REV[p.workflowStageId] || `Stage_${p.workflowStageId}`,
+      startDate: p.startDate,
+      endDate: p.endDate
+    }));
   },
-  fetchActivePeriod: async (departmentId, academicYearId, stage) => {
-    const { data } = await apiClient.get(`/departments/${departmentId}/Periods/active`, {
-      params: { academicYearId, stage }
+  fetchActivePeriod: async (orgUnitId, semesterId, stage) => {
+    const stageId = STAGE_MAP[stage] || 0;
+    const { data } = await apiClient.get('/stages/periods', {
+      params: { semesterId: semesterId, orgUnitId: orgUnitId }
     });
+    const period = data.find(p => p.workflowStageId === stageId);
+    if (!period) return null;
+    return {
+      id: period.workflowStageId,
+      workflowStage: stage,
+      startDate: period.startDate,
+      endDate: period.endDate
+    };
+  },
+  createPeriod: async (orgUnitId, periodData) => {
+    // Legacy support
+    return periodData;
+  },
+  updatePeriod: async (orgUnitId, periodId, periodData) => {
+    // Legacy support
+    return periodData;
+  },
+  approveInitialPeriods: async (orgUnitId, semesterId, periods) => {
+    const payload = {
+      semesterId: semesterId,
+      orgUnitId: orgUnitId,
+      periods: periods.map(p => ({
+        workflowStageId: STAGE_MAP[p.workflowStage] || 0,
+        startDate: p.startDate,
+        endDate: p.endDate
+      })).filter(p => p.workflowStageId !== 0)
+    };
+    const { data } = await apiClient.post('/stages/periods', payload);
     return data;
   },
-  createPeriod: async (departmentId, periodData) => {
-    const { data } = await apiClient.post(`/departments/${departmentId}/Periods`, periodData);
-    return data;
-  },
-  updatePeriod: async (departmentId, periodId, periodData) => {
-    const { data } = await apiClient.put(`/departments/${departmentId}/Periods/${periodId}`, periodData);
-    return data;
-  },
-  approveInitialPeriods: async (departmentId, academicYearId, periods) => {
-    const { data } = await apiClient.post(`/departments/${departmentId}/Periods/approve-initial`, { periods }, {
-      params: { academicYearId }
-    });
-    return data;
-  },
-  approveDefensePeriods: async (departmentId, academicYearId, periods) => {
-    const { data } = await apiClient.post(`/departments/${departmentId}/Periods/approve-defense`, { periods }, {
-      params: { academicYearId }
-    });
+  approveDefensePeriods: async (orgUnitId, semesterId, periods) => {
+    const payload = {
+      semesterId: semesterId,
+      orgUnitId: orgUnitId,
+      periods: periods.map(p => ({
+        workflowStageId: STAGE_MAP[p.workflowStage] || 0,
+        startDate: p.startDate,
+        endDate: p.endDate
+      })).filter(p => p.workflowStageId !== 0)
+    };
+    const { data } = await apiClient.post('/stages/periods', payload);
     return data;
   }
 };
 
 export const periodKeys = {
   all: ['periods'],
-  byDepartment: (departmentId, academicYearId) => [...periodKeys.all, 'department', departmentId, academicYearId],
-  active: (departmentId, academicYearId, stage) => [...periodKeys.all, 'active', departmentId, academicYearId, stage]
+  byDepartment: (orgUnitId, semesterId) => [...periodKeys.all, 'department', orgUnitId, semesterId],
+  active: (orgUnitId, semesterId, stage) => [...periodKeys.all, 'active', orgUnitId, semesterId, stage]
 };
 
-export const usePeriods = (departmentId, academicYearId) => {
+export const usePeriods = (orgUnitId, semesterId) => {
   return useQuery({
-    queryKey: periodKeys.byDepartment(departmentId, academicYearId),
-    queryFn: () => periodApi.fetchPeriods(departmentId, academicYearId),
-    enabled: !!departmentId && !!academicYearId,
+    queryKey: periodKeys.byDepartment(orgUnitId, semesterId),
+    queryFn: () => periodApi.fetchPeriods(orgUnitId, semesterId),
+    enabled: !!orgUnitId && !!semesterId,
   });
 };
 
-export const useActivePeriod = (departmentId, academicYearId, stage) => {
+export const useActivePeriod = (orgUnitId, semesterId, stage) => {
   return useQuery({
-    queryKey: periodKeys.active(departmentId, academicYearId, stage),
-    queryFn: () => periodApi.fetchActivePeriod(departmentId, academicYearId, stage),
-    enabled: !!departmentId && !!academicYearId && !!stage,
+    queryKey: periodKeys.active(orgUnitId, semesterId, stage),
+    queryFn: () => periodApi.fetchActivePeriod(orgUnitId, semesterId, stage),
+    enabled: !!orgUnitId && !!semesterId && !!stage,
   });
 };
 
-export const useApproveInitialPeriods = (departmentId, academicYearId) => {
+export const useApproveInitialPeriods = (orgUnitId, semesterId) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (periods) => periodApi.approveInitialPeriods(departmentId, academicYearId, periods),
+    mutationFn: (periods) => periodApi.approveInitialPeriods(orgUnitId, semesterId, periods),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: periodKeys.byDepartment(departmentId, academicYearId) });
+      queryClient.invalidateQueries({ queryKey: periodKeys.byDepartment(orgUnitId, semesterId) });
     },
   });
 };
 
-export const useApproveDefensePeriods = (departmentId, academicYearId) => {
+export const useApproveDefensePeriods = (orgUnitId, semesterId) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (periods) => periodApi.approveDefensePeriods(departmentId, academicYearId, periods),
+    mutationFn: (periods) => periodApi.approveDefensePeriods(orgUnitId, semesterId, periods),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: periodKeys.byDepartment(departmentId, academicYearId) });
+      queryClient.invalidateQueries({ queryKey: periodKeys.byDepartment(orgUnitId, semesterId) });
     },
   });
 };
+

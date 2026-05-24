@@ -51,18 +51,18 @@ export function useUploadExternalReview(workId, reviewId) {
 }
 
 // Review status for department (for secretaries / department heads)
-export async function fetchReviewStatus(departmentId, academicYearId) {
+export async function fetchReviewStatus(orgUnitId, semesterId) {
   const { data } = await apiClient.get('/works/review-status', {
-    params: { departmentId, academicYearId },
+    params: { orgUnitId, semesterId },
   });
   return data;
 }
 
-export function useReviewStatus(departmentId, academicYearId) {
+export function useReviewStatus(orgUnitId, semesterId) {
   return useQuery({
-    queryKey: ['reviewStatus', departmentId, academicYearId],
-    queryFn: () => fetchReviewStatus(departmentId, academicYearId),
-    enabled: !!departmentId && !!academicYearId,
+    queryKey: ['reviewStatus', orgUnitId, semesterId],
+    queryFn: () => fetchReviewStatus(orgUnitId, semesterId),
+    enabled: !!orgUnitId && !!semesterId,
   });
 }
 

@@ -1,3 +1,6 @@
+// Shared styles
+import './styles/theme.css';
+
 // Shared assets
 // Icons can be imported directly from '@awm/shared/src/assets/icons/...'
 
@@ -7,7 +10,7 @@ export {
   resources, 
   supportedLanguages, 
   defaultLanguage, 
-  changeLanguage, 
+  changeLanguage,
   getCurrentLanguage,
   getIntlLocale,
   getLocalizedValue,
@@ -15,18 +18,24 @@ export {
 } from './i18n';
 
 // Context
-export { 
-  RoleProvider, 
-  useRole, 
-  ROLES, 
-  UNIVERSAL_ROLES, 
-  ROLE_META 
+export {
+  RoleProvider,
+  useRole,
+  ROLES,
+  UNIVERSAL_ROLES,
+  ROLE_META
 } from './context/RoleContext';
 
 export {
   AuthProvider,
   useAuth
 } from './context/AuthContext';
+
+// UI Components
+export { Button } from './components/ui/Button/Button';
+export { Card } from './components/ui/Card/Card';
+export { Badge } from './components/ui/Badge/Badge';
+export { Skeleton } from './components/ui/Skeleton/Skeleton';
 
 // Components
 export { LanguageSelector } from './components/LanguageSelector';
@@ -35,7 +44,6 @@ export { ProtectedRoute } from './components/ProtectedRoute';
 export { RequireAuth, LoginRedirect } from './components/RequireAuth';
 export { SingleSignOnPage } from './components/SingleSignOnPage';
 export { ConfirmModal } from './components/ConfirmModal/ConfirmModal';
-
 // Re-export react-i18next hooks for convenience
 export { useTranslation, Trans } from 'react-i18next';
 

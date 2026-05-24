@@ -3,65 +3,73 @@ import { staffApi } from './adminApi';
 
 export const staffKeys = {
   all: ['staff'],
-  byDepartment: (departmentId) => [...staffKeys.all, 'department', departmentId],
-  supervisors: (departmentId) => [...staffKeys.all, 'supervisors', departmentId],
+  byDepartment: (orgUnitId) => [...staffKeys.all, 'department', orgUnitId],
+  supervisors: (orgUnitId, semesterId, specialityId) => [...staffKeys.all, 'supervisors', orgUnitId, semesterId, specialityId],
 };
 
-export const useStaffByDepartment = (departmentId) => {
+export const useStaffByDepartment = (orgUnitId) => {
   return useQuery({
-    queryKey: staffKeys.byDepartment(departmentId),
-    queryFn: () => staffApi.fetchStaffByDepartment(departmentId),
-    enabled: !!departmentId,
+    queryKey: staffKeys.byDepartment(orgUnitId),
+    queryFn: () => staffApi.fetchStaffByDepartment(orgUnitId),
+    enabled: !!orgUnitId,
   });
 };
 
-export const useSupervisors = (departmentId) => {
+export const useSupervisors = (orgUnitId, semesterId, specialityId = null) => {
   return useQuery({
-    queryKey: staffKeys.supervisors(departmentId),
-    queryFn: () => staffApi.fetchSupervisors(departmentId),
-    enabled: !!departmentId,
+    queryKey: staffKeys.supervisors(orgUnitId, semesterId, specialityId),
+    queryFn: () => staffApi.fetchSupervisors(orgUnitId, semesterId, specialityId),
+    enabled: !!orgUnitId && !!semesterId,
   });
 };
 
-export const useCreateStaff = (departmentId) => {
+export const useCreateStaff = (orgUnitId) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: staffApi.createStaff,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: staffKeys.byDepartment(departmentId) });
+      queryClient.invalidateQueries({ queryKey: staffKeys.byDepartment(orgUnitId) });
     },
   });
 };
 
-export const useUpdateStaff = (departmentId) => {
+export const useUpdateStaff = (orgUnitId) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, ...data }) => staffApi.updateStaff(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: staffKeys.byDepartment(departmentId) });
-      queryClient.invalidateQueries({ queryKey: staffKeys.supervisors(departmentId) });
+      queryClient.invalidateQueries({ queryKey: staffKeys.byDepartment(orgUnitId) });
     },
   });
 };
 
-export const useUpdateStaffWorkload = (departmentId) => {
+export const useUpdateStaffWorkload = (orgUnitId, semesterId, specialityId = null) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, maxStudentsLoad }) => staffApi.updateWorkload(id, maxStudentsLoad),
+    mutationFn: ({ userId, maxWorkload }) => staffApi.updateWorkload(orgUnitId, userId, semesterId, specialityId, maxWorkload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: staffKeys.byDepartment(departmentId) });
-      queryClient.invalidateQueries({ queryKey: staffKeys.supervisors(departmentId) });
+      queryClient.invalidateQueries({ queryKey: staffKeys.supervisors(orgUnitId, semesterId, specialityId) });
     },
   });
 };
 
-export const useApproveSupervisors = (departmentId) => {
+export const useApproveSupervisors = (orgUnitId, semesterId, specialityId = null) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (staffIds) => staffApi.approveSupervisors(departmentId, staffIds),
+    mutationFn: (assignments) => staffApi.approveSupervisors(orgUnitId, semesterId, specialityId, assignments),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: staffKeys.byDepartment(departmentId) });
-      queryClient.invalidateQueries({ queryKey: staffKeys.supervisors(departmentId) });
+      queryClient.invalidateQueries({ queryKey: staffKeys.supervisors(orgUnitId, semesterId, specialityId) });
     },
   });
 };
+
+export const useRemoveSupervisor = (orgUnitId, semesterId, specialityId = null) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (userId) => staffApi.removeSupervisor(orgUnitId, userId, semesterId, specialityId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: staffKeys.supervisors(orgUnitId, semesterId, specialityId) });
+    },
+  });
+};
+

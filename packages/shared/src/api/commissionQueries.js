@@ -2,9 +2,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './apiClient';
 
 export const commissionApi = {
-  fetchCommissions: async (departmentId, academicYearId) => {
+  fetchCommissions: async (orgUnitId, semesterId) => {
     const { data } = await apiClient.get('/commissions', {
-      params: { departmentId, academicYearId }
+      params: { orgUnitId, semesterId }
     });
     return data;
   },
@@ -36,15 +36,15 @@ export const commissionApi = {
 
 export const commissionKeys = {
   all: ['commissions'],
-  byDepartment: (departmentId, academicYearId) => [...commissionKeys.all, 'department', departmentId, academicYearId],
+  byDepartment: (orgUnitId, semesterId) => [...commissionKeys.all, 'department', orgUnitId, semesterId],
   detail: (commissionId) => [...commissionKeys.all, 'detail', commissionId]
 };
 
-export const useCommissions = (departmentId, academicYearId) => {
+export const useCommissions = (orgUnitId, semesterId) => {
   return useQuery({
-    queryKey: commissionKeys.byDepartment(departmentId, academicYearId),
-    queryFn: () => commissionApi.fetchCommissions(departmentId, academicYearId),
-    enabled: !!departmentId && !!academicYearId,
+    queryKey: commissionKeys.byDepartment(orgUnitId, semesterId),
+    queryFn: () => commissionApi.fetchCommissions(orgUnitId, semesterId),
+    enabled: !!orgUnitId && !!semesterId,
   });
 };
 
@@ -56,22 +56,22 @@ export const useCommissionDetail = (commissionId) => {
   });
 };
 
-export const useCreateCommission = (departmentId, academicYearId) => {
+export const useCreateCommission = (orgUnitId, semesterId) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: commissionApi.createCommission,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: commissionKeys.byDepartment(departmentId, academicYearId) });
+      queryClient.invalidateQueries({ queryKey: commissionKeys.byDepartment(orgUnitId, semesterId) });
     },
   });
 };
 
-export const useUpdateCommission = (departmentId, academicYearId) => {
+export const useUpdateCommission = (orgUnitId, semesterId) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, ...data }) => commissionApi.updateCommission(id, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: commissionKeys.byDepartment(departmentId, academicYearId) });
+      queryClient.invalidateQueries({ queryKey: commissionKeys.byDepartment(orgUnitId, semesterId) });
       queryClient.invalidateQueries({ queryKey: commissionKeys.detail(variables.id) });
     },
   });

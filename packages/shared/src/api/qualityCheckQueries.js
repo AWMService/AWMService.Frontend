@@ -38,17 +38,17 @@ export function useSubmitForCheck(workId) {
   });
 }
 
-export async function fetchPendingChecks(departmentId, academicYearId, checkType) {
-  const params = { departmentId, academicYearId };
+export async function fetchPendingChecks(orgUnitId, semesterId, checkType) {
+  const params = { orgUnitId, semesterId };
   if (checkType != null) params.checkType = CHECK_TYPES[checkType] ?? checkType;
   const { data } = await apiClient.get('/quality-checks/pending', { params });
   return data;
 }
 
-export function usePendingChecks(departmentId, academicYearId, checkType) {
+export function usePendingChecks(orgUnitId, semesterId, checkType) {
   return useQuery({
-    queryKey: ['pendingChecks', departmentId, academicYearId, checkType],
-    queryFn: () => fetchPendingChecks(departmentId, academicYearId, checkType),
-    enabled: !!departmentId && !!academicYearId,
+    queryKey: ['pendingChecks', orgUnitId, semesterId, checkType],
+    queryFn: () => fetchPendingChecks(orgUnitId, semesterId, checkType),
+    enabled: !!orgUnitId && !!semesterId,
   });
 }

@@ -70,9 +70,9 @@ export const normalizeTopic = (item) => {
     ...item,
     id: read(item, 'id'),
     directionId: read(item, 'directionId'),
-    departmentId: read(item, 'departmentId'),
+    orgUnitId: read(item, 'orgUnitId'),
     supervisorId: read(item, 'supervisorId'),
-    academicYearId: read(item, 'academicYearId'),
+    semesterId: read(item, 'semesterId'),
     workTypeId: read(item, 'workTypeId'),
     title: readLocalized(item, 'title'),
     description: readLocalized(item, 'description'),
@@ -143,9 +143,9 @@ export const topicPayloadFromForm = ({ form, user, workTypeId }) => {
   const titleRu = form.title?.ru?.trim() || form.title?.kk?.trim() || form.title?.en?.trim() || '';
 
   return {
-    departmentId: user?.departmentId,
-    supervisorId: user?.staffId,
-    academicYearId: user?.currentAcademicYearId,
+    orgUnitId: user?.orgUnitId,
+    supervisorId: user?.userId,
+    semesterId: user?.currentSemesterId,
     workTypeId: Number(form.workTypeId || form.workType || workTypeId),
     directionId: form.directionId ? Number(form.directionId) : null,
     titleRu,
@@ -159,9 +159,9 @@ export const topicPayloadFromForm = ({ form, user, workTypeId }) => {
 };
 
 export const topicsApi = {
-  fetchBySupervisor: async ({ supervisorId, academicYearId }) => {
+  fetchBySupervisor: async ({ supervisorId, semesterId }) => {
     const { data } = await apiClient.get('/Topics/by-supervisor', {
-      params: { supervisorId, academicYearId },
+      params: { supervisorId, semesterId },
     });
     return data.map(normalizeTopic);
   },
@@ -171,9 +171,9 @@ export const topicsApi = {
     return data.map(normalizeTopic);
   },
 
-  fetchAvailable: async ({ departmentId, academicYearId } = {}) => {
+  fetchAvailable: async ({ orgUnitId, semesterId } = {}) => {
     const { data } = await apiClient.get('/Topics/available', {
-      params: { departmentId, academicYearId },
+      params: { orgUnitId, semesterId },
     });
     return data.map(normalizeTopic);
   },
@@ -213,9 +213,9 @@ export const topicsApi = {
     return data;
   },
 
-  fetchCoordinationSummary: async ({ departmentId, academicYearId }) => {
+  fetchCoordinationSummary: async ({ orgUnitId, semesterId }) => {
     const { data } = await apiClient.get('/Topics/coordination-summary', {
-      params: { departmentId, academicYearId },
+      params: { orgUnitId, semesterId },
     });
     return normalizeCoordinationSummary(data);
   },
@@ -225,15 +225,15 @@ export const topicsApi = {
     return data;
   },
 
-  completeCoordination: async ({ departmentId, academicYearId }) => {
-    const { data } = await apiClient.post('/Topics/complete-coordination', { departmentId, academicYearId });
+  completeCoordination: async ({ orgUnitId, semesterId }) => {
+    const { data } = await apiClient.post('/Topics/complete-coordination', { orgUnitId, semesterId });
     return data;
   },
 };
 
 export const applicationsApi = {
-  fetchMy: async ({ academicYearId } = {}) => {
-    const { data } = await apiClient.get('/applications/my', { params: { academicYearId } });
+  fetchMy: async ({ semesterId } = {}) => {
+    const { data } = await apiClient.get('/applications/my', { params: { semesterId } });
     return data.map(normalizeTopicApplication);
   },
 
@@ -265,23 +265,23 @@ export const applicationsApi = {
 
 export const topicKeys = {
   all: ['topics'],
-  supervisor: (supervisorId, academicYearId) => [...topicKeys.all, 'supervisor', supervisorId, academicYearId],
-  available: (departmentId, academicYearId) => [...topicKeys.all, 'available', departmentId, academicYearId],
+  supervisor: (supervisorId, semesterId) => [...topicKeys.all, 'supervisor', supervisorId, semesterId],
+  available: (orgUnitId, semesterId) => [...topicKeys.all, 'available', orgUnitId, semesterId],
   direction: (directionId) => [...topicKeys.all, 'direction', directionId],
   detail: (id) => [...topicKeys.all, 'detail', id],
-  coordination: (departmentId, academicYearId) => [...topicKeys.all, 'coordination', departmentId, academicYearId],
+  coordination: (orgUnitId, semesterId) => [...topicKeys.all, 'coordination', orgUnitId, semesterId],
 };
 
 export const applicationKeys = {
   all: ['applications'],
-  my: (academicYearId) => [...applicationKeys.all, 'my', academicYearId],
+  my: (semesterId) => [...applicationKeys.all, 'my', semesterId],
   topic: (topicId) => [...applicationKeys.all, 'topic', topicId],
 };
 
-export const useTopicsBySupervisor = (supervisorId, academicYearId) => useQuery({
-  queryKey: topicKeys.supervisor(supervisorId, academicYearId),
-  queryFn: () => topicsApi.fetchBySupervisor({ supervisorId, academicYearId }),
-  enabled: !!supervisorId && !!academicYearId,
+export const useTopicsBySupervisor = (supervisorId, semesterId) => useQuery({
+  queryKey: topicKeys.supervisor(supervisorId, semesterId),
+  queryFn: () => topicsApi.fetchBySupervisor({ supervisorId, semesterId }),
+  enabled: !!supervisorId && !!semesterId,
 });
 
 export const useTopicsByDirection = (directionId) => useQuery({
@@ -290,9 +290,9 @@ export const useTopicsByDirection = (directionId) => useQuery({
   enabled: !!directionId,
 });
 
-export const useAvailableTopics = (departmentId, academicYearId) => useQuery({
-  queryKey: topicKeys.available(departmentId, academicYearId),
-  queryFn: () => topicsApi.fetchAvailable({ departmentId, academicYearId }),
+export const useAvailableTopics = (orgUnitId, semesterId) => useQuery({
+  queryKey: topicKeys.available(orgUnitId, semesterId),
+  queryFn: () => topicsApi.fetchAvailable({ orgUnitId, semesterId }),
 });
 
 export const useTopicDetail = (id) => useQuery({
@@ -301,10 +301,10 @@ export const useTopicDetail = (id) => useQuery({
   enabled: !!id,
 });
 
-export const useTopicCoordinationSummary = (departmentId, academicYearId) => useQuery({
-  queryKey: topicKeys.coordination(departmentId, academicYearId),
-  queryFn: () => topicsApi.fetchCoordinationSummary({ departmentId, academicYearId }),
-  enabled: !!departmentId && !!academicYearId,
+export const useTopicCoordinationSummary = (orgUnitId, semesterId) => useQuery({
+  queryKey: topicKeys.coordination(orgUnitId, semesterId),
+  queryFn: () => topicsApi.fetchCoordinationSummary({ orgUnitId, semesterId }),
+  enabled: !!orgUnitId && !!semesterId,
 });
 
 const invalidateTopics = (queryClient) => {
@@ -376,9 +376,9 @@ export const useCompleteTopicCoordination = () => {
   });
 };
 
-export const useMyApplications = (academicYearId) => useQuery({
-  queryKey: applicationKeys.my(academicYearId),
-  queryFn: () => applicationsApi.fetchMy({ academicYearId }),
+export const useMyApplications = (semesterId) => useQuery({
+  queryKey: applicationKeys.my(semesterId),
+  queryFn: () => applicationsApi.fetchMy({ semesterId }),
 });
 
 export const useApplicationsByTopic = (topicId) => useQuery({
