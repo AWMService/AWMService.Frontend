@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getIntlLocale, useUploadAttachment, useCurrentWorkId, useAttachments, useQualityChecks, useSubmitForCheck, useMyWorkProgress, useActivePeriod } from '@awm/shared';
+import { getIntlLocale, useUploadAttachment, useCurrentWorkId, useAttachments, useQualityChecks, useSubmitForCheck, useMyWorkProgress, useActivePeriod, useDeleteAttachment, downloadAttachment } from '@awm/shared';
 import './ReviewStepPage.css';
 import warningIcon from '../../assets/icons/alert-circle-icon.svg';
 import infoIcon from '../../assets/icons/pre-defense/info-icon.svg';
@@ -19,6 +19,7 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
     const { data: workId } = useCurrentWorkId();
     const { data: workProgress } = useMyWorkProgress();
     const { data: apiAttachments = [] } = useAttachments(workId);
+    const deleteMutation = useDeleteAttachment(workId);
     const uploadMutation = useUploadAttachment(workId);
     const checkType = route === 'software-check' ? 'SoftwareCheck' : 'NormControl';
     const { data: checks = [] } = useQualityChecks(workId);
@@ -102,8 +103,22 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
         }
     };
 
-    const handleDeleteFile = () => {
-        // Delete handled by UploadedFilesCard via API
+    const handleDeleteFile = async (attachmentId) => {
+        if (!workId || !attachmentId) return;
+        try {
+            await deleteMutation.mutateAsync(attachmentId);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleDownloadFile = async (attachmentId, fileName) => {
+        if (!workId || !attachmentId) return;
+        try {
+            await downloadAttachment(workId, attachmentId, fileName);
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     const handleRepoSubmit = () => {
@@ -180,9 +195,10 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
                     <div className="review-step-left">
                         {(!isSoftwareCheck || submitMode === 'file') && (
                             <UploadedFilesCard
-                                uploadedFiles={apiAttachments.map(a => ({ name: a.fileName, date: new Date(a.createdAt).toLocaleDateString(locale), id: a.id }))}
+                                uploadedFiles={apiAttachments.map(a => ({ name: a.fileName, date: new Date(a.uploadedAt).toLocaleDateString(locale), id: a.id }))}
                                 onUploadClick={() => setIsModalOpen(true)}
                                 onDeleteFile={handleDeleteFile}
+                                onDownloadFile={handleDownloadFile}
                                 status={status}
                             />
                         )}

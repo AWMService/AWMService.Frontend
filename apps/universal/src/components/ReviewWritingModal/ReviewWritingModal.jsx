@@ -27,6 +27,7 @@ export default function ReviewWritingModal({ isOpen, work, onClose, onSubmit }) 
             workId: work?.id,
             reviewText,
             fileName: file?.name || null,
+            file: file,
             comment,
             date: new Date().toISOString().split('T')[0]
         });

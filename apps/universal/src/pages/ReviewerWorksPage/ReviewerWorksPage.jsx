@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMyReviewerAssignments } from '@awm/shared';
+import { useMyReviewerAssignments, uploadAttachment } from '@awm/shared';
 import ReviewWritingModal from '../../components/ReviewWritingModal/ReviewWritingModal';
 import './ReviewerWorksPage.css';
 
@@ -42,6 +42,18 @@ function ReviewerWorksPage() {
             </div>
         );
     }
+
+    const handleSubmitReview = async (reviewData) => {
+        if (reviewData.file && reviewData.workId) {
+            try {
+                await uploadAttachment(reviewData.workId, reviewData.file, 'ReviewerReview');
+            } catch (err) {
+                console.error('Failed to upload review file', err);
+            }
+        }
+        // TODO: Actually submit review form data via review endpoint once ready
+        setReviewModalWork(null);
+    };
 
     return (
         <div className="reviewer-works-page">
@@ -99,9 +111,7 @@ function ReviewerWorksPage() {
                 isOpen={!!reviewModalWork}
                 work={reviewModalWork}
                 onClose={() => setReviewModalWork(null)}
-                onSubmit={() => {
-                    setReviewModalWork(null);
-                }}
+                onSubmit={handleSubmitReview}
             />
         </div>
     );

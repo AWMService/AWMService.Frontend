@@ -34,6 +34,7 @@ export default function RemarksFormModal({ document, onClose, onSubmit }) {
     const locale = getIntlLocale(i18n.language);
     const [category, setCategory] = useState('');
     const [remarkText, setRemarkText] = useState('');
+    const [file, setFile] = useState(null);
     const [touched, setTouched] = useState({ category: false, text: false });
 
     if (!document) return null;
@@ -62,6 +63,7 @@ export default function RemarksFormModal({ document, onClose, onSubmit }) {
             category,
             text: remarkText.trim(),
             date: new Date().toISOString().split('T')[0],
+            file: file,
         });
     };
 
@@ -116,6 +118,20 @@ export default function RemarksFormModal({ document, onClose, onSubmit }) {
                                     placeholder={t('normocontrol.remarkPlaceholder')}
                                     rows={4}
                                 />
+                            </div>
+
+                            <div className="rfm-field">
+                                <label className="rfm-label">{t('normocontrol.uploadDocument')}</label>
+                                <input
+                                    type="file"
+                                    accept=".pdf,.doc,.docx"
+                                    onChange={(e) => {
+                                        if (e.target.files && e.target.files.length > 0) {
+                                            setFile(e.target.files[0]);
+                                        }
+                                    }}
+                                />
+                                {file && <span className="rfm-filename" style={{marginTop: 5, fontSize: '0.85em', color: '#666'}}>{file.name}</span>}
                             </div>
                         </div>
 

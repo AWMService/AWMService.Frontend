@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getIntlLocale, getLocalizedValue, useAuth, usePendingChecks } from '@awm/shared';
+import { getIntlLocale, getLocalizedValue, useAuth, usePendingChecks, uploadExpertDocument } from '@awm/shared';
 import DocumentPreviewModal from '../../components/DocumentPreviewModal/DocumentPreviewModal';
 import RemarksFormModal from '../../components/RemarksFormModal/RemarksFormModal';
 import './NormocontrolPage.css';
@@ -109,7 +109,16 @@ function NormocontrolPage() {
         setSelectedDocument(null);
     };
 
-    const handleRemarkSubmit = (remark) => {
+    const handleRemarkSubmit = async (remark) => {
+        const doc = displayDocuments.find(d => d.id === remark.documentId);
+        if (remark.file && doc && doc.workId) {
+            try {
+                await uploadExpertDocument(doc.workId, doc.id, remark.file, 'Other');
+            } catch (err) {
+                console.error('Failed to upload expert document', err);
+            }
+        }
+
         setDocuments((prev) =>
             prev.map((doc) =>
                 doc.id === remark.documentId
