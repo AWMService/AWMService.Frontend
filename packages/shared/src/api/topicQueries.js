@@ -16,11 +16,12 @@ const readLocalized = (item, field) => {
 
 /**
  * Normalizes topic status from backend TopicStatus enum string.
- * Backend returns: "Draft", "Pending", "Approved", "Rejected", "Closed"
+ * Backend returns: "Draft", "Pending", "Approved", "Rejected", "Closed",
+ *                  "Inactive", "Reconciled", "NeedsRevision"
  */
 const normalizeTopicStatus = (item) => {
   const raw = String(read(item, 'status') || '').toLowerCase();
-  if (['draft', 'pending', 'approved', 'rejected', 'closed'].includes(raw)) return raw;
+  if (['draft', 'pending', 'approved', 'rejected', 'closed', 'inactive', 'reconciled', 'needsrevision'].includes(raw)) return raw;
   return 'draft';
 };
 
@@ -117,35 +118,56 @@ export const normalizeTopic = (item) => {
   };
 };
 
-export const normalizeCoordinationSummary = (summary) => ({
+/**
+ * Normalizes the reconciliation summary response from backend.
+ * Maps TopicReconciliationSummaryResponse → frontend model.
+ */
+export const normalizeReconciliationSummary = (summary) => ({
   totalTopics: read(summary, 'totalTopics') ?? 0,
-  approvedTopics: read(summary, 'approvedTopics') ?? 0,
-  topicsWithStudents: read(summary, 'topicsWithStudents') ?? 0,
+  topicsWithAcceptedStudents: read(summary, 'topicsWithAcceptedStudents') ?? 0,
   topicsWithoutStudents: read(summary, 'topicsWithoutStudents') ?? 0,
-  closedTopics: read(summary, 'closedTopics') ?? 0,
-  totalAcceptedApplications: read(summary, 'totalAcceptedApplications') ?? 0,
-  totalAvailableSpots: read(summary, 'totalAvailableSpots') ?? 0,
+  topicsWithExcessApplications: read(summary, 'topicsWithExcessApplications') ?? 0,
+  reconciledTopics: read(summary, 'reconciledTopics') ?? 0,
+  inactiveTopics: read(summary, 'inactiveTopics') ?? 0,
+  needsRevisionTopics: read(summary, 'needsRevisionTopics') ?? 0,
   topics: (read(summary, 'topics') || []).map((item) => {
-    const status = String(read(item, 'status') || '').toLowerCase();
+    const status = normalizeTopicStatus(item);
+    const maxParticipants = read(item, 'maxParticipants') ?? 1;
+    const acceptedCount = read(item, 'acceptedApplicationsCount') ?? 0;
+    const pendingCount = read(item, 'pendingApplicationsCount') ?? 0;
+    const totalCount = read(item, 'totalApplicationsCount') ?? 0;
     return {
-      id: read(item, 'topicId'),
-      topicId: read(item, 'topicId'),
+      id: read(item, 'id'),
+      topicId: read(item, 'id'),
       title: readLocalized(item, 'title'),
-      supervisorId: read(item, 'supervisorId'),
-      supervisorName: read(item, 'supervisorName'),
-      maxParticipants: read(item, 'maxParticipants') ?? 1,
-      applicationsCount: read(item, 'applicationsCount') ?? 0,
-      acceptedCount: read(item, 'acceptedCount') ?? 0,
-      pendingCount: read(item, 'pendingCount') ?? 0,
-      rejectedCount: read(item, 'rejectedCount') ?? 0,
-      availableSpots: read(item, 'availableSpots') ?? 0,
-      lastRejectionReason: read(item, 'lastRejectionReason'),
+      directionId: read(item, 'directionId'),
+      directionTitle: read(item, 'directionTitle'),
+      workTypeId: read(item, 'workTypeId'),
+      workTypeName: read(item, 'workTypeName'),
+      specialityId: read(item, 'specialityId'),
+      supervisorFullName: read(item, 'supervisorFullName') ?? '',
+      createdBy: read(item, 'createdBy'),
+      maxParticipants,
+      acceptedCount,
+      pendingCount,
+      totalApplicationsCount: totalCount,
+      availableSpots: Math.max(0, maxParticipants - acceptedCount),
+      hasExcessApplications: totalCount > maxParticipants,
+      hasNoStudents: acceptedCount === 0 && totalCount === 0,
+      reviewComment: read(item, 'reviewComment'),
       status,
       isApproved: status === 'approved',
       isClosed: status === 'closed',
+      isReconciled: status === 'reconciled',
+      isInactive: status === 'inactive',
+      isNeedsRevision: status === 'needsrevision',
+      createdAt: read(item, 'createdAt'),
     };
   }),
 });
+
+/** @deprecated Use normalizeReconciliationSummary instead */
+export const normalizeCoordinationSummary = normalizeReconciliationSummary;
 
 export const topicPayloadFromForm = ({ form, user, workTypeId }) => {
   const titleRu = form.title?.ru?.trim() || form.title?.kk?.trim() || form.title?.en?.trim() || '';
@@ -219,18 +241,47 @@ export const topicsApi = {
     const { data } = await apiClient.get('/v1/topics/department', {
       params: { orgUnitId, semesterId },
     });
-    return normalizeCoordinationSummary(data);
+    return normalizeReconciliationSummary(data);
   },
 
-  // --- Below endpoints require backend implementation (Topic Coordination phase) ---
+  // --- Reconciliation Stage (Согласование тем) ---
 
-  bulkApprove: async (topicIds) => {
-    const { data } = await apiClient.post('/v1/topics/bulk-approve', { topicIds });
+  fetchReconciliationSummary: async ({ orgUnitId, semesterId, specialityId } = {}) => {
+    const { data } = await apiClient.get('/v1/topics/reconciliation', {
+      params: { orgUnitId, semesterId, specialityId },
+    });
+    return normalizeReconciliationSummary(data);
+  },
+
+  reconcile: async (topicIds) => {
+    const { data } = await apiClient.post('/v1/topics/reconcile', { topicIds });
     return data;
   },
 
+  markInactive: async (topicIds) => {
+    const { data } = await apiClient.post('/v1/topics/mark-inactive', { topicIds });
+    return data;
+  },
+
+  sendBackForRevision: async ({ topicIds, comment }) => {
+    const { data } = await apiClient.post('/v1/topics/send-back-for-revision', { topicIds, comment });
+    return data;
+  },
+
+  completeReconciliation: async ({ orgUnitId, semesterId }) => {
+    const { data } = await apiClient.post('/v1/topics/complete-reconciliation', { orgUnitId, semesterId });
+    return data;
+  },
+
+  /** @deprecated Use reconcile instead */
+  bulkApprove: async (topicIds) => {
+    const { data } = await apiClient.post('/v1/topics/reconcile', { topicIds });
+    return data;
+  },
+
+  /** @deprecated Use completeReconciliation instead */
   completeCoordination: async ({ orgUnitId, semesterId }) => {
-    const { data } = await apiClient.post('/v1/topics/complete-coordination', { orgUnitId, semesterId });
+    const { data } = await apiClient.post('/v1/topics/complete-reconciliation', { orgUnitId, semesterId });
     return data;
   },
 };
@@ -273,6 +324,7 @@ export const topicKeys = {
   available: (orgUnitId, semesterId) => [...topicKeys.all, 'available', orgUnitId, semesterId],
   detail: (id) => [...topicKeys.all, 'detail', id],
   coordination: (orgUnitId, semesterId) => [...topicKeys.all, 'coordination', orgUnitId, semesterId],
+  reconciliation: (orgUnitId, semesterId, specialityId) => [...topicKeys.all, 'reconciliation', orgUnitId, semesterId, specialityId],
 };
 
 export const applicationKeys = {
@@ -301,6 +353,12 @@ export const useTopicDetail = (id) => useQuery({
 export const useTopicCoordinationSummary = (orgUnitId, semesterId) => useQuery({
   queryKey: topicKeys.coordination(orgUnitId, semesterId),
   queryFn: () => topicsApi.fetchCoordinationSummary({ orgUnitId, semesterId }),
+  enabled: !!orgUnitId && !!semesterId,
+});
+
+export const useReconciliationSummary = (orgUnitId, semesterId, specialityId) => useQuery({
+  queryKey: topicKeys.reconciliation(orgUnitId, semesterId, specialityId),
+  queryFn: () => topicsApi.fetchReconciliationSummary({ orgUnitId, semesterId, specialityId }),
   enabled: !!orgUnitId && !!semesterId,
 });
 
@@ -358,18 +416,52 @@ export const useDeactivateTopic = () => {
   });
 };
 
+/** @deprecated Use useReconcileTopics instead */
 export const useBulkApproveTopics = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: topicsApi.bulkApprove,
+    mutationFn: topicsApi.reconcile,
     onSuccess: () => invalidateTopics(queryClient),
   });
 };
 
+/** @deprecated Use useCompleteReconciliation instead */
 export const useCompleteTopicCoordination = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: topicsApi.completeCoordination,
+    mutationFn: topicsApi.completeReconciliation,
+    onSuccess: () => invalidateTopics(queryClient),
+  });
+};
+
+export const useReconcileTopics = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: topicsApi.reconcile,
+    onSuccess: () => invalidateTopics(queryClient),
+  });
+};
+
+export const useMarkTopicsInactive = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: topicsApi.markInactive,
+    onSuccess: () => invalidateTopics(queryClient),
+  });
+};
+
+export const useSendTopicsBackForRevision = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: topicsApi.sendBackForRevision,
+    onSuccess: () => invalidateTopics(queryClient),
+  });
+};
+
+export const useCompleteReconciliation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: topicsApi.completeReconciliation,
     onSuccess: () => invalidateTopics(queryClient),
   });
 };

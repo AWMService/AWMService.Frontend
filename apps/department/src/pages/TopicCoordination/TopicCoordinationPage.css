@@ -23,7 +23,7 @@
 
 .tc-stats-summary {
     display: flex;
-    gap: 16px;
+    gap: 10px;
     margin-top: 12px;
     flex-wrap: wrap;
 }
@@ -36,6 +36,43 @@
     background: #ffffff;
     border: 1px solid #e5e7eb;
     border-radius: 999px;
+    transition: all 0.15s ease;
+}
+
+.tc-stat-item--success {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #15803d;
+}
+
+.tc-stat-item--warning {
+    background: #fffbeb;
+    border-color: #fde68a;
+    color: #92400e;
+}
+
+.tc-stat-item--danger {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #dc2626;
+}
+
+.tc-stat-item--reconciled {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1d4ed8;
+}
+
+.tc-stat-item--inactive {
+    background: #f5f5f5;
+    border-color: #d4d4d4;
+    color: #737373;
+}
+
+.tc-stat-item--revision {
+    background: #fef3c7;
+    border-color: #fcd34d;
+    color: #b45309;
 }
 
 /* ===================== FILTERS ===================== */
@@ -129,6 +166,14 @@
     background-color: #f8fafc;
 }
 
+.tc-table tbody tr.tc-row--excess {
+    background-color: #fffbeb;
+}
+
+.tc-table tbody tr.tc-row--excess:hover {
+    background-color: #fef3c7;
+}
+
 .tc-col-checkbox {
     width: 40px;
     text-align: center;
@@ -150,6 +195,52 @@
 
 .tc-col-actions {
     white-space: nowrap;
+    width: 120px;
+}
+
+.tc-col-students {
+    white-space: nowrap;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+}
+
+.tc-col-applications {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ===================== TOPIC CELL ===================== */
+
+.tc-topic-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.tc-topic-title {
+    font-weight: 500;
+    color: #0f172a;
+}
+
+.tc-topic-comment {
+    font-size: 12px;
+    color: #94a3b8;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 300px;
+    cursor: help;
+}
+
+.tc-excess-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
 }
 
 /* ===================== STATUS BADGES ===================== */
@@ -180,20 +271,43 @@
 }
 
 .tc-status-badge--closed {
-    background-color: #fee2e2;
-    color: #dc2626;
+    background-color: #e0e7ff;
+    color: #4338ca;
+}
+
+.tc-status-badge--reconciled {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+    font-weight: 600;
+}
+
+.tc-status-badge--inactive {
+    background-color: #f5f5f5;
+    color: #737373;
+}
+
+.tc-status-badge--needsrevision {
+    background-color: #fef3c7;
+    color: #b45309;
 }
 
 /* ===================== ACTION BUTTONS ===================== */
 
+.tc-action-group {
+    display: flex;
+    gap: 4px;
+}
+
 .tc-btn {
-    padding: 6px 14px;
-    font-size: 13px;
+    padding: 6px 10px;
+    font-size: 14px;
     font-weight: 500;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.15s ease;
+    min-width: 32px;
+    text-align: center;
 }
 
 .tc-btn:disabled {
@@ -208,6 +322,24 @@
 
 .tc-btn--approve:hover:not(:disabled) {
     background-color: #bbf7d0;
+}
+
+.tc-btn--inactive {
+    background-color: #f5f5f5;
+    color: #737373;
+}
+
+.tc-btn--inactive:hover:not(:disabled) {
+    background-color: #e5e5e5;
+}
+
+.tc-btn--revision {
+    background-color: #fef3c7;
+    color: #b45309;
+}
+
+.tc-btn--revision:hover:not(:disabled) {
+    background-color: #fde68a;
 }
 
 .tc-btn--reject {
@@ -227,7 +359,7 @@
     bottom: 16px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     background: #f0f9ff;
     border: 1px solid #bae6fd;
     padding: 12px 20px;
@@ -235,6 +367,7 @@
     margin-top: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     z-index: 10;
+    flex-wrap: wrap;
 }
 
 .tc-bulk-bar__label {
@@ -245,13 +378,19 @@
 }
 
 .tc-bulk-btn {
-    padding: 8px 18px;
+    padding: 8px 16px;
     font-size: 13px;
     font-weight: 500;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.tc-bulk-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .tc-bulk-btn--approve {
@@ -259,8 +398,26 @@
     color: #ffffff;
 }
 
-.tc-bulk-btn--approve:hover {
+.tc-bulk-btn--approve:hover:not(:disabled) {
     background-color: #15803d;
+}
+
+.tc-bulk-btn--inactive {
+    background-color: #737373;
+    color: #ffffff;
+}
+
+.tc-bulk-btn--inactive:hover:not(:disabled) {
+    background-color: #525252;
+}
+
+.tc-bulk-btn--revision {
+    background-color: #d97706;
+    color: #ffffff;
+}
+
+.tc-bulk-btn--revision:hover:not(:disabled) {
+    background-color: #b45309;
 }
 
 .tc-bulk-btn--reject {
@@ -268,11 +425,11 @@
     color: #ffffff;
 }
 
-.tc-bulk-btn--reject:hover {
+.tc-bulk-btn--reject:hover:not(:disabled) {
     background-color: #b91c1c;
 }
 
-/* ===================== REJECT MODAL ===================== */
+/* ===================== REVISION MODAL ===================== */
 
 .tc-reject-modal-backdrop {
     position: fixed;
@@ -295,10 +452,16 @@
 }
 
 .tc-reject-modal__title {
-    margin: 0 0 16px;
+    margin: 0 0 8px;
     font-size: 18px;
     font-weight: 600;
     color: #111827;
+}
+
+.tc-reject-modal__subtitle {
+    margin: 0 0 16px;
+    font-size: 13px;
+    color: #64748b;
 }
 
 .tc-reject-modal textarea {
@@ -360,12 +523,12 @@
 }
 
 .tc-reject-modal__btn--confirm {
-    background-color: #dc2626;
+    background-color: #d97706;
     color: #ffffff;
 }
 
 .tc-reject-modal__btn--confirm:hover {
-    background-color: #b91c1c;
+    background-color: #b45309;
 }
 
 .tc-reject-modal__btn--confirm:disabled {
@@ -400,6 +563,13 @@
     border-color: #d1d5db;
     color: #9ca3af;
     cursor: not-allowed;
+}
+
+.tc-finalize-hint {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #94a3b8;
+    text-align: center;
 }
 
 /* ===================== EMPTY STATE ===================== */
