@@ -62,19 +62,16 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        // Map to backend request format using unified StaffRoleType IDs:
-        // 2 = Chairman, 3 = Secretary, 4 = Member
-        const members = [];
-        if (formData.chairmanId) members.push({ userId: parseInt(formData.chairmanId), role: 2 });
-        if (formData.secretaryId) members.push({ userId: parseInt(formData.secretaryId), role: 3 });
-        formData.memberIds.forEach(id => members.push({ userId: parseInt(id), role: 4 }));
-
+        // Map to backend request format (CreateCommissionRequest):
+        // ChairmanUserId, SecretaryUserId, MemberUserIds
         onSubmit({
             name: formData.name,
             // 1 = PreDefense, 2 = GAK (CommissionTypes)
-            commissionType: formData.type === 'PreDefense' ? 1 : 2,
+            commissionTypeId: formData.type === 'PreDefense' ? 1 : 2,
             preDefenseNumber: formData.type === 'PreDefense' ? parseInt(formData.preDefenseNumber) : null,
-            members: members
+            chairmanUserId: parseInt(formData.chairmanId),
+            secretaryUserId: parseInt(formData.secretaryId),
+            memberUserIds: formData.memberIds.map(id => parseInt(id))
         });
     };
 

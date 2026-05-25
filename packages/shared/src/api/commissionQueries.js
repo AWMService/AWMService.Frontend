@@ -2,10 +2,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './apiClient';
 
 export const commissionApi = {
-  fetchCommissions: async (orgUnitId, semesterId) => {
-    const { data } = await apiClient.get('/v1/commissions', {
-      params: { orgUnitId, semesterId }
-    });
+  fetchCommissions: async (orgUnitId, semesterId, specialityId = null) => {
+    const params = { orgUnitId, semesterId };
+    if (specialityId) params.specialityId = specialityId;
+    
+    const { data } = await apiClient.get('/v1/commissions', { params });
     return data;
   },
   fetchCommissionById: async (commissionId) => {
@@ -13,19 +14,12 @@ export const commissionApi = {
     return data;
   },
   createCommission: async (commissionData) => {
+    // commissionData includes: OrgUnitId, SemesterId, SpecialityId, CommissionTypeId, PreDefenseNumber, Name, ChairmanUserId, SecretaryUserId, MemberUserIds
     const { data } = await apiClient.post('/v1/commissions', commissionData);
     return data;
   },
   updateCommission: async (commissionId, commissionData) => {
     const { data } = await apiClient.put(`/v1/commissions/${commissionId}`, commissionData);
-    return data;
-  },
-  addMember: async (commissionId, memberData) => {
-    const { data } = await apiClient.post(`/v1/commissions/${commissionId}/members`, memberData);
-    return data;
-  },
-  removeMember: async (commissionId, memberId) => {
-    const { data } = await apiClient.delete(`/v1/commissions/${commissionId}/members/${memberId}`);
     return data;
   },
   deleteCommission: async (commissionId) => {
@@ -36,14 +30,15 @@ export const commissionApi = {
 
 export const commissionKeys = {
   all: ['commissions'],
-  byDepartment: (orgUnitId, semesterId) => [...commissionKeys.all, 'department', orgUnitId, semesterId],
+  byDepartment: (orgUnitId, semesterId, specialityId = null) => 
+    [...commissionKeys.all, 'department', orgUnitId, semesterId, specialityId],
   detail: (commissionId) => [...commissionKeys.all, 'detail', commissionId]
 };
 
-export const useCommissions = (orgUnitId, semesterId) => {
+export const useCommissions = (orgUnitId, semesterId, specialityId = null) => {
   return useQuery({
-    queryKey: commissionKeys.byDepartment(orgUnitId, semesterId),
-    queryFn: () => commissionApi.fetchCommissions(orgUnitId, semesterId),
+    queryKey: commissionKeys.byDepartment(orgUnitId, semesterId, specialityId),
+    queryFn: () => commissionApi.fetchCommissions(orgUnitId, semesterId, specialityId),
     enabled: !!orgUnitId && !!semesterId,
   });
 };
@@ -56,43 +51,34 @@ export const useCommissionDetail = (commissionId) => {
   });
 };
 
-export const useCreateCommission = (orgUnitId, semesterId) => {
+export const useCreateCommission = (orgUnitId, semesterId, specialityId = null) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: commissionApi.createCommission,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: commissionKeys.byDepartment(orgUnitId, semesterId) });
+      queryClient.invalidateQueries({ queryKey: commissionKeys.byDepartment(orgUnitId, semesterId, specialityId) });
     },
   });
 };
 
-export const useUpdateCommission = (orgUnitId, semesterId) => {
+export const useUpdateCommission = (orgUnitId, semesterId, specialityId = null) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, ...data }) => commissionApi.updateCommission(id, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: commissionKeys.byDepartment(orgUnitId, semesterId) });
+      queryClient.invalidateQueries({ queryKey: commissionKeys.byDepartment(orgUnitId, semesterId, specialityId) });
       queryClient.invalidateQueries({ queryKey: commissionKeys.detail(variables.id) });
     },
   });
 };
 
-export const useAddCommissionMember = (commissionId) => {
+export const useDeleteCommission = (orgUnitId, semesterId, specialityId = null) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (memberData) => commissionApi.addMember(commissionId, memberData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: commissionKeys.detail(commissionId) });
-    },
-  });
-};
-
-export const useRemoveCommissionMember = (commissionId) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (memberId) => commissionApi.removeMember(commissionId, memberId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: commissionKeys.detail(commissionId) });
+    mutationFn: (id) => commissionApi.deleteCommission(id),
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: commissionKeys.byDepartment(orgUnitId, semesterId, specialityId) });
+      queryClient.invalidateQueries({ queryKey: commissionKeys.detail(id) });
     },
   });
 };

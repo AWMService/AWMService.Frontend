@@ -16,6 +16,7 @@ import CommissionsPage from './pages/Commissions/CommissionsPage.jsx';
 import StudentDistributionPage from './pages/StudentDistribution/StudentDistributionPage.jsx';
 import ExpertAssignmentPage from './pages/ExpertAssignment/ExpertAssignmentPage.jsx';
 import DefenseReadinessPage from './pages/DefenseReadiness/DefenseReadinessPage.jsx';
+import EvaluationCriteriaPage from './pages/EvaluationCriteria/EvaluationCriteriaPage.jsx';
 import './App.css';
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
                             <Route path="/time-periods/:id/schedule" element={<TimePeriodSchedulePage />} />
                             <Route path="/notifications" element={<NotificationsPage translationPrefix="department" />} />
                             <Route path="/commissions" element={<CommissionsPage />} />
+                            <Route path="/evaluation-criteria" element={<EvaluationCriteriaPage />} />
                             <Route path="/student-distribution" element={<StudentDistributionPage />} />
                             <Route path="/expert-assignment" element={<ExpertAssignmentPage />} />
                             <Route path="/defense-readiness" element={<DefenseReadinessPage />} />

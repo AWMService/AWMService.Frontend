@@ -167,8 +167,8 @@ export default function StudentList() {
                 onClose={() => setIsJournalOpen(false)}
                 selectedStudent={selectedStudent}
                 criteriaList={criteriaList.map(c => ({
-                    id: String(c.id || c.criteriaId),
-                    label: { ru: c.nameRu || c.name, kk: c.nameKz || c.name, en: c.nameEn || c.name },
+                    id: String(c.id),
+                    label: { ru: c.criteriaName, kk: c.criteriaName, en: c.criteriaName },
                     max: c.maxScore || 10,
                 }))}
                 scores={scores}

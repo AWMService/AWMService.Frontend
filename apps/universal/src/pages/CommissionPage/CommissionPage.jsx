@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useRole, ROLES, getIntlLocale, getLocalizedValue, useAuth, useCommissions, useGenerateProtocol, useProtocol } from '@awm/shared';
 import './CommissionPage.css';
 
 function CommissionPage() {
     const { t, i18n } = useTranslation();
+    const navigate = useNavigate();
     const locale = getIntlLocale(i18n.language);
     const { currentRole } = useRole();
     const { user } = useAuth();
@@ -33,9 +35,7 @@ function CommissionPage() {
     const isChairman = currentRole === ROLES.CHAIRMAN;
     const isSecretary = currentRole === ROLES.SECRETARY;
 
-    const handleGenerateProtocol = (commission) => {
-        setProtocolModal(commission);
-    };
+
 
     const handleConfirmGenerateProtocol = async () => {
         if (!protocolModal) return;
@@ -131,15 +131,18 @@ function CommissionPage() {
                         </div>
 
                         <div className="commission-actions">
-                            <button className="action-btn primary">
+                            <button 
+                                className="action-btn primary"
+                                onClick={() => navigate(`/schedule/${commission.id}`)}
+                            >
                                 {t('commission.students')}
                             </button>
-                            {isSecretary && commission.hasUpcomingSchedule === false && (
+                            {(isSecretary || isChairman) && (
                                 <button
                                     className="action-btn secondary"
-                                    onClick={() => handleGenerateProtocol(commission)}
+                                    onClick={() => navigate(`/secretary/${commission.id}`)}
                                 >
-                                    {t('commission.generateProtocol')}
+                                    {t('nav.secretary')}
                                 </button>
                             )}
                         </div>

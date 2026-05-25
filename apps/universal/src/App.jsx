@@ -89,7 +89,7 @@ function AppContent() {
                                 <StudentList />
                             </ProtectedRoute>
                         } />
-                        <Route path="/secretary" element={
+                        <Route path="/secretary/:commissionId" element={
                             <ProtectedRoute allowedRoles={[ROLES.SECRETARY]} fallback="/">
                                 <SecretaryStudentList />
                             </ProtectedRoute>

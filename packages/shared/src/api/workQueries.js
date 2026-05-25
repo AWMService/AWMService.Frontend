@@ -35,7 +35,7 @@ export const useMySupervisedWorks = (options = {}) => {
 };
 
 export const fetchStudentDefenseStep = async () => {
-  const { data } = await apiClient.get('/v1/works/my-defense-step');
+  const { data } = await apiClient.get('/v1/schedules/my-defense-step');
   return data;
 };
 

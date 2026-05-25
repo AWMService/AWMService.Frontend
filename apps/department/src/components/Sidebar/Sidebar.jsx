@@ -40,6 +40,12 @@ export function Sidebar() {
       descriptionKey: "department.commissionsDescription",
     },
     {
+      href: "/evaluation-criteria",
+      labelKey: "nav.evaluationCriteria",
+      icon: documentCheckIcon,
+      descriptionKey: "department.evaluationCriteriaDescription",
+    },
+    {
       href: "/directions-topics?tab=directions",
       labelKey: "nav.directionsTopics",
       icon: graduationCapIcon,

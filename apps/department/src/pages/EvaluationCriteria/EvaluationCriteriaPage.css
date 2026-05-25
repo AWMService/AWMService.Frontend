@@ -1,0 +1,154 @@
+.criteria-page {
+    background-color: #F9FAFB;
+    flex: 1;
+    margin-top: 64px;
+    padding: 56px;
+}
+
+.criteria-page .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.criteria-page .page-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1F2937;
+    margin-bottom: 1rem;
+}
+
+.work-type-selector {
+    display: flex;
+    background: #E5E7EB;
+    padding: 4px;
+    border-radius: 8px;
+    width: fit-content;
+}
+
+.type-btn {
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    background: transparent;
+    color: #4B5563;
+    transition: all 0.2s;
+}
+
+.type-btn.active {
+    background: #ffffff;
+    color: #111827;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.criteria-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.criteria-card {
+    background: #ffffff;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: box-shadow 0.2s;
+}
+
+.criteria-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.criteria-card.adding {
+    border: 2px dashed #D1D5DB;
+    background: #F3F4F6;
+}
+
+.criteria-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 4px 0;
+}
+
+.criteria-stats {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 13px;
+    color: #6B7280;
+}
+
+.stat strong {
+    color: #374151;
+}
+
+.speciality-badge {
+    background: #FEF3C7;
+    color: #92400E;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.criteria-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.criteria-actions button {
+    background: none;
+    border: none;
+    color: #2563EB;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.criteria-actions button.danger {
+    color: #DC2626;
+}
+
+/* Form Styles */
+.criteria-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.criteria-form__fields {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 12px;
+}
+
+.criteria-form__fields input {
+    padding: 8px 12px;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.criteria-form__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.criteria-empty {
+    text-align: center;
+    padding: 64px;
+    color: #9CA3AF;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #E5E7EB;
+}

@@ -50,10 +50,16 @@ function CommissionsPage() {
     };
 
     const handleEdit = (commission) => {
-        // Prepare data for modal
+        // Find chairman and secretary from members array
+        const chairman = commission.members?.find(m => m.roleType === 2); // StaffRoleType.CommissionChairman
+        const secretary = commission.members?.find(m => m.roleType === 3); // StaffRoleType.CommissionSecretary
+        const members = commission.members?.filter(m => m.roleType === 4).map(m => m.userId) || [];
+
         setEditingCommission({
             ...commission,
-            // We don't have IDs for members in the list view yet, so edit might be limited to name
+            chairmanId: chairman?.userId || '',
+            secretaryId: secretary?.userId || '',
+            memberIds: members
         });
         setIsFormOpen(true);
     };
@@ -61,6 +67,8 @@ function CommissionsPage() {
     const handleFormSubmit = async (formData) => {
         try {
             if (editingCommission) {
+                // For update, we might need a separate UpdateCommissionRequest on backend
+                // or just update name for now if PUT /v1/commissions/{id} only supports that
                 await updateMutation.mutateAsync({ id: editingCommission.id, name: formData.name });
             } else {
                 await createMutation.mutateAsync({
@@ -75,6 +83,14 @@ function CommissionsPage() {
             console.error("Failed to submit commission", error);
         }
     };
+
+    // ... inside return, update card rendering:
+    // {commissions.map((commission) => {
+    //    const chairman = commission.members?.find(m => m.roleType === 2)?.fullName;
+    //    const secretary = commission.members?.find(m => m.roleType === 3)?.fullName;
+    //    const memberCount = commission.members?.filter(m => m.roleType === 4).length || 0;
+    // ...
+
 
     const handleFormClose = () => {
         setIsFormOpen(false);
@@ -121,56 +137,62 @@ function CommissionsPage() {
                     </div>
                 )}
 
-                {commissions.map((commission) => (
-                    <div key={commission.id} className="commission-card">
-                        <div className="commission-card__header">
-                            <h3 className="commission-card__name">{commission.name}</h3>
-                            <span
-                                className={`commission-card__type-badge commission-card__type-badge--${commission.commissionType.toLowerCase()}`}
-                            >
-                                {commission.commissionType === 'PreDefense'
-                                    ? t('department.predefense')
-                                    : t('department.defenseCommission')}
-                            </span>
-                        </div>
+                {commissions.map((commission) => {
+                    const chairman = commission.members?.find(m => m.roleType === 2)?.fullName;
+                    const secretary = commission.members?.find(m => m.roleType === 3)?.fullName;
+                    const memberCount = commission.members?.filter(m => m.roleType === 4).length || 0;
 
-                        <div className="commission-card__info">
-                            <div className="commission-card__info-row">
-                                <span className="commission-card__info-label">
-                                    {t('commission.chairman')}:
+                    return (
+                        <div key={commission.id} className="commission-card">
+                            <div className="commission-card__header">
+                                <h3 className="commission-card__name">{commission.name}</h3>
+                                <span
+                                    className={`commission-card__type-badge commission-card__type-badge--${commission.commissionTypeId === 1 ? 'predefense' : 'defense'}`}
+                                >
+                                    {commission.commissionTypeId === 1
+                                        ? t('department.predefense')
+                                        : t('department.defenseCommission')}
                                 </span>
-                                <span>{commission.chairmanName || t('common.notAssigned', 'Not assigned')}</span>
                             </div>
-                            <div className="commission-card__info-row">
-                                <span className="commission-card__info-label">
-                                    {t('commission.secretary')}:
-                                </span>
-                                <span>{commission.secretaryName || t('common.notAssigned', 'Not assigned')}</span>
-                            </div>
-                            <div className="commission-card__info-row">
-                                <span className="commission-card__info-label">
-                                    {t('commission.members')}:
-                                </span>
-                                <span>{getMembersLabel(commission.memberCount)}</span>
-                            </div>
-                        </div>
 
-                        <div className="commission-card__actions">
-                            <button
-                                className="commission-card__action-btn"
-                                onClick={() => handleEdit(commission)}
-                            >
-                                {t('department.editCommission')}
-                            </button>
-                            <button
-                                className="commission-card__action-btn commission-card__action-btn--danger"
-                                onClick={() => setDeleteTarget(commission)}
-                            >
-                                {t('department.deleteCommission')}
-                            </button>
+                            <div className="commission-card__info">
+                                <div className="commission-card__info-row">
+                                    <span className="commission-card__info-label">
+                                        {t('commission.chairman')}:
+                                    </span>
+                                    <span>{chairman || t('common.notAssigned')}</span>
+                                </div>
+                                <div className="commission-card__info-row">
+                                    <span className="commission-card__info-label">
+                                        {t('commission.secretary')}:
+                                    </span>
+                                    <span>{secretary || t('common.notAssigned')}</span>
+                                </div>
+                                <div className="commission-card__info-row">
+                                    <span className="commission-card__info-label">
+                                        {t('commission.members')}:
+                                    </span>
+                                    <span>{getMembersLabel(memberCount)}</span>
+                                </div>
+                            </div>
+
+                            <div className="commission-card__actions">
+                                <button
+                                    className="commission-card__action-btn"
+                                    onClick={() => handleEdit(commission)}
+                                >
+                                    {t('department.editCommission')}
+                                </button>
+                                <button
+                                    className="commission-card__action-btn commission-card__action-btn--danger"
+                                    onClick={() => setDeleteTarget(commission)}
+                                >
+                                    {t('department.deleteCommission')}
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             <CommissionFormModal
