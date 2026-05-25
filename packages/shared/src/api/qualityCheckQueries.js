@@ -8,7 +8,7 @@ const CHECK_TYPES = {
 };
 
 export async function fetchQualityChecks(workId) {
-  const { data } = await apiClient.get(`/quality-checks/by-work/${workId}`);
+  const { data } = await apiClient.get(`/v1/quality-checks/by-work/${workId}`);
   return data;
 }
 
@@ -22,7 +22,7 @@ export function useQualityChecks(workId) {
 
 export async function submitForCheck(workId, checkType) {
   const typeValue = CHECK_TYPES[checkType] ?? 0;
-  const { data } = await apiClient.post(`/quality-checks/works/${workId}/submit`, {
+  const { data } = await apiClient.post(`/v1/quality-checks/works/${workId}/submit`, {
     checkType: typeValue,
   });
   return data;
@@ -41,7 +41,7 @@ export function useSubmitForCheck(workId) {
 export async function fetchPendingChecks(orgUnitId, semesterId, checkType) {
   const params = { orgUnitId, semesterId };
   if (checkType != null) params.checkType = CHECK_TYPES[checkType] ?? checkType;
-  const { data } = await apiClient.get('/quality-checks/pending', { params });
+  const { data } = await apiClient.get('/v1/quality-checks/pending', { params });
   return data;
 }
 

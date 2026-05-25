@@ -16,7 +16,7 @@ export const ATTACHMENT_TYPE_LABELS = {
 };
 
 function buildUrl(workId, attachmentId) {
-  const base = `/works/${workId}/attachments`;
+  const base = `/v1/works/${workId}/attachments`;
   return attachmentId != null ? `${base}/${attachmentId}` : base;
 }
 
@@ -84,7 +84,7 @@ export function useDeleteAttachment(workId) {
 }
 
 export async function fetchCurrentWorkId() {
-  const { data } = await apiClient.get('/works/my');
+  const { data } = await apiClient.get('/v1/works/my');
   if (!data || data.length === 0) return null;
   return data[0].id;
 }

@@ -9,7 +9,7 @@ export const workKeys = {
 };
 
 export const fetchMyWorkProgress = async () => {
-  const { data } = await apiClient.get('/works/my-progress');
+  const { data } = await apiClient.get('/v1/works/my-progress');
   return data;
 };
 
@@ -22,7 +22,7 @@ export const useMyWorkProgress = (options = {}) => {
 };
 
 export const fetchMySupervisedWorks = async () => {
-  const { data } = await apiClient.get('/works/my-supervised');
+  const { data } = await apiClient.get('/v1/works/my-supervised');
   return data;
 };
 
@@ -35,7 +35,7 @@ export const useMySupervisedWorks = (options = {}) => {
 };
 
 export const fetchStudentDefenseStep = async () => {
-  const { data } = await apiClient.get('/works/my-defense-step');
+  const { data } = await apiClient.get('/v1/works/my-defense-step');
   return data;
 };
 

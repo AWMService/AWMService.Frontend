@@ -27,7 +27,7 @@ const STAGE_MAP_REV = {
 
 export const periodApi = {
   fetchPeriods: async (orgUnitId, semesterId) => {
-    const { data } = await apiClient.get('/stages/periods', {
+    const { data } = await apiClient.get('/v1/stages/periods', {
       params: { semesterId: semesterId, orgUnitId: orgUnitId }
     });
     return data.map(p => ({
@@ -39,7 +39,7 @@ export const periodApi = {
   },
   fetchActivePeriod: async (orgUnitId, semesterId, stage) => {
     const stageId = STAGE_MAP[stage] || 0;
-    const { data } = await apiClient.get('/stages/periods', {
+    const { data } = await apiClient.get('/v1/stages/periods', {
       params: { semesterId: semesterId, orgUnitId: orgUnitId }
     });
     const period = data.find(p => p.workflowStageId === stageId);
@@ -69,7 +69,7 @@ export const periodApi = {
         endDate: p.endDate
       })).filter(p => p.workflowStageId !== 0)
     };
-    const { data } = await apiClient.post('/stages/periods', payload);
+    const { data } = await apiClient.post('/v1/stages/periods', payload);
     return data;
   },
   approveDefensePeriods: async (orgUnitId, semesterId, periods) => {
@@ -82,7 +82,7 @@ export const periodApi = {
         endDate: p.endDate
       })).filter(p => p.workflowStageId !== 0)
     };
-    const { data } = await apiClient.post('/stages/periods', payload);
+    const { data } = await apiClient.post('/v1/stages/periods', payload);
     return data;
   }
 };

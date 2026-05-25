@@ -66,41 +66,41 @@ export const directionPayloadFromForm = ({ form, user, workTypeId }) => ({
 
 export const directionsApi = {
   fetchBySupervisor: async ({ semesterId }) => {
-    const { data } = await apiClient.get('/directions/my', {
+    const { data } = await apiClient.get('/v1/directions/my', {
       params: { semesterId },
     });
     return data.map(normalizeDirection);
   },
 
   fetchByDepartment: async ({ orgUnitId, semesterId, stateId }) => {
-    const { data } = await apiClient.get(`/directions/department/${orgUnitId}`, {
+    const { data } = await apiClient.get(`/v1/directions/department/${orgUnitId}`, {
       params: { semesterId, stateId },
     });
     return data.map(normalizeDirection);
   },
 
   fetchById: async (id) => {
-    const { data } = await apiClient.get(`/directions/${id}`);
+    const { data } = await apiClient.get(`/v1/directions/${id}`);
     return normalizeDirection(data);
   },
 
   create: async (payload) => {
-    const { data } = await apiClient.post('/directions', payload);
+    const { data } = await apiClient.post('/v1/directions', payload);
     return data;
   },
 
   update: async (id, payload) => {
-    const { data } = await apiClient.put(`/directions/${id}`, payload);
+    const { data } = await apiClient.put(`/v1/directions/${id}`, payload);
     return data;
   },
 
   submit: async (id) => {
-    const { data } = await apiClient.post(`/directions/${id}/submit`);
+    const { data } = await apiClient.post(`/v1/directions/${id}/submit`);
     return data;
   },
 
   review: async ({ id, decisionId, comment }) => {
-    const { data } = await apiClient.post(`/directions/${id}/review`, { decisionId, comment });
+    const { data } = await apiClient.post(`/v1/directions/${id}/review`, { decisionId, comment });
     return data;
   },
 };

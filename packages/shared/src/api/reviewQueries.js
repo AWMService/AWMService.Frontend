@@ -3,7 +3,7 @@ import { apiClient } from './apiClient';
 
 // Reviews for a specific work
 export async function fetchReviewsByWork(workId) {
-  const { data } = await apiClient.get(`/works/${workId}/reviews`);
+  const { data } = await apiClient.get(`/v1/works/${workId}/reviews`);
   return data;
 }
 
@@ -17,7 +17,7 @@ export function useReviewsByWork(workId) {
 
 // Supervisor review
 export async function createSupervisorReview(workId, formData) {
-  const { data } = await apiClient.post(`/works/${workId}/reviews/supervisor`, formData, {
+  const { data } = await apiClient.post(`/v1/works/${workId}/reviews/supervisor`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
   return data;
@@ -35,7 +35,7 @@ export function useCreateSupervisorReview(workId) {
 
 // External review upload
 export async function uploadExternalReview(workId, reviewId, formData) {
-  await apiClient.post(`/works/${workId}/reviews/external/${reviewId}`, formData, {
+  await apiClient.post(`/v1/works/${workId}/reviews/external/${reviewId}`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
 }
@@ -52,7 +52,7 @@ export function useUploadExternalReview(workId, reviewId) {
 
 // Review status for department (for secretaries / department heads)
 export async function fetchReviewStatus(orgUnitId, semesterId) {
-  const { data } = await apiClient.get('/works/review-status', {
+  const { data } = await apiClient.get('/v1/works/review-status', {
     params: { orgUnitId, semesterId },
   });
   return data;
@@ -68,7 +68,7 @@ export function useReviewStatus(orgUnitId, semesterId) {
 
 // Assigned reviewer for a work
 export async function fetchAssignedReviewer(workId) {
-  const { data } = await apiClient.get(`/works/${workId}/assigned-reviewer`);
+  const { data } = await apiClient.get(`/v1/works/${workId}/assigned-reviewer`);
   return data;
 }
 
@@ -82,7 +82,7 @@ export function useAssignedReviewer(workId) {
 
 // Assign reviewer to a work
 export async function assignReviewerToWork(workId, reviewerId) {
-  const { data } = await apiClient.post(`/works/${workId}/assign-reviewer`, { reviewerId });
+  const { data } = await apiClient.post(`/v1/works/${workId}/assign-reviewer`, { reviewerId });
   return data;
 }
 
@@ -99,7 +99,7 @@ export function useAssignReviewer(workId) {
 
 // My reviewer assignments
 export async function fetchMyReviewerAssignments() {
-  const { data } = await apiClient.get('/reviews/my-assignments');
+  const { data } = await apiClient.get('/v1/reviews/my-assignments');
   return data;
 }
 

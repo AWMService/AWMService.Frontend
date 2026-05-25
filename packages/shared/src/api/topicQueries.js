@@ -14,11 +14,13 @@ const readLocalized = (item, field) => {
   };
 };
 
+/**
+ * Normalizes topic status from backend TopicStatus enum string.
+ * Backend returns: "Draft", "Pending", "Approved", "Rejected", "Closed"
+ */
 const normalizeTopicStatus = (item) => {
-  if (read(item, 'isClosed') || read(item, 'isDeleted')) return 'closed';
-  if (read(item, 'isApproved')) return 'approved';
-  if (read(item, 'isRejected')) return 'rejected';
-  if (read(item, 'isSubmittedForApproval')) return 'pending';
+  const raw = String(read(item, 'status') || '').toLowerCase();
+  if (['draft', 'pending', 'approved', 'rejected', 'closed'].includes(raw)) return raw;
   return 'draft';
 };
 
@@ -66,6 +68,7 @@ export const normalizeTopic = (item) => {
   const pendingApplicationsCount = read(item, 'pendingApplicationsCount') ?? applications.filter((app) => app.status === 'pending').length;
   const acceptedApplicationsCount = read(item, 'acceptedApplicationsCount') ?? applications.filter((app) => app.status === 'approved').length;
   const maxParticipants = read(item, 'maxParticipants') ?? 1;
+  const status = normalizeTopicStatus(item);
 
   return {
     ...item,
@@ -81,15 +84,15 @@ export const normalizeTopic = (item) => {
     supervisorName: read(item, 'supervisorName'),
     workTypeName: read(item, 'workTypeName'),
     maxParticipants,
-    participantCount: maxParticipants,
+    participantCount: acceptedApplicationsCount,
     availableSpots: read(item, 'availableSpots') ?? Math.max(0, maxParticipants - acceptedApplicationsCount),
     acceptedApplicationsCount,
     pendingApplicationsCount,
     applicationsCount: read(item, 'applicationsCount') ?? applications.length,
-    isSubmittedForApproval: read(item, 'isSubmittedForApproval') ?? false,
-    isApproved: read(item, 'isApproved') ?? false,
-    isClosed: read(item, 'isClosed') ?? false,
-    status: normalizeTopicStatus(item),
+    status,
+    isApproved: status === 'approved',
+    isClosed: status === 'closed',
+    reviewComment: read(item, 'reviewComment'),
     createdAt: read(item, 'createdAt'),
     applications,
     students: applications
@@ -122,22 +125,26 @@ export const normalizeCoordinationSummary = (summary) => ({
   closedTopics: read(summary, 'closedTopics') ?? 0,
   totalAcceptedApplications: read(summary, 'totalAcceptedApplications') ?? 0,
   totalAvailableSpots: read(summary, 'totalAvailableSpots') ?? 0,
-  topics: (read(summary, 'topics') || []).map((item) => ({
-    id: read(item, 'topicId'),
-    topicId: read(item, 'topicId'),
-    title: readLocalized(item, 'title'),
-    supervisorId: read(item, 'supervisorId'),
-    supervisorName: read(item, 'supervisorName'),
-    maxParticipants: read(item, 'maxParticipants') ?? 1,
-    applicationsCount: read(item, 'applicationsCount') ?? 0,
-    acceptedCount: read(item, 'acceptedCount') ?? 0,
-    pendingCount: read(item, 'pendingCount') ?? 0,
-    rejectedCount: read(item, 'rejectedCount') ?? 0,
-    availableSpots: read(item, 'availableSpots') ?? 0,
-    lastRejectionReason: read(item, 'lastRejectionReason'),
-    isApproved: read(item, 'isApproved') ?? false,
-    isClosed: read(item, 'isClosed') ?? false,
-  })),
+  topics: (read(summary, 'topics') || []).map((item) => {
+    const status = String(read(item, 'status') || '').toLowerCase();
+    return {
+      id: read(item, 'topicId'),
+      topicId: read(item, 'topicId'),
+      title: readLocalized(item, 'title'),
+      supervisorId: read(item, 'supervisorId'),
+      supervisorName: read(item, 'supervisorName'),
+      maxParticipants: read(item, 'maxParticipants') ?? 1,
+      applicationsCount: read(item, 'applicationsCount') ?? 0,
+      acceptedCount: read(item, 'acceptedCount') ?? 0,
+      pendingCount: read(item, 'pendingCount') ?? 0,
+      rejectedCount: read(item, 'rejectedCount') ?? 0,
+      availableSpots: read(item, 'availableSpots') ?? 0,
+      lastRejectionReason: read(item, 'lastRejectionReason'),
+      status,
+      isApproved: status === 'approved',
+      isClosed: status === 'closed',
+    };
+  }),
 });
 
 export const topicPayloadFromForm = ({ form, user, workTypeId }) => {
@@ -167,11 +174,6 @@ export const topicsApi = {
     return data.map(normalizeTopic);
   },
 
-  fetchByDirection: async (directionId) => {
-    const { data } = await apiClient.get(`/v1/topics/by-direction/${directionId}`);
-    return data.map(normalizeTopic);
-  },
-
   fetchAvailable: async ({ orgUnitId, semesterId } = {}) => {
     const { data } = await apiClient.get('/v1/topics/available', {
       params: { orgUnitId, semesterId },
@@ -195,7 +197,7 @@ export const topicsApi = {
   },
 
   submitForApproval: async (topicIds) => {
-    const { data } = await apiClient.post('/v1/topics/submit', topicIds);
+    const { data } = await apiClient.post('/v1/topics/submit', { topicIds });
     return data;
   },
 
@@ -205,13 +207,12 @@ export const topicsApi = {
   },
 
   close: async (id) => {
-    const { data } = await apiClient.post(`/v1/topics/${id}/close`);
-    return data;
+    await apiClient.post(`/v1/topics/${id}/close`);
   },
 
-  deactivate: async (id) => {
-    const { data } = await apiClient.post(`/v1/topics/${id}/deactivate`);
-    return data;
+  /** @deprecated Redirects to review with isApproved=false. Will be removed. */
+  deactivate: async (id, comment = '') => {
+    return topicsApi.approve(id, { isApproved: false, comment });
   },
 
   fetchCoordinationSummary: async ({ orgUnitId, semesterId }) => {
@@ -220,6 +221,8 @@ export const topicsApi = {
     });
     return normalizeCoordinationSummary(data);
   },
+
+  // --- Below endpoints require backend implementation (Topic Coordination phase) ---
 
   bulkApprove: async (topicIds) => {
     const { data } = await apiClient.post('/v1/topics/bulk-approve', { topicIds });
@@ -268,7 +271,6 @@ export const topicKeys = {
   all: ['topics'],
   supervisor: (supervisorId, semesterId) => [...topicKeys.all, 'supervisor', supervisorId, semesterId],
   available: (orgUnitId, semesterId) => [...topicKeys.all, 'available', orgUnitId, semesterId],
-  direction: (directionId) => [...topicKeys.all, 'direction', directionId],
   detail: (id) => [...topicKeys.all, 'detail', id],
   coordination: (orgUnitId, semesterId) => [...topicKeys.all, 'coordination', orgUnitId, semesterId],
 };
@@ -283,12 +285,6 @@ export const useTopicsBySupervisor = (supervisorId, semesterId) => useQuery({
   queryKey: topicKeys.supervisor(supervisorId, semesterId),
   queryFn: () => topicsApi.fetchBySupervisor({ supervisorId, semesterId }),
   enabled: !!supervisorId && !!semesterId,
-});
-
-export const useTopicsByDirection = (directionId) => useQuery({
-  queryKey: topicKeys.direction(directionId),
-  queryFn: () => topicsApi.fetchByDirection(directionId),
-  enabled: !!directionId,
 });
 
 export const useAvailableTopics = (orgUnitId, semesterId) => useQuery({
@@ -353,6 +349,7 @@ export const useCloseTopic = () => {
   });
 };
 
+/** @deprecated Use useApproveTopic with isApproved=false instead. */
 export const useDeactivateTopic = () => {
   const queryClient = useQueryClient();
   return useMutation({

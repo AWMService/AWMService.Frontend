@@ -3,33 +3,33 @@ import { apiClient } from './apiClient';
 
 export const commissionApi = {
   fetchCommissions: async (orgUnitId, semesterId) => {
-    const { data } = await apiClient.get('/commissions', {
+    const { data } = await apiClient.get('/v1/commissions', {
       params: { orgUnitId, semesterId }
     });
     return data;
   },
   fetchCommissionById: async (commissionId) => {
-    const { data } = await apiClient.get(`/commissions/${commissionId}`);
+    const { data } = await apiClient.get(`/v1/commissions/${commissionId}`);
     return data;
   },
   createCommission: async (commissionData) => {
-    const { data } = await apiClient.post('/commissions', commissionData);
+    const { data } = await apiClient.post('/v1/commissions', commissionData);
     return data;
   },
   updateCommission: async (commissionId, commissionData) => {
-    const { data } = await apiClient.put(`/commissions/${commissionId}`, commissionData);
+    const { data } = await apiClient.put(`/v1/commissions/${commissionId}`, commissionData);
     return data;
   },
   addMember: async (commissionId, memberData) => {
-    const { data } = await apiClient.post(`/commissions/${commissionId}/members`, memberData);
+    const { data } = await apiClient.post(`/v1/commissions/${commissionId}/members`, memberData);
     return data;
   },
   removeMember: async (commissionId, memberId) => {
-    const { data } = await apiClient.delete(`/commissions/${commissionId}/members/${memberId}`);
+    const { data } = await apiClient.delete(`/v1/commissions/${commissionId}/members/${memberId}`);
     return data;
   },
   deleteCommission: async (commissionId) => {
-    const { data } = await apiClient.delete(`/commissions/${commissionId}`);
+    const { data } = await apiClient.delete(`/v1/commissions/${commissionId}`);
     return data;
   }
 };
