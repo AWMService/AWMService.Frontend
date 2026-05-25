@@ -39,10 +39,10 @@ export default function STopicsPage() {
     const locale = getIntlLocale(i18n.language);
     const currentLanguage = normalizeLanguage(i18n.language);
     const supervisorId = user?.staffId;
-    const academicYearId = user?.currentAcademicYearId;
+    const semesterId = user?.currentSemesterId;
 
-    const { data: topics = [], isLoading, error } = useTopicsBySupervisor(supervisorId, academicYearId);
-    const { data: directions = [] } = useDirectionsBySupervisor(supervisorId, academicYearId);
+    const { data: topics = [], isLoading, error } = useTopicsBySupervisor(supervisorId, semesterId);
+    const { data: directions = [] } = useDirectionsBySupervisor(supervisorId, semesterId);
     const { data: workTypes = [] } = useWorkTypes();
 
     const createMutation = useCreateTopic();
@@ -128,7 +128,7 @@ export default function STopicsPage() {
                     <button
                         className="btn-create-new"
                         onClick={() => setIsCreateOpen(true)}
-                        disabled={!user?.departmentId || !supervisorId || !academicYearId || !defaultWorkTypeId || isMutating}
+                        disabled={!user?.orgUnitId || !supervisorId || !semesterId || !defaultWorkTypeId || isMutating}
                     >
                         <Plus size={18} />
                         <span>{t('supervisor.createTopic')}</span>
@@ -268,3 +268,5 @@ export default function STopicsPage() {
         </div>
     );
 }
+
+

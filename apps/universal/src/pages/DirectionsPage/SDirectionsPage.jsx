@@ -25,11 +25,11 @@ export default function SDirectionsPage() {
     const currentLanguage = normalizeLanguage(i18n.language);
 
     const supervisorId = user?.staffId;
-    const academicYearId = user?.currentAcademicYearId;
+    const semesterId = user?.currentSemesterId;
 
     const { data: workTypes = [] } = useWorkTypes();
     const defaultWorkTypeId = workTypes[0]?.id;
-    const { data: directions = [], isLoading, error } = useDirectionsBySupervisor(supervisorId, academicYearId);
+    const { data: directions = [], isLoading, error } = useDirectionsBySupervisor(supervisorId, semesterId);
 
     const createMutation = useCreateDirection();
     const updateMutation = useUpdateDirection();
@@ -48,7 +48,7 @@ export default function SDirectionsPage() {
         revision: t('status.revision'),
     }), [t]);
 
-    const isContextReady = !!user?.departmentId && !!supervisorId && !!academicYearId && !!defaultWorkTypeId;
+    const isContextReady = !!user?.orgUnitId && !!supervisorId && !!semesterId && !!defaultWorkTypeId;
     const isMutating = createMutation.isPending || updateMutation.isPending || submitMutation.isPending;
 
     const handleCreateDirection = async (form) => {
@@ -83,7 +83,7 @@ export default function SDirectionsPage() {
     const canEdit = (direction) => direction.status === "draft" || direction.status === "revision";
     const canSubmit = (direction) => direction.status === "draft" || direction.status === "revision";
 
-    if (!supervisorId || !academicYearId) {
+    if (!supervisorId || !semesterId) {
         return (
             <div className="directions-page">
                 <div className="empty-state-wrapper">
@@ -225,3 +225,5 @@ export default function SDirectionsPage() {
         </div>
     );
 }
+
+

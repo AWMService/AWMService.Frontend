@@ -24,19 +24,19 @@ function CommissionsPage() {
     const { user } = useAuth();
     const queryClient = useQueryClient();
     
-    const departmentId = user?.departmentId;
-    const academicYearId = user?.currentAcademicYearId;
+    const orgUnitId = user?.orgUnitId;
+    const semesterId = user?.currentSemesterId;
 
-    const { data: commissions = [], isLoading: isCommsLoading } = useCommissions(departmentId, academicYearId);
-    const { data: staff = [], isLoading: isStaffLoading } = useStaffByDepartment(departmentId);
+    const { data: commissions = [], isLoading: isCommsLoading } = useCommissions(orgUnitId, semesterId);
+    const { data: staff = [], isLoading: isStaffLoading } = useStaffByDepartment(orgUnitId);
 
-    const createMutation = useCreateCommission(departmentId, academicYearId);
-    const updateMutation = useUpdateCommission(departmentId, academicYearId);
+    const createMutation = useCreateCommission(orgUnitId, semesterId);
+    const updateMutation = useUpdateCommission(orgUnitId, semesterId);
     
     const deleteMutation = useMutation({
         mutationFn: (id) => commissionApi.deleteCommission(id),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['commissions', 'department', departmentId, academicYearId] });
+            queryClient.invalidateQueries({ queryKey: ['commissions', 'department', orgUnitId, semesterId] });
         }
     });
 
@@ -65,8 +65,8 @@ function CommissionsPage() {
             } else {
                 await createMutation.mutateAsync({
                     ...formData,
-                    departmentId: departmentId,
-                    academicYearId: academicYearId
+                    orgUnitId: orgUnitId,
+                    semesterId: semesterId
                 });
             }
             setIsFormOpen(false);
@@ -194,3 +194,6 @@ function CommissionsPage() {
 }
 
 export default CommissionsPage;
+
+
+

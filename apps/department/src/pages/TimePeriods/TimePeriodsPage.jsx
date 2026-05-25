@@ -13,11 +13,11 @@ export default function TimePeriodsPage() {
     const { t } = useTranslation();
     const { user } = useAuth();
     
-    const departmentId = user?.departmentId;
-    const academicYearId = user?.currentAcademicYearId;
+    const orgUnitId = user?.orgUnitId;
+    const semesterId = user?.currentSemesterId;
 
-    const { data: periodsData = [], isLoading } = usePeriods(departmentId, academicYearId);
-    const approveMutation = useApproveDefensePeriods(departmentId, academicYearId);
+    const { data: periodsData = [], isLoading } = usePeriods(orgUnitId, semesterId);
+    const approveMutation = useApproveDefensePeriods(orgUnitId, semesterId);
 
     const [localPeriods, setLocalPeriods] = useState([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -86,7 +86,7 @@ export default function TimePeriodsPage() {
         return <div className="time-periods-page"><p>{t('common.loading', 'Loading...')}</p></div>;
     }
 
-    if (!departmentId || !academicYearId) {
+    if (!orgUnitId || !semesterId) {
         return <div className="time-periods-page"><p>{t('department.noDepartmentSelected', 'Department or Academic Year missing.')}</p></div>;
     }
 
@@ -153,3 +153,6 @@ export default function TimePeriodsPage() {
         </div>
     );
 }
+
+
+

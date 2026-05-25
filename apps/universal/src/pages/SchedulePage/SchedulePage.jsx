@@ -13,10 +13,10 @@ export default function SchedulePage() {
     const [selectedCommissionId, setSelectedCommissionId] = useState(null);
     const [selectedDate, setSelectedDate] = useState('');
 
-    const departmentId = user?.departmentId;
-    const academicYearId = user?.currentAcademicYearId;
+    const orgUnitId = user?.orgUnitId;
+    const semesterId = user?.currentSemesterId;
 
-    const { data: commissions = [], isLoading: isCommissionsLoading } = useCommissions(departmentId, academicYearId);
+    const { data: commissions = [], isLoading: isCommissionsLoading } = useCommissions(orgUnitId, semesterId);
 
     // Auto-select first commission if none selected
     React.useEffect(() => {
@@ -169,3 +169,6 @@ export default function SchedulePage() {
         </div>
     );
 }
+
+
+

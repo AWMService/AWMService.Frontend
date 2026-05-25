@@ -11,10 +11,10 @@ function CommissionPage() {
     const [activeTab, setActiveTab] = useState('upcoming');
     const [protocolModal, setProtocolModal] = useState(null);
 
-    const departmentId = user?.departmentId;
-    const academicYearId = user?.currentAcademicYearId;
+    const orgUnitId = user?.orgUnitId;
+    const semesterId = user?.currentSemesterId;
 
-    const { data: commissions = [], isLoading } = useCommissions(departmentId, academicYearId);
+    const { data: commissions = [], isLoading } = useCommissions(orgUnitId, semesterId);
 
     const generateProtocolMutation = useGenerateProtocol();
 
@@ -221,3 +221,6 @@ function CommissionPage() {
 }
 
 export default CommissionPage;
+
+
+

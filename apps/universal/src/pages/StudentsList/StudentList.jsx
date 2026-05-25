@@ -54,8 +54,8 @@ export default function StudentList() {
 
     // Load criteria for grading
     const workTypeId = user?.workTypeId || 1;
-    const departmentId = user?.departmentId;
-    const { data: criteriaList = [], isLoading: isCriteriaLoading } = useEvaluationCriteria(workTypeId, departmentId);
+    const orgUnitId = user?.orgUnitId;
+    const { data: criteriaList = [], isLoading: isCriteriaLoading } = useEvaluationCriteria(workTypeId, orgUnitId);
 
     // Load existing grades for selected schedule
     const selectedScheduleId = selectedStudent?.scheduleId;

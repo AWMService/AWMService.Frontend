@@ -16,8 +16,8 @@ export default function ChooseThemePage() {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const currentLanguage = normalizeLanguage(i18n.language);
-  const { data: availableTopics = [], isLoading, error } = useAvailableTopics(user?.departmentId, user?.currentAcademicYearId);
-  const { data: myApplications = [] } = useMyApplications(user?.currentAcademicYearId);
+  const { data: availableTopics = [], isLoading, error } = useAvailableTopics(user?.orgUnitId, user?.currentSemesterId);
+  const { data: myApplications = [] } = useMyApplications(user?.currentSemesterId);
   const createApplication = useCreateApplication();
   const withdrawApplication = useWithdrawApplication();
 
@@ -221,3 +221,4 @@ export default function ChooseThemePage() {
     </div>
   );
 }
+

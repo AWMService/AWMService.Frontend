@@ -68,9 +68,9 @@ function NormocontrolPage() {
     const { t } = useTranslation();
     const locale = getIntlLocale();
     const { user } = useAuth();
-    const departmentId = user?.departmentId;
-    const academicYearId = user?.academicYearId;
-    const { data: pendingChecks = [] } = usePendingChecks(departmentId, academicYearId, 'NormControl');
+    const orgUnitId = user?.orgUnitId;
+    const semesterId = user?.semesterId;
+    const { data: pendingChecks = [] } = usePendingChecks(orgUnitId, semesterId, 'NormControl');
 
     const apiDocuments = useMemo(() => pendingChecks.map(check => ({
         id: check.id,
@@ -256,3 +256,6 @@ function NormocontrolPage() {
 }
 
 export default NormocontrolPage;
+
+
+

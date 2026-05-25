@@ -238,7 +238,7 @@ export const topicsApi = {
   },
 
   fetchCoordinationSummary: async ({ orgUnitId, semesterId }) => {
-    const { data } = await apiClient.get('/v1/topics/department', {
+    const { data } = await apiClient.get('/v1/topics/org-unit', {
       params: { orgUnitId, semesterId },
     });
     return normalizeReconciliationSummary(data);

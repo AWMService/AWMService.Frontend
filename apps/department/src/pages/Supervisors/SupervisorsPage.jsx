@@ -17,29 +17,29 @@ import searchIcon from "../../assets/icons/search-icon.svg";
 function SupervisorsPage() {
     const { t } = useTranslation();
     const { user } = useAuth();
-    const departmentId = user?.orgUnitId;
+    const orgUnitId = user?.orgUnitId;
+    const semesterId = user?.currentSemesterId;
 
-    const { data: allTeachers = [], isLoading: isLoadingTeachers } = useStaffByDepartment(departmentId);
-    const { data: rawSupervisors = [], isLoading: isLoadingSupervisors } = useSupervisors(departmentId);
+    const { data: allTeachers = [], isLoading: isLoadingTeachers } = useStaffByDepartment(orgUnitId);
+    const { data: rawSupervisors = [], isLoading: isLoadingSupervisors } = useSupervisors(orgUnitId, semesterId);
     
-    const approveMutation = useApproveSupervisors(departmentId);
-    const updateWorkloadMutation = useUpdateStaffWorkload(departmentId);
+    const approveMutation = useApproveSupervisors(orgUnitId, semesterId);
+    const updateWorkloadMutation = useUpdateStaffWorkload(orgUnitId, semesterId);
 
     const [searchTerm, setSearchTerm] = useState("");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     // Map backend staff format to UI component format
     const mapStaffToUI = (staff) => ({
-        id: staff.id,
+        id: staff.userId || staff.id,
         name: staff.fullName || "Unknown",
-        position: staff.position || "",
-        degree: staff.academicDegree || "",
+        positionTitle: staff.positionTitle || "",
         specialization: "", 
         email: staff.email || "",
         phone: "",
-        currentStudents: 0, 
-        maxStudents: staff.maxStudentsLoad || 0,
-        assignedDate: new Date(), 
+        currentStudents: staff.currentStudents || 0, 
+        maxStudents: staff.maxWorkload !== undefined ? staff.maxWorkload : (staff.maxStudentsLoad || 0),
+        assignedDate: staff.assignedDate || new Date(), 
     });
 
     const supervisors = useMemo(() => rawSupervisors.map(mapStaffToUI), [rawSupervisors]);
@@ -61,26 +61,43 @@ function SupervisorsPage() {
     );
 
     const handleAddSupervisors = async (selectedIds) => {
-        const currentSupervisorIds = supervisors.map(s => s.id);
-        const newIdsToApprove = [...currentSupervisorIds, ...selectedIds];
-        await approveMutation.mutateAsync(newIdsToApprove);
+        const currentAssignments = supervisors.map(s => ({
+            userId: s.id,
+            maxWorkload: s.maxStudents || 5
+        }));
+        
+        const newAssignments = selectedIds.map(id => {
+            const teacher = teachersUI.find(t => t.id === id);
+            return {
+                userId: id,
+                maxWorkload: teacher?.maxStudents || 5
+            };
+        });
+
+        const allAssignments = [...currentAssignments, ...newAssignments];
+        await approveMutation.mutateAsync(allAssignments);
         setIsDialogOpen(false);
     };
 
     const handleRemoveSupervisor = async (id) => {
-        const remainingIds = supervisors.filter(s => s.id !== id).map(s => s.id);
-        await approveMutation.mutateAsync(remainingIds);
+        const remainingAssignments = supervisors
+            .filter(s => s.id !== id)
+            .map(s => ({
+                userId: s.id,
+                maxWorkload: s.maxStudents || 5
+            }));
+        await approveMutation.mutateAsync(remainingAssignments);
     };
 
     const handleUpdateWorkload = async (id, maxStudents) => {
-        await updateWorkloadMutation.mutateAsync({ id, maxStudentsLoad: maxStudents });
+        await updateWorkloadMutation.mutateAsync({ userId: id, maxWorkload: maxStudents });
     };
 
     if (isLoadingTeachers || isLoadingSupervisors) {
         return <div className="supervisors-page"><p>{t('common.loading', 'Loading...')}</p></div>;
     }
 
-    if (!departmentId) {
+    if (!orgUnitId) {
         return <div className="supervisors-page"><p>{t('department.noDepartmentSelected', 'No department selected.')}</p></div>;
     }
 

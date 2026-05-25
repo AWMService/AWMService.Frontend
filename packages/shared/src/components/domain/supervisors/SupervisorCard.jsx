@@ -35,8 +35,8 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
           <div>
             <h3 className="card-title">{supervisor.name}</h3>
             <p className="card-description">
-              {supervisor.position} • {supervisor.degree} •{" "}
-              {supervisor.specialization}
+              {supervisor.positionTitle}
+              {supervisor.specialization && ` • ${supervisor.specialization}`}
             </p>
           </div>
 

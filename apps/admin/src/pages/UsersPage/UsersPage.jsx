@@ -77,7 +77,7 @@ function UsersPage() {
                 data: {
                     email: formData.email,
                     roleId: formData.roleId,
-                    departmentId: formData.departmentId,
+                    orgUnitId: formData.orgUnitId,
                     instituteId: formData.instituteId
                 }
             });
@@ -204,3 +204,4 @@ function UsersPage() {
 }
 
 export default UsersPage;
+

@@ -26,8 +26,8 @@ const TopicCoordinationPage = () => {
     const { t, i18n } = useTranslation();
     const { user } = useAuth();
     const currentLanguage = normalizeLanguage(i18n.language);
-    const orgUnitId = user?.orgUnitId ?? user?.departmentId;
-    const semesterId = user?.currentSemesterId ?? user?.currentAcademicYearId;
+    const orgUnitId = user?.orgUnitId ?? user?.orgUnitId;
+    const semesterId = user?.currentSemesterId ?? user?.currentSemesterId;
 
     const { data: summary, isLoading, error } = useReconciliationSummary(orgUnitId, semesterId);
     const reconcileMutation = useReconcileTopics();
@@ -473,3 +473,4 @@ const TopicCoordinationPage = () => {
 };
 
 export default TopicCoordinationPage;
+

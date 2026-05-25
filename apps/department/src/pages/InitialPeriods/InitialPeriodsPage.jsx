@@ -21,11 +21,11 @@ export default function InitialPeriodsPage() {
     const locale = getIntlLocale(i18n.language);
     const { user } = useAuth();
     
-    const departmentId = user?.departmentId;
-    const academicYearId = user?.currentAcademicYearId;
+    const orgUnitId = user?.orgUnitId;
+    const semesterId = user?.currentSemesterId;
 
-    const { data: periodsData = [], isLoading } = usePeriods(departmentId, academicYearId);
-    const approveMutation = useApproveInitialPeriods(departmentId, academicYearId);
+    const { data: periodsData = [], isLoading } = usePeriods(orgUnitId, semesterId);
+    const approveMutation = useApproveInitialPeriods(orgUnitId, semesterId);
 
     const [formData, setFormData] = useState(getEmptyFormData());
     const [isApproved, setIsApproved] = useState(false);
@@ -142,7 +142,7 @@ export default function InitialPeriodsPage() {
         return <div className="initial-periods-page"><p>{t('common.loading', 'Loading...')}</p></div>;
     }
 
-    if (!departmentId || !academicYearId) {
+    if (!orgUnitId || !semesterId) {
         return <div className="initial-periods-page"><p>{t('department.noDepartmentSelected', 'Department or Academic Year missing.')}</p></div>;
     }
 
@@ -245,3 +245,6 @@ export default function InitialPeriodsPage() {
         </div>
     );
 }
+
+
+

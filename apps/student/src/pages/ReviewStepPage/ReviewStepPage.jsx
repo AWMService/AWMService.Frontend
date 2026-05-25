@@ -23,8 +23,8 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
     const checkType = route === 'software-check' ? 'SoftwareCheck' : 'NormControl';
     const { data: checks = [] } = useQualityChecks(workId);
     const { data: activePeriod } = useActivePeriod(
-        workProgress?.departmentId,
-        workProgress?.academicYearId,
+        workProgress?.orgUnitId,
+        workProgress?.semesterId,
         checkType
     );
     const submitMutation = useSubmitForCheck(workId);
@@ -210,3 +210,4 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
 };
 
 export default ReviewStepPage;
+

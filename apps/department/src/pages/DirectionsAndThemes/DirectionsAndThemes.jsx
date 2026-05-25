@@ -37,16 +37,16 @@ const DirectionsAndThemes = () => {
     const currentLanguage = normalizeLanguage(i18n.language);
     const locale = getIntlLocale(i18n.language);
 
-    const departmentId = user?.departmentId;
-    const academicYearId = user?.currentAcademicYearId;
+    const orgUnitId = user?.orgUnitId;
+    const semesterId = user?.currentSemesterId;
 
     const query = new URLSearchParams(location.search);
     const activeTab = query.get("tab") || TABS.DIRECTIONS;
     const isDirections = activeTab === TABS.DIRECTIONS;
 
-    const { data: rawDirections = [], isLoading: directionsLoading, error: directionsError } = useDirectionsByDepartment(departmentId, academicYearId);
-    const { data: coordinationSummary, isLoading: topicsLoading, error: topicsError } = useTopicCoordinationSummary(departmentId, academicYearId);
-    const { data: staff = [] } = useStaffByDepartment(departmentId);
+    const { data: rawDirections = [], isLoading: directionsLoading, error: directionsError } = useDirectionsByDepartment(orgUnitId, semesterId);
+    const { data: coordinationSummary, isLoading: topicsLoading, error: topicsError } = useTopicCoordinationSummary(orgUnitId, semesterId);
+    const { data: staff = [] } = useStaffByDepartment(orgUnitId);
     const { data: workTypes = [] } = useWorkTypes();
 
     const approveMutation = useApproveDirection();
@@ -207,7 +207,7 @@ const DirectionsAndThemes = () => {
                 </div>
             </div>
 
-            {isDirections && (!departmentId || !academicYearId) && (
+            {isDirections && (!orgUnitId || !semesterId) && (
                 <p className="no-results">{t('department.noDepartmentSelected', 'Department or Academic Year missing.')}</p>
             )}
             {error && (
@@ -266,3 +266,6 @@ const DirectionsAndThemes = () => {
 };
 
 export default DirectionsAndThemes;
+
+
+

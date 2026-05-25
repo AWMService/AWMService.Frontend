@@ -21,7 +21,7 @@ export default function MyApplicationsPage() {
   const { user } = useAuth();
   const locale = getIntlLocale(i18n.language);
   const currentLanguage = normalizeLanguage(i18n.language);
-  const { data: applications = [], isLoading, error } = useMyApplications(user?.currentAcademicYearId);
+  const { data: applications = [], isLoading, error } = useMyApplications(user?.currentSemesterId);
   const withdrawApplication = useWithdrawApplication();
 
   const formatDate = (dateStr) => {
@@ -101,3 +101,4 @@ export default function MyApplicationsPage() {
     </div>
   );
 }
+

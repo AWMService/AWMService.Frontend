@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ConfirmModal, usePrograms, useCreateProgram, useUpdateProgram, useDeleteProgram, useDepartments, useDegreeLevels } from '@awm/shared';
 import './ProgramsPage.css';
 
-const emptyForm = { name: '', degreeLevelId: '', departmentId: '', code: '' };
+const emptyForm = { name: '', degreeLevelId: '', orgUnitId: '', code: '' };
 
 export default function ProgramsPage() {
     const { t } = useTranslation();
@@ -34,7 +34,7 @@ export default function ProgramsPage() {
 
     const openEdit = (item) => {
         setEditingItem(item);
-        setFormData({ name: item.name, degreeLevelId: item.degreeLevelId, departmentId: item.departmentId, code: item.code });
+        setFormData({ name: item.name, degreeLevelId: item.degreeLevelId, orgUnitId: item.orgUnitId, code: item.code });
         setIsFormOpen(true);
     };
 
@@ -45,7 +45,7 @@ export default function ProgramsPage() {
         const payload = {
             ...formData,
             degreeLevelId: formData.degreeLevelId ? Number(formData.degreeLevelId) : null,
-            departmentId: formData.departmentId ? Number(formData.departmentId) : null,
+            orgUnitId: formData.orgUnitId ? Number(formData.orgUnitId) : null,
         };
 
         if (editingItem) {
@@ -98,7 +98,7 @@ export default function ProgramsPage() {
 
                 {filtered.map((item, idx) => {
                     const levelName = degreeLevels.find(l => l.id === item.degreeLevelId)?.name || '';
-                    const deptName = departments.find(d => d.id === item.departmentId)?.name || '';
+                    const deptName = departments.find(d => d.id === item.orgUnitId)?.name || '';
                     return (
                         <div key={item.id} className="table-row">
                             <div className="col-num">{idx + 1}</div>
@@ -160,8 +160,8 @@ export default function ProgramsPage() {
                                 {t('nav.departments')}
                                 <select
                                     className="form-input"
-                                    value={formData.departmentId}
-                                    onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
+                                    value={formData.orgUnitId}
+                                    onChange={(e) => setFormData({ ...formData, orgUnitId: e.target.value })}
                                 >
                                     <option value="">{t('common.select') || 'Select...'}</option>
                                     {departments.map(opt => (
@@ -198,3 +198,4 @@ export default function ProgramsPage() {
         </div>
     );
 }
+

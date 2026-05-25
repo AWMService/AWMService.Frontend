@@ -73,7 +73,7 @@ export const directionsApi = {
   },
 
   fetchByDepartment: async ({ orgUnitId, semesterId, stateId }) => {
-    const { data } = await apiClient.get(`/v1/directions/department/${orgUnitId}`, {
+    const { data } = await apiClient.get(`/v1/directions/org-unit/${orgUnitId}`, {
       params: { semesterId, stateId },
     });
     return data.map(normalizeDirection);

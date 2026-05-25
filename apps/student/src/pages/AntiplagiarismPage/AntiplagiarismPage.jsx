@@ -38,8 +38,8 @@ const AntiplagiarismPage = () => {
     const { data: workProgress } = useMyWorkProgress();
     const { data: checks = [] } = useQualityChecks(workId);
     const { data: activePeriod } = useActivePeriod(
-        workProgress?.departmentId,
-        workProgress?.academicYearId,
+        workProgress?.orgUnitId,
+        workProgress?.semesterId,
         'AntiPlagiarism'
     );
 

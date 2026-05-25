@@ -26,10 +26,10 @@ export default function StudentDistributionPage() {
     const [filterCommission, setFilterCommission] = useState("all");
     const [filterDate, setFilterDate] = useState("");
 
-    const departmentId = user?.departmentId;
-    const academicYearId = user?.currentAcademicYearId;
+    const departmentId = user?.orgUnitId;
+    const semesterId = user?.currentSemesterId;
 
-    const { data: commissions = [], isLoading: isCommissionsLoading } = useCommissions(departmentId, academicYearId);
+    const { data: commissions = [], isLoading: isCommissionsLoading } = useCommissions(departmentId, semesterId);
 
     // Get selected commission ID
     const selectedCommissionId = filterCommission !== "all" ? Number(filterCommission) : commissions[0]?.id;
@@ -189,3 +189,5 @@ export default function StudentDistributionPage() {
         </div>
     );
 }
+
+
