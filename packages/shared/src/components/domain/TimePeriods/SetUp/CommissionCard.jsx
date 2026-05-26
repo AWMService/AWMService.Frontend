@@ -11,13 +11,13 @@ const teachers = [
     "Доцент Иванова Е.Е.",
 ];
 
-function SelectBox({ label, value, onChange, placeholder }) {
+function SelectBox({ label, value, onChange, placeholder, teachersList = [] }) {
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState("");
     const ref = useRef(null);
 
-    const filtered = teachers.filter((t) =>
-        t.toLowerCase().includes(query.toLowerCase())
+    const filtered = teachersList.filter((t) =>
+        t.name.toLowerCase().includes(query.toLowerCase())
     );
 
     useEffect(() => {
@@ -32,13 +32,15 @@ function SelectBox({ label, value, onChange, placeholder }) {
             document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    const selectedName = teachersList.find(t => t.id === value)?.name || "";
+
     return (
         <div className="field" ref={ref}>
             <label>{label}</label>
 
             <div className={`select-box ${open ? "open" : ""}`}>
                 <input
-                    value={open ? query : value || ""}
+                    value={open ? query : selectedName}
                     placeholder={placeholder}
                     onFocus={() => setOpen(true)}
                     onChange={(e) => {
@@ -66,15 +68,15 @@ function SelectBox({ label, value, onChange, placeholder }) {
                     <div className="select-dropdown">
                         {filtered.map((t) => (
                             <div
-                                key={t}
+                                key={t.id}
                                 className="select-option"
                                 onClick={() => {
-                                    onChange(t);
+                                    onChange(t.id);
                                     setQuery("");
                                     setOpen(false);
                                 }}
                             >
-                                {t}
+                                {t.name}
                             </div>
                         ))}
                     </div>
@@ -84,7 +86,7 @@ function SelectBox({ label, value, onChange, placeholder }) {
     );
 }
 
-export default function CommissionCard({ commission, onChange, onRemove }) {
+export default function CommissionCard({ commission, onChange, onRemove, teachersList = [] }) {
     const { t } = useTranslation();
     const [membersOpen, setMembersOpen] = useState(false);
 
@@ -107,11 +109,11 @@ export default function CommissionCard({ commission, onChange, onRemove }) {
                         onClick={() => onRemove(commission.id)}
                     >
                         <svg viewBox="0 0 24 24">
-                            <path d="M3 6h18" />
-                            <path d="M8 6V4h8v2" />
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-                            <path d="M10 11v6" />
-                            <path d="M14 11v6" />
+                             <path d="M3 6h18" />
+                             <path d="M8 6V4h8v2" />
+                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                             <path d="M10 11v6" />
+                             <path d="M14 11v6" />
                         </svg>
                     </button>
                 )}
@@ -124,6 +126,7 @@ export default function CommissionCard({ commission, onChange, onRemove }) {
                 onChange={(value) =>
                     onChange({ ...commission, chairman: value })
                 }
+                teachersList={teachersList}
             />
 
             <SelectBox
@@ -133,6 +136,7 @@ export default function CommissionCard({ commission, onChange, onRemove }) {
                 onChange={(value) =>
                     onChange({ ...commission, secretary: value })
                 }
+                teachersList={teachersList}
             />
 
             <div className="members-row">
@@ -147,11 +151,14 @@ export default function CommissionCard({ commission, onChange, onRemove }) {
 
             {commission.members.length > 0 && (
                 <div className="members-chips">
-                    {commission.members.map((m) => (
-                        <span key={m} className="chip">
-                            {m}
-                        </span>
-                    ))}
+                    {commission.members.map((memberId) => {
+                        const tInfo = teachersList.find(x => x.id === memberId);
+                        return (
+                            <span key={memberId} className="chip">
+                                {tInfo?.name || memberId}
+                            </span>
+                        );
+                    })}
                 </div>
             )}
 
@@ -163,6 +170,7 @@ export default function CommissionCard({ commission, onChange, onRemove }) {
                     onChange({ ...commission, members });
                     setMembersOpen(false);
                 }}
+                teachersList={teachersList}
             />
         </div>
     );

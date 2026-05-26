@@ -15,7 +15,7 @@ const teachers = [
     " Иванова Е.Е.",
 ];
 
-export default function MembersModal({ isOpen, selected, onClose, onConfirm }) {
+export default function MembersModal({ isOpen, selected = [], onClose, onConfirm, teachersList = [] }) {
     const { t } = useTranslation();
     const [checked, setChecked] = useState([]);
     const [query, setQuery] = useState("");
@@ -32,15 +32,15 @@ export default function MembersModal({ isOpen, selected, onClose, onConfirm }) {
 
     if (!isOpen) return null;
 
-    const filtered = teachers.filter((t) =>
-        t.toLowerCase().includes(query.toLowerCase())
+    const filtered = teachersList.filter((t) =>
+        t.name.toLowerCase().includes(query.toLowerCase())
     );
 
-    const toggle = (name) => {
-        if (checked.includes(name)) {
-            setChecked((prev) => prev.filter((n) => n !== name));
+    const toggle = (id) => {
+        if (checked.includes(id)) {
+            setChecked((prev) => prev.filter((n) => n !== id));
         } else if (checked.length < 4) {
-            setChecked((prev) => [...prev, name]);
+            setChecked((prev) => [...prev, id]);
         }
     };
 
@@ -50,11 +50,6 @@ export default function MembersModal({ isOpen, selected, onClose, onConfirm }) {
                 <h3 className="modal-title">{t('commission.members')}</h3>
 
                 <div className="search-wrapper">
-                    {/*<svg viewBox="0 0 24 24" className="search-icon">*/}
-                    {/*    <circle cx="11" cy="11" r="8" />*/}
-                    {/*    <line x1="21" y1="21" x2="16.65" y2="16.65" />*/}
-                    {/*</svg>*/}
-
                     <input
                         className="search-input"
                         placeholder={t('department.searchTeacher')}
@@ -66,14 +61,14 @@ export default function MembersModal({ isOpen, selected, onClose, onConfirm }) {
                 {/* LIST */}
                 <div className="modal-list">
                     {filtered.map((t) => {
-                        const active = checked.includes(t);
+                        const active = checked.includes(t.id);
                         return (
                             <div
-                                key={t}
+                                key={t.id}
                                 className={`modal-item ${active ? "active" : ""}`}
-                                onClick={() => toggle(t)}
+                                onClick={() => toggle(t.id)}
                             >
-                                <span>{t}</span>
+                                <span>{t.name}</span>
                                 {active && <span className="check">✓</span>}
                             </div>
                         );

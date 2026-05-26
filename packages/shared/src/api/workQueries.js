@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './apiClient';
 
 export const workKeys = {
@@ -6,6 +6,7 @@ export const workKeys = {
   myProgress: () => [...workKeys.all, 'my-progress'],
   mySupervised: () => [...workKeys.all, 'my-supervised'],
   defenseStep: () => [...workKeys.all, 'defense-step'],
+  readiness: (orgUnitId, semesterId, specialityId) => [...workKeys.all, 'readiness', orgUnitId, semesterId, specialityId],
 };
 
 export const fetchMyWorkProgress = async () => {
@@ -44,5 +45,33 @@ export const useStudentDefenseStep = (options = {}) => {
     queryKey: workKeys.defenseStep(),
     queryFn: fetchStudentDefenseStep,
     ...options,
+  });
+};
+
+export const fetchDefenseReadiness = async ({ orgUnitId, semesterId, specialityId }) => {
+  const { data } = await apiClient.get('/v1/works/defense-readiness', {
+    params: { orgUnitId, semesterId, specialityId }
+  });
+  return data;
+};
+
+export const useDefenseReadiness = (params, options = {}) => {
+  return useQuery({
+    queryKey: workKeys.readiness(params.orgUnitId, params.semesterId, params.specialityId),
+    queryFn: () => fetchDefenseReadiness(params),
+    enabled: !!params.orgUnitId && !!params.semesterId,
+    ...options,
+  });
+};
+
+export const useAdmitToDefense = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (workId) => {
+      await apiClient.post(`/v1/works/${workId}/admit`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: workKeys.all });
+    }
   });
 };

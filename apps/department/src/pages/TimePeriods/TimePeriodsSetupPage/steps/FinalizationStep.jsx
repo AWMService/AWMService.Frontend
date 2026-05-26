@@ -1,83 +1,42 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { getIntlLocale } from "@awm/shared";
+import "./FinalizationStep.css";
 
-export default function FinalizationStep({
-                                             commissions,
-                                             freeStudents,
-                                             totalStudents,
-                                             onFinish
-                                         }) {
-    const { t, i18n } = useTranslation();
-    const locale = getIntlLocale(i18n.language);
-    const distributedStudents = commissions.reduce((sum, c) => {
-        return (
-            sum +
-            c.sessions.reduce((sSum, s) => sSum + s.students.length, 0)
-        );
-    }, 0);
+export default function FinalizationStep({ commissions, onFinish }) {
+    const { t } = useTranslation();
 
     return (
-        <>
-            <h3>{t('department.finalization')}</h3>
-
-            <div className="final-summary">
-                <div className="summary-card">
-                    <span>{t('department.totalStudents')}</span>
-                    <strong>{totalStudents}</strong>
+        <div className="final-step-container">
+            <div className="final-glow-sphere"></div>
+            
+            <div className="final-card">
+                <div className="final-icon-wrapper">
+                    <svg className="final-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
                 </div>
 
-                <div className="summary-card success">
-                    <span>{t('department.distributed')}</span>
-                    <strong>{distributedStudents}</strong>
-                </div>
-
-                <div className="summary-card danger">
-                    <span>{t('department.notDistributed')}</span>
-                    <strong>{freeStudents.length}</strong>
-                </div>
-            </div>
-
-            <div className="final-commissions">
-                {commissions.map(c => (
-                    <div key={c.id} className="final-commission">
-                        <h4>{c.name}</h4>
-
-                        {c.sessions.map(s => (
-                            <div key={s.sessionId} className="final-session">
-                                <div className="session-datetime">
-                                    <span>
-                                        {new Date(s.date).toLocaleDateString(locale, {
-                                            day: "numeric",
-                                            month: "long",
-                                            year: "numeric",
-                                        })}
-                                    </span>
-                                    <span> {s.time}</span>
-                                </div>
-
-                                <div className="session-students">
-                                    {t('commission.studentsCount', { count: s.students.length })}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                ))}
-            </div>
-
-            <button
-                className="btn-primary"
-                disabled={freeStudents.length > 0}
-                onClick={onFinish}
-            >
-                {t('department.approvePeriod')}
-            </button>
-
-            {freeStudents.length > 0 && (
-                <p className="final-warning">
-                    {t('department.notAllDistributed')}
+                <h2 className="final-title">{t('department.finalization', 'Настройка завершена!')}</h2>
+                <p className="final-description">
+                    Все этапы настройки периода успешно выполнены. 
+                    Комиссии зарегистрированы в базе данных, а студенты были распределены по соответствующим сессиям.
                 </p>
-            )}
-        </>
+
+                <div className="final-summary-box">
+                    <div className="final-summary-item">
+                        <span className="final-summary-value">{commissions.length}</span>
+                        <span className="final-summary-label">{t('department.commissions', 'Комиссии')}</span>
+                    </div>
+                </div>
+
+                <button
+                    className="final-btn"
+                    onClick={onFinish}
+                >
+                    {t('department.approvePeriod', 'Утвердить и завершить')}
+                </button>
+            </div>
+        </div>
     );
 }

@@ -7,7 +7,8 @@ export default function CommissionSetupStep({
                                                 addCommission,
                                                 updateCommission,
                                                 removeCommission,
-                                                onNext
+                                                onNext,
+                                                teachersList = []
                                             }) {
     const { t } = useTranslation();
 
@@ -22,6 +23,7 @@ export default function CommissionSetupStep({
                         commission={c}
                         onChange={updateCommission}
                         onRemove={removeCommission}
+                        teachersList={teachersList}
                     />
                 ))}
             </div>

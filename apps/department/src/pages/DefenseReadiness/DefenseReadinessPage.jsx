@@ -2,52 +2,40 @@
 
 import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { ConfirmModal } from "@awm/shared";
+import { ConfirmModal, useAuth, useDefenseReadiness, useAdmitToDefense } from "@awm/shared";
 import "./DefenseReadinessPage.css";
 import documentCheckIcon from "../../assets/icons/document-check-icon.svg";
 
-const CHECK_STATUS = { PASSED: "passed", FAILED: "failed", PENDING: "pending" };
-
 const CHECK_ICONS = {
-    [CHECK_STATUS.PASSED]: "✅",
-    [CHECK_STATUS.FAILED]: "❌",
-    [CHECK_STATUS.PENDING]: "⏳",
+    true: "✅",
+    false: "⏳"
 };
-
-const INITIAL_STUDENTS = [
-    { id: 1, name: "Иванов Алексей Петрович", topic: "Разработка веб-приложения для управления проектами", normocontrol: CHECK_STATUS.PASSED, antiplagiarism: CHECK_STATUS.PASSED, review: CHECK_STATUS.PASSED, supervisorReview: CHECK_STATUS.PASSED, admitted: true },
-    { id: 2, name: "Петрова Мария Сергеевна", topic: "Анализ данных с использованием машинного обучения", normocontrol: CHECK_STATUS.PASSED, antiplagiarism: CHECK_STATUS.PASSED, review: CHECK_STATUS.PENDING, supervisorReview: CHECK_STATUS.PASSED, admitted: false },
-    { id: 3, name: "Сидоров Дмитрий Николаевич", topic: "Мобильное приложение для мониторинга здоровья", normocontrol: CHECK_STATUS.FAILED, antiplagiarism: CHECK_STATUS.PASSED, review: CHECK_STATUS.PASSED, supervisorReview: CHECK_STATUS.FAILED, admitted: false },
-    { id: 4, name: "Козлова Анна Владимировна", topic: "Система автоматического тестирования ПО", normocontrol: CHECK_STATUS.PASSED, antiplagiarism: CHECK_STATUS.PASSED, review: CHECK_STATUS.PASSED, supervisorReview: CHECK_STATUS.PASSED, admitted: true },
-    { id: 5, name: "Морозов Артём Игоревич", topic: "Нейросетевой подход к распознаванию образов", normocontrol: CHECK_STATUS.PASSED, antiplagiarism: CHECK_STATUS.PENDING, review: CHECK_STATUS.PENDING, supervisorReview: CHECK_STATUS.PASSED, admitted: false },
-    { id: 6, name: "Волкова Елена Дмитриевна", topic: "Блокчейн-платформа для верификации документов", normocontrol: CHECK_STATUS.PASSED, antiplagiarism: CHECK_STATUS.PASSED, review: CHECK_STATUS.PASSED, supervisorReview: CHECK_STATUS.PASSED, admitted: true },
-    { id: 7, name: "Новиков Кирилл Андреевич", topic: "Оптимизация баз данных для высоконагруженных систем", normocontrol: CHECK_STATUS.PENDING, antiplagiarism: CHECK_STATUS.PASSED, review: CHECK_STATUS.FAILED, supervisorReview: CHECK_STATUS.PENDING, admitted: false },
-    { id: 8, name: "Фёдорова Ольга Михайловна", topic: "IoT-система умного дома на базе Raspberry Pi", normocontrol: CHECK_STATUS.PASSED, antiplagiarism: CHECK_STATUS.FAILED, review: CHECK_STATUS.PASSED, supervisorReview: CHECK_STATUS.PASSED, admitted: false },
-    { id: 9, name: "Егоров Максим Юрьевич", topic: "Платформа электронного обучения с геймификацией", normocontrol: CHECK_STATUS.PASSED, antiplagiarism: CHECK_STATUS.PASSED, review: CHECK_STATUS.PASSED, supervisorReview: CHECK_STATUS.PASSED, admitted: true },
-    { id: 10, name: "Соколова Виктория Александровна", topic: "Разработка CRM-системы для малого бизнеса", normocontrol: CHECK_STATUS.PASSED, antiplagiarism: CHECK_STATUS.PASSED, review: CHECK_STATUS.PASSED, supervisorReview: CHECK_STATUS.PASSED, admitted: true },
-    { id: 11, name: "Лебедев Павел Романович", topic: "Система распознавания речи на основе трансформеров", normocontrol: CHECK_STATUS.FAILED, antiplagiarism: CHECK_STATUS.FAILED, review: CHECK_STATUS.FAILED, supervisorReview: CHECK_STATUS.FAILED, admitted: false },
-    { id: 12, name: "Кузнецова Дарья Олеговна", topic: "Автоматизация CI/CD пайплайнов для микросервисов", normocontrol: CHECK_STATUS.PASSED, antiplagiarism: CHECK_STATUS.PENDING, review: CHECK_STATUS.PASSED, supervisorReview: CHECK_STATUS.PENDING, admitted: false },
-];
 
 function allChecksPassed(student) {
     return (
-        student.normocontrol === CHECK_STATUS.PASSED &&
-        student.antiplagiarism === CHECK_STATUS.PASSED &&
-        student.review === CHECK_STATUS.PASSED &&
-        student.supervisorReview === CHECK_STATUS.PASSED
+        student.normocontrolPassed &&
+        student.antiplagiarismPassed &&
+        student.reviewPassed &&
+        student.supervisorReviewPassed
     );
 }
 
 function getAdmissionStatus(student) {
     if (student.admitted) return "admitted";
-    const checks = [student.normocontrol, student.antiplagiarism, student.review, student.supervisorReview];
-    if (checks.some((c) => c === CHECK_STATUS.FAILED)) return "not-admitted";
-    return "in-progress";
+    if (allChecksPassed(student)) return "in-progress";
+    return "not-admitted";
 }
 
 export default function DefenseReadinessPage() {
     const { t } = useTranslation();
-    const [students, setStudents] = useState(INITIAL_STUDENTS);
+    const { user } = useAuth();
+    
+    const orgUnitId = user?.orgUnitId;
+    const semesterId = user?.currentSemesterId;
+
+    const { data: students = [], isLoading } = useDefenseReadiness({ orgUnitId, semesterId });
+    const admitMutation = useAdmitToDefense();
+
     const [selectedIds, setSelectedIds] = useState([]);
     const [confirmModal, setConfirmModal] = useState({ isOpen: false, isBulk: false, studentId: null });
 
@@ -72,7 +60,7 @@ export default function DefenseReadinessPage() {
         if (selectedIds.length === students.length) {
             setSelectedIds([]);
         } else {
-            setSelectedIds(students.map((s) => s.id));
+            setSelectedIds(students.map((s) => s.workId));
         }
     };
 
@@ -84,29 +72,36 @@ export default function DefenseReadinessPage() {
         setConfirmModal({ isOpen: true, isBulk: true, studentId: null });
     };
 
-    const confirmAdmit = () => {
-        if (confirmModal.isBulk) {
-            setStudents((prev) =>
-                prev.map((s) =>
-                    selectedIds.includes(s.id) && allChecksPassed(s)
-                        ? { ...s, admitted: true }
-                        : s
-                )
-            );
-            setSelectedIds([]);
-        } else if (confirmModal.studentId) {
-            setStudents((prev) =>
-                prev.map((s) =>
-                    s.id === confirmModal.studentId ? { ...s, admitted: true } : s
-                )
-            );
+    const confirmAdmit = async () => {
+        try {
+            if (confirmModal.isBulk) {
+                for (const id of selectedIds) {
+                    const s = students.find((x) => x.workId === id);
+                    if (s && allChecksPassed(s) && !s.admitted) {
+                        await admitMutation.mutateAsync(id);
+                    }
+                }
+                setSelectedIds([]);
+            } else if (confirmModal.studentId) {
+                await admitMutation.mutateAsync(confirmModal.studentId);
+            }
+        } catch (error) {
+            console.error("Failed to admit student(s) to defense", error);
         }
         setConfirmModal({ isOpen: false, isBulk: false, studentId: null });
     };
 
     const eligibleSelectedCount = useMemo(() => {
-        return students.filter((s) => selectedIds.includes(s.id) && allChecksPassed(s) && !s.admitted).length;
+        return students.filter((s) => selectedIds.includes(s.workId) && allChecksPassed(s) && !s.admitted).length;
     }, [students, selectedIds]);
+
+    if (isLoading) {
+        return (
+            <div className="defense-readiness-page">
+                <p>{t("common.loading")}</p>
+            </div>
+        );
+    }
 
     return (
         <div className="defense-readiness-page">
@@ -182,22 +177,22 @@ export default function DefenseReadinessPage() {
                             const canAdmit = allChecksPassed(student) && !student.admitted;
 
                             return (
-                                <tr key={student.id}>
+                                <tr key={student.workId}>
                                     <td>
                                         <input
                                             type="checkbox"
                                             className="dr-checkbox"
-                                            checked={selectedIds.includes(student.id)}
-                                            onChange={() => toggleSelect(student.id)}
+                                            checked={selectedIds.includes(student.workId)}
+                                            onChange={() => toggleSelect(student.workId)}
                                         />
                                     </td>
                                     <td>{idx + 1}</td>
-                                    <td className="dr-student-name">{student.name}</td>
-                                    <td className="dr-topic" title={student.topic}>{student.topic}</td>
-                                    <td className="dr-check-icon">{CHECK_ICONS[student.normocontrol]}</td>
-                                    <td className="dr-check-icon">{CHECK_ICONS[student.antiplagiarism]}</td>
-                                    <td className="dr-check-icon">{CHECK_ICONS[student.review]}</td>
-                                    <td className="dr-check-icon">{CHECK_ICONS[student.supervisorReview]}</td>
+                                    <td className="dr-student-name">{student.studentName}</td>
+                                    <td className="dr-topic" title={student.topicTitle}>{student.topicTitle}</td>
+                                    <td className="dr-check-icon">{CHECK_ICONS[student.normocontrolPassed]}</td>
+                                    <td className="dr-check-icon">{CHECK_ICONS[student.antiplagiarismPassed]}</td>
+                                    <td className="dr-check-icon">{CHECK_ICONS[student.reviewPassed]}</td>
+                                    <td className="dr-check-icon">{CHECK_ICONS[student.supervisorReviewPassed]}</td>
                                     <td>
                                         {status === "admitted" && (
                                             <span className="dr-status-badge dr-status-badge--admitted">
@@ -219,7 +214,7 @@ export default function DefenseReadinessPage() {
                                         <button
                                             className="dr-admit-btn"
                                             disabled={!canAdmit}
-                                            onClick={() => handleAdmit(student.id)}
+                                            onClick={() => handleAdmit(student.workId)}
                                         >
                                             {t("department.admitToDefense")}
                                         </button>
