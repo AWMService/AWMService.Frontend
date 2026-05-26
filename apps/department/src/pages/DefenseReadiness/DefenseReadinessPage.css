@@ -103,6 +103,29 @@
     color: #ca8a04;
 }
 
+/* Next-step navigation */
+.dr-next-steps {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.dr-next-step-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #6366f1;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.dr-next-step-btn:hover {
+    background-color: #4f46e5;
+}
+
 /* Bulk bar */
 .dr-bulk-bar {
     display: flex;

@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { ConfirmModal, useAuth, useDefenseReadiness, useAdmitToDefense } from "@awm/shared";
 import "./DefenseReadinessPage.css";
 import documentCheckIcon from "../../assets/icons/document-check-icon.svg";
@@ -13,6 +14,7 @@ const CHECK_ICONS = {
 
 function allChecksPassed(student) {
     return (
+        student.preDefensePassed &&
         student.normocontrolPassed &&
         student.antiplagiarismPassed &&
         student.reviewPassed &&
@@ -28,6 +30,7 @@ function getAdmissionStatus(student) {
 
 export default function DefenseReadinessPage() {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const { user } = useAuth();
     
     const orgUnitId = user?.orgUnitId;
@@ -147,6 +150,16 @@ export default function DefenseReadinessPage() {
                 </button>
             </div>
 
+            {/* Next-step navigation */}
+            <div className="dr-next-steps">
+                <button className="dr-next-step-btn" onClick={() => navigate('/commissions?type=gak')}>
+                    {t("department.createGakCommission")}
+                </button>
+                <button className="dr-next-step-btn" onClick={() => navigate('/student-distribution')}>
+                    {t("department.setupDefenseSchedule")}
+                </button>
+            </div>
+
             {/* Table */}
             <div className="dr-table-wrapper">
                 <table className="dr-table">
@@ -163,6 +176,7 @@ export default function DefenseReadinessPage() {
                             <th>№</th>
                             <th>{t("department.student")}</th>
                             <th>{t("department.topic")}</th>
+                            <th>{t("department.preDefense")}</th>
                             <th>{t("department.normocontrol")}</th>
                             <th>{t("department.antiplagiarism")}</th>
                             <th>{t("department.reviewCheck")}</th>
@@ -189,6 +203,7 @@ export default function DefenseReadinessPage() {
                                     <td>{idx + 1}</td>
                                     <td className="dr-student-name">{student.studentName}</td>
                                     <td className="dr-topic" title={student.topicTitle}>{student.topicTitle}</td>
+                                    <td className="dr-check-icon">{CHECK_ICONS[student.preDefensePassed]}</td>
                                     <td className="dr-check-icon">{CHECK_ICONS[student.normocontrolPassed]}</td>
                                     <td className="dr-check-icon">{CHECK_ICONS[student.antiplagiarismPassed]}</td>
                                     <td className="dr-check-icon">{CHECK_ICONS[student.reviewPassed]}</td>

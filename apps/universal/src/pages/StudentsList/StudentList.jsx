@@ -45,8 +45,9 @@ export default function StudentList() {
                         ru: slot.studentName || `Студент ${i + 1}`,
                         en: slot.studentName || `Student ${i + 1}`,
                     },
-                    readiness: slot.status === 'Graded' ? 100 : 0,
+                    readiness: slot.isProtocolFinalized ? 100 : slot.isReconciliationStarted ? 50 : 0,
                     scheduleId: slot.id,
+                    isLocked: slot.isProtocolFinalized,
                 }
             ],
         }));
@@ -97,7 +98,7 @@ export default function StudentList() {
     const openJournal = (student, topic) => {
         setSelectedStudent({ ...student, topicTitle: topic.title, scheduleId: student.scheduleId });
         setScores({});
-        setStatus("editing");
+        setStatus(student.isLocked ? "locked" : "editing");
         setIsJournalOpen(true);
     };
 
@@ -142,12 +143,12 @@ export default function StudentList() {
                             {topic.students.map((s) => (
                                 <div
                                     key={s.id}
-                                    className="s-student-item"
+                                    className={`s-student-item ${s.isLocked ? 'sec-student-finalized' : ''}`}
                                     onClick={() => openJournal(s, topic)}
                                 >
                                     <span>{getLocalizedValue(s.name)}</span>
-                                    <span className="s-readiness-tag">
-                                        {s.readiness}%
+                                    <span className={`s-readiness-tag ${s.readiness === 100 ? 'sec-score-complete' : s.readiness === 50 ? 'sec-status-warning' : ''}`}>
+                                        {s.isLocked ? t('status.protocolClosed') : `${s.readiness}%`}
                                     </span>
                                 </div>
                             ))}

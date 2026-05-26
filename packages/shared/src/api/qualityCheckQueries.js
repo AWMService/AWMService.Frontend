@@ -72,6 +72,18 @@ export function useCompleteQualityCheck(workId) {
   });
 }
 
+// Generic version — workId passed per-call, for list pages where each item has its own workId
+export function useCompleteQualityCheckMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ workId, checkId, checkData }) => completeQualityCheck(workId, checkId, checkData),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['qualityChecks', variables.workId] });
+      queryClient.invalidateQueries({ queryKey: ['pendingChecks'] });
+    },
+  });
+}
+
 // Fetch Check Configurations for a department
 export async function fetchCheckConfigurations(orgUnitId) {
   const { data } = await apiClient.get('/v1/quality-checks/configurations', {
