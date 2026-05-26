@@ -123,6 +123,10 @@ export const protocolApi = {
   fetchProtocol: async (id) => {
     const { data } = await apiClient.get(`/v1/protocols/${id}`);
     return data;
+  },
+  downloadProtocolPdf: async (protocolId) => {
+    const response = await apiClient.get(`/v1/protocols/${protocolId}/pdf`, { responseType: 'blob' });
+    return response.data;
   }
 };
 
@@ -151,6 +155,21 @@ export function useProtocolDetail(protocolId) {
     queryKey: ['protocols', 'detail', protocolId],
     queryFn: () => protocolApi.fetchProtocol(protocolId),
     enabled: !!protocolId,
+  });
+}
+
+export function useDownloadProtocolPdf() {
+  return useMutation({
+    mutationFn: (id) => protocolApi.downloadProtocolPdf(id),
+    onSuccess: (data, id) => {
+      const url = window.URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `protocol_${id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
   });
 }
 

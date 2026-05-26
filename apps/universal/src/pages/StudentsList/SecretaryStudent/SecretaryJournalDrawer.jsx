@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getLocalizedValue, useEvaluationCriteria, useGradesBySchedule, useStartReconciliation, useGenerateProtocol, useFinalizeProtocol, useAuth } from "@awm/shared";
+import { getLocalizedValue, useEvaluationCriteria, useGradesBySchedule, useStartReconciliation, useGenerateProtocol, useFinalizeProtocol, useAuth, useDownloadProtocolPdf } from "@awm/shared";
 
 export default function SecretaryJournalDrawer({ open, onClose, student }) {
     const { t } = useTranslation();
@@ -10,6 +10,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
 
     const scheduleId = student?.scheduleId;
     const isFinalized = !!student?.protocolId;
+    const protocolId = student?.protocolId;
 
     // Fetch real data
     const workTypeId = 1; // DP by default for pre-defense
@@ -19,6 +20,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
     const startReconciliationMutation = useStartReconciliation();
     const generateProtocolMutation = useGenerateProtocol();
     const finalizeProtocolMutation = useFinalizeProtocol();
+    const downloadPdfMutation = useDownloadProtocolPdf();
 
     const handleRevealClick = () => setShowConfirmModal(true);
 
@@ -34,14 +36,14 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
     const handleFinalLock = async () => {
         try {
             // 1. Create protocol
-            const protocolId = await generateProtocolMutation.mutateAsync({
+            const generatedId = await generateProtocolMutation.mutateAsync({
                 scheduleId: scheduleId,
                 finalScoreNumeric: parseFloat(averageScore),
                 decision: decision
             });
 
             // 2. Finalize protocol
-            await finalizeProtocolMutation.mutateAsync(protocolId);
+            await finalizeProtocolMutation.mutateAsync(generatedId);
             onClose();
         } catch (error) {
             console.error('Failed to finalize protocol', error);
@@ -125,7 +127,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
                                                 ? (criterionGrades.reduce((s, g) => s + g.score, 0) / criterionGrades.length).toFixed(1)
                                                 : 0;
 
-                                            return (
+                                             return (
                                                 <tr key={criterion.id} className={idx % 2 === 0 ? 'sec-row-even' : ''}>
                                                     <td className="sec-criterion-name">
                                                         {criterion.criteriaName}
@@ -186,10 +188,11 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
                 </div>
 
                 <div className="s-drawer-footer">
-                    <div className="s-actions">
+                    <div className="s-actions" style={{ width: "100%" }}>
                         {!isFinalized && status === "gathering" && (
                             <button
                                 className="s-btn-primary"
+                                style={{ width: "100%" }}
                                 onClick={handleRevealClick}
                                 disabled={members.length === 0 || startReconciliationMutation.isPending}
                             >
@@ -200,6 +203,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
                         {!isFinalized && status === "reviewing" && (
                             <button 
                                 className="s-btn-primary sec-btn-success" 
+                                style={{ width: "100%" }}
                                 onClick={handleFinalLock}
                                 disabled={generateProtocolMutation.isPending || finalizeProtocolMutation.isPending}
                             >
@@ -208,7 +212,19 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
                         )}
 
                         {(isFinalized || status === "completed") && (
-                            <div className="s-locked-badge">{t('status.protocolApproved')}</div>
+                            <div style={{ display: "flex", gap: "10px", width: "100%", flexDirection: "column" }}>
+                                <div className="s-locked-badge" style={{ marginBottom: "5px" }}>{t('status.protocolApproved')}</div>
+                                {protocolId && (
+                                    <button 
+                                        className="s-btn-secondary" 
+                                        style={{ width: "100%", padding: "10px", borderRadius: "6px", cursor: "pointer", border: "1px solid #ccc", background: "#f9f9f9" }}
+                                        onClick={() => downloadPdfMutation.mutate(protocolId)}
+                                        disabled={downloadPdfMutation.isPending}
+                                    >
+                                        {downloadPdfMutation.isPending ? t('common.loading') : t('common.downloadPdf', 'Скачать PDF')}
+                                    </button>
+                                )}
+                            </div>
                         )}
                     </div>
                 </div>
