@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuth, usePeriods, useApproveDefensePeriods, ConfirmModal } from "@awm/shared";
+import { 
+    useAuth, 
+    usePeriods, 
+    useApproveDefensePeriods, 
+    useOrgUnitSpecialities,
+    useResetStagesOverride,
+    ConfirmModal 
+} from "@awm/shared";
 import "./TimePeriodsPage.css";
 
 import { TimePeriodCard, TimePeriodFormDialog } from "@awm/shared";
@@ -16,13 +23,19 @@ export default function TimePeriodsPage() {
     const orgUnitId = user?.orgUnitId;
     const semesterId = user?.currentSemesterId;
 
-    const { data: periodsData = [], isLoading } = usePeriods(orgUnitId, semesterId);
-    const approveMutation = useApproveDefensePeriods(orgUnitId, semesterId);
-
+    const [selectedSpecialityId, setSelectedSpecialityId] = useState(null);
     const [localPeriods, setLocalPeriods] = useState([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+    // Queries
+    const { data: specialities = [] } = useOrgUnitSpecialities(orgUnitId);
+    const { data: periodsData = [], isLoading } = usePeriods(orgUnitId, semesterId, selectedSpecialityId);
+    
+    // Mutations
+    const approveMutation = useApproveDefensePeriods(orgUnitId, semesterId, selectedSpecialityId);
+    const resetMutation = useResetStagesOverride(orgUnitId, semesterId);
 
     useEffect(() => {
         if (periodsData && periodsData.length > 0) {
@@ -39,6 +52,9 @@ export default function TimePeriodsPage() {
                 status: "upcoming",
             }));
             setLocalPeriods(mapped);
+            setHasUnsavedChanges(false);
+        } else {
+            setLocalPeriods([]);
             setHasUnsavedChanges(false);
         }
     }, [periodsData]);
@@ -82,6 +98,16 @@ export default function TimePeriodsPage() {
         }
     };
 
+    const handleResetOverride = async () => {
+        if (window.confirm(t("department.confirmResetOverride", "Вы действительно хотите удалить индивидуальные сроки для этой специальности и вернуться к общим срокам кафедры?"))) {
+            try {
+                await resetMutation.mutateAsync(selectedSpecialityId);
+            } catch (error) {
+                console.error("Failed to reset override", error);
+            }
+        }
+    };
+
     if (isLoading) {
         return <div className="time-periods-page"><p>{t('common.loading', 'Loading...')}</p></div>;
     }
@@ -89,6 +115,8 @@ export default function TimePeriodsPage() {
     if (!orgUnitId || !semesterId) {
         return <div className="time-periods-page"><p>{t('department.noDepartmentSelected', 'Department or Academic Year missing.')}</p></div>;
     }
+
+    const hasOverride = selectedSpecialityId && periodsData.some(p => DEFENSE_STAGES.includes(p.workflowStage));
 
     return (
         <div className="time-periods-page">
@@ -103,6 +131,15 @@ export default function TimePeriodsPage() {
                 </div>
 
                 <div className="page-actions" style={{ display: 'flex', gap: '10px' }}>
+                    {hasOverride && !hasUnsavedChanges && (
+                        <button
+                            className="button secondary-button"
+                            onClick={handleResetOverride}
+                            style={{ color: "#DC2626", borderColor: "#FCA5A5" }}
+                        >
+                            {t('department.resetToDefaults', 'Сбросить к общим срокам')}
+                        </button>
+                    )}
                     {hasUnsavedChanges && (
                         <button
                             className="button secondary-button"
@@ -121,6 +158,52 @@ export default function TimePeriodsPage() {
                     </button>
                 </div>
             </div>
+
+            {/* Speciality Selector */}
+            <div className="speciality-selector-wrapper" style={{ 
+                marginBottom: "2rem", 
+                background: "#ffffff", 
+                border: "1px solid #E5E7EB", 
+                borderRadius: "12px", 
+                padding: "16px 20px", 
+                display: "flex", 
+                alignItems: "center", 
+                gap: "16px" 
+            }}>
+                <span className="selector-label" style={{ fontSize: "0.875rem", fontWeight: "600", color: "#374151" }}>{t("student.specialty")}:</span>
+                <select
+                    className="speciality-select"
+                    value={selectedSpecialityId || ""}
+                    onChange={(e) => {
+                        const val = e.target.value;
+                        setSelectedSpecialityId(val ? Number(val) : null);
+                        setLocalPeriods([]);
+                        setHasUnsavedChanges(false);
+                    }}
+                    style={{ 
+                        padding: "0.6rem 2rem 0.6rem 1rem", 
+                        borderRadius: "0.375rem", 
+                        border: "1px solid #E5E7EB", 
+                        fontSize: "0.875rem", 
+                        color: "#1F2937", 
+                        backgroundColor: "#ffffff", 
+                        outline: "none", 
+                        cursor: "pointer", 
+                        minWidth: "320px" 
+                    }}
+                >
+                    <option value="">{t("department.allSpecialities", "Общее для кафедры (По умолчанию)")}</option>
+                    {specialities.map(s => (
+                        <option key={s.id} value={s.id}>{s.code} - {s.title}</option>
+                    ))}
+                </select>
+            </div>
+
+            {selectedSpecialityId && !hasOverride && !hasUnsavedChanges && (
+                <div className="periods-form__order-error" style={{ color: "#1E3A8A", background: "#EFF6FF", borderColor: "#BFDBFE", marginBottom: "2rem" }}>
+                    {t("department.usingInheritedDates", "Внимание: для данной специальности используются общие сроки кафедры. Вы можете добавить новые этапы и сохранить индивидуальные настройки.")}
+                </div>
+            )}
 
             <div className="periods-list">
                 {localPeriods.map((period) => (

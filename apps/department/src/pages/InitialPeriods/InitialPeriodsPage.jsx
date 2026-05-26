@@ -1,17 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { ConfirmModal, getIntlLocale, useAuth, usePeriods, useApproveInitialPeriods } from "@awm/shared";
+import { 
+    ConfirmModal, 
+    getIntlLocale, 
+    useAuth, 
+    usePeriods, 
+    useApproveInitialPeriods,
+    useOrgUnitSpecialities,
+    useResetStagesOverride
+} from "@awm/shared";
 import { validateDateRange, validateAllPeriods } from "../../utils/periodValidation";
 import "./InitialPeriodsPage.css";
 
 const PERIOD_CONFIG = [
     { key: "directions", stage: "DirectionSubmission", labelKey: "department.directionsFormationPeriod" },
+    { key: "topics", stage: "TopicCreation", labelKey: "department.topicsFormationPeriod" },
     { key: "selection", stage: "TopicSelection", labelKey: "department.topicSelectionPeriod" },
 ];
 
 function getEmptyFormData() {
     return {
         directions: { startDate: "", endDate: "" },
+        topics: { startDate: "", endDate: "" },
         selection: { startDate: "", endDate: "" },
     };
 }
@@ -24,19 +34,31 @@ export default function InitialPeriodsPage() {
     const orgUnitId = user?.orgUnitId;
     const semesterId = user?.currentSemesterId;
 
-    const { data: periodsData = [], isLoading } = usePeriods(orgUnitId, semesterId);
-    const approveMutation = useApproveInitialPeriods(orgUnitId, semesterId);
-
+    const [selectedSpecialityId, setSelectedSpecialityId] = useState(null);
     const [formData, setFormData] = useState(getEmptyFormData());
     const [isApproved, setIsApproved] = useState(false);
     const [errors, setErrors] = useState({});
     const [orderError, setOrderError] = useState("");
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
+    // Queries
+    const { data: specialities = [] } = useOrgUnitSpecialities(orgUnitId);
+    const { data: periodsData = [], isLoading } = usePeriods(orgUnitId, semesterId, selectedSpecialityId);
+    const { data: defaultPeriodsData = [] } = usePeriods(orgUnitId, semesterId, null);
+
+    // Mutations
+    const approveMutation = useApproveInitialPeriods(orgUnitId, semesterId, selectedSpecialityId);
+    const resetMutation = useResetStagesOverride(orgUnitId, semesterId);
+
     useEffect(() => {
-        if (periodsData && periodsData.length > 0) {
-            const initialPeriods = periodsData.filter(p => 
-                ["DirectionSubmission", "TopicSelection"].includes(p.workflowStage)
+        // Fallback to department defaults if this is a speciality with no overrides yet
+        const sourceData = (selectedSpecialityId && (!periodsData || periodsData.length === 0))
+            ? defaultPeriodsData
+            : periodsData;
+
+        if (sourceData && sourceData.length > 0) {
+            const initialPeriods = sourceData.filter(p => 
+                ["DirectionSubmission", "TopicCreation", "TopicSelection"].includes(p.workflowStage)
             );
             
             if (initialPeriods.length > 0) {
@@ -51,11 +73,23 @@ export default function InitialPeriodsPage() {
                     }
                 });
                 setFormData(newFormData);
-                // If periods exist in backend, they are considered approved for view mode
-                setIsApproved(true);
+                
+                // If it is from the selected speciality's own data, mark as approved/saved
+                if (periodsData && periodsData.length > 0) {
+                    setIsApproved(true);
+                } else {
+                    // Inherited defaults are not yet saved as speciality override
+                    setIsApproved(false);
+                }
+            } else {
+                setFormData(getEmptyFormData());
+                setIsApproved(false);
             }
+        } else {
+            setFormData(getEmptyFormData());
+            setIsApproved(false);
         }
-    }, [periodsData]);
+    }, [periodsData, defaultPeriodsData, selectedSpecialityId]);
 
     const handleDateChange = (periodKey, field, value) => {
         setFormData((prev) => ({
@@ -123,6 +157,16 @@ export default function InitialPeriodsPage() {
         }
     };
 
+    const handleResetOverride = async () => {
+        if (window.confirm(t("department.confirmResetOverride", "Вы действительно хотите удалить индивидуальные сроки для этой специальности и вернуться к общим срокам кафедры?"))) {
+            try {
+                await resetMutation.mutateAsync(selectedSpecialityId);
+            } catch (error) {
+                console.error("Failed to reset override", error);
+            }
+        }
+    };
+
     const handleEdit = () => {
         setIsApproved(false);
         setErrors({});
@@ -146,17 +190,38 @@ export default function InitialPeriodsPage() {
         return <div className="initial-periods-page"><p>{t('department.noDepartmentSelected', 'Department or Academic Year missing.')}</p></div>;
     }
 
-    // ===================== SUMMARY VIEW =====================
-    if (isApproved) {
-        return (
-            <div className="initial-periods-page">
-                <div className="page-header">
-                    <div>
-                        <h1 className="page-title">{t("department.initialPeriodsTitle")}</h1>
-                        <p className="page-subtitle">{t("department.initialPeriodsSubtitle")}</p>
-                    </div>
+    return (
+        <div className="initial-periods-page">
+            <div className="page-header">
+                <div>
+                    <h1 className="page-title">{t("department.initialPeriodsTitle")}</h1>
+                    <p className="page-subtitle">{t("department.initialPeriodsSubtitle")}</p>
                 </div>
+            </div>
 
+            {/* Speciality Selector */}
+            <div className="speciality-selector-wrapper">
+                <span className="selector-label">{t("student.specialty")}:</span>
+                <select
+                    className="speciality-select"
+                    value={selectedSpecialityId || ""}
+                    onChange={(e) => {
+                        const val = e.target.value;
+                        setSelectedSpecialityId(val ? Number(val) : null);
+                        setIsApproved(false);
+                        setErrors({});
+                        setOrderError("");
+                    }}
+                >
+                    <option value="">{t("department.allSpecialities", "Общее для кафедры (По умолчанию)")}</option>
+                    {specialities.map(s => (
+                        <option key={s.id} value={s.id}>{s.code} - {s.title}</option>
+                    ))}
+                </select>
+            </div>
+
+            {/* ===================== SUMMARY VIEW ===================== */}
+            {isApproved ? (
                 <div className="periods-summary">
                     {PERIOD_CONFIG.map(({ key, labelKey }) => (
                         <div key={key} className="period-summary-card">
@@ -171,73 +236,87 @@ export default function InitialPeriodsPage() {
                             </span>
                         </div>
                     ))}
-                </div>
 
-                <div className="periods-summary__actions">
-                    <button className="button secondary-button" onClick={handleEdit}>
-                        {t("department.editPeriods")}
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
-    // ===================== FORM VIEW =====================
-    return (
-        <div className="initial-periods-page">
-            <div className="page-header">
-                <div>
-                    <h1 className="page-title">{t("department.initialPeriodsTitle")}</h1>
-                    <p className="page-subtitle">{t("department.initialPeriodsSubtitle")}</p>
-                </div>
-            </div>
-
-            <div className="periods-form">
-                {PERIOD_CONFIG.map(({ key, labelKey }) => (
-                    <div key={key} className="period-group">
-                        <div className="period-group__title">{t(labelKey)}</div>
-                        <div className="period-group__dates">
-                            <div className="period-group__date-field">
-                                <label>{t("common.startDate")}</label>
-                                <input
-                                    type="date"
-                                    value={formData[key].startDate}
-                                    onChange={(e) => handleDateChange(key, "startDate", e.target.value)}
-                                />
-                            </div>
-                            <div className="period-group__date-field">
-                                <label>{t("common.endDate")}</label>
-                                <input
-                                    type="date"
-                                    value={formData[key].endDate}
-                                    onChange={(e) => handleDateChange(key, "endDate", e.target.value)}
-                                />
-                            </div>
-                        </div>
-                        {errors[key] && (
-                            <div className="period-group__error">{errors[key]}</div>
+                    <div className="periods-summary__actions" style={{ display: "flex", gap: "12px" }}>
+                        <button className="button secondary-button" onClick={handleEdit}>
+                            {t("department.editPeriods")}
+                        </button>
+                        {selectedSpecialityId && (
+                            <button className="button secondary-button" onClick={handleResetOverride} style={{ color: "#DC2626", borderColor: "#FCA5A5" }}>
+                                {t("department.resetToDefaults", "Сбросить к общим срокам кафедры")}
+                            </button>
                         )}
                     </div>
-                ))}
-
-                {orderError && (
-                    <div className="periods-form__order-error">{orderError}</div>
-                )}
-
-                <div className="periods-form__actions">
-                    <button
-                        className="button primary-button"
-                        disabled={!allDatesFilled || approveMutation.isPending}
-                        onClick={handleSubmit}
-                    >
-                        {t("department.approveInitialPeriods")}
-                    </button>
                 </div>
-            </div>
+            ) : (
+                /* ===================== FORM VIEW ===================== */
+                <div className="periods-form">
+                    {selectedSpecialityId && periodsData.length === 0 && (
+                        <div className="periods-form__order-error" style={{ color: "#1E3A8A", background: "#EFF6FF", borderColor: "#BFDBFE", marginBottom: "8px" }}>
+                            {t("department.usingInheritedDates", "Внимание: для данной специальности используются общие сроки кафедры. Вы можете изменить их и сохранить индивидуальные настройки.")}
+                        </div>
+                    )}
+
+                    {PERIOD_CONFIG.map(({ key, labelKey }) => (
+                        <div key={key} className="period-group">
+                            <div className="period-group__title">{t(labelKey)}</div>
+                            <div className="period-group__dates">
+                                <div className="period-group__date-field">
+                                    <label>{t("common.startDate")}</label>
+                                    <input
+                                        type="date"
+                                        value={formData[key].startDate}
+                                        onChange={(e) => handleDateChange(key, "startDate", e.target.value)}
+                                    />
+                                </div>
+                                <div className="period-group__date-field">
+                                    <label>{t("common.endDate")}</label>
+                                    <input
+                                        type="date"
+                                        value={formData[key].endDate}
+                                        onChange={(e) => handleDateChange(key, "endDate", e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            {errors[key] && (
+                                <div className="period-group__error">{errors[key]}</div>
+                            )}
+                        </div>
+                    ))}
+
+                    {orderError && (
+                        <div className="periods-form__order-error">{orderError}</div>
+                    )}
+
+                    <div className="periods-form__actions" style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
+                        {selectedSpecialityId && periodsData.length > 0 && (
+                            <button
+                                className="button secondary-button"
+                                onClick={() => setIsApproved(true)}
+                            >
+                                {t("common.cancel", "Отмена")}
+                            </button>
+                        )}
+                        <button
+                            className="button primary-button"
+                            disabled={!allDatesFilled || approveMutation.isPending}
+                            onClick={handleSubmit}
+                        >
+                            {selectedSpecialityId 
+                                ? t("department.saveOverride", "Сохранить настройки этапов")
+                                : t("department.approveInitialPeriods")
+                            }
+                        </button>
+                    </div>
+                </div>
+            )}
 
             <ConfirmModal
                 isOpen={isConfirmOpen}
-                title={t("department.approveInitialPeriods")}
+                title={selectedSpecialityId 
+                    ? t("department.saveOverride", "Сохранить настройки этапов")
+                    : t("department.approveInitialPeriods")
+                }
                 message={t("department.periodsApproved")}
                 onConfirm={handleConfirm}
                 onCancel={() => setIsConfirmOpen(false)}
