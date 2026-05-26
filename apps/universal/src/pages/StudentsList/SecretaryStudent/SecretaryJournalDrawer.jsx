@@ -6,6 +6,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
     const { t } = useTranslation();
     const { user } = useAuth();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [decision, setDecision] = useState("Допущен");
 
     const scheduleId = student?.scheduleId;
     const isFinalized = !!student?.protocolId;
@@ -36,7 +37,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
             const protocolId = await generateProtocolMutation.mutateAsync({
                 scheduleId: scheduleId,
                 finalScoreNumeric: parseFloat(averageScore),
-                decision: "Допущен" // Default decision
+                decision: decision
             });
 
             // 2. Finalize protocol
@@ -149,6 +150,31 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
                     )}
 
                     <hr className="s-divider" />
+
+                    {/* Решение комиссии */}
+                    {!isFinalized && status === "reviewing" && (
+                        <div className="sec-decision-section" style={{ marginBottom: "15px" }}>
+                            <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold", fontSize: "14px" }}>
+                                {t('journal.commissionDecision', 'Решение комиссии')}:
+                            </label>
+                            <select 
+                                value={decision} 
+                                onChange={(e) => setDecision(e.target.value)}
+                                style={{
+                                    width: "100%",
+                                    padding: "8px 12px",
+                                    borderRadius: "6px",
+                                    border: "1px solid #d1d5db",
+                                    backgroundColor: "#fff",
+                                    fontSize: "14px",
+                                    outline: "none"
+                                }}
+                            >
+                                <option value="Допущен">{t('journal.admitted', 'Допущен')}</option>
+                                <option value="Не допущен">{t('journal.notAdmitted', 'Не допущен')}</option>
+                            </select>
+                        </div>
+                    )}
 
                     {/* Итоговый балл */}
                     <div className={`sec-summary-box ${status === 'completed' ? 'locked' : ''}`}>

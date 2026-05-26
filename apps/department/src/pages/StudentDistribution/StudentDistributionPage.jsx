@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { getIntlLocale, useAuth, useCommissions, usePreDefenseSchedule } from "@awm/shared";
+import { getIntlLocale, useAuth, useCommissions, usePreDefenseSchedule, useAutoDistributeStudents } from "@awm/shared";
 import "./StudentDistributionPage.css";
 import usersIcon from "../../assets/icons/users-icon.svg";
 
@@ -25,11 +25,28 @@ export default function StudentDistributionPage() {
     const { user } = useAuth();
     const [filterCommission, setFilterCommission] = useState("all");
     const [filterDate, setFilterDate] = useState("");
+    const [distributePdNumber, setDistributePdNumber] = useState(1);
 
     const departmentId = user?.orgUnitId;
     const semesterId = user?.currentSemesterId;
 
     const { data: commissions = [], isLoading: isCommissionsLoading } = useCommissions(departmentId, semesterId);
+    const autoDistributeMutation = useAutoDistributeStudents();
+
+    const handleAutoDistribute = async () => {
+        try {
+            await autoDistributeMutation.mutateAsync({
+                orgUnitId: departmentId,
+                semesterId: semesterId,
+                commissionTypeId: 1, // PreDefense
+                preDefenseNumber: distributePdNumber
+            });
+            alert(t('department.distributionSuccess', 'Студенты успешно распределены!'));
+        } catch (error) {
+            console.error('Failed to distribute students', error);
+            alert(error?.message || t('department.distributionFailed', 'Ошибка при распределении'));
+        }
+    };
 
     // Get selected commission ID
     const selectedCommissionId = filterCommission !== "all" ? Number(filterCommission) : commissions[0]?.id;
@@ -89,7 +106,7 @@ export default function StudentDistributionPage() {
 
     return (
         <div className="student-distribution-page">
-            <div className="page-header">
+            <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div className="page-header-info">
                     <div className="page-header-icon-bg">
                         <img src={usersIcon} alt="" className="page-header-icon" />
@@ -98,6 +115,45 @@ export default function StudentDistributionPage() {
                         <h1 className="page-title">{t("department.studentDistributionTitle")}</h1>
                         <p className="page-subtitle">{t("department.studentDistributionSubtitle")}</p>
                     </div>
+                </div>
+                <div className="sd-auto-distribute-actions" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <select
+                        value={distributePdNumber}
+                        onChange={(e) => setDistributePdNumber(Number(e.target.value))}
+                        style={{
+                            padding: '8px 12px',
+                            borderRadius: '6px',
+                            border: '1px solid #d1d5db',
+                            backgroundColor: '#fff',
+                            fontSize: '14px',
+                            outline: 'none'
+                        }}
+                    >
+                        <option value={1}>{t('department.preDefense1', 'Предзащита 1')}</option>
+                        <option value={2}>{t('department.preDefense2', 'Предзащита 2')}</option>
+                        <option value={3}>{t('department.preDefense3', 'Предзащита 3')}</option>
+                    </select>
+                    <button
+                        onClick={handleAutoDistribute}
+                        disabled={autoDistributeMutation.isPending}
+                        style={{
+                            padding: '8px 16px',
+                            borderRadius: '6px',
+                            border: 'none',
+                            backgroundColor: '#4f46e5',
+                            color: '#fff',
+                            fontWeight: '600',
+                            fontSize: '14px',
+                            cursor: 'pointer',
+                            transition: 'background-color 0.2s'
+                        }}
+                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#4338ca'}
+                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#4f46e5'}
+                    >
+                        {autoDistributeMutation.isPending 
+                            ? t('common.loading', 'Загрузка...') 
+                            : t('department.autoDistribute', 'Автораспределение')}
+                    </button>
                 </div>
             </div>
 

@@ -263,3 +263,16 @@
     background-color: #9ca3af;
     cursor: not-allowed;
 }
+
+.ea-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.ea-save-success-msg {
+    color: #10B981;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+

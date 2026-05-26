@@ -1,0 +1,164 @@
+.check-settings-page {
+    background-color: #f9fafb;
+    flex: 1;
+    margin-top: 64px;
+    padding: 56px;
+}
+
+.check-settings-page .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.check-settings-page .page-header-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.check-settings-page .page-header-icon-bg {
+    background-color: #dbeafe;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.check-settings-page .page-header-icon {
+    width: 2rem;
+    height: 2rem;
+    color: #2563eb;
+}
+
+.check-settings-page .page-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+    line-height: 1.55;
+}
+
+.check-settings-page .page-subtitle {
+    font-size: 0.875rem;
+    color: #4b5563;
+    margin-top: 0.25rem;
+}
+
+/* Form Card */
+.cs-form-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.cs-form-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 1.25rem;
+}
+
+.cs-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.cs-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.cs-form-field label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.cs-form-field select,
+.cs-form-field input[type="number"] {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    color: #111827;
+    background-color: #ffffff;
+}
+
+.cs-form-field select:focus,
+.cs-form-field input[type="number"]:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.cs-checkbox-field {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-bottom: 0.5rem;
+}
+
+.cs-checkbox-field input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+    accent-color: #2563eb;
+}
+
+.cs-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1.25rem;
+}
+
+.cs-error-msg {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+/* Table BADGES & BUTTONS */
+.cs-status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.cs-status-badge.active {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.cs-status-badge.inactive {
+    background-color: #f3f4f6;
+    color: #374151;
+}
+
+.cs-delete-btn {
+    border: none;
+    background: none;
+    color: #ef4444;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.15s;
+}
+
+.cs-delete-btn:hover {
+    background-color: #fee2e2;
+}

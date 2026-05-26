@@ -162,3 +162,23 @@ export const useStartPreDefenseReconciliation = useStartReconciliation;
 export const useStartDefenseReconciliation = useStartReconciliation;
 export const useGeneratePreDefenseProtocol = useGenerateProtocol;
 export const usePreDefenseGradesBySchedule = useGradesBySchedule;
+
+export async function fetchPreDefenseSchedule(commissionId) {
+  const { data } = await apiClient.get('/v1/schedules', {
+    params: { commissionId },
+  });
+  return data;
+}
+
+export function usePreDefenseSchedule(commissionId) {
+  return useQuery({
+    queryKey: ['preDefense', 'schedule', commissionId],
+    queryFn: () => fetchPreDefenseSchedule(commissionId),
+    enabled: !!commissionId,
+  });
+}
+
+export const useDefenseSchedule = usePreDefenseSchedule;
+export const useProtocol = useProtocolDetail;
+
+

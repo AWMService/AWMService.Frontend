@@ -15,6 +15,7 @@ import { NotificationsPage } from '@awm/shared';
 import CommissionsPage from './pages/Commissions/CommissionsPage.jsx';
 import StudentDistributionPage from './pages/StudentDistribution/StudentDistributionPage.jsx';
 import ExpertAssignmentPage from './pages/ExpertAssignment/ExpertAssignmentPage.jsx';
+import CheckSettingsPage from './pages/CheckSettings/CheckSettingsPage.jsx';
 import DefenseReadinessPage from './pages/DefenseReadiness/DefenseReadinessPage.jsx';
 import EvaluationCriteriaPage from './pages/EvaluationCriteria/EvaluationCriteriaPage.jsx';
 import './App.css';
@@ -42,6 +43,7 @@ function App() {
                             <Route path="/evaluation-criteria" element={<EvaluationCriteriaPage />} />
                             <Route path="/student-distribution" element={<StudentDistributionPage />} />
                             <Route path="/expert-assignment" element={<ExpertAssignmentPage />} />
+                            <Route path="/check-settings" element={<CheckSettingsPage />} />
                             <Route path="/defense-readiness" element={<DefenseReadinessPage />} />
                             <Route path="*" element={<Navigate to="/supervisors" replace />} />
                         </Routes>

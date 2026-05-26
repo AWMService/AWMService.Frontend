@@ -25,6 +25,10 @@ export const commissionApi = {
   deleteCommission: async (commissionId) => {
     const { data } = await apiClient.delete(`/v1/commissions/${commissionId}`);
     return data;
+  },
+  autoDistributeStudents: async (distributionData) => {
+    const { data } = await apiClient.post('/v1/commissions/auto-distribute', distributionData);
+    return data;
   }
 };
 
@@ -79,6 +83,18 @@ export const useDeleteCommission = (orgUnitId, semesterId, specialityId = null) 
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: commissionKeys.byDepartment(orgUnitId, semesterId, specialityId) });
       queryClient.invalidateQueries({ queryKey: commissionKeys.detail(id) });
+    },
+  });
+};
+
+export const useAutoDistributeStudents = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: commissionApi.autoDistributeStudents,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: commissionKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['preDefenseSchedule'] });
+      queryClient.invalidateQueries({ queryKey: ['schedules'] });
     },
   });
 };

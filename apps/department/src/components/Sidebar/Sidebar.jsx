@@ -82,6 +82,12 @@ export function Sidebar() {
       descriptionKey: "department.expertAssignmentDescription",
     },
     {
+      href: "/check-settings",
+      labelKey: "nav.checks",
+      icon: shieldCheckIcon,
+      descriptionKey: "department.notifyReviews",
+    },
+    {
       href: "/defense-readiness",
       labelKey: "nav.defenseReadiness",
       icon: documentCheckIcon,
