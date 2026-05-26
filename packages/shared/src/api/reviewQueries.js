@@ -34,18 +34,19 @@ export function useCreateSupervisorReview(workId) {
 }
 
 // External review upload
-export async function uploadExternalReview(workId, reviewId, formData) {
-  await apiClient.post(`/v1/works/${workId}/reviews/external/${reviewId}`, formData, {
+export async function uploadExternalReview(workId, formData) {
+  await apiClient.post(`/v1/works/${workId}/reviews/external`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
 }
 
-export function useUploadExternalReview(workId, reviewId) {
+export function useUploadExternalReview() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (formData) => uploadExternalReview(workId, reviewId, formData),
-    onSuccess: () => {
+    mutationFn: ({ workId, formData }) => uploadExternalReview(workId, formData),
+    onSuccess: (data, { workId }) => {
       queryClient.invalidateQueries({ queryKey: ['reviews', 'work', workId] });
+      queryClient.invalidateQueries({ queryKey: ['reviews', 'my-assignments'] });
     },
   });
 }
@@ -107,5 +108,68 @@ export function useMyReviewerAssignments() {
   return useQuery({
     queryKey: ['reviews', 'my-assignments'],
     queryFn: fetchMyReviewerAssignments,
+  });
+}
+
+// Fetch all reviewers
+export async function fetchReviewers(searchTerm) {
+  const { data } = await apiClient.get('/v1/reviewers', {
+    params: { searchTerm },
+  });
+  return data;
+}
+
+export function useReviewers(searchTerm) {
+  return useQuery({
+    queryKey: ['reviewers', searchTerm],
+    queryFn: () => fetchReviewers(searchTerm),
+  });
+}
+
+// Create reviewer
+export async function createReviewer(reviewerData) {
+  const { data } = await apiClient.post('/v1/reviewers', reviewerData);
+  return data;
+}
+
+export function useCreateReviewer() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createReviewer,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['reviewers'] });
+    },
+  });
+}
+
+// Update reviewer
+export async function updateReviewer(id, reviewerData) {
+  const { data } = await apiClient.put(`/v1/reviewers/${id}`, reviewerData);
+  return data;
+}
+
+export function useUpdateReviewer() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }) => updateReviewer(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['reviewers'] });
+    },
+  });
+}
+
+// Delete reviewer
+export async function deleteReviewer(id) {
+  const { data } = await apiClient.delete(`/v1/reviewers/${id}`);
+  return data;
+}
+
+export function useDeleteReviewer() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteReviewer,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['reviewers'] });
+    },
   });
 }

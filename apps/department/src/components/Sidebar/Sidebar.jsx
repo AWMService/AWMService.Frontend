@@ -93,6 +93,12 @@ export function Sidebar() {
       icon: documentCheckIcon,
       descriptionKey: "department.defenseReadinessDescription",
     },
+    {
+      href: "/reviewers",
+      labelKey: "reviewer.reviewers",
+      icon: usersIcon,
+      descriptionKey: "department.reviewersDescription",
+    },
   ];
 
   return <SharedSidebar navigationItems={navigationItems} headerTitle={t('nav.dashboard')} />;

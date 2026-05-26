@@ -18,6 +18,7 @@ import ExpertAssignmentPage from './pages/ExpertAssignment/ExpertAssignmentPage.
 import CheckSettingsPage from './pages/CheckSettings/CheckSettingsPage.jsx';
 import DefenseReadinessPage from './pages/DefenseReadiness/DefenseReadinessPage.jsx';
 import EvaluationCriteriaPage from './pages/EvaluationCriteria/EvaluationCriteriaPage.jsx';
+import ReviewersPage from './pages/Reviewers/ReviewersPage.jsx';
 import './App.css';
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
                             <Route path="/expert-assignment" element={<ExpertAssignmentPage />} />
                             <Route path="/check-settings" element={<CheckSettingsPage />} />
                             <Route path="/defense-readiness" element={<DefenseReadinessPage />} />
+                            <Route path="/reviewers" element={<ReviewersPage />} />
                             <Route path="*" element={<Navigate to="/supervisors" replace />} />
                         </Routes>
                     </main>
