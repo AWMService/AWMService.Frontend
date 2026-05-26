@@ -5,6 +5,7 @@ export const staffKeys = {
   all: ['staff'],
   byDepartment: (orgUnitId) => [...staffKeys.all, 'department', orgUnitId],
   supervisors: (orgUnitId, semesterId, specialityId) => [...staffKeys.all, 'supervisors', orgUnitId, semesterId, specialityId],
+  supervisorsStatus: (orgUnitId, semesterId, specialityId) => [...staffKeys.all, 'supervisorsStatus', orgUnitId, semesterId, specialityId],
 };
 
 export const useStaffByDepartment = (orgUnitId) => {
@@ -68,6 +69,36 @@ export const useRemoveSupervisor = (orgUnitId, semesterId, specialityId = null) 
   return useMutation({
     mutationFn: (userId) => staffApi.removeSupervisor(orgUnitId, userId, semesterId, specialityId),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: staffKeys.supervisors(orgUnitId, semesterId, specialityId) });
+    },
+  });
+};
+
+export const useSupervisorsStatus = (orgUnitId, semesterId, specialityId = null) => {
+  return useQuery({
+    queryKey: staffKeys.supervisorsStatus(orgUnitId, semesterId, specialityId),
+    queryFn: () => staffApi.fetchSupervisorsStatus(orgUnitId, semesterId, specialityId),
+    enabled: !!orgUnitId && !!semesterId,
+  });
+};
+
+export const useConfirmSupervisors = (orgUnitId, semesterId, specialityId = null) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => staffApi.confirmSupervisors(orgUnitId, semesterId, specialityId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: staffKeys.supervisorsStatus(orgUnitId, semesterId, specialityId) });
+      queryClient.invalidateQueries({ queryKey: staffKeys.supervisors(orgUnitId, semesterId, specialityId) });
+    },
+  });
+};
+
+export const useUnlockSupervisors = (orgUnitId, semesterId, specialityId = null) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => staffApi.unlockSupervisors(orgUnitId, semesterId, specialityId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: staffKeys.supervisorsStatus(orgUnitId, semesterId, specialityId) });
       queryClient.invalidateQueries({ queryKey: staffKeys.supervisors(orgUnitId, semesterId, specialityId) });
     },
   });

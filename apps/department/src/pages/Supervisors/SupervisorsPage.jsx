@@ -7,7 +7,11 @@ import {
     useStaffByDepartment, 
     useSupervisors, 
     useUpdateStaffWorkload, 
-    useApproveSupervisors 
+    useApproveSupervisors,
+    useSupervisorsStatus,
+    useConfirmSupervisors,
+    useUnlockSupervisors,
+    ConfirmModal
 } from "@awm/shared";
 import "./SupervisorsPage.css";
 import { SupervisorCard, SupervisorSelectionDialog } from "@awm/shared";
@@ -22,12 +26,19 @@ function SupervisorsPage() {
 
     const { data: allTeachers = [], isLoading: isLoadingTeachers } = useStaffByDepartment(orgUnitId);
     const { data: rawSupervisors = [], isLoading: isLoadingSupervisors } = useSupervisors(orgUnitId, semesterId);
+    const { data: statusData, isLoading: isLoadingStatus } = useSupervisorsStatus(orgUnitId, semesterId);
     
     const approveMutation = useApproveSupervisors(orgUnitId, semesterId);
     const updateWorkloadMutation = useUpdateStaffWorkload(orgUnitId, semesterId);
+    const confirmMutation = useConfirmSupervisors(orgUnitId, semesterId);
+    const unlockMutation = useUnlockSupervisors(orgUnitId, semesterId);
 
     const [searchTerm, setSearchTerm] = useState("");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [isUnlockModalOpen, setIsUnlockModalOpen] = useState(false);
+
+    const isConfirmed = statusData?.isConfirmed || false;
 
     // Map backend staff format to UI component format
     const mapStaffToUI = (staff) => ({
@@ -93,7 +104,17 @@ function SupervisorsPage() {
         await updateWorkloadMutation.mutateAsync({ userId: id, maxWorkload: maxStudents });
     };
 
-    if (isLoadingTeachers || isLoadingSupervisors) {
+    const handleConfirmSupervisors = async () => {
+        await confirmMutation.mutateAsync();
+        setIsConfirmModalOpen(false);
+    };
+
+    const handleUnlockSupervisors = async () => {
+        await unlockMutation.mutateAsync();
+        setIsUnlockModalOpen(false);
+    };
+
+    if (isLoadingTeachers || isLoadingSupervisors || isLoadingStatus) {
         return <div className="supervisors-page"><p>{t('common.loading', 'Loading...')}</p></div>;
     }
 
@@ -113,15 +134,48 @@ function SupervisorsPage() {
                     </div>
                 </div>
 
-                <button
-                    className="button primary-button"
-                    onClick={() => setIsDialogOpen(true)}
-                    disabled={approveMutation.isPending}
-                >
-                    <img src={plusIcon} alt="Add" className="button-icon" />
-                    {t('department.addSupervisors')}
-                </button>
+                <div className="header-actions">
+                    {isConfirmed ? (
+                        <button
+                            className="button secondary-button"
+                            onClick={() => setIsUnlockModalOpen(true)}
+                            disabled={unlockMutation.isPending}
+                        >
+                            {t('department.unlockSupervisors', 'Разблокировать для изменений')}
+                        </button>
+                    ) : (
+                        <>
+                            <button
+                                className="button secondary-button"
+                                onClick={() => setIsConfirmModalOpen(true)}
+                                disabled={confirmMutation.isPending || supervisors.length === 0}
+                            >
+                                {t('department.confirmSupervisors', 'Утвердить состав НР')}
+                            </button>
+                            <button
+                                className="button primary-button"
+                                onClick={() => setIsDialogOpen(true)}
+                                disabled={approveMutation.isPending}
+                            >
+                                <img src={plusIcon} alt="Add" className="button-icon" />
+                                {t('department.addSupervisors')}
+                            </button>
+                        </>
+                    )}
+                </div>
             </div>
+
+            {isConfirmed && (
+                <div className="confirmed-banner">
+                    <svg viewBox="0 0 24 24" className="banner-icon">
+                        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+                        <path d="m9 12 2 2 4-4" />
+                    </svg>
+                    <div className="banner-text">
+                        <strong>{t('department.supervisorsConfirmedBannerTitle', 'Состав научных руководителей утвержден.')}</strong> {t('department.supervisorsConfirmedBannerBody', 'Изменение состава заблокировано. Нагрузку преподавателей можно изменять без разблокировки.')}
+                    </div>
+                </div>
+            )}
 
             <div className="search-bar-container">
                 <img src={searchIcon} alt="Search" className="search-bar-icon" />
@@ -139,7 +193,7 @@ function SupervisorsPage() {
                     <SupervisorCard
                         key={supervisor.id}
                         supervisor={supervisor}
-                        onRemove={handleRemoveSupervisor}
+                        onRemove={isConfirmed ? null : handleRemoveSupervisor}
                         onUpdateWorkload={handleUpdateWorkload}
                     />
                 ))}
@@ -155,6 +209,22 @@ function SupervisorsPage() {
                 onOpenChange={setIsDialogOpen}
                 availableTeachers={availableTeachers}
                 onConfirm={handleAddSupervisors}
+            />
+
+            <ConfirmModal
+                isOpen={isConfirmModalOpen}
+                title={t('department.confirmSupervisorsTitle', 'Утверждение состава руководителей')}
+                message={t('department.confirmSupervisorsMessage', 'Вы уверены, что хотите утвердить состав научных руководителей? После утверждения внесение изменений (добавление/удаление) будет заблокировано. Нагрузку руководителей можно будет изменять без разблокировки.')}
+                onConfirm={handleConfirmSupervisors}
+                onCancel={() => setIsConfirmModalOpen(false)}
+            />
+
+            <ConfirmModal
+                isOpen={isUnlockModalOpen}
+                title={t('department.unlockSupervisorsTitle', 'Разблокировка состава руководителей')}
+                message={t('department.unlockSupervisorsMessage', 'Вы уверены, что хотите разблокировать состав научных руководителей для редактирования? Вы сможете добавлять и удалять руководителей.')}
+                onConfirm={handleUnlockSupervisors}
+                onCancel={() => setIsUnlockModalOpen(false)}
             />
         </div>
     );

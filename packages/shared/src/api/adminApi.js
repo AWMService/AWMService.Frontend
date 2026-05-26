@@ -176,5 +176,25 @@ export const staffApi = {
       params: { semesterId, specialityId }
     });
     return data;
+  },
+  fetchSupervisorsStatus: async (orgUnitId, semesterId, specialityId = null) => {
+    const { data } = await apiClient.get(`/v1/org-units/${orgUnitId}/supervisors/status`, {
+      params: { semesterId, specialityId }
+    });
+    return data;
+  },
+  confirmSupervisors: async (orgUnitId, semesterId, specialityId = null) => {
+    const { data } = await apiClient.post(`/v1/org-units/${orgUnitId}/supervisors/confirm`, {
+      semesterId,
+      specialityId
+    });
+    return data;
+  },
+  unlockSupervisors: async (orgUnitId, semesterId, specialityId = null) => {
+    const { data } = await apiClient.post(`/v1/org-units/${orgUnitId}/supervisors/unlock`, {
+      semesterId,
+      specialityId
+    });
+    return data;
   }
 };
