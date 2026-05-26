@@ -94,15 +94,24 @@ const DirectionsAndThemes = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [filterStatus, setFilterStatus] = useState("all");
 
-    const filterOptions = [
-        { value: "all", label: t('common.all') },
-        { value: "draft", label: t('status.draft') },
-        { value: "pending", label: t('status.underReview') },
-        { value: "approved", label: t('status.approved') },
-        { value: "rejected", label: t('status.rejected') },
-        { value: "revision", label: t('status.revision') },
-        { value: "closed", label: t('status.closed', t('student.occupied')) },
-    ];
+    const filterOptions = useMemo(() => {
+        if (isDirections) {
+            return [
+                { value: "all", label: t('common.all') },
+                { value: "pending", label: t('status.underReview') },
+                { value: "approved", label: t('status.approved') },
+                { value: "rejected", label: t('status.rejected') },
+                { value: "revision", label: t('status.revision') },
+            ];
+        } else {
+            return [
+                { value: "all", label: t('common.all') },
+                { value: "pending", label: t('status.underReview') },
+                { value: "approved", label: t('status.approved') },
+                { value: "closed", label: t('status.closed', t('student.occupied')) },
+            ];
+        }
+    }, [isDirections, t]);
 
     const changeTab = (tab) => {
         navigate(`?tab=${tab}`);

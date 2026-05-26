@@ -4,26 +4,35 @@ import "./DirectionModal.css";
 
 const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
     const { t } = useTranslation();
-    const [showRejection, setShowRejection] = useState(false);
+    const [reviewMode, setReviewMode] = useState(null); // null, 'reject', 'revision'
     const [rejectionReason, setRejectionReason] = useState("");
     const [language, setLanguage] = useState("ru");
 
     if (!direction) return null;
 
-    const isPending = direction.status === "На рассмотрении";
-    const isRejected = direction.status === "Отклонено";
+    const isPending = direction.status === "pending";
+    const isRejected = direction.status === "rejected";
 
     const handleReject = () => {
         if (!rejectionReason.trim()) {
             return; // Дополнительная защита
         }
 
-        onUpdateStatus(direction.id, "Отклонено", rejectionReason);
+        onUpdateStatus(direction.id, "rejected", rejectionReason);
+        handleClose();
+    };
+
+    const handleRevision = () => {
+        if (!rejectionReason.trim()) {
+            return; // Дополнительная защита
+        }
+
+        onUpdateStatus(direction.id, "revision", rejectionReason);
         handleClose();
     };
 
     const handleClose = () => {
-        setShowRejection(false);
+        setReviewMode(null);
         setRejectionReason("");
         onClose();
     };
@@ -41,14 +50,16 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                 <div className="dm-header">
                     <div
                         className={`dm-status ${
-                            isPending
+                            direction.status === "pending"
                                 ? "dm-status--pending"
-                                : isRejected
+                                : direction.status === "rejected"
                                     ? "dm-status--rejected"
-                                    : "dm-status--approved"
+                                    : direction.status === "revision"
+                                        ? "dm-status--revision"
+                                        : "dm-status--approved"
                         }`}
                     >
-                        {direction.status}
+                        {t(`status.${direction.status === 'pending' ? 'underReview' : direction.status}`)}
                     </div>
 
                     <div className="dm-lang-switch">
@@ -104,11 +115,11 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                             </div>
                         </div>
 
-                        {/* ПРИЧИНА ОТКАЗА (ПОСЛЕ ОТКЛОНЕНИЯ) */}
-                        {isRejected && direction.rejectionReason && (
-                            <div className="dm-rejected-info">
+                        {/* ПРИЧИНА ОТКАЗА ИЛИ ЗАМЕЧАНИЯ (ПОСЛЕ ОТКЛОНЕНИЯ/ОТПРАВКИ НА ДОРАБОТКУ) */}
+                        {(direction.status === 'rejected' || direction.status === 'revision') && direction.rejectionReason && (
+                            <div className={`dm-rejected-info ${direction.status === 'revision' ? 'dm-revision-info' : ''}`}>
                                 <span className="dm-rejected-info__label">
-                                    {t('department.rejectionReason')}
+                                    {direction.status === 'revision' ? t('department.revisionReason') : t('department.rejectionReason')}
                                 </span>
                                 <p className="dm-rejected-info__text">
                                     {direction.rejectionReason}
@@ -120,22 +131,30 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                     {/* FOOTER */}
                     <div className="dm-footer">
                         {isPending ? (
-                            !showRejection ? (
+                            !reviewMode ? (
                                 <div className="dm-footer__actions">
                                     <button
                                         className="dm-btn dm-btn--reject"
                                         onClick={() =>
-                                            setShowRejection(true)
+                                            setReviewMode("reject")
                                         }
                                     >
                                         {t('common.reject')}
+                                    </button>
+                                    <button
+                                        className="dm-btn dm-btn--revision"
+                                        onClick={() =>
+                                            setReviewMode("revision")
+                                        }
+                                    >
+                                        {t('department.sendForRevision')}
                                     </button>
                                     <button
                                         className="dm-btn dm-btn--approve"
                                         onClick={() =>
                                             onUpdateStatus(
                                                 direction.id,
-                                                "Утверждено"
+                                                "approved"
                                             )
                                         }
                                     >
@@ -145,11 +164,17 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                             ) : (
                                 <div className="dm-rejection-form">
                                     <h3 className="dm-rejection-form__title">
-                                        {t('supervisor.rejectionReason')}
+                                        {reviewMode === "revision"
+                                            ? t('department.revisionReason')
+                                            : t('supervisor.rejectionReason')}
                                     </h3>
                                     <textarea
                                         className="dm-rejection-form__textarea"
-                                        placeholder={t('department.rejectReasonPlaceholder')}
+                                        placeholder={
+                                            reviewMode === "revision"
+                                                ? t('department.revisionReasonPlaceholder')
+                                                : t('department.rejectReasonPlaceholder')
+                                        }
                                         value={rejectionReason}
                                         onChange={(e) =>
                                             setRejectionReason(e.target.value)
@@ -160,18 +185,28 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                                         <button
                                             className="dm-btn dm-btn--ghost"
                                             onClick={() => {
-                                                setShowRejection(false);
+                                                setReviewMode(null);
                                                 setRejectionReason("");
                                             }}
                                         >
                                             {t('common.cancel')}
                                         </button>
                                         <button
-                                            className="dm-btn dm-btn--confirm-reject"
-                                            onClick={handleReject}
+                                            className={
+                                                reviewMode === "revision"
+                                                    ? "dm-btn dm-btn--confirm-revision"
+                                                    : "dm-btn dm-btn--confirm-reject"
+                                            }
+                                            onClick={
+                                                reviewMode === "revision"
+                                                    ? handleRevision
+                                                    : handleReject
+                                            }
                                             disabled={!rejectionReason.trim()}
                                         >
-                                            {t('common.confirmReject')}
+                                            {reviewMode === "revision"
+                                                ? t('department.confirmRevision')
+                                                : t('common.confirmReject')}
                                         </button>
                                     </div>
                                 </div>

@@ -66,6 +66,12 @@
     border: 1px solid #FECACA;
 }
 
+.dm-status--revision {
+    background: #FFFBEB;
+    color: #B45309;
+    border: 1px solid #FDE68A;
+}
+
 .dm-status--approved {
     background: #ECFDF5;
     color: #047857;
@@ -172,9 +178,13 @@
 }
 
 .dm-footer__actions {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
+    display: flex;
     gap: 12px;
+    justify-content: flex-end;
+}
+
+.dm-footer__actions .dm-btn {
+    flex: 1;
 }
 
 .dm-btn {
@@ -215,13 +225,23 @@
 }
 
 .dm-btn--reject {
-    background: rgba(37, 99, 235, 0.08) !important;
-    color: #1E40AF !important;
-    border: 1px solid rgba(37, 99, 235, 0.25) !important;
+    background: rgba(239, 68, 68, 0.08) !important;
+    color: #dc2626 !important;
+    border: 1px solid rgba(239, 68, 68, 0.25) !important;
 }
 
 .dm-btn--reject:hover {
-    background: rgba(37, 99, 235, 0.16) !important;
+    background: rgba(239, 68, 68, 0.16) !important;
+}
+
+.dm-btn--revision {
+    background: rgba(245, 158, 11, 0.08) !important;
+    color: #d97706 !important;
+    border: 1px solid rgba(245, 158, 11, 0.25) !important;
+}
+
+.dm-btn--revision:hover {
+    background: rgba(245, 158, 11, 0.16) !important;
 }
 
 .dm-btn--close {
@@ -264,12 +284,21 @@
 }
 
 .dm-btn--confirm-reject {
-    background: rgba(99, 102, 241, 0.86);
-    color: white;
+    background: #dc2626 !important;
+    color: white !important;
 }
 
 .dm-btn--confirm-reject:hover {
-    background: rgba(16, 18, 200, 0.86);
+    background: #b91c1c !important;
+}
+
+.dm-btn--confirm-revision {
+    background: #d97706 !important;
+    color: white !important;
+}
+
+.dm-btn--confirm-revision:hover {
+    background: #b45309 !important;
 }
 
 .dm-btn--ghost {
@@ -301,4 +330,17 @@
     font-size: 14px;
     line-height: 1.6;
     color: #7F1D1D;
+}
+
+.dm-revision-info {
+    background: #FFFBEB !important;
+    border-color: #FDE68A !important;
+}
+
+.dm-revision-info .dm-rejected-info__label {
+    color: #B45309 !important;
+}
+
+.dm-revision-info .dm-rejected-info__text {
+    color: #78350F !important;
 }
