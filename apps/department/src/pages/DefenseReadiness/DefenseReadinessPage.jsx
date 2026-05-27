@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { ConfirmModal, useAuth, useDefenseReadiness, useAdmitToDefense } from "@awm/shared";
+import { ConfirmModal, useAuth, useDefenseReadiness, useAdmitToDefense, useActiveCheckConfigurations } from "@awm/shared";
 import "./DefenseReadinessPage.css";
 import documentCheckIcon from "../../assets/icons/document-check-icon.svg";
 
@@ -12,13 +12,14 @@ const CHECK_ICONS = {
     false: "⏳"
 };
 
-function allChecksPassed(student) {
+function allChecksPassed(student, requiresSW = false) {
     return (
         student.preDefensePassed &&
         student.normocontrolPassed &&
         student.antiplagiarismPassed &&
         student.reviewPassed &&
-        student.supervisorReviewPassed
+        student.supervisorReviewPassed &&
+        (!requiresSW || student.softwareCheckPassed)
     );
 }
 
@@ -38,9 +39,12 @@ export default function DefenseReadinessPage() {
 
     const { data: students = [], isLoading } = useDefenseReadiness({ orgUnitId, semesterId });
     const admitMutation = useAdmitToDefense();
+    const { data: activeConfigs } = useActiveCheckConfigurations(orgUnitId);
+    const requiresSoftwareCheck = activeConfigs?.some(c => c.checkTypeCode === 'SOFTWARECHECK') ?? false;
 
     const [selectedIds, setSelectedIds] = useState([]);
     const [confirmModal, setConfirmModal] = useState({ isOpen: false, isBulk: false, studentId: null });
+    const [filter, setFilter] = useState('all'); // 'all' | 'ready' | 'admitted'
 
     const kpiCounts = useMemo(() => {
         let admitted = 0, notAdmitted = 0, inProgress = 0;
@@ -52,6 +56,17 @@ export default function DefenseReadinessPage() {
         });
         return { admitted, notAdmitted, inProgress };
     }, [students]);
+
+    const filteredStudents = useMemo(() => {
+        if (filter === 'ready')    return students.filter(s => allChecksPassed(s, requiresSoftwareCheck) && !s.admitted);
+        if (filter === 'admitted') return students.filter(s => s.admitted);
+        return students;
+    }, [students, filter, requiresSoftwareCheck]);
+
+    const readyCount = useMemo(
+        () => students.filter(s => allChecksPassed(s, requiresSoftwareCheck) && !s.admitted).length,
+        [students, requiresSoftwareCheck]
+    );
 
     const toggleSelect = (id) => {
         setSelectedIds((prev) =>
@@ -80,7 +95,7 @@ export default function DefenseReadinessPage() {
             if (confirmModal.isBulk) {
                 for (const id of selectedIds) {
                     const s = students.find((x) => x.workId === id);
-                    if (s && allChecksPassed(s) && !s.admitted) {
+                    if (s && allChecksPassed(s, requiresSoftwareCheck) && !s.admitted) {
                         await admitMutation.mutateAsync(id);
                     }
                 }
@@ -95,8 +110,8 @@ export default function DefenseReadinessPage() {
     };
 
     const eligibleSelectedCount = useMemo(() => {
-        return students.filter((s) => selectedIds.includes(s.workId) && allChecksPassed(s) && !s.admitted).length;
-    }, [students, selectedIds]);
+        return students.filter((s) => selectedIds.includes(s.workId) && allChecksPassed(s, requiresSoftwareCheck) && !s.admitted).length;
+    }, [students, selectedIds, requiresSoftwareCheck]);
 
     if (isLoading) {
         return (
@@ -160,6 +175,28 @@ export default function DefenseReadinessPage() {
                 </button>
             </div>
 
+            {/* Filter tabs */}
+            <div className="dr-filter-tabs">
+                <button
+                    className={`dr-filter-tab${filter === 'all' ? ' active' : ''}`}
+                    onClick={() => setFilter('all')}
+                >
+                    {t('department.filterAll')} ({students.length})
+                </button>
+                <button
+                    className={`dr-filter-tab${filter === 'ready' ? ' active' : ''}`}
+                    onClick={() => setFilter('ready')}
+                >
+                    {t('department.filterReady')} ({readyCount})
+                </button>
+                <button
+                    className={`dr-filter-tab${filter === 'admitted' ? ' active' : ''}`}
+                    onClick={() => setFilter('admitted')}
+                >
+                    {t('department.filterAdmitted')} ({kpiCounts.admitted})
+                </button>
+            </div>
+
             {/* Table */}
             <div className="dr-table-wrapper">
                 <table className="dr-table">
@@ -181,14 +218,15 @@ export default function DefenseReadinessPage() {
                             <th>{t("department.antiplagiarism")}</th>
                             <th>{t("department.reviewCheck")}</th>
                             <th>{t("department.supervisorReview")}</th>
+                            {requiresSoftwareCheck && <th>{t("department.softwareCheckColumn")}</th>}
                             <th>{t("department.admissionStatus")}</th>
                             <th>{t("department.actions")}</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {students.map((student, idx) => {
+                        {filteredStudents.map((student, idx) => {
                             const status = getAdmissionStatus(student);
-                            const canAdmit = allChecksPassed(student) && !student.admitted;
+                            const canAdmit = allChecksPassed(student, requiresSoftwareCheck) && !student.admitted;
 
                             return (
                                 <tr key={student.workId}>
@@ -208,6 +246,9 @@ export default function DefenseReadinessPage() {
                                     <td className="dr-check-icon">{CHECK_ICONS[student.antiplagiarismPassed]}</td>
                                     <td className="dr-check-icon">{CHECK_ICONS[student.reviewPassed]}</td>
                                     <td className="dr-check-icon">{CHECK_ICONS[student.supervisorReviewPassed]}</td>
+                                    {requiresSoftwareCheck && (
+                                        <td className="dr-check-icon">{CHECK_ICONS[student.softwareCheckPassed]}</td>
+                                    )}
                                     <td>
                                         {status === "admitted" && (
                                             <span className="dr-status-badge dr-status-badge--admitted">

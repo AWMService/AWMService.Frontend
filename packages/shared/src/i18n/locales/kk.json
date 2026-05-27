@@ -711,7 +711,10 @@
         "checksPeriodSectionSubtitle": "Нормобақылау, антиплагиат және рецензия мерзімдерін баптау",
         "approveChecksPeriods": "Тексеру кезеңі мен сарапшыларды бекіту",
         "addChecksPeriod": "Тексеру кезеңін қосу",
-        "checksPeriodsApproveConfirm": "Тексеру кезеңін бекіту? Нормобақылау, антиплагиат және рецензия мерзімдері бекітіледі."
+        "checksPeriodsApproveConfirm": "Тексеру кезеңін бекіту? Нормобақылау, антиплагиат және рецензия мерзімдері бекітіледі.",
+        "softwareCheckColumn": "ПО тексеру",
+        "filterReady": "Дайын",
+        "filterAdmitted": "Жіберілді"
     },
     "admin": {
         "users": "Пайдаланушылар",
