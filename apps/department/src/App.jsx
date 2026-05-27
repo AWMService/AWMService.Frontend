@@ -19,6 +19,7 @@ import CheckSettingsPage from './pages/CheckSettings/CheckSettingsPage.jsx';
 import DefenseReadinessPage from './pages/DefenseReadiness/DefenseReadinessPage.jsx';
 import EvaluationCriteriaPage from './pages/EvaluationCriteria/EvaluationCriteriaPage.jsx';
 import ReviewersPage from './pages/Reviewers/ReviewersPage.jsx';
+import ReviewerAssignmentPage from './pages/ReviewerAssignment/ReviewerAssignmentPage.jsx';
 import './App.css';
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
                             <Route path="/check-settings" element={<CheckSettingsPage />} />
                             <Route path="/defense-readiness" element={<DefenseReadinessPage />} />
                             <Route path="/reviewers" element={<ReviewersPage />} />
+                            <Route path="/reviewer-assignment" element={<ReviewerAssignmentPage />} />
                             <Route path="*" element={<Navigate to="/supervisors" replace />} />
                         </Routes>
                     </main>

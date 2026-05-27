@@ -2,11 +2,20 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import "./TimePeriodFormDialog.css";
 
+const ALL_PERIOD_OPTIONS = [
+    { value: "PreDefense1",  labelKey: "student.preDefense1" },
+    { value: "PreDefense2",  labelKey: "student.preDefense2" },
+    { value: "PreDefense3",  labelKey: "student.preDefense3" },
+    { value: "FinalDefense", labelKey: "student.defense" },
+    { value: "ChecksPeriod", labelKey: "student.checksPeriod" },
+];
+
 export default function TimePeriodFormDialog({
                                                  isOpen,
                                                  onClose,
                                                  onSubmit,
                                                  editingPeriod,
+                                                 allowedStages,
                                              }) {
     const { t } = useTranslation();
     const [formData, setFormData] = useState({
@@ -15,12 +24,9 @@ export default function TimePeriodFormDialog({
         endDate: "",
     });
 
-    const periodOptions = [
-        { value: "Предзащита 1", labelKey: "student.preDefense1" },
-        { value: "Предзащита 2", labelKey: "student.preDefense2" },
-        { value: "Предзащита 3", labelKey: "student.preDefense3" },
-        { value: "Защита", labelKey: "commission.defense" },
-    ];
+    const periodOptions = allowedStages
+        ? ALL_PERIOD_OPTIONS.filter(o => allowedStages.includes(o.value))
+        : ALL_PERIOD_OPTIONS;
 
     useEffect(() => {
         if (editingPeriod) {

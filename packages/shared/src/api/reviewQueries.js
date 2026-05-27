@@ -81,16 +81,16 @@ export function useAssignedReviewer(workId) {
   });
 }
 
-// Assign reviewer to a work
-export async function assignReviewerToWork(workId, reviewerId) {
-  const { data } = await apiClient.post(`/v1/works/${workId}/assign-reviewer`, { reviewerId });
+// Assign reviewer to a work (reviewerEntityId = Reviewer entity ID, not UserId)
+export async function assignReviewerToWork(workId, reviewerEntityId) {
+  const { data } = await apiClient.post(`/v1/works/${workId}/assign-reviewer`, { reviewerEntityId });
   return data;
 }
 
 export function useAssignReviewer(workId) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (reviewerId) => assignReviewerToWork(workId, reviewerId),
+    mutationFn: (reviewerEntityId) => assignReviewerToWork(workId, reviewerEntityId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assignedReviewer', workId] });
       queryClient.invalidateQueries({ queryKey: ['reviewStatus'] });

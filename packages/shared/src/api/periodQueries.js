@@ -10,7 +10,8 @@ const STAGE_MAP = {
   "PreDefense1": 5,
   "PreDefense2": 6,
   "PreDefense3": 7,
-  "FinalDefense": 8
+  "FinalDefense": 8,
+  "ChecksPeriod": 9,
 };
 
 const STAGE_MAP_REV = {
@@ -22,7 +23,8 @@ const STAGE_MAP_REV = {
   5: "PreDefense1",
   6: "PreDefense2",
   7: "PreDefense3",
-  8: "FinalDefense"
+  8: "FinalDefense",
+  9: "ChecksPeriod",
 };
 
 export const periodApi = {
@@ -133,6 +135,16 @@ export const useApproveInitialPeriods = (orgUnitId, semesterId, specialityId = n
 };
 
 export const useApproveDefensePeriods = (orgUnitId, semesterId, specialityId = null) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (periods) => periodApi.approveDefensePeriods(orgUnitId, semesterId, periods, specialityId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: periodKeys.all });
+    },
+  });
+};
+
+export const useApproveChecksPeriods = (orgUnitId, semesterId, specialityId = null) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (periods) => periodApi.approveDefensePeriods(orgUnitId, semesterId, periods, specialityId),
