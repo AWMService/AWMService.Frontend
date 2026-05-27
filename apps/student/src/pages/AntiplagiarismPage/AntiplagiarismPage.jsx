@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCurrentWorkId, useQualityChecks, useUploadAttachment, useSubmitForCheck, useMyWorkProgress, useActivePeriod } from '@awm/shared';
+import { useCurrentWorkId, useQualityChecks, useUploadAttachment, useSubmitForCheck, useMyWorkProgress, useActivePeriod, useActiveCheckConfigurations } from '@awm/shared';
 import './AntiplagiarismPage.css';
 import infoIcon from '../../assets/icons/pre-defense/info-icon.svg';
 import warningIcon from '../../assets/icons/alert-circle-icon.svg';
@@ -46,7 +46,16 @@ const AntiplagiarismPage = () => {
     const uploadMutation = useUploadAttachment(workId);
     const submitMutation = useSubmitForCheck(workId);
 
-    const antiChecks = checks.filter(c => c.checkType === 'AntiPlagiarism').sort((a, b) => b.attemptNumber - a.attemptNumber);
+    const { data: activeConfigs } = useActiveCheckConfigurations(
+        workProgress?.orgUnitId,
+        workProgress?.specialityId ?? null
+    );
+    const apThreshold = activeConfigs
+        ?.find(c => c.checkTypeCode === 'ANTIPLAGIARISM')
+        ?.minimumPassValue ?? null;
+
+    // Filter by checkTypeId === 2 (AntiPlagiarism) — more reliable than string name comparison
+    const antiChecks = checks.filter(c => c.checkTypeId === 2).sort((a, b) => b.attemptNumber - a.attemptNumber);
     const latestCheck = antiChecks[0];
 
     const derivedStatus = latestCheck
@@ -160,6 +169,11 @@ const AntiplagiarismPage = () => {
                                 <p className="stat-desc">
                                     {status === 'success' ? t('student.thresholdMet') : t('student.thresholdNotMet')}
                                 </p>
+                                {apThreshold != null && (
+                                    <p className="threshold-label" style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '0.4rem' }}>
+                                        {t('student.minimumThreshold')}: <strong>{apThreshold}%</strong>
+                                    </p>
+                                )}
                             </div>
 
                             <div className="glass-card comments-section">

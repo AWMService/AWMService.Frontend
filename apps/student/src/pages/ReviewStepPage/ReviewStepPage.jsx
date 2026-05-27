@@ -21,7 +21,10 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
     const { data: apiAttachments = [] } = useAttachments(workId);
     const deleteMutation = useDeleteAttachment(workId);
     const uploadMutation = useUploadAttachment(workId);
+    // checkType string is used for: period query key + submitMutation arg
     const checkType = route === 'software-check' ? 'SoftwareCheck' : 'NormControl';
+    // checkTypeId is used for reliable filtering of quality check results (avoids title locale mismatch)
+    const checkTypeId = route === 'software-check' ? 3 : 1;
     const { data: checks = [] } = useQualityChecks(workId);
     const { data: activePeriod } = useActivePeriod(
         workProgress?.orgUnitId,
@@ -29,7 +32,7 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
         checkType
     );
     const submitMutation = useSubmitForCheck(workId);
-    const latestCheck = checks.filter(c => c.checkType === checkType).sort((a, b) => b.attemptNumber - a.attemptNumber)[0];
+    const latestCheck = checks.filter(c => c.checkTypeId === checkTypeId).sort((a, b) => b.attemptNumber - a.attemptNumber)[0];
     const derivedStatus = latestCheck
         ? latestCheck.isPassed ? 'success' : 'failed'
         : initialStatus || 'in_progress';

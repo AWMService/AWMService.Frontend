@@ -141,6 +141,7 @@
         "downloadExpertDocument": "Скачать документ с замечаниями",
         "checkNotRequired": "Проверка не требуется",
         "checkNotRequiredDesc": "Этот тип проверки не настроен для вашей кафедры.",
+        "minimumThreshold": "Минимальный порог оригинальности",
         "normocontrol": "Нормоконтроль",
         "softwareCheck": "Проверка ПО",
         "antiplagiarism": "Антиплагиат",
@@ -864,7 +865,17 @@
         "documentCol": "Документ",
         "resultCol": "Результат",
         "actionsCol": "Действия",
-        "noFile": "Нет файла"
+        "noFile": "Нет файла",
+        "tabPending": "Ожидает",
+        "tabFailed": "Не прошёл",
+        "tabPassed": "Прошёл",
+        "noDocuments": "Нет ожидающих проверки работ",
+        "attempt": "Попытка",
+        "percentageInputLabel": "Оригинальность",
+        "submitResult": "Отправить результат",
+        "thresholdInfo": "Порог зачёта",
+        "resultPassed": "Зачтено",
+        "resultFailed": "Незачтено"
     },
     "universal": {
         "notificationsTitle": "Уведомления",

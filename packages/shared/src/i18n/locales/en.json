@@ -141,6 +141,7 @@
         "downloadExpertDocument": "Download Expert Document",
         "checkNotRequired": "Check Not Required",
         "checkNotRequiredDesc": "This check type is not configured for your department.",
+        "minimumThreshold": "Minimum Originality Threshold",
         "normocontrol": "Document Control",
         "softwareCheck": "Software Check",
         "antiplagiarism": "Plagiarism Check",
@@ -864,7 +865,17 @@
         "documentCol": "Document",
         "resultCol": "Result",
         "actionsCol": "Actions",
-        "noFile": "No file"
+        "noFile": "No file",
+        "tabPending": "Pending",
+        "tabFailed": "Failed",
+        "tabPassed": "Passed",
+        "noDocuments": "No works pending review",
+        "attempt": "Attempt",
+        "percentageInputLabel": "Originality",
+        "submitResult": "Submit Result",
+        "thresholdInfo": "Pass Threshold",
+        "resultPassed": "Passed",
+        "resultFailed": "Failed"
     },
     "universal": {
         "notificationsTitle": "Notifications",

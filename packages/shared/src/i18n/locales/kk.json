@@ -141,6 +141,7 @@
         "downloadExpertDocument": "Ескертулері бар құжатты жүктеу",
         "checkNotRequired": "Тексеру талап етілмейді",
         "checkNotRequiredDesc": "Бұл тексеру түрі сіздің кафедраңыз үшін баптандырылмаған.",
+        "minimumThreshold": "Минималды түпнұсқалық шегі",
         "normocontrol": "Нормобақылау",
         "softwareCheck": "БҚ тексеру",
         "antiplagiarism": "Антиплагиат",
@@ -864,7 +865,17 @@
         "documentCol": "Құжат",
         "resultCol": "Нәтиже",
         "actionsCol": "Әрекеттер",
-        "noFile": "Файл жоқ"
+        "noFile": "Файл жоқ",
+        "tabPending": "Күтуде",
+        "tabFailed": "Өтпеді",
+        "tabPassed": "Өтті",
+        "noDocuments": "Тексерілуін күтіп тұрған жұмыстар жоқ",
+        "attempt": "Әрекет",
+        "percentageInputLabel": "Түпнұсқалық",
+        "submitResult": "Нәтижені жіберу",
+        "thresholdInfo": "Есептеу шегі",
+        "resultPassed": "Есептелді",
+        "resultFailed": "Есептелмеді"
     },
     "universal": {
         "notificationsTitle": "Хабарламалар",
