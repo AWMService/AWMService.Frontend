@@ -714,7 +714,11 @@
         "checksPeriodsApproveConfirm": "Тексеру кезеңін бекіту? Нормобақылау, антиплагиат және рецензия мерзімдері бекітіледі.",
         "softwareCheckColumn": "ПО тексеру",
         "filterReady": "Дайын",
-        "filterAdmitted": "Жіберілді"
+        "filterAdmitted": "Жіберілді",
+        "modePreDefense": "Алдын ала қорғаулар",
+        "modeGak": "МАК (Қорытынды қорғау)",
+        "noGakCommissions": "МАК комиссиялары жасалмаған. «Комиссиялар» бетінде жасаңыз.",
+        "noPreDefenseCommissions": "Алдын ала қорғау комиссиялары жасалмаған."
     },
     "admin": {
         "users": "Пайдаланушылар",

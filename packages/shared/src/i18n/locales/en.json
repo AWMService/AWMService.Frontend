@@ -715,7 +715,11 @@
         "checksPeriodSectionSubtitle": "Set deadlines for document control, plagiarism check, and review",
         "approveChecksPeriods": "Approve Checks Period & Experts",
         "addChecksPeriod": "Add Checks Period",
-        "checksPeriodsApproveConfirm": "Approve checks period? This will finalize the deadlines for document control, anti-plagiarism, and review."
+        "checksPeriodsApproveConfirm": "Approve checks period? This will finalize the deadlines for document control, anti-plagiarism, and review.",
+        "modePreDefense": "Pre-Defenses",
+        "modeGak": "GAK (Final Defense)",
+        "noGakCommissions": "No GAK commissions found. Create them on the Commissions page.",
+        "noPreDefenseCommissions": "No pre-defense commissions found."
     },
     "admin": {
         "users": "Users",

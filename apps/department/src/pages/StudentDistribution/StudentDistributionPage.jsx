@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { getIntlLocale, useAuth, useCommissions, usePreDefenseSchedule, useAutoDistributeStudents } from "@awm/shared";
+import { getIntlLocale, useAuth, useCommissions, useDefenseSchedule, useAutoDistributeStudents } from "@awm/shared";
 import "./StudentDistributionPage.css";
 import usersIcon from "../../assets/icons/users-icon.svg";
 
@@ -23,6 +23,8 @@ export default function StudentDistributionPage() {
     const { t, i18n } = useTranslation();
     const locale = getIntlLocale(i18n.language);
     const { user } = useAuth();
+
+    const [commissionMode, setCommissionMode] = useState('predefense'); // 'predefense' | 'gak'
     const [filterCommission, setFilterCommission] = useState("all");
     const [filterDate, setFilterDate] = useState("");
     const [distributePdNumber, setDistributePdNumber] = useState(1);
@@ -33,13 +35,19 @@ export default function StudentDistributionPage() {
     const { data: commissions = [], isLoading: isCommissionsLoading } = useCommissions(departmentId, semesterId);
     const autoDistributeMutation = useAutoDistributeStudents();
 
+    // Filter commissions by current mode (commissionTypeId: 1=PreDefense, 2=GAK)
+    const commissionsForMode = useMemo(
+        () => commissions.filter(c => commissionMode === 'gak' ? c.commissionTypeId === 2 : c.commissionTypeId === 1),
+        [commissions, commissionMode]
+    );
+
     const handleAutoDistribute = async () => {
         try {
             await autoDistributeMutation.mutateAsync({
                 orgUnitId: departmentId,
                 semesterId: semesterId,
-                commissionTypeId: 1, // PreDefense
-                preDefenseNumber: distributePdNumber
+                commissionTypeId: commissionMode === 'gak' ? 2 : 1,
+                preDefenseNumber: commissionMode === 'predefense' ? distributePdNumber : undefined
             });
             alert(t('department.distributionSuccess', 'Студенты успешно распределены!'));
         } catch (error) {
@@ -48,9 +56,18 @@ export default function StudentDistributionPage() {
         }
     };
 
+    // Reset commission filter when mode changes
+    const handleModeChange = (mode) => {
+        setCommissionMode(mode);
+        setFilterCommission("all");
+    };
+
     // Get selected commission ID
-    const selectedCommissionId = filterCommission !== "all" ? Number(filterCommission) : commissions[0]?.id;
-    const { data: schedule = [], isLoading: isScheduleLoading } = usePreDefenseSchedule(selectedCommissionId);
+    const selectedCommissionId = filterCommission !== "all"
+        ? Number(filterCommission)
+        : commissionsForMode[0]?.id;
+
+    const { data: schedule = [], isLoading: isScheduleLoading } = useDefenseSchedule(selectedCommissionId);
 
     // Build students from schedule data (assigned works)
     const students = useMemo(() => {
@@ -77,13 +94,13 @@ export default function StudentDistributionPage() {
 
     const slotCounts = useMemo(() => {
         const counts = {};
-        commissions.forEach((c) => {
+        commissionsForMode.forEach((c) => {
             const commStudents = students.filter((s) => String(s.commissionId) === String(c.id));
             const assigned = commStudents.filter((s) => s.assignedSlot).length;
             counts[c.id] = { assigned, total: TIME_SLOTS.length };
         });
         return counts;
-    }, [commissions, students]);
+    }, [commissionsForMode, students]);
 
     const getCommissionName = (id) => commissions.find((c) => String(c.id) === String(id))?.name || id;
 
@@ -116,23 +133,27 @@ export default function StudentDistributionPage() {
                         <p className="page-subtitle">{t("department.studentDistributionSubtitle")}</p>
                     </div>
                 </div>
+
+                {/* Auto-distribute controls */}
                 <div className="sd-auto-distribute-actions" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                    <select
-                        value={distributePdNumber}
-                        onChange={(e) => setDistributePdNumber(Number(e.target.value))}
-                        style={{
-                            padding: '8px 12px',
-                            borderRadius: '6px',
-                            border: '1px solid #d1d5db',
-                            backgroundColor: '#fff',
-                            fontSize: '14px',
-                            outline: 'none'
-                        }}
-                    >
-                        <option value={1}>{t('department.preDefense1', 'Предзащита 1')}</option>
-                        <option value={2}>{t('department.preDefense2', 'Предзащита 2')}</option>
-                        <option value={3}>{t('department.preDefense3', 'Предзащита 3')}</option>
-                    </select>
+                    {commissionMode === 'predefense' && (
+                        <select
+                            value={distributePdNumber}
+                            onChange={(e) => setDistributePdNumber(Number(e.target.value))}
+                            style={{
+                                padding: '8px 12px',
+                                borderRadius: '6px',
+                                border: '1px solid #d1d5db',
+                                backgroundColor: '#fff',
+                                fontSize: '14px',
+                                outline: 'none'
+                            }}
+                        >
+                            <option value={1}>{t('department.preDefense1', 'Предзащита 1')}</option>
+                            <option value={2}>{t('department.preDefense2', 'Предзащита 2')}</option>
+                            <option value={3}>{t('department.preDefense3', 'Предзащита 3')}</option>
+                        </select>
+                    )}
                     <button
                         onClick={handleAutoDistribute}
                         disabled={autoDistributeMutation.isPending}
@@ -150,11 +171,27 @@ export default function StudentDistributionPage() {
                         onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#4338ca'}
                         onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#4f46e5'}
                     >
-                        {autoDistributeMutation.isPending 
-                            ? t('common.loading', 'Загрузка...') 
+                        {autoDistributeMutation.isPending
+                            ? t('common.loading', 'Загрузка...')
                             : t('department.autoDistribute', 'Автораспределение')}
                     </button>
                 </div>
+            </div>
+
+            {/* Mode toggle tabs */}
+            <div className="sd-mode-tabs">
+                <button
+                    className={`sd-mode-tab${commissionMode === 'predefense' ? ' active' : ''}`}
+                    onClick={() => handleModeChange('predefense')}
+                >
+                    {t('department.modePreDefense', 'Предзащиты')}
+                </button>
+                <button
+                    className={`sd-mode-tab${commissionMode === 'gak' ? ' active' : ''}`}
+                    onClick={() => handleModeChange('gak')}
+                >
+                    {t('department.modeGak', 'ГАК (Финальная защита)')}
+                </button>
             </div>
 
             {/* Filter bar */}
@@ -165,7 +202,7 @@ export default function StudentDistributionPage() {
                     onChange={(e) => setFilterCommission(e.target.value)}
                 >
                     <option value="all">{t("department.allCommissions")}</option>
-                    {commissions.map((c) => (
+                    {commissionsForMode.map((c) => (
                         <option key={c.id} value={String(c.id)}>{c.name}</option>
                     ))}
                 </select>
@@ -179,7 +216,7 @@ export default function StudentDistributionPage() {
 
             {/* Slot fill indicators */}
             <div className="sd-slot-indicators">
-                {commissions.map((c) => {
+                {commissionsForMode.map((c) => {
                     const { assigned, total } = slotCounts[c.id] || { assigned: 0, total: 0 };
                     const pct = total > 0 ? (assigned / total) * 100 : 0;
                     return (
@@ -192,6 +229,13 @@ export default function StudentDistributionPage() {
                         </div>
                     );
                 })}
+                {commissionsForMode.length === 0 && (
+                    <p style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                        {commissionMode === 'gak'
+                            ? t('department.noGakCommissions', 'Комиссии ГАК не созданы. Создайте их на странице «Комиссии».')
+                            : t('department.noPreDefenseCommissions', 'Комиссии предзащит не созданы.')}
+                    </p>
+                )}
             </div>
 
             {/* Table */}
@@ -245,5 +289,3 @@ export default function StudentDistributionPage() {
         </div>
     );
 }
-
-

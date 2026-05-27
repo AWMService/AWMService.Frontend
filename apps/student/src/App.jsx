@@ -42,6 +42,7 @@ function App() {
                     <Route path="my-applications" element={<MyApplicationsPage />} />
                     <Route path="pre-defense-1" element={<DefenseStepPage />} />
                     <Route path="pre-defense-2" element={<DefenseStepPage />} />
+                    <Route path="pre-defense-3" element={<DefenseStepPage />} />
                     <Route path="normocontrol" element={<ReviewStepPage {...normocontrolData} />} />
                     <Route path="software-check" element={<ReviewStepPage {...softwareCheckData} />} />
                     <Route path="antiplagiarism" element={<AntiplagiarismPage />} />
