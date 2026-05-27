@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getIntlLocale, useUploadAttachment, useCurrentWorkId, useAttachments, useQualityChecks, useSubmitForCheck, useMyWorkProgress, useActivePeriod, useDeleteAttachment, downloadAttachment, downloadExpertDocument } from '@awm/shared';
+import { getIntlLocale, useUploadAttachment, useCurrentWorkId, useAttachments, useQualityChecks, useSubmitForCheck, useMyWorkProgress, useActivePeriod, useDeleteAttachment, downloadAttachment, downloadExpertDocument, useActiveCheckConfigurations } from '@awm/shared';
 import './ReviewStepPage.css';
 import warningIcon from '../../assets/icons/alert-circle-icon.svg';
 import infoIcon from '../../assets/icons/pre-defense/info-icon.svg';
@@ -42,6 +42,22 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
     const [submitMode, setSubmitMode] = useState('file');
     const [repoUrl, setRepoUrl] = useState('');
     const [repoUrlError, setRepoUrlError] = useState('');
+
+    const { data: activeConfigs } = useActiveCheckConfigurations(
+        workProgress?.orgUnitId,
+        workProgress?.specialityId ?? null
+    );
+
+    // Map checkType string to the backend constant code
+    const checkCode = checkType === 'SoftwareCheck' ? 'SOFTWARECHECK'
+                    : checkType === 'NormControl'    ? 'NORMCONTROL'
+                    : 'ANTIPLAGIARISM';
+
+    // If configurations are loaded and non-empty, verify this check is required.
+    // If no configurations exist (empty array) → treat as "show all" fallback.
+    const isCheckRequired = !activeConfigs
+        || activeConfigs.length === 0
+        || activeConfigs.some(c => c.checkTypeCode === checkCode);
 
     const period = activePeriod ? {
         start: new Date(activePeriod.startDate).toLocaleDateString(),
@@ -130,6 +146,25 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
         setStatus('in_progress');
         setRepoUrl('');
     };
+
+    if (!isCheckRequired) {
+        return (
+            <div className="review-step-page">
+                <header className="review-step-header">
+                    <div className="header-title-row">
+                        <img src={pageIcon} alt="" className="page-icon"/>
+                        <h2>{pageTitle}</h2>
+                    </div>
+                </header>
+                <div className="review-step-content">
+                    <InfoBox icon={infoIcon} type="neutral">
+                        <p className="info-title">{t('student.checkNotRequired')}</p>
+                        <p className="info-desc">{t('student.checkNotRequiredDesc')}</p>
+                    </InfoBox>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="review-step-page">

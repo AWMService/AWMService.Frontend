@@ -133,6 +133,23 @@ export function useDeleteCheckConfiguration(orgUnitId) {
   });
 }
 
+// Fetch active check configurations for a student's org unit and speciality
+// Returns only IsActive=true records. Empty array → no rules configured → caller should show all steps.
+export async function fetchActiveCheckConfigurations(orgUnitId, specialityId) {
+  const params = { orgUnitId };
+  if (specialityId != null) params.specialityId = specialityId;
+  const { data } = await apiClient.get('/v1/quality-checks/configurations/active', { params });
+  return data;
+}
+
+export function useActiveCheckConfigurations(orgUnitId, specialityId) {
+  return useQuery({
+    queryKey: ['activeCheckConfigurations', orgUnitId, specialityId ?? null],
+    queryFn: () => fetchActiveCheckConfigurations(orgUnitId, specialityId),
+    enabled: !!orgUnitId,
+  });
+}
+
 // Fetch Assigned Experts for a department
 export async function fetchAssignedExperts(orgUnitId) {
   const { data } = await apiClient.get('/v1/quality-checks/experts', {

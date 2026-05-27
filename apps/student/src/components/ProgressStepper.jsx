@@ -4,19 +4,24 @@ import { useTranslation } from 'react-i18next';
 import './ProgressStepper.css';
 import doneIcon from '../assets/icons/done-icon.svg';
 
-export function ProgressStepper({ currentStep = 1, highestCompletedStep = 1 }) {
+export function ProgressStepper({ currentStep = 1, highestCompletedStep = 1, activeCheckTypeCodes = null }) {
   const { t } = useTranslation();
 
-  const steps = [
-    { id: 1, nameKey: 'student.chooseTheme', path: '/choose-theme' },
-    { id: 2, nameKey: 'student.preDefense1', path: '/pre-defense-1' },
-    { id: 3, nameKey: 'student.preDefense2', path: '/pre-defense-2' },
-    { id: 4, nameKey: 'student.normocontrol', path: '/normocontrol' },
-    { id: 5, nameKey: 'student.softwareCheck', path: '/software-check' },
-    { id: 6, nameKey: 'student.antiplagiarism', path: '/antiplagiarism' },
-    { id: 7, nameKey: 'student.critique', path: '/critique' },
-    { id: 8, nameKey: 'student.defense', path: '/defense' },
+  const allSteps = [
+    { id: 1, nameKey: 'student.chooseTheme',    path: '/choose-theme' },
+    { id: 2, nameKey: 'student.preDefense1',    path: '/pre-defense-1' },
+    { id: 3, nameKey: 'student.preDefense2',    path: '/pre-defense-2' },
+    { id: 4, nameKey: 'student.normocontrol',   path: '/normocontrol',   checkTypeCode: 'NORMCONTROL' },
+    { id: 5, nameKey: 'student.softwareCheck',  path: '/software-check', checkTypeCode: 'SOFTWARECHECK' },
+    { id: 6, nameKey: 'student.antiplagiarism', path: '/antiplagiarism', checkTypeCode: 'ANTIPLAGIARISM' },
+    { id: 7, nameKey: 'student.critique',       path: '/critique' },
+    { id: 8, nameKey: 'student.defense',        path: '/defense' },
   ];
+
+  // null = no filter (show all); array = show only steps without checkTypeCode OR whose code is in the list
+  const steps = activeCheckTypeCodes === null
+    ? allSteps
+    : allSteps.filter(s => !s.checkTypeCode || activeCheckTypeCodes.includes(s.checkTypeCode));
 
   return (
       <div className="stepper-container">

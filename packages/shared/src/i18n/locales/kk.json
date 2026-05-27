@@ -139,6 +139,8 @@
         "checksPeriod": "Тексеру кезеңі",
         "expertDocument": "Сарапшы құжаты",
         "downloadExpertDocument": "Ескертулері бар құжатты жүктеу",
+        "checkNotRequired": "Тексеру талап етілмейді",
+        "checkNotRequiredDesc": "Бұл тексеру түрі сіздің кафедраңыз үшін баптандырылмаған.",
         "normocontrol": "Нормобақылау",
         "softwareCheck": "БҚ тексеру",
         "antiplagiarism": "Антиплагиат",

@@ -139,6 +139,8 @@
         "checksPeriod": "Checks Period",
         "expertDocument": "Expert Document",
         "downloadExpertDocument": "Download Expert Document",
+        "checkNotRequired": "Check Not Required",
+        "checkNotRequiredDesc": "This check type is not configured for your department.",
         "normocontrol": "Document Control",
         "softwareCheck": "Software Check",
         "antiplagiarism": "Plagiarism Check",
