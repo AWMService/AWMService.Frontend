@@ -137,6 +137,8 @@
         "preDefense2": "Pre-defense 2",
         "preDefense3": "Pre-defense 3",
         "checksPeriod": "Checks Period",
+        "expertDocument": "Expert Document",
+        "downloadExpertDocument": "Download Expert Document",
         "normocontrol": "Document Control",
         "softwareCheck": "Software Check",
         "antiplagiarism": "Plagiarism Check",

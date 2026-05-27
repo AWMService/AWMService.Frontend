@@ -1,31 +1,8 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getIntlLocale, getLocalizedValue } from '@awm/shared';
+import { getIntlLocale, getLocalizedValue, useQualityChecks } from '@awm/shared';
 import { X, MessageSquare, Clock } from 'lucide-react';
 import './RemarksFormModal.css';
-
-const mockPreviousRemarks = [
-    {
-        id: 1,
-        category: 'formatting',
-        text: {
-            ru: 'Отступы на страницах 12-15 не соответствуют ГОСТ. Необходимо выровнять поля.',
-            kk: '12-15 беттердегі шегіністер ГОСТ-қа сәйкес келмейді. Өрістерді туралау қажет.',
-            en: 'Margins on pages 12-15 do not meet the standard. The page layout needs to be aligned.',
-        },
-        date: '2025-05-10',
-    },
-    {
-        id: 2,
-        category: 'citations',
-        text: {
-            ru: 'Ссылка [3] не найдена в списке литературы.',
-            kk: '[3] сілтемесі әдебиеттер тізімінде табылмады.',
-            en: 'Reference [3] was not found in the bibliography list.',
-        },
-        date: '2025-05-12',
-    },
-];
 
 const CATEGORIES = ['formatting', 'content', 'structure', 'citations', 'other'];
 
@@ -37,6 +14,9 @@ export default function RemarksFormModal({ document, onClose, onSubmit }) {
     const [file, setFile] = useState(null);
     const [touched, setTouched] = useState({ category: false, text: false });
 
+    // Real check history for this work (enabled only when workId is available)
+    const { data: checks = [] } = useQualityChecks(document?.workId);
+
     if (!document) return null;
 
     const canSubmit = category !== '' && remarkText.trim().length > 0;
@@ -44,10 +24,10 @@ export default function RemarksFormModal({ document, onClose, onSubmit }) {
     const getCategoryLabel = (cat) => {
         const map = {
             formatting: t('normocontrol.formatting'),
-            content: t('normocontrol.content'),
-            structure: t('normocontrol.structure'),
-            citations: t('normocontrol.citations'),
-            other: t('normocontrol.other'),
+            content:    t('normocontrol.content'),
+            structure:  t('normocontrol.structure'),
+            citations:  t('normocontrol.citations'),
+            other:      t('normocontrol.other'),
         };
         return map[cat] || cat;
     };
@@ -67,7 +47,15 @@ export default function RemarksFormModal({ document, onClose, onSubmit }) {
         });
     };
 
-    const previousRemarks = document.remarks ? mockPreviousRemarks : [];
+    // Real previous remarks from API: failed NormControl checks with comments
+    const previousRemarks = checks
+        .filter(c => (c.checkTypeName === 'NormControl' || c.checkType === 'NormControl') && !c.isPassed && c.comment)
+        .sort((a, b) => a.attemptNumber - b.attemptNumber)
+        .map(c => ({
+            id:   c.id,
+            text: { ru: c.comment, kk: c.comment, en: c.comment },
+            date: c.createdAt,
+        }));
 
     return (
         <div className="rfm-overlay" onClick={onClose}>
@@ -131,11 +119,15 @@ export default function RemarksFormModal({ document, onClose, onSubmit }) {
                                         }
                                     }}
                                 />
-                                {file && <span className="rfm-filename" style={{marginTop: 5, fontSize: '0.85em', color: '#666'}}>{file.name}</span>}
+                                {file && (
+                                    <span className="rfm-filename" style={{ marginTop: 5, fontSize: '0.85em', color: '#666' }}>
+                                        {file.name}
+                                    </span>
+                                )}
                             </div>
                         </div>
 
-                        {/* Previous remarks */}
+                        {/* Previous remarks from API */}
                         {previousRemarks.length > 0 && (
                             <div className="rfm-section">
                                 <h3 className="rfm-section-title">
@@ -146,14 +138,13 @@ export default function RemarksFormModal({ document, onClose, onSubmit }) {
                                     {previousRemarks.map((remark) => (
                                         <div key={remark.id} className="rfm-history-item">
                                             <div className="rfm-history-meta">
-                                                <span className="rfm-history-category">
-                                                    {getCategoryLabel(remark.category)}
-                                                </span>
                                                 <span className="rfm-history-date">
                                                     {new Date(remark.date).toLocaleDateString(locale)}
                                                 </span>
                                             </div>
-                                            <p className="rfm-history-text">{getLocalizedValue(remark.text, i18n.language)}</p>
+                                            <p className="rfm-history-text">
+                                                {getLocalizedValue(remark.text, i18n.language)}
+                                            </p>
                                         </div>
                                     ))}
                                 </div>

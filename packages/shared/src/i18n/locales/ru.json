@@ -137,6 +137,8 @@
         "preDefense2": "Предзащита 2",
         "preDefense3": "Предзащита 3",
         "checksPeriod": "Период проверок",
+        "expertDocument": "Документ эксперта",
+        "downloadExpertDocument": "Скачать документ с замечаниями",
         "normocontrol": "Нормоконтроль",
         "softwareCheck": "Проверка ПО",
         "antiplagiarism": "Антиплагиат",

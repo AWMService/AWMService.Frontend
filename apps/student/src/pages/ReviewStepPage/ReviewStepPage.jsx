@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getIntlLocale, useUploadAttachment, useCurrentWorkId, useAttachments, useQualityChecks, useSubmitForCheck, useMyWorkProgress, useActivePeriod, useDeleteAttachment, downloadAttachment } from '@awm/shared';
+import { getIntlLocale, useUploadAttachment, useCurrentWorkId, useAttachments, useQualityChecks, useSubmitForCheck, useMyWorkProgress, useActivePeriod, useDeleteAttachment, downloadAttachment, downloadExpertDocument } from '@awm/shared';
 import './ReviewStepPage.css';
 import warningIcon from '../../assets/icons/alert-circle-icon.svg';
 import infoIcon from '../../assets/icons/pre-defense/info-icon.svg';
@@ -203,6 +203,20 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
                             />
                         )}
                         <CommentsCard comments={comments} status={status} />
+                        {status === 'failed' && latestCheck?.attachmentId && (
+                            <div className="card expert-attachment-card" style={{ marginTop: '1rem', padding: '1rem' }}>
+                                <h4 style={{ margin: '0 0 0.5rem', fontSize: '0.9rem', fontWeight: 600 }}>
+                                    {t('student.expertDocument')}
+                                </h4>
+                                <button
+                                    className="btn-primary"
+                                    style={{ width: '100%' }}
+                                    onClick={() => downloadExpertDocument(workId, latestCheck.id, 'expert_remarks.pdf')}
+                                >
+                                    {t('student.downloadExpertDocument')}
+                                </button>
+                            </div>
+                        )}
                     </div>
 
                     <div className="review-step-right">

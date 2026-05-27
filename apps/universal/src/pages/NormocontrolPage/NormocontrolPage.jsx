@@ -11,8 +11,12 @@ function NormocontrolPage() {
     const { user } = useAuth();
     const orgUnitId = user?.orgUnitId;
     const semesterId = user?.currentSemesterId;
-    const { data: pendingChecks = [], refetch } = usePendingChecks(orgUnitId, semesterId, 'NormControl');
+    const { data: pendingChecks = [] } = usePendingChecks(orgUnitId, semesterId, 'NormControl');
     const completeCheckMutation = useCompleteQualityCheckMutation();
+
+    // Local state: track docs moved out of pending after expert acts
+    const [approvedDocs, setApprovedDocs] = useState([]);
+    const [revisionDocs, setRevisionDocs] = useState([]);
 
     const displayDocuments = useMemo(() => pendingChecks.map(check => ({
         id: check.id,
@@ -70,8 +74,11 @@ function NormocontrolPage() {
             await completeCheckMutation.mutateAsync({
                 workId: doc.workId,
                 checkId: doc.id,
-                checkData: { isPassed: false, comment: remark.comment, attachmentId },
+                // FIX: was remark.comment (undefined) — correct field is remark.text
+                checkData: { isPassed: false, comment: remark.text, attachmentId },
             });
+            // Move doc to revision tab in local state
+            setRevisionDocs(prev => [...prev, { ...doc, status: 'revision' }]);
         } catch (err) {
             console.error('Failed to complete quality check', err);
         }
@@ -87,13 +94,18 @@ function NormocontrolPage() {
                 checkId: doc.id,
                 checkData: { isPassed: true },
             });
+            // Move doc to approved tab in local state
+            setApprovedDocs(prev => [...prev, { ...doc, status: 'approved' }]);
         } catch (err) {
             console.error('Failed to approve quality check', err);
         }
     };
 
-    const filteredDocs = displayDocuments.filter(doc => {
-        if (activeTab === 'pending') return doc.status === 'pending';
+    // Combine pending (live) + completed (local) for all tabs
+    const allDocs = [...displayDocuments, ...approvedDocs, ...revisionDocs];
+
+    const filteredDocs = allDocs.filter(doc => {
+        if (activeTab === 'pending')  return doc.status === 'pending';
         if (activeTab === 'revision') return doc.status === 'revision';
         if (activeTab === 'approved') return doc.status === 'approved';
         return true;
@@ -101,9 +113,9 @@ function NormocontrolPage() {
 
     const getStatusBadge = (status) => {
         const statusMap = {
-            pending: { label: t('normocontrol.pendingCheck'), class: 'status-pending' },
-            revision: { label: t('normocontrol.revision'), class: 'status-revision' },
-            approved: { label: t('normocontrol.approved'), class: 'status-approved' },
+            pending:  { label: t('normocontrol.pendingCheck'), class: 'status-pending' },
+            revision: { label: t('normocontrol.revision'),     class: 'status-revision' },
+            approved: { label: t('normocontrol.approved'),     class: 'status-approved' },
         };
         return statusMap[status] || { label: status, class: '' };
     };
@@ -115,12 +127,16 @@ function NormocontrolPage() {
             year: 'numeric',
         }).format(new Date(value));
 
+    const pendingCount  = allDocs.filter(d => d.status === 'pending').length;
+    const revisionCount = allDocs.filter(d => d.status === 'revision').length;
+    const approvedCount = allDocs.filter(d => d.status === 'approved').length;
+
     return (
         <div className="normocontrol-page">
             <div className="page-header">
                 <h1>{t('normocontrol.documentsCheck')}</h1>
                 <p className="page-subtitle">
-                    {t('normocontrol.pendingCheck')}: {displayDocuments.filter(d => d.status === 'pending').length}
+                    {t('normocontrol.pendingCheck')}: {pendingCount}
                 </p>
             </div>
 
@@ -129,19 +145,19 @@ function NormocontrolPage() {
                     className={`tab ${activeTab === 'pending' ? 'active' : ''}`}
                     onClick={() => setActiveTab('pending')}
                 >
-                    {t('normocontrol.pendingCheck')} ({displayDocuments.filter(d => d.status === 'pending').length})
+                    {t('normocontrol.pendingCheck')} ({pendingCount})
                 </button>
                 <button
                     className={`tab ${activeTab === 'revision' ? 'active' : ''}`}
                     onClick={() => setActiveTab('revision')}
                 >
-                    {t('normocontrol.revision')} ({displayDocuments.filter(d => d.status === 'revision').length})
+                    {t('normocontrol.revision')} ({revisionCount})
                 </button>
                 <button
                     className={`tab ${activeTab === 'approved' ? 'active' : ''}`}
                     onClick={() => setActiveTab('approved')}
                 >
-                    {t('normocontrol.checked')} ({displayDocuments.filter(d => d.status === 'approved').length})
+                    {t('normocontrol.checked')} ({approvedCount})
                 </button>
             </div>
 
@@ -169,7 +185,7 @@ function NormocontrolPage() {
 
                             <div className="document-card-footer">
                                 <span>{t('common.date')}: {formatDate(doc.submittedDate)}</span>
-                                {doc.remarks && (
+                                {doc.remarks > 0 && (
                                     <span className="remarks">
                                         {t('normocontrol.remarksCount', { count: doc.remarks })}
                                     </span>
@@ -205,6 +221,7 @@ function NormocontrolPage() {
                     </div>
                 )}
             </div>
+
             {previewOpen && selectedDocument && (
                 <DocumentPreviewModal
                     document={selectedDocument}

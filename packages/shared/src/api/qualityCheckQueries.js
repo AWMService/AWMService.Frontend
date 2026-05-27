@@ -9,7 +9,8 @@ export const CHECK_TYPES = {
 
 export async function fetchQualityChecks(workId) {
   const { data } = await apiClient.get(`/v1/quality-checks/by-work/${workId}`);
-  return data;
+  // Alias checkTypeName → checkType for consistent filtering in consumers (e.g. ReviewStepPage)
+  return data.map(c => ({ ...c, checkType: c.checkTypeName }));
 }
 
 export function useQualityChecks(workId) {
