@@ -1,0 +1,135 @@
+/* SoftwareCheckDashboard — extends shared .edu-* classes from anti.css */
+
+/* Material link (repo URL) */
+.sw-material-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #2563eb;
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.sw-material-link:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+/* Download archive button (text-style) */
+.sw-download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #2563eb;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: color 0.15s;
+}
+
+.sw-download-btn:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+/* Actions container */
+.sw-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-end;
+}
+
+/* Pass button */
+.sw-btn-pass {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid #10b981;
+    border-radius: 6px;
+    background: #ecfdf5;
+    color: #059669;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.sw-btn-pass:hover:not(:disabled) {
+    background: #d1fae5;
+}
+
+.sw-btn-pass:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Fail button */
+.sw-btn-fail {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid #ef4444;
+    border-radius: 6px;
+    background: #fef2f2;
+    color: #dc2626;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.sw-btn-fail:hover:not(:disabled) {
+    background: #fee2e2;
+}
+
+.sw-btn-fail:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Cancel button */
+.sw-btn-cancel {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.8rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #f8fafc;
+    color: #64748b;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.sw-btn-cancel:hover:not(:disabled) {
+    background: #f1f5f9;
+}
+
+/* Inline rejection textarea area */
+.sw-reject-area {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 240px;
+}
+
+.sw-reject-textarea {
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    resize: vertical;
+    font-family: inherit;
+    color: #0f172a;
+    outline: none;
+    transition: border-color 0.15s;
+    box-sizing: border-box;
+}
+
+.sw-reject-textarea:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}

@@ -127,7 +127,8 @@
         "studentDistribution": "Распределение студентов",
         "expertAssignment": "Назначение экспертов",
         "defenseReadiness": "Готовность к защите",
-        "reviewerAssignment": "Назначение рецензентов"
+        "reviewerAssignment": "Назначение рецензентов",
+        "softwareChecks": "Проверка ПО"
     },
     "student": {
         "chooseTheme": "Выбор темы",
@@ -876,6 +877,23 @@
         "thresholdInfo": "Порог зачёта",
         "resultPassed": "Зачтено",
         "resultFailed": "Незачтено"
+    },
+    "softwareCheck": {
+        "workReview": "Проверка программного обеспечения",
+        "tabPending": "Ожидает",
+        "tabFailed": "Не принято",
+        "tabPassed": "Принято",
+        "noDocuments": "Нет работ на проверке",
+        "attempt": "Попытка",
+        "viewRepo": "Открыть репозиторий",
+        "downloadFile": "Скачать архив",
+        "passWork": "Принять",
+        "failWork": "Вернуть на доработку",
+        "addComment": "Комментарий для студента",
+        "submitRemark": "Отправить",
+        "resultPassed": "Принято",
+        "resultFailed": "Возвращено",
+        "noMaterials": "Материалы не прикреплены"
     },
     "universal": {
         "notificationsTitle": "Уведомления",

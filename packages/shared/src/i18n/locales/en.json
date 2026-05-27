@@ -127,7 +127,8 @@
         "studentDistribution": "Student Distribution",
         "expertAssignment": "Expert Assignment",
         "defenseReadiness": "Defense Readiness",
-        "reviewerAssignment": "Reviewer Assignment"
+        "reviewerAssignment": "Reviewer Assignment",
+        "softwareChecks": "Software Check"
     },
     "student": {
         "chooseTheme": "Choose Theme",
@@ -876,6 +877,23 @@
         "thresholdInfo": "Pass Threshold",
         "resultPassed": "Passed",
         "resultFailed": "Failed"
+    },
+    "softwareCheck": {
+        "workReview": "Software Check Review",
+        "tabPending": "Pending",
+        "tabFailed": "Rejected",
+        "tabPassed": "Accepted",
+        "noDocuments": "No works pending review",
+        "attempt": "Attempt",
+        "viewRepo": "Open Repository",
+        "downloadFile": "Download Archive",
+        "passWork": "Accept",
+        "failWork": "Send for Revision",
+        "addComment": "Comment for student",
+        "submitRemark": "Submit",
+        "resultPassed": "Accepted",
+        "resultFailed": "Rejected",
+        "noMaterials": "No materials attached"
     },
     "universal": {
         "notificationsTitle": "Notifications",

@@ -127,7 +127,8 @@
         "studentDistribution": "Студенттерді бөлу",
         "expertAssignment": "Сарапшыларды тағайындау",
         "defenseReadiness": "Қорғауға дайындық",
-        "reviewerAssignment": "Рецензент тағайындау"
+        "reviewerAssignment": "Рецензент тағайындау",
+        "softwareChecks": "ПО тексеру"
     },
     "student": {
         "chooseTheme": "Тақырып таңдау",
@@ -876,6 +877,23 @@
         "thresholdInfo": "Есептеу шегі",
         "resultPassed": "Есептелді",
         "resultFailed": "Есептелмеді"
+    },
+    "softwareCheck": {
+        "workReview": "Бағдарламалық қамтамасыз етуді тексеру",
+        "tabPending": "Күтуде",
+        "tabFailed": "Қабылданбады",
+        "tabPassed": "Қабылданды",
+        "noDocuments": "Тексерілуін күтіп тұрған жұмыстар жоқ",
+        "attempt": "Әрекет",
+        "viewRepo": "Репозиторийді ашу",
+        "downloadFile": "Мұрағатты жүктеп алу",
+        "passWork": "Қабылдау",
+        "failWork": "Пысықтауға қайтару",
+        "addComment": "Студентке түсініктеме",
+        "submitRemark": "Жіберу",
+        "resultPassed": "Қабылданды",
+        "resultFailed": "Қайтарылды",
+        "noMaterials": "Материалдар тіркелмеген"
     },
     "universal": {
         "notificationsTitle": "Хабарламалар",

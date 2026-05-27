@@ -22,7 +22,8 @@ export function UniversalSidebar() {
                 { href: "/my-topics", labelKey: "nav.myTopics", icon: myTopicsIcon, descriptionKey: "supervisor.topics" },
                 { href: "/mystudents", labelKey: "nav.myStudents", icon: studentsIcon, descriptionKey: "supervisor.students" },
                 { href: "/schedule", labelKey: "nav.schedule", icon: scheduleIcon, descriptionKey: "commission.schedule", activePaths: ["/schedule", "/secretary"] },
-                { href: "/checks", labelKey: "nav.checks", icon: checkIcon, descriptionKey: "supervisor.gradeWork" }
+                { href: "/checks", labelKey: "nav.checks", icon: checkIcon, descriptionKey: "supervisor.gradeWork" },
+                { href: "/software-checks", labelKey: "nav.softwareChecks", icon: checkIcon, descriptionKey: "supervisor.gradeWork" }
             );
         }
 

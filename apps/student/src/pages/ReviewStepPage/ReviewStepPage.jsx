@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getIntlLocale, useUploadAttachment, useCurrentWorkId, useAttachments, useQualityChecks, useSubmitForCheck, useMyWorkProgress, useActivePeriod, useDeleteAttachment, downloadAttachment, downloadExpertDocument, useActiveCheckConfigurations } from '@awm/shared';
+import { getIntlLocale, useUploadAttachment, useCurrentWorkId, useAttachments, useQualityChecks, useSubmitForCheck, useMyWorkProgress, useActivePeriod, useDeleteAttachment, downloadAttachment, downloadExpertDocument, useActiveCheckConfigurations, useSaveRepoUrl } from '@awm/shared';
 import './ReviewStepPage.css';
 import warningIcon from '../../assets/icons/alert-circle-icon.svg';
 import infoIcon from '../../assets/icons/pre-defense/info-icon.svg';
@@ -45,6 +45,7 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
     const [submitMode, setSubmitMode] = useState('file');
     const [repoUrl, setRepoUrl] = useState('');
     const [repoUrlError, setRepoUrlError] = useState('');
+    const saveRepoUrlMutation = useSaveRepoUrl(workId);
 
     const { data: activeConfigs } = useActiveCheckConfigurations(
         workProgress?.orgUnitId,
@@ -140,14 +141,20 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
         }
     };
 
-    const handleRepoSubmit = () => {
+    const handleRepoSubmit = async () => {
         if (!REPO_URL_PATTERN.test(repoUrl.trim())) {
             setRepoUrlError(t('student.invalidUrl'));
             return;
         }
         setRepoUrlError('');
-        setStatus('in_progress');
-        setRepoUrl('');
+        try {
+            await saveRepoUrlMutation.mutateAsync(repoUrl.trim());
+            await submitMutation.mutateAsync(checkType);
+            setStatus('in_progress');
+            setRepoUrl('');
+        } catch (err) {
+            setRepoUrlError(err.message || t('common.error'));
+        }
     };
 
     if (!isCheckRequired) {
@@ -220,9 +227,9 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
                             <button
                                 className="btn-primary"
                                 onClick={handleRepoSubmit}
-                                disabled={!repoUrl.trim()}
+                                disabled={!repoUrl.trim() || saveRepoUrlMutation.isPending || submitMutation.isPending}
                             >
-                                {t('student.submitRepo')}
+                                {(saveRepoUrlMutation.isPending || submitMutation.isPending) ? '…' : t('student.submitRepo')}
                             </button>
                         </div>
                         {repoUrlError && <p className="repo-url-error">{repoUrlError}</p>}

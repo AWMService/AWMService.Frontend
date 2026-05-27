@@ -10,6 +10,7 @@ import SchedulePage from './pages/SchedulePage/SchedulePage.jsx';
 import StudentList from './pages/StudentsList/StudentList.jsx';
 import SecretaryStudentList from './pages/StudentsList/SecretaryStudent/SecretaryStudentList.jsx';
 import AntiPlagiarismDashboard from './pages/AntiPlagiarismDashboard.jsx';
+import SoftwareCheckDashboard from './pages/SoftwareCheckDashboard/SoftwareCheckDashboard.jsx';
 // Страницы для других ролей
 import ReviewerWorksPage from './pages/ReviewerWorksPage/ReviewerWorksPage.jsx';
 import NormocontrolPage from './pages/NormocontrolPage/NormocontrolPage.jsx';
@@ -104,6 +105,11 @@ function AppContent() {
                         <Route path="/checks" element={
                             <ProtectedRoute allowedRoles={[ROLES.SUPERVISOR]} fallback="/">
                                 <AntiPlagiarismDashboard />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/software-checks" element={
+                            <ProtectedRoute allowedRoles={[ROLES.SUPERVISOR]} fallback="/">
+                                <SoftwareCheckDashboard />
                             </ProtectedRoute>
                         } />
                         
