@@ -116,8 +116,8 @@ export const protocolApi = {
     const { data } = await apiClient.post('/v1/protocols', protocolData);
     return data;
   },
-  finalizeProtocol: async (id) => {
-    const { data } = await apiClient.post(`/v1/protocols/${id}/finalize`);
+  finalizeProtocol: async (id, isStudentPresent = true) => {
+    const { data } = await apiClient.post(`/v1/protocols/${id}/finalize`, { isStudentPresent });
     return data;
   },
   fetchProtocol: async (id) => {
@@ -143,9 +143,11 @@ export function useGenerateProtocol() {
 export function useFinalizeProtocol() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: protocolApi.finalizeProtocol,
+    mutationFn: ({ id, isStudentPresent = true }) => protocolApi.finalizeProtocol(id, isStudentPresent),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['protocols'] });
+      queryClient.invalidateQueries({ queryKey: ['preDefense'] });
+      queryClient.invalidateQueries({ queryKey: ['defenseSchedule'] });
     },
   });
 }

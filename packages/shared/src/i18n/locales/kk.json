@@ -865,7 +865,11 @@
         "averageScore": "Комиссия орташа балы:",
         "currentAverage": "Ағымдағы орташа балл:",
         "gradeInProtocol": "Хаттамадағы қорытынды балл:",
-        "approveGrade": "Студенттің бағасын мақұлдау"
+        "approveGrade": "Студенттің бағасын мақұлдау",
+        "absentWarning": "Студент қатыспады деп белгіленген — хаттама себепсіз болмау ретінде жабылады",
+        "commissionDecision": "Комиссия шешімі",
+        "admitted": "Жіберілді",
+        "notAdmitted": "Жіберілмеді"
     },
     "antiplagiarism": {
         "workReview": "Жұмыстарды тексеру",

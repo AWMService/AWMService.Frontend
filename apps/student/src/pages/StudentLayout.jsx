@@ -10,6 +10,7 @@ const isStandalonePage = (path) =>
     STANDALONE_PAGES.some((page) => path.includes(page));
 
 const getStepFromPath = (path) => {
+  if (path.includes('pre-defense-3')) return 3;
   if (path.includes('pre-defense-1')) return 2;
   if (path.includes('pre-defense-2')) return 3;
   if (path.includes('normocontrol')) return 4;
@@ -18,6 +19,20 @@ const getStepFromPath = (path) => {
   if (path.includes('critique')) return 7;
   if (path.includes('defense')) return 8;
   if (path.includes('choose-theme') || path.includes('my-applications')) return 1;
+  return 1;
+};
+
+const stateToHighestStep = (stateName) => {
+  if (!stateName) return 1;
+  if (stateName.startsWith('PreDefense1.')) return 2;
+  if (stateName.startsWith('PreDefense2.') || stateName.startsWith('PreDefense3.')) return 3;
+  if (stateName.startsWith('Checks.') || stateName.startsWith('Reviews.')) return 7;
+  if (
+    stateName === 'ReadyForDefense' ||
+    stateName.startsWith('Defense.') ||
+    stateName === 'Defended' ||
+    stateName === 'DefenseFailed'
+  ) return 8;
   return 1;
 };
 
@@ -36,7 +51,7 @@ export const StudentLayout = () => {
     : null;
 
   const currentStep = getStepFromPath(location.pathname);
-  const highestCompletedStep = 8; // TODO: replace with real workProgress stage
+  const highestCompletedStep = stateToHighestStep(workProgress?.currentStateName);
 
   const standalone = isStandalonePage(location.pathname);
 

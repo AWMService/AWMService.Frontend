@@ -866,7 +866,11 @@
         "averageScore": "Средний балл комиссии:",
         "currentAverage": "Текущий средний балл:",
         "gradeInProtocol": "Итоговый балл в протоколе:",
-        "approveGrade": "Утвердить оценку студента"
+        "approveGrade": "Утвердить оценку студента",
+        "absentWarning": "Студент отмечен как отсутствующий — протокол будет закрыт как неявка",
+        "commissionDecision": "Решение комиссии",
+        "admitted": "Допущен",
+        "notAdmitted": "Не допущен"
     },
     "antiplagiarism": {
         "workReview": "Проверка работ",

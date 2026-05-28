@@ -866,7 +866,11 @@
         "averageScore": "Commission average score:",
         "currentAverage": "Current average score:",
         "gradeInProtocol": "Final score in protocol:",
-        "approveGrade": "Approve student grade"
+        "approveGrade": "Approve student grade",
+        "absentWarning": "Student is marked as absent — the protocol will be finalized as a no-show",
+        "commissionDecision": "Commission decision",
+        "admitted": "Admitted",
+        "notAdmitted": "Not admitted"
     },
     "antiplagiarism": {
         "workReview": "Work Review",

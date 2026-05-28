@@ -17,6 +17,9 @@ export default function SecretaryStudentList() {
     // Fetch real schedule data
     const { data: schedule = [], isLoading: isScheduleLoading } = useDefenseSchedule(Number(commissionId));
 
+    // Extract commission pre-defense number from first slot (all slots share the same commission)
+    const preDefenseNumber = schedule.length > 0 ? (schedule[0]?.preDefenseNumber ?? null) : null;
+
     // Convert schedule slots to the "topics" format used by UI
     const topics = useMemo(() => {
         if (!schedule) return [];
@@ -179,6 +182,8 @@ export default function SecretaryStudentList() {
                     open={isDrawerOpen}
                     onClose={() => setIsDrawerOpen(false)}
                     student={selectedStudent}
+                    isPresent={attendance[selectedStudent.id] !== false}
+                    preDefenseNumber={preDefenseNumber}
                 />
             )}
         </div>

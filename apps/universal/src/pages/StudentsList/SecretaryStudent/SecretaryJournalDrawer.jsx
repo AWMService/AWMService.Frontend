@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getLocalizedValue, useEvaluationCriteria, useGradesBySchedule, useStartReconciliation, useGenerateProtocol, useFinalizeProtocol, useAuth, useDownloadProtocolPdf } from "@awm/shared";
 
-export default function SecretaryJournalDrawer({ open, onClose, student }) {
+export default function SecretaryJournalDrawer({ open, onClose, student, isPresent = true, preDefenseNumber = null }) {
     const { t } = useTranslation();
     const { user } = useAuth();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [decision, setDecision] = useState("Допущен");
+    // PZ-1 is informational — decision is always "Допущен" regardless of scores
+    const isInformationalPreDefense = preDefenseNumber === 1;
 
     const scheduleId = student?.scheduleId;
     const isFinalized = !!student?.protocolId;
@@ -35,15 +37,17 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
 
     const handleFinalLock = async () => {
         try {
+            const effectiveDecision = isInformationalPreDefense ? "Допущен" : decision;
+
             // 1. Create protocol
             const generatedId = await generateProtocolMutation.mutateAsync({
                 scheduleId: scheduleId,
                 finalScoreNumeric: parseFloat(averageScore),
-                decision: decision
+                decision: effectiveDecision
             });
 
-            // 2. Finalize protocol
-            await finalizeProtocolMutation.mutateAsync(generatedId);
+            // 2. Finalize protocol (pass attendance status)
+            await finalizeProtocolMutation.mutateAsync({ id: generatedId, isStudentPresent: isPresent });
             onClose();
         } catch (error) {
             console.error('Failed to finalize protocol', error);
@@ -153,14 +157,29 @@ export default function SecretaryJournalDrawer({ open, onClose, student }) {
 
                     <hr className="s-divider" />
 
-                    {/* Решение комиссии */}
-                    {!isFinalized && status === "reviewing" && (
+                    {/* Предупреждение о неявке */}
+                    {!isPresent && !isFinalized && (
+                        <div style={{
+                            backgroundColor: "#fef3c7",
+                            border: "1px solid #f59e0b",
+                            borderRadius: "6px",
+                            padding: "10px 12px",
+                            marginBottom: "12px",
+                            fontSize: "13px",
+                            color: "#92400e"
+                        }}>
+                            {t('journal.absentWarning', 'Студент отмечен как отсутствующий — протокол будет закрыт как неявка')}
+                        </div>
+                    )}
+
+                    {/* Решение комиссии — только для ПЗ-2 и ПЗ-3 */}
+                    {!isFinalized && status === "reviewing" && !isInformationalPreDefense && (
                         <div className="sec-decision-section" style={{ marginBottom: "15px" }}>
                             <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold", fontSize: "14px" }}>
                                 {t('journal.commissionDecision', 'Решение комиссии')}:
                             </label>
-                            <select 
-                                value={decision} 
+                            <select
+                                value={decision}
                                 onChange={(e) => setDecision(e.target.value)}
                                 style={{
                                     width: "100%",
