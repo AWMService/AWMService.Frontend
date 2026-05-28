@@ -21,14 +21,12 @@ function App() {
     const normocontrolData = {
         pageTitle: t('student.normocontrol'),
         pageIcon: documentCheckIcon,
-        expert: { name: 'Паленшеев П.П.', position: 'Старший преподаватель', degree: 'PhD' },
-        initialStatus: 'failed',
+        initialStatus: 'in_progress',
     };
 
     const softwareCheckData = {
         pageTitle: t('student.softwareCheck'),
         pageIcon: codeIcon,
-        expert: { name: 'Сидоров А.А.', position: 'Инженер-программист', degree: 'Магистр' },
         initialStatus: 'in_progress',
         route: 'software-check',
     };
