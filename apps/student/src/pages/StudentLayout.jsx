@@ -26,7 +26,10 @@ const stateToHighestStep = (stateName) => {
   if (!stateName) return 1;
   if (stateName.startsWith('PreDefense1.')) return 2;
   if (stateName.startsWith('PreDefense2.') || stateName.startsWith('PreDefense3.')) return 3;
-  if (stateName.startsWith('Checks.') || stateName.startsWith('Reviews.')) return 7;
+  if (stateName === 'Checks.WaitingForInitial') return 4;
+  if (stateName === 'Checks.WaitingForAntiPlagiarism') return 6;
+  if (stateName.startsWith('Checks.')) return 5;
+  if (stateName.startsWith('Reviews.')) return 7;
   if (
     stateName === 'ReadyForDefense' ||
     stateName.startsWith('Defense.') ||

@@ -72,7 +72,7 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
         name: workProgress?.supervisorName || t('common.noData'),
         position: t('student.assignedExpert'),
         degree: '',
-        ...expert
+        ...(expert || {})
     };
 
     const comments = latestCheck?.comment || null;
