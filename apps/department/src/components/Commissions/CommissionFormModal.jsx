@@ -1,19 +1,22 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useOrgUnitSpecialities } from "@awm/shared";
 import "./CommissionFormModal.css";
 
 const emptyForm = {
     name: '',
-    type: 'PreDefense', // Matches backend enum string
+    type: 'PreDefense',
     chairmanId: '',
     secretaryId: '',
     memberIds: [],
     preDefenseNumber: 1,
+    specialityId: '',
 };
 
-export default function CommissionFormModal({ isOpen, onClose, onSubmit, editingCommission, staff = [] }) {
+export default function CommissionFormModal({ isOpen, onClose, onSubmit, editingCommission, staff = [], orgUnitId }) {
     const { t } = useTranslation();
     const [formData, setFormData] = useState(emptyForm);
+    const { data: specialities = [] } = useOrgUnitSpecialities(orgUnitId);
     const [memberSearch, setMemberSearch] = useState('');
 
     useEffect(() => {
@@ -25,6 +28,7 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
                 secretaryId: editingCommission.secretaryId || '',
                 memberIds: editingCommission.memberIds || [],
                 preDefenseNumber: editingCommission.preDefenseNumber || 1,
+                specialityId: editingCommission.specialityId || '',
             });
         } else {
             setFormData(emptyForm);
@@ -66,9 +70,9 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
         // ChairmanUserId, SecretaryUserId, MemberUserIds
         onSubmit({
             name: formData.name,
-            // 1 = PreDefense, 2 = GAK (CommissionTypes)
             commissionTypeId: formData.type === 'PreDefense' ? 1 : 2,
             preDefenseNumber: formData.type === 'PreDefense' ? parseInt(formData.preDefenseNumber) : null,
+            specialityId: formData.specialityId ? parseInt(formData.specialityId) : null,
             chairmanUserId: parseInt(formData.chairmanId),
             secretaryUserId: parseInt(formData.secretaryId),
             memberUserIds: formData.memberIds.map(id => parseInt(id))
@@ -103,6 +107,18 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
                             <option value="GAK">{t('department.defenseCommission')}</option>
                         </select>
                     </label>
+
+                    {specialities.length > 0 && (
+                        <label className="commission-modal__field">
+                            {t('department.speciality', 'Специальность')}
+                            <select name="specialityId" value={formData.specialityId} onChange={handleChange}>
+                                <option value="">{t('department.allSpecialities', 'Все специальности')}</option>
+                                {specialities.map((s) => (
+                                    <option key={s.id} value={s.id}>{s.name}</option>
+                                ))}
+                            </select>
+                        </label>
+                    )}
 
                     {formData.type === 'PreDefense' && (
                         <label className="commission-modal__field">

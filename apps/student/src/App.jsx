@@ -6,6 +6,7 @@ import { StudentLayout } from './pages/StudentLayout.jsx';
 import ChooseThemePage from './pages/ChooseThemePage.jsx';
 import MyApplicationsPage from './pages/MyApplicationsPage.jsx';
 import DefenseStepPage from './pages/DefenseStepPage/DefenseStepPage.jsx';
+import MySchedulePage from './pages/MySchedulePage/MySchedulePage.jsx';
 import ReviewStepPage from './pages/ReviewStepPage/ReviewStepPage.jsx';
 import AntiplagiarismPage from './pages/AntiplagiarismPage/AntiplagiarismPage.jsx';
 import CritiquePage from './pages/CritiquePage/CritiquePage.jsx';
@@ -48,6 +49,7 @@ function App() {
                     <Route path="defense" element={<DefenseStepPage />} />
                     <Route path="profile" element={<ProfilePage />} />
                     <Route path="my-work" element={<MyWorkPage />} />
+                    <Route path="my-schedule" element={<MySchedulePage />} />
                     <Route path="notifications" element={<NotificationsPage translationPrefix="student" />} />
                 </Route>
                 <Route path="*" element={<Navigate to="/choose-theme" replace />} />

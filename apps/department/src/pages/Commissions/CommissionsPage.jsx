@@ -201,6 +201,7 @@ function CommissionsPage() {
                 onSubmit={handleFormSubmit}
                 editingCommission={editingCommission}
                 staff={staff}
+                orgUnitId={orgUnitId}
             />
 
             <ConfirmModal

@@ -16,6 +16,7 @@ import {
     useReviewsByWork,
     useUploadExternalReview,
     useMyWorkProgress,
+    downloadAttachment,
 } from '@awm/shared';
 
 const CritiquePage = () => {
@@ -76,10 +77,12 @@ const CritiquePage = () => {
         }
     };
 
-    const handleDownloadReview = () => {
-        if (externalReview?.attachmentId) {
-            // TODO: implement download via attachment endpoint
-            console.log('Download review attachment:', externalReview.attachmentId);
+    const handleDownloadReview = async () => {
+        if (!workId || !externalReview?.attachmentId) return;
+        try {
+            await downloadAttachment(workId, externalReview.attachmentId, 'review.pdf');
+        } catch (err) {
+            console.error('Failed to download review:', err);
         }
     };
 
