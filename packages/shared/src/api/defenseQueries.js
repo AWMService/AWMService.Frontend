@@ -127,6 +127,13 @@ export const protocolApi = {
   downloadProtocolPdf: async (protocolId) => {
     const response = await apiClient.get(`/v1/protocols/${protocolId}/pdf`, { responseType: 'blob' });
     return response.data;
+  },
+  downloadAdmittedStudentsList: async (orgUnitId, semesterId) => {
+    const response = await apiClient.get('/v1/protocols/admitted-list', {
+      params: { orgUnitId, semesterId },
+      responseType: 'blob',
+    });
+    return response.data;
   }
 };
 
@@ -168,6 +175,22 @@ export function useDownloadProtocolPdf() {
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', `protocol_${id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+  });
+}
+
+export function useDownloadAdmittedStudentsList() {
+  return useMutation({
+    mutationFn: ({ orgUnitId, semesterId }) =>
+      protocolApi.downloadAdmittedStudentsList(orgUnitId, semesterId),
+    onSuccess: (data, variables) => {
+      const url = window.URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `admitted_${variables.orgUnitId}_${variables.semesterId}.pdf`);
       document.body.appendChild(link);
       link.click();
       link.remove();

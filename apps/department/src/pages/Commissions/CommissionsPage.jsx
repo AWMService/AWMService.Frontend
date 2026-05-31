@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { 
-    ConfirmModal, 
-    useAuth, 
-    useCommissions, 
-    useStaffByDepartment, 
-    useCreateCommission, 
+import {
+    ConfirmModal,
+    useAuth,
+    useCommissions,
+    useStaffByDepartment,
+    useCreateCommission,
     useUpdateCommission,
+    useApprovePreDefensePeriods,
+    useOrgUnitSpecialities,
     commissionApi
 } from "@awm/shared";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -27,11 +29,29 @@ function CommissionsPage() {
     const orgUnitId = user?.orgUnitId;
     const semesterId = user?.currentSemesterId;
 
-    const { data: commissions = [], isLoading: isCommsLoading } = useCommissions(orgUnitId, semesterId);
+    const [selectedSpecialityId, setSelectedSpecialityId] = useState(null);
+    const { data: specialities = [] } = useOrgUnitSpecialities(orgUnitId);
+
+    const { data: commissions = [], isLoading: isCommsLoading } = useCommissions(orgUnitId, semesterId, selectedSpecialityId);
     const { data: staff = [], isLoading: isStaffLoading } = useStaffByDepartment(orgUnitId);
 
-    const createMutation = useCreateCommission(orgUnitId, semesterId);
-    const updateMutation = useUpdateCommission(orgUnitId, semesterId);
+    const createMutation = useCreateCommission(orgUnitId, semesterId, selectedSpecialityId);
+    const updateMutation = useUpdateCommission(orgUnitId, semesterId, selectedSpecialityId);
+    const approveMutation = useApprovePreDefensePeriods();
+
+    const [approveError, setApproveError] = useState(null);
+    const [approveSuccess, setApproveSuccess] = useState(false);
+
+    const handleApprove = async () => {
+        setApproveError(null);
+        setApproveSuccess(false);
+        try {
+            await approveMutation.mutateAsync({ orgUnitId, semesterId });
+            setApproveSuccess(true);
+        } catch (err) {
+            setApproveError(err?.response?.data?.detail || t('common.error'));
+        }
+    };
     
     const deleteMutation = useMutation({
         mutationFn: (id) => commissionApi.deleteCommission(id),
@@ -120,15 +140,50 @@ function CommissionsPage() {
 
     return (
         <div className="commissions-page">
+            {specialities.length > 0 && (
+                <div className="speciality-scope-selector">
+                    <label className="speciality-scope-label">{t('department.speciality', 'Специальность')}:</label>
+                    <select
+                        value={selectedSpecialityId || ""}
+                        onChange={(e) => setSelectedSpecialityId(e.target.value ? Number(e.target.value) : null)}
+                        className="speciality-scope-select"
+                    >
+                        <option value="">{t('department.allSpecialities', 'Общее для кафедры (По умолчанию)')}</option>
+                        {specialities.map(s => (
+                            <option key={s.id} value={s.id}>{s.code} - {s.title}</option>
+                        ))}
+                    </select>
+                </div>
+            )}
             <div className="page-header">
                 <div>
                     <h1 className="page-title">{t('department.commissionsTitle')}</h1>
                 </div>
-                <button className="button primary-button" onClick={handleCreate}>
-                    <img src={plusIcon} alt="" className="button-icon" />
-                    {t('department.createCommission')}
-                </button>
+                <div className="page-header__actions">
+                    <button
+                        className="button secondary-button"
+                        onClick={handleApprove}
+                        disabled={approveMutation.isPending || commissions.length === 0}
+                    >
+                        {approveMutation.isPending
+                            ? t('common.loading')
+                            : t('department.approvePreDefenseCommissions', 'Утвердить периоды предзащит и комиссии')}
+                    </button>
+                    <button className="button primary-button" onClick={handleCreate}>
+                        <img src={plusIcon} alt="" className="button-icon" />
+                        {t('department.createCommission')}
+                    </button>
+                </div>
             </div>
+
+            {approveSuccess && (
+                <div className="alert alert--success">
+                    {t('department.approvePreDefenseSuccess', 'Периоды предзащит и комиссии утверждены.')}
+                </div>
+            )}
+            {approveError && (
+                <div className="alert alert--error">{approveError}</div>
+            )}
 
             <div className="commissions-grid">
                 {commissions.length === 0 && (

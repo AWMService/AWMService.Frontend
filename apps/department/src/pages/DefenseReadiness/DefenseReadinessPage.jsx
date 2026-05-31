@@ -3,14 +3,16 @@
 import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { ConfirmModal, useAuth, useDefenseReadiness, useAdmitToDefense, useActiveCheckConfigurations } from "@awm/shared";
+import { ConfirmModal, useAuth, useDefenseReadiness, useAdmitToDefense, useActiveCheckConfigurations, useDownloadAdmittedStudentsList } from "@awm/shared";
 import "./DefenseReadinessPage.css";
 import documentCheckIcon from "../../assets/icons/document-check-icon.svg";
 
-const CHECK_ICONS = {
-    true: "✅",
-    false: "⏳"
-};
+function CheckBadge({ passed }) {
+    if (passed) {
+        return <span className="dr-check dr-check--passed" aria-label="passed">✓</span>;
+    }
+    return <span className="dr-check dr-check--pending" aria-label="pending">–</span>;
+}
 
 function allChecksPassed(student, requiresSW = false) {
     return (
@@ -39,6 +41,7 @@ export default function DefenseReadinessPage() {
 
     const { data: students = [], isLoading } = useDefenseReadiness({ orgUnitId, semesterId });
     const admitMutation = useAdmitToDefense();
+    const downloadAdmittedMutation = useDownloadAdmittedStudentsList();
     const { data: activeConfigs } = useActiveCheckConfigurations(orgUnitId);
     const requiresSoftwareCheck = activeConfigs?.some(c => c.checkTypeCode === 'SOFTWARECHECK') ?? false;
 
@@ -173,6 +176,15 @@ export default function DefenseReadinessPage() {
                 <button className="dr-next-step-btn" onClick={() => navigate('/student-distribution')}>
                     {t("department.setupDefenseSchedule")}
                 </button>
+                <button
+                    className="dr-next-step-btn"
+                    disabled={downloadAdmittedMutation.isPending || kpiCounts.admitted === 0}
+                    onClick={() => downloadAdmittedMutation.mutate({ orgUnitId, semesterId })}
+                >
+                    {downloadAdmittedMutation.isPending
+                        ? t('common.loading')
+                        : t('department.downloadAdmittedList', 'Скачать список допущенных')}
+                </button>
             </div>
 
             {/* Filter tabs */}
@@ -241,13 +253,13 @@ export default function DefenseReadinessPage() {
                                     <td>{idx + 1}</td>
                                     <td className="dr-student-name">{student.studentName}</td>
                                     <td className="dr-topic" title={student.topicTitle}>{student.topicTitle}</td>
-                                    <td className="dr-check-icon">{CHECK_ICONS[student.preDefensePassed]}</td>
-                                    <td className="dr-check-icon">{CHECK_ICONS[student.normocontrolPassed]}</td>
-                                    <td className="dr-check-icon">{CHECK_ICONS[student.antiplagiarismPassed]}</td>
-                                    <td className="dr-check-icon">{CHECK_ICONS[student.reviewPassed]}</td>
-                                    <td className="dr-check-icon">{CHECK_ICONS[student.supervisorReviewPassed]}</td>
+                                    <td className="dr-check-cell"><CheckBadge passed={student.preDefensePassed} /></td>
+                                    <td className="dr-check-cell"><CheckBadge passed={student.normocontrolPassed} /></td>
+                                    <td className="dr-check-cell"><CheckBadge passed={student.antiplagiarismPassed} /></td>
+                                    <td className="dr-check-cell"><CheckBadge passed={student.reviewPassed} /></td>
+                                    <td className="dr-check-cell"><CheckBadge passed={student.supervisorReviewPassed} /></td>
                                     {requiresSoftwareCheck && (
-                                        <td className="dr-check-icon">{CHECK_ICONS[student.softwareCheckPassed]}</td>
+                                        <td className="dr-check-cell"><CheckBadge passed={student.softwareCheckPassed} /></td>
                                     )}
                                     <td>
                                         {status === "admitted" && (

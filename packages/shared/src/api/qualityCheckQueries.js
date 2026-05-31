@@ -56,6 +56,24 @@ export function usePendingChecks(orgUnitId, semesterId, checkType) {
   });
 }
 
+// Fetch all checks for expert (pending + approved + revision) — stable across page reloads
+export async function fetchAllExpertChecks(orgUnitId, semesterId, checkType) {
+  const params = { orgUnitId, semesterId, includeCompleted: true };
+  if (checkType != null) {
+    params.checkTypeId = typeof checkType === 'number' ? checkType : (CHECK_TYPES[checkType] ?? checkType);
+  }
+  const { data } = await apiClient.get('/v1/quality-checks/pending', { params });
+  return data;
+}
+
+export function useAllExpertChecks(orgUnitId, semesterId, checkType) {
+  return useQuery({
+    queryKey: ['allExpertChecks', orgUnitId, semesterId, checkType],
+    queryFn: () => fetchAllExpertChecks(orgUnitId, semesterId, checkType),
+    enabled: !!orgUnitId && !!semesterId,
+  });
+}
+
 // Complete quality check (expert decision)
 export async function completeQualityCheck(workId, checkId, checkData) {
   const { data } = await apiClient.post(`/v1/quality-checks/works/${workId}/${checkId}/complete`, checkData);

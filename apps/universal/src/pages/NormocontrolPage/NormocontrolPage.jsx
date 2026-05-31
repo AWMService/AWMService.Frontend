@@ -1,9 +1,18 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getIntlLocale, getLocalizedValue, useAuth, usePendingChecks, useCompleteQualityCheckMutation, uploadExpertDocument } from '@awm/shared';
+import { getIntlLocale, getLocalizedValue, useAuth, useAllExpertChecks, useCompleteQualityCheckMutation, uploadExpertDocument } from '@awm/shared';
 import DocumentPreviewModal from '../../components/DocumentPreviewModal/DocumentPreviewModal';
 import RemarksFormModal from '../../components/RemarksFormModal/RemarksFormModal';
 import './NormocontrolPage.css';
+
+// API status values from QualityCheckStatus enum on backend
+const API_STATUS = { Pending: 0, Approved: 1, SentForRevision: 2 };
+
+function mapStatus(apiStatus) {
+    if (apiStatus === API_STATUS.Approved) return 'approved';
+    if (apiStatus === API_STATUS.SentForRevision) return 'revision';
+    return 'pending';
+}
 
 function NormocontrolPage() {
     const { t } = useTranslation();
@@ -11,14 +20,12 @@ function NormocontrolPage() {
     const { user } = useAuth();
     const orgUnitId = user?.orgUnitId;
     const semesterId = user?.currentSemesterId;
-    const { data: pendingChecks = [] } = usePendingChecks(orgUnitId, semesterId, 'NormControl');
+
+    // Fetch all checks (pending + approved + revision) — stable across page reloads
+    const { data: allChecks = [] } = useAllExpertChecks(orgUnitId, semesterId, 'NormControl');
     const completeCheckMutation = useCompleteQualityCheckMutation();
 
-    // Local state: track docs moved out of pending after expert acts
-    const [approvedDocs, setApprovedDocs] = useState([]);
-    const [revisionDocs, setRevisionDocs] = useState([]);
-
-    const displayDocuments = useMemo(() => pendingChecks.map(check => ({
+    const displayDocuments = useMemo(() => allChecks.map(check => ({
         id: check.id,
         workId: check.workId,
         studentName: check.studentName || `Work #${check.workId}`,
@@ -30,10 +37,10 @@ function NormocontrolPage() {
         },
         documentType: { ru: 'Документ', kk: 'Құжат', en: 'Document' },
         submittedDate: check.createdAt || new Date().toISOString(),
-        status: 'pending',
+        status: mapStatus(check.status),
         version: check.attemptNumber || 1,
         remarks: check.comment ? 1 : 0,
-    })), [pendingChecks]);
+    })), [allChecks]);
 
     const [activeTab, setActiveTab] = useState('pending');
     const [selectedDocument, setSelectedDocument] = useState(null);
@@ -74,11 +81,8 @@ function NormocontrolPage() {
             await completeCheckMutation.mutateAsync({
                 workId: doc.workId,
                 checkId: doc.id,
-                // FIX: was remark.comment (undefined) — correct field is remark.text
                 checkData: { isPassed: false, comment: remark.text, attachmentId },
             });
-            // Move doc to revision tab in local state
-            setRevisionDocs(prev => [...prev, { ...doc, status: 'revision' }]);
         } catch (err) {
             console.error('Failed to complete quality check', err);
         }
@@ -94,17 +98,12 @@ function NormocontrolPage() {
                 checkId: doc.id,
                 checkData: { isPassed: true },
             });
-            // Move doc to approved tab in local state
-            setApprovedDocs(prev => [...prev, { ...doc, status: 'approved' }]);
         } catch (err) {
             console.error('Failed to approve quality check', err);
         }
     };
 
-    // Combine pending (live) + completed (local) for all tabs
-    const allDocs = [...displayDocuments, ...approvedDocs, ...revisionDocs];
-
-    const filteredDocs = allDocs.filter(doc => {
+    const filteredDocs = displayDocuments.filter(doc => {
         if (activeTab === 'pending')  return doc.status === 'pending';
         if (activeTab === 'revision') return doc.status === 'revision';
         if (activeTab === 'approved') return doc.status === 'approved';
@@ -127,9 +126,9 @@ function NormocontrolPage() {
             year: 'numeric',
         }).format(new Date(value));
 
-    const pendingCount  = allDocs.filter(d => d.status === 'pending').length;
-    const revisionCount = allDocs.filter(d => d.status === 'revision').length;
-    const approvedCount = allDocs.filter(d => d.status === 'approved').length;
+    const pendingCount  = displayDocuments.filter(d => d.status === 'pending').length;
+    const revisionCount = displayDocuments.filter(d => d.status === 'revision').length;
+    const approvedCount = displayDocuments.filter(d => d.status === 'approved').length;
 
     return (
         <div className="normocontrol-page">

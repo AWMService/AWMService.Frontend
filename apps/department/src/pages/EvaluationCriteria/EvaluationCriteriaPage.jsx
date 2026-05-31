@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { 
-    ConfirmModal, 
-    useAuth, 
+import {
+    ConfirmModal,
+    useAuth,
+    useOrgUnitSpecialities,
     useEvaluationCriteria,
     useCreateEvaluationCriteria,
     evaluationApi
@@ -63,13 +64,15 @@ function EvaluationCriteriaPage() {
     const queryClient = useQueryClient();
     
     const orgUnitId = user?.orgUnitId;
-    
+
     const [workTypeId, setWorkTypeId] = useState(1); // 1 = DP, 2 = DR (WorkTypes)
+    const [selectedSpecialityId, setSelectedSpecialityId] = useState(null);
     const [isAdding, setIsFormOpen] = useState(false);
     const [editingId, setEditingId] = useState(null);
     const [deleteTarget, setDeleteTarget] = useState(null);
 
-    const { data: criteria = [], isLoading } = useEvaluationCriteria(workTypeId, orgUnitId);
+    const { data: specialities = [] } = useOrgUnitSpecialities(orgUnitId);
+    const { data: criteria = [], isLoading } = useEvaluationCriteria(workTypeId, orgUnitId, selectedSpecialityId);
     
     const createMutation = useCreateEvaluationCriteria();
     
@@ -91,7 +94,8 @@ function EvaluationCriteriaPage() {
         createMutation.mutate({
             ...formData,
             workTypeId,
-            orgUnitId
+            orgUnitId,
+            specialityId: selectedSpecialityId,
         }, {
             onSuccess: () => setIsFormOpen(false)
         });
@@ -107,6 +111,21 @@ function EvaluationCriteriaPage() {
 
     return (
         <div className="criteria-page">
+            {specialities.length > 0 && (
+                <div className="speciality-scope-selector">
+                    <label className="speciality-scope-label">{t('department.speciality', 'Специальность')}:</label>
+                    <select
+                        value={selectedSpecialityId || ""}
+                        onChange={(e) => setSelectedSpecialityId(e.target.value ? Number(e.target.value) : null)}
+                        className="speciality-scope-select"
+                    >
+                        <option value="">{t('department.allSpecialities', 'Общее для кафедры (По умолчанию)')}</option>
+                        {specialities.map(s => (
+                            <option key={s.id} value={s.id}>{s.code} - {s.title}</option>
+                        ))}
+                    </select>
+                </div>
+            )}
             <div className="page-header">
                 <div>
                     <h1 className="page-title">{t('criteria.title', 'Критерии оценивания')}</h1>

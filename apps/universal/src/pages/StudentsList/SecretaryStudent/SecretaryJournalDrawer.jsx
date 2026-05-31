@@ -7,8 +7,12 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
     const { user } = useAuth();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [decision, setDecision] = useState("Допущен");
+    const [gradeLetter, setGradeLetter] = useState("Отлично");
+
     // PZ-1 is informational — decision is always "Допущен" regardless of scores
     const isInformationalPreDefense = preDefenseNumber === 1;
+    // GAK commission has no pre-defense number
+    const isGAK = preDefenseNumber === null;
 
     const scheduleId = student?.scheduleId;
     const isFinalized = !!student?.protocolId;
@@ -37,13 +41,23 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
 
     const handleFinalLock = async () => {
         try {
-            const effectiveDecision = isInformationalPreDefense ? "Допущен" : decision;
+            let effectiveDecision;
+            let effectiveGradeLetter;
+
+            if (isGAK) {
+                effectiveGradeLetter = gradeLetter;
+                effectiveDecision = gradeLetter === "Неудовлетворительно" ? "Не допущен" : "Допущен";
+            } else {
+                effectiveDecision = isInformationalPreDefense ? "Допущен" : decision;
+                effectiveGradeLetter = undefined;
+            }
 
             // 1. Create protocol
             const generatedId = await generateProtocolMutation.mutateAsync({
                 scheduleId: scheduleId,
                 finalScoreNumeric: parseFloat(averageScore),
-                decision: effectiveDecision
+                decision: effectiveDecision,
+                finalGradeLetter: effectiveGradeLetter,
             });
 
             // 2. Finalize protocol (pass attendance status)
@@ -172,8 +186,35 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
                         </div>
                     )}
 
-                    {/* Решение комиссии — только для ПЗ-2 и ПЗ-3 */}
-                    {!isFinalized && status === "reviewing" && !isInformationalPreDefense && (
+                    {/* Итоговая оценка ГАК (Отлично / Хорошо / Удовлетворительно / Неудовлетворительно) */}
+                    {!isFinalized && status === "reviewing" && isGAK && (
+                        <div className="sec-decision-section" style={{ marginBottom: "15px" }}>
+                            <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold", fontSize: "14px" }}>
+                                {t('journal.overallGrade', 'Итоговая оценка ГАК')}:
+                            </label>
+                            <select
+                                value={gradeLetter}
+                                onChange={(e) => setGradeLetter(e.target.value)}
+                                style={{
+                                    width: "100%",
+                                    padding: "8px 12px",
+                                    borderRadius: "6px",
+                                    border: "1px solid #d1d5db",
+                                    backgroundColor: "#fff",
+                                    fontSize: "14px",
+                                    outline: "none"
+                                }}
+                            >
+                                <option value="Отлично">{t('journal.gradeExcellent', 'Отлично')}</option>
+                                <option value="Хорошо">{t('journal.gradeGood', 'Хорошо')}</option>
+                                <option value="Удовлетворительно">{t('journal.gradeSatisfactory', 'Удовлетворительно')}</option>
+                                <option value="Неудовлетворительно">{t('journal.gradeUnsatisfactory', 'Неудовлетворительно')}</option>
+                            </select>
+                        </div>
+                    )}
+
+                    {/* Решение комиссии — только для ПЗ-2 и ПЗ-3 (не ГАК) */}
+                    {!isFinalized && status === "reviewing" && !isInformationalPreDefense && !isGAK && (
                         <div className="sec-decision-section" style={{ marginBottom: "15px" }}>
                             <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold", fontSize: "14px" }}>
                                 {t('journal.commissionDecision', 'Решение комиссии')}:
