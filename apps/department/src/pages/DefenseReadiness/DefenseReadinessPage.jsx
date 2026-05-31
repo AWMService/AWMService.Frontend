@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { ConfirmModal, useAuth, useDefenseReadiness, useAdmitToDefense, useActiveCheckConfigurations, useDownloadAdmittedStudentsList } from "@awm/shared";
+import { ConfirmModal, useAuth, useDefenseReadiness, useAdmitToDefense, useActiveCheckConfigurations, useDownloadAdmittedStudentsList, useNotifyUnreadyStudents } from "@awm/shared";
 import "./DefenseReadinessPage.css";
 import documentCheckIcon from "../../assets/icons/document-check-icon.svg";
 
@@ -42,11 +42,13 @@ export default function DefenseReadinessPage() {
     const { data: students = [], isLoading } = useDefenseReadiness({ orgUnitId, semesterId });
     const admitMutation = useAdmitToDefense();
     const downloadAdmittedMutation = useDownloadAdmittedStudentsList();
+    const notifyMutation = useNotifyUnreadyStudents();
     const { data: activeConfigs } = useActiveCheckConfigurations(orgUnitId);
     const requiresSoftwareCheck = activeConfigs?.some(c => c.checkTypeCode === 'SOFTWARECHECK') ?? false;
 
     const [selectedIds, setSelectedIds] = useState([]);
     const [confirmModal, setConfirmModal] = useState({ isOpen: false, isBulk: false, studentId: null });
+    const [isNotifyConfirmOpen, setIsNotifyConfirmOpen] = useState(false);
     const [filter, setFilter] = useState('all'); // 'all' | 'ready' | 'admitted'
 
     const kpiCounts = useMemo(() => {
@@ -185,6 +187,16 @@ export default function DefenseReadinessPage() {
                         ? t('common.loading')
                         : t('department.downloadAdmittedList', 'Скачать список допущенных')}
                 </button>
+                <button
+                    className="dr-next-step-btn"
+                    style={{ background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', color: '#fff', border: 'none' }}
+                    disabled={notifyMutation.isPending || kpiCounts.notAdmitted === 0}
+                    onClick={() => setIsNotifyConfirmOpen(true)}
+                >
+                    {notifyMutation.isPending
+                        ? t('common.loading')
+                        : t('department.notifyUnready', 'Уведомить неготовых')}
+                </button>
             </div>
 
             {/* Filter tabs */}
@@ -306,6 +318,24 @@ export default function DefenseReadinessPage() {
                 onCancel={() => setConfirmModal({ isOpen: false, isBulk: false, studentId: null })}
                 confirmText={t("department.admitToDefense")}
                 cancelText={t("department.cancel")}
+            />
+
+            <ConfirmModal
+                isOpen={isNotifyConfirmOpen}
+                title={t("department.confirmNotification", "Подтверждение отправки")}
+                message={t("department.confirmNotifyUnreadyMessage", `Вы уверены, что хотите отправить уведомления всем недопущенным студентам (${kpiCounts.notAdmitted} чел.) о необходимости завершить подготовку к защите?`)}
+                onConfirm={async () => {
+                    try {
+                        await notifyMutation.mutateAsync({ orgUnitId, semesterId });
+                        alert(t("department.notificationsSent", "Уведомления успешно отправлены!"));
+                    } catch (err) {
+                        console.error(err);
+                    }
+                    setIsNotifyConfirmOpen(false);
+                }}
+                onCancel={() => setIsNotifyConfirmOpen(false)}
+                confirmText={t("common.send", "Отправить")}
+                cancelText={t("common.cancel", "Отмена")}
             />
         </div>
     );

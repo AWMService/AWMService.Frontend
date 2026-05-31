@@ -87,6 +87,7 @@ export function useCompleteQualityCheck(workId) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['qualityChecks', workId] });
       queryClient.invalidateQueries({ queryKey: ['pendingChecks'] });
+      queryClient.invalidateQueries({ queryKey: ['allExpertChecks'] });
     },
   });
 }
@@ -99,6 +100,7 @@ export function useCompleteQualityCheckMutation() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['qualityChecks', variables.workId] });
       queryClient.invalidateQueries({ queryKey: ['pendingChecks'] });
+      queryClient.invalidateQueries({ queryKey: ['allExpertChecks'] });
     },
   });
 }

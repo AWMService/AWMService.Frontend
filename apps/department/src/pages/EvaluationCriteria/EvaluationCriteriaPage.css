@@ -127,8 +127,40 @@
 
 .criteria-form__fields {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-columns: 2fr 1fr 1fr 80px;
     gap: 12px;
+}
+
+.criteria-form__sort-order {
+    max-width: 80px;
+}
+
+/* Defense Stage Type Tabs */
+.defense-stage-tabs {
+    display: flex;
+    background: #E0E7FF;
+    padding: 4px;
+    border-radius: 8px;
+    width: fit-content;
+    margin-bottom: 1.5rem;
+}
+
+.stage-tab {
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    background: transparent;
+    color: #4338CA;
+    transition: all 0.2s;
+}
+
+.stage-tab.active {
+    background: #4F46E5;
+    color: #ffffff;
+    box-shadow: 0 1px 3px rgba(79, 70, 229, 0.3);
 }
 
 .criteria-form__fields input {

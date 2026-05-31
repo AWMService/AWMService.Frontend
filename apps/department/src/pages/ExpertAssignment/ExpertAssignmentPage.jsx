@@ -4,7 +4,8 @@ import {
     useAuth, 
     useStaffByDepartment, 
     useAssignedExperts, 
-    useSaveExpertAssignments 
+    useSaveExpertAssignments,
+    useOrgUnitSpecialities 
 } from "@awm/shared";
 import "./ExpertAssignmentPage.css";
 import shieldCheckIcon from "../../assets/icons/shield-check-icon.svg";
@@ -13,6 +14,9 @@ export default function ExpertAssignmentPage() {
     const { t } = useTranslation();
     const { user } = useAuth();
     const orgUnitId = user?.orgUnitId;
+
+    const [selectedSpecialityId, setSelectedSpecialityId] = useState(null);
+    const { data: specialities = [] } = useOrgUnitSpecialities(orgUnitId);
 
     const { data: teachers = [], isLoading: isLoadingTeachers } = useStaffByDepartment(orgUnitId);
     const { data: expertAssignments = [], isLoading: isLoadingExperts } = useAssignedExperts(orgUnitId);
@@ -100,6 +104,21 @@ export default function ExpertAssignmentPage() {
 
     return (
         <div className="expert-assignment-page">
+            {specialities.length > 0 && (
+                <div className="speciality-scope-selector">
+                    <label className="speciality-scope-label">{t('department.speciality', 'Специальность')}:</label>
+                    <select
+                        value={selectedSpecialityId || ""}
+                        onChange={(e) => setSelectedSpecialityId(e.target.value ? Number(e.target.value) : null)}
+                        className="speciality-scope-select"
+                    >
+                        <option value="">{t('department.allSpecialities', 'Общее для кафедры (По умолчанию)')}</option>
+                        {specialities.map(s => (
+                            <option key={s.id} value={s.id}>{s.code} - {s.title}</option>
+                        ))}
+                    </select>
+                </div>
+            )}
             <div className="page-header">
                 <div className="page-header-info">
                     <div className="page-header-icon-bg">

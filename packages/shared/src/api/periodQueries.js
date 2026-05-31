@@ -87,6 +87,20 @@ export const periodApi = {
     const { data } = await apiClient.post('/v1/stages/periods', payload);
     return data;
   },
+  approveChecksPeriods: async (orgUnitId, semesterId, periods, specialityId = null) => {
+    const payload = {
+      semesterId: semesterId,
+      orgUnitId: orgUnitId,
+      specialityId: specialityId,
+      periods: periods.map(p => ({
+        workflowStageId: STAGE_MAP[p.workflowStage] || 0,
+        startDate: p.startDate,
+        endDate: p.endDate
+      })).filter(p => p.workflowStageId !== 0)
+    };
+    const { data } = await apiClient.post('/v1/stages/approve-checks', payload);
+    return data;
+  },
   fetchOrgUnitSpecialities: async (orgUnitId) => {
     const { data } = await apiClient.get('/v1/stages/specialities', {
       params: { orgUnitId }
@@ -147,7 +161,7 @@ export const useApproveDefensePeriods = (orgUnitId, semesterId, specialityId = n
 export const useApproveChecksPeriods = (orgUnitId, semesterId, specialityId = null) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (periods) => periodApi.approveDefensePeriods(orgUnitId, semesterId, periods, specialityId),
+    mutationFn: (periods) => periodApi.approveChecksPeriods(orgUnitId, semesterId, periods, specialityId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: periodKeys.all });
     },

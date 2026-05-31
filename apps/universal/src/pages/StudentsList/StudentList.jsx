@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { getLocalizedValue, useAuth, useDefenseSchedule, useEvaluationCriteria, useSubmitGrade, useGradesBySchedule } from "@awm/shared";
+import { getLocalizedValue, useAuth, useDefenseSchedule, useEvaluationCriteria, useSubmitGrade, useGradesBySchedule, useDownloadScheduleReport } from "@awm/shared";
 import StudentJournalDrawer from "../../components/StudentJournalDrawer/StudentJournalDrawer.jsx";
 import "./StudentList.css";
 
@@ -18,6 +18,7 @@ export default function StudentList() {
     const currentStageKey = "defense";
 
     const { data: defenseSchedule = [], isLoading: isScheduleLoading } = useDefenseSchedule(Number(commissionId));
+    const { mutate: downloadSchedule, isPending: isDownloading } = useDownloadScheduleReport();
 
     // Build topics/students from defense schedule slots that have assigned works
     const topics = useMemo(() => {
@@ -130,9 +131,33 @@ export default function StudentList() {
     return (
         <div className={`s-page-container ${isJournalOpen ? "s-drawer-open" : ""}`}>
             <div className="s-main-content">
-                <h1 className="s-title">
-                    {t('commission.commissions')} №{commissionId} ({t(`student.${currentStageKey}`)})
-                </h1>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px', width: '100%' }}>
+                    <h1 className="s-title" style={{ margin: 0 }}>
+                        {t('commission.commissions')} №{commissionId} ({t(`student.${currentStageKey}`)})
+                    </h1>
+                    <button
+                        onClick={() => downloadSchedule(Number(commissionId))}
+                        disabled={isDownloading}
+                        className="download-button"
+                        style={{
+                            padding: '8px 16px',
+                            borderRadius: '8px',
+                            border: 'none',
+                            background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                            color: '#fff',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 6px -1px rgba(59, 130, 246, 0.3)',
+                            transition: 'all 0.2s',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            fontSize: '14px'
+                        }}
+                    >
+                        📥 {isDownloading ? t('common.downloading', 'Скачивание...') : t('commission.downloadSchedule', 'Скачать PDF расписания')}
+                    </button>
+                </div>
 
                 <div className="s-topics-grid">
                     {topics.map((topic) => (

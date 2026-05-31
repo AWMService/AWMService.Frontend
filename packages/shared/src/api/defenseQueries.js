@@ -4,10 +4,11 @@ import { apiClient } from './apiClient';
 // ================= Evaluation Criteria =================
 
 export const evaluationApi = {
-  fetchCriteria: async (workTypeId, orgUnitId = null, specialityId = null) => {
+  fetchCriteria: async (workTypeId, orgUnitId = null, specialityId = null, defenseStageType = null) => {
     const params = { workTypeId };
     if (orgUnitId) params.orgUnitId = orgUnitId;
     if (specialityId) params.specialityId = specialityId;
+    if (defenseStageType) params.defenseStageType = defenseStageType;
     
     const { data } = await apiClient.get('/v1/evaluation-criteria', { params });
     return data;
@@ -26,10 +27,10 @@ export const evaluationApi = {
   }
 };
 
-export function useEvaluationCriteria(workTypeId, orgUnitId = null, specialityId = null) {
+export function useEvaluationCriteria(workTypeId, orgUnitId = null, specialityId = null, defenseStageType = null) {
   return useQuery({
-    queryKey: ['evaluation', 'criteria', workTypeId, orgUnitId, specialityId],
-    queryFn: () => evaluationApi.fetchCriteria(workTypeId, orgUnitId, specialityId),
+    queryKey: ['evaluation', 'criteria', workTypeId, orgUnitId, specialityId, defenseStageType],
+    queryFn: () => evaluationApi.fetchCriteria(workTypeId, orgUnitId, specialityId, defenseStageType),
     enabled: !!workTypeId,
   });
 }
@@ -134,6 +135,21 @@ export const protocolApi = {
       responseType: 'blob',
     });
     return response.data;
+  },
+  downloadScheduleReport: async (commissionId) => {
+    const response = await apiClient.get('/v1/protocols/schedule-report', {
+      params: { commissionId },
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+  notifyUnreadyStudents: async (orgUnitId, semesterId, specialityId = null) => {
+    const response = await apiClient.post('/v1/protocols/notify-unready', {
+      orgUnitId,
+      semesterId,
+      specialityId,
+    });
+    return response.data;
   }
 };
 
@@ -195,6 +211,28 @@ export function useDownloadAdmittedStudentsList() {
       link.click();
       link.remove();
     }
+  });
+}
+
+export function useDownloadScheduleReport() {
+  return useMutation({
+    mutationFn: (commissionId) => protocolApi.downloadScheduleReport(commissionId),
+    onSuccess: (data, commissionId) => {
+      const url = window.URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `schedule_commission_${commissionId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+  });
+}
+
+export function useNotifyUnreadyStudents() {
+  return useMutation({
+    mutationFn: ({ orgUnitId, semesterId, specialityId }) =>
+      protocolApi.notifyUnreadyStudents(orgUnitId, semesterId, specialityId),
   });
 }
 

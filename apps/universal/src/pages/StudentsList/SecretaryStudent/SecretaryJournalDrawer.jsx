@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getLocalizedValue, useEvaluationCriteria, useGradesBySchedule, useStartReconciliation, useGenerateProtocol, useFinalizeProtocol, useAuth, useDownloadProtocolPdf } from "@awm/shared";
+import { getLocalizedValue, useEvaluationCriteria, useGradesBySchedule, useStartReconciliation, useGenerateProtocol, useFinalizeProtocol, useAuth, useDownloadProtocolPdf, useGraduateWorks } from "@awm/shared";
 
 export default function SecretaryJournalDrawer({ open, onClose, student, isPresent = true, preDefenseNumber = null }) {
     const { t } = useTranslation();
@@ -27,6 +27,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
     const generateProtocolMutation = useGenerateProtocol();
     const finalizeProtocolMutation = useFinalizeProtocol();
     const downloadPdfMutation = useDownloadProtocolPdf();
+    const graduateWorksMutation = useGraduateWorks();
 
     const handleRevealClick = () => setShowConfirmModal(true);
 
@@ -36,6 +37,16 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
             setShowConfirmModal(false);
         } catch (error) {
             console.error('Failed to reveal scores', error);
+        }
+    };
+
+    const handleGraduate = async () => {
+        if (!student?.workId) return;
+        try {
+            await graduateWorksMutation.mutateAsync([student.workId]);
+            onClose();
+        } catch (error) {
+            console.error('Failed to graduate student', error);
         }
     };
 
@@ -282,6 +293,16 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
                                         disabled={downloadPdfMutation.isPending}
                                     >
                                         {downloadPdfMutation.isPending ? t('common.loading') : t('common.downloadPdf', 'Скачать PDF')}
+                                    </button>
+                                )}
+                                {isGAK && student?.globalStatus !== 'graduated' && (
+                                    <button 
+                                        className="s-btn-primary" 
+                                        style={{ width: "100%", padding: "10px", borderRadius: "6px", cursor: "pointer", backgroundColor: "#10b981", border: "none", color: "white" }}
+                                        onClick={handleGraduate}
+                                        disabled={graduateWorksMutation.isPending}
+                                    >
+                                        {graduateWorksMutation.isPending ? t('common.loading') : t('journal.markAsGraduated', 'Перевести в выпускники')}
                                     </button>
                                 )}
                             </div>

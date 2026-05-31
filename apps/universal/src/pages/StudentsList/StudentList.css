@@ -377,3 +377,85 @@
     color: #64748b;
     line-height: 1.4;
 }
+
+/* Protocol fields: Readiness % and Decision */
+.s-protocol-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid #e5e7eb;
+    background: #fafbfc;
+}
+
+.s-protocol-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.s-protocol-field--full {
+    grid-column: 1 / -1;
+}
+
+.s-field-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+}
+
+.s-readiness-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    transition: 0.2s;
+}
+
+.s-readiness-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    outline: none;
+}
+
+.s-decision-select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #111827;
+    background: #fff;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.s-decision-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    outline: none;
+}
+
+.s-decision-comment {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #111827;
+    resize: vertical;
+    min-height: 60px;
+    font-family: inherit;
+    transition: 0.2s;
+}
+
+.s-decision-comment:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    outline: none;
+}

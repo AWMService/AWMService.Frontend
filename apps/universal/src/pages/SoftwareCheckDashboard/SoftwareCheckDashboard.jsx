@@ -16,33 +16,41 @@ const SoftwareCheckDashboard = () => {
     const orgUnitId = user?.orgUnitId;
     const semesterId = user?.currentSemesterId;
 
-    const { data: pendingChecks = [] } = usePendingChecks(orgUnitId, semesterId, 'SoftwareCheck');
+    const { data: allChecks = [] } = useAllExpertChecks(orgUnitId, semesterId, 'SoftwareCheck');
     const completeMutation = useCompleteQualityCheckMutation();
 
-    // Local session state — tracks completed decisions (same pattern as NormocontrolPage / AntiPlagiarismDashboard)
-    const [passedDocs, setPassedDocs] = useState([]);
-    const [failedDocs, setFailedDocs] = useState([]);
     const [activeTab, setActiveTab] = useState('pending');
 
     // Per-card inline rejection state
-    const [rejectingId, setRejectingId] = useState(null); // checkId being rejected right now
+    const [rejectingId, setRejectingId] = useState(null);
     const [rejectComment, setRejectComment] = useState('');
-    const [submitting, setSubmitting] = useState({}); // { [checkId]: boolean }
+    const [submitting, setSubmitting] = useState({});
 
-    const displayDocuments = useMemo(() => pendingChecks.map(check => ({
-        id: check.id,
-        workId: check.workId,
-        studentName: check.studentName || `Work #${check.workId}`,
-        topicTitle: check.topicTitle || '—',
-        submittedDate: check.createdAt,
-        attemptNumber: check.attemptNumber || 1,
-        attachmentId: check.attachmentId ?? null,
-        submissionUrl: check.submissionUrl ?? null,
-        status: 'pending',
-    })), [pendingChecks]);
+    const displayDocuments = useMemo(() => allChecks.map(check => {
+        let status = 'pending';
+        if (check.status === 1) status = 'passed';
+        if (check.status === 2) status = 'failed';
+        
+        // Map string status from backend (from QualityCheckStatus)
+        if (check.status === 'Approved') status = 'passed';
+        if (check.status === 'SentForRevision') status = 'failed';
+        if (check.status === 'Pending') status = 'pending';
 
-    const allDocs = [...displayDocuments, ...passedDocs, ...failedDocs];
-    const filteredDocs = allDocs.filter(d =>
+        return {
+            id: check.id,
+            workId: check.workId,
+            studentName: check.studentName || `Work #${check.workId}`,
+            topicTitle: check.topicTitle || '—',
+            submittedDate: check.createdAt,
+            attemptNumber: check.attemptNumber || 1,
+            attachmentId: check.attachmentId ?? null,
+            submissionUrl: check.submissionUrl ?? null,
+            status: status,
+            comment: check.comment
+        };
+    }), [allChecks]);
+
+    const filteredDocs = displayDocuments.filter(d =>
         activeTab === 'pending' ? d.status === 'pending' :
         activeTab === 'failed'  ? d.status === 'failed'  :
         activeTab === 'passed'  ? d.status === 'passed'  : true
@@ -56,7 +64,6 @@ const SoftwareCheckDashboard = () => {
                 checkId: doc.id,
                 checkData: { isPassed: true },
             });
-            setPassedDocs(prev => [...prev, { ...doc, status: 'passed' }]);
         } catch (err) {
             console.error('Failed to pass SW check', err);
         } finally {
@@ -82,7 +89,6 @@ const SoftwareCheckDashboard = () => {
                 checkId: doc.id,
                 checkData: { isPassed: false, comment: rejectComment.trim() || undefined },
             });
-            setFailedDocs(prev => [...prev, { ...doc, status: 'failed', comment: rejectComment.trim() }]);
             setRejectingId(null);
             setRejectComment('');
         } catch (err) {
@@ -93,9 +99,9 @@ const SoftwareCheckDashboard = () => {
     };
 
     const tabs = [
-        { key: 'pending', label: t('softwareCheck.tabPending'), count: displayDocuments.length },
-        { key: 'failed',  label: t('softwareCheck.tabFailed'),  count: failedDocs.length },
-        { key: 'passed',  label: t('softwareCheck.tabPassed'),  count: passedDocs.length },
+        { key: 'pending', label: t('softwareCheck.tabPending'), count: displayDocuments.filter(d => d.status === 'pending').length },
+        { key: 'failed',  label: t('softwareCheck.tabFailed'),  count: displayDocuments.filter(d => d.status === 'failed').length },
+        { key: 'passed',  label: t('softwareCheck.tabPassed'),  count: displayDocuments.filter(d => d.status === 'passed').length },
     ];
 
     return (

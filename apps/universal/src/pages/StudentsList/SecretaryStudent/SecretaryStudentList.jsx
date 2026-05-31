@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { getLocalizedValue, useDefenseSchedule, useRole, ROLES } from "@awm/shared";
+import { getLocalizedValue, useDefenseSchedule, useRole, ROLES, useDownloadScheduleReport } from "@awm/shared";
 import SecretaryJournalDrawer from "./SecretaryJournalDrawer";
+import { Download } from "lucide-react";
 import "./Secretary.css";
 
 export default function SecretaryStudentList() {
@@ -16,6 +17,9 @@ export default function SecretaryStudentList() {
 
     // Fetch real schedule data
     const { data: schedule = [], isLoading: isScheduleLoading } = useDefenseSchedule(Number(commissionId));
+    
+    // Download report mutation
+    const downloadReportMutation = useDownloadScheduleReport();
 
     // Extract commission pre-defense number from first slot (all slots share the same commission)
     const preDefenseNumber = schedule.length > 0 ? (schedule[0]?.preDefenseNumber ?? null) : null;
@@ -101,10 +105,20 @@ export default function SecretaryStudentList() {
     return (
         <div className={`s-page-container ${isDrawerOpen ? "s-drawer-open" : ""}`}>
             <div className="s-main-content">
-                <div className="sec-page-header">
+                <div className="sec-page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <h1 className="s-title">
                         {isSecretary ? t('nav.secretary') : t('roles.chairman')} - {t('commission.commissions')} №{commissionId}
                     </h1>
+                    {isSecretary && (
+                        <button 
+                            className="btn-create-new" 
+                            onClick={() => downloadReportMutation.mutate(Number(commissionId))}
+                            disabled={downloadReportMutation.isPending}
+                        >
+                            <Download size={18} />
+                            <span>{t('commission.downloadProtocol', 'Сформировать ведомость')}</span>
+                        </button>
+                    )}
                 </div>
 
                 <div className="s-topics-grid">

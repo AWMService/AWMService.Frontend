@@ -87,3 +87,15 @@ export const useSaveRepoUrl = (workId) => {
     },
   });
 };
+
+export const useGraduateWorks = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (workIds) => {
+      await apiClient.post('/v1/works/graduate', { workIds });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: workKeys.all });
+    }
+  });
+};

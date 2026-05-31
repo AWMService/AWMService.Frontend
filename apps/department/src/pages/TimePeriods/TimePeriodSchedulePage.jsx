@@ -6,7 +6,8 @@ import {
     getIntlLocale, 
     useAuth, 
     useCommissions, 
-    usePreDefenseSchedule 
+    usePreDefenseSchedule,
+    useDownloadScheduleReport 
 } from '@awm/shared';
 import './TimePeriodSchedulePage.css';
 
@@ -55,6 +56,7 @@ export default function TimePeriodSchedulePage() {
 
     // Fetch schedule for the selected commission
     const { data: schedule = [], isLoading: isScheduleLoading } = usePreDefenseSchedule(selectedCommissionId);
+    const { mutate: downloadScheduleReport, isPending: isDownloading } = useDownloadScheduleReport();
 
     // Get unique dates in schedule
     const uniqueDates = useMemo(() => {
@@ -99,11 +101,34 @@ export default function TimePeriodSchedulePage() {
                     <button className="back-button" onClick={() => navigate(-1)} style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', color: '#4b5563', fontWeight: '600', marginBottom: '16px' }}>
                         <ArrowLeft size={18} /> {t('common.back')}
                     </button>
-                    <div className="header-content-row">
+                    <div className="header-content-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
                         <div className="header-titles">
                             <h1>{t('commission.scheduleTitle', 'График защит и предзащит')}</h1>
                             <p className="subtitle">{t('commission.overallSchedule', 'Расписание работы комиссии и выступлений студентов')}</p>
                         </div>
+                        {selectedCommissionId && (
+                            <button 
+                                onClick={() => downloadScheduleReport(selectedCommissionId)}
+                                disabled={isDownloading}
+                                className="download-button"
+                                style={{ 
+                                    padding: '10px 20px', 
+                                    borderRadius: '8px', 
+                                    border: 'none', 
+                                    background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)', 
+                                    color: '#fff', 
+                                    fontWeight: '600', 
+                                    cursor: 'pointer', 
+                                    boxShadow: '0 4px 6px -1px rgba(59, 130, 246, 0.3)',
+                                    transition: 'all 0.2s',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px'
+                                }}
+                            >
+                                📥 {isDownloading ? t('common.downloading', 'Скачивание...') : t('commission.downloadSchedule', 'Скачать PDF расписания')}
+                            </button>
+                        )}
                     </div>
                 </div>
 

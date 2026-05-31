@@ -15,7 +15,7 @@ import "./EvaluationCriteriaPage.css";
 // Form for adding/editing criteria (simplified inline or could be a modal)
 function CriteriaForm({ initialData, onSubmit, onCancel }) {
     const { t } = useTranslation();
-    const [formData, setFormData] = useState(initialData || { criteriaName: '', maxScore: 10, weight: 1.0 });
+    const [formData, setFormData] = useState(initialData || { criteriaName: '', maxScore: 10, weight: 1.0, sortOrder: 0 });
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -49,6 +49,32 @@ function CriteriaForm({ initialData, onSubmit, onCancel }) {
                     required
                     min="0"
                 />
+                <input 
+                    type="number" 
+                    placeholder={t('criteria.sortOrder', 'Порядок')} 
+                    value={formData.sortOrder}
+                    onChange={e => setFormData({...formData, sortOrder: parseInt(e.target.value) || 0})}
+                    min="0"
+                    className="criteria-form__sort-order"
+                />
+            </div>
+
+            {/* Defense stage type tabs */}
+            <div className="defense-stage-tabs">
+                <button 
+                    type="button"
+                    className={`stage-tab ${formData.defenseStageType === 1 ? 'active' : ''}`}
+                    onClick={() => setFormData({...formData, defenseStageType: 1})}
+                >
+                    {t('criteria.preDefense', 'Предзащиты')}
+                </button>
+                <button 
+                    type="button"
+                    className={`stage-tab ${formData.defenseStageType === 2 ? 'active' : ''}`}
+                    onClick={() => setFormData({...formData, defenseStageType: 2})}
+                >
+                    {t('criteria.gakDefense', 'Защита ГАК')}
+                </button>
             </div>
             <div className="criteria-form__actions">
                 <button type="submit" className="button primary-button">{t('common.save')}</button>
@@ -67,12 +93,13 @@ function EvaluationCriteriaPage() {
 
     const [workTypeId, setWorkTypeId] = useState(1); // 1 = DP, 2 = DR (WorkTypes)
     const [selectedSpecialityId, setSelectedSpecialityId] = useState(null);
+    const [defenseStageType, setDefenseStageType] = useState(1); // 1=PreDefense, 2=GAK
     const [isAdding, setIsFormOpen] = useState(false);
     const [editingId, setEditingId] = useState(null);
     const [deleteTarget, setDeleteTarget] = useState(null);
 
     const { data: specialities = [] } = useOrgUnitSpecialities(orgUnitId);
-    const { data: criteria = [], isLoading } = useEvaluationCriteria(workTypeId, orgUnitId, selectedSpecialityId);
+    const { data: criteria = [], isLoading } = useEvaluationCriteria(workTypeId, orgUnitId, selectedSpecialityId, defenseStageType);
     
     const createMutation = useCreateEvaluationCriteria();
     
@@ -96,6 +123,7 @@ function EvaluationCriteriaPage() {
             workTypeId,
             orgUnitId,
             specialityId: selectedSpecialityId,
+            defenseStageType,
         }, {
             onSuccess: () => setIsFormOpen(false)
         });
@@ -150,6 +178,22 @@ function EvaluationCriteriaPage() {
                         {t('criteria.add', 'Добавить критерий')}
                     </button>
                 )}
+            </div>
+
+            {/* Defense stage type tabs */}
+            <div className="defense-stage-tabs">
+                <button 
+                    className={`stage-tab ${defenseStageType === 1 ? 'active' : ''}`}
+                    onClick={() => setDefenseStageType(1)}
+                >
+                    {t('criteria.preDefense', 'Предзащиты')}
+                </button>
+                <button 
+                    className={`stage-tab ${defenseStageType === 2 ? 'active' : ''}`}
+                    onClick={() => setDefenseStageType(2)}
+                >
+                    {t('criteria.gakDefense', 'Защита ГАК')}
+                </button>
             </div>
 
             {isAdding && (
