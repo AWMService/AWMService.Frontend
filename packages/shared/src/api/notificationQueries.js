@@ -16,7 +16,7 @@ export function useNotifications(skip = 0, take = 20, onlyUnread = null) {
 }
 
 export async function markNotificationAsRead(notificationId) {
-  await apiClient.patch(`/v1/notifications/${notificationId}/read`);
+  await apiClient.post(`/v1/notifications/${notificationId}/read`);
 }
 
 export function useMarkAsRead() {
@@ -31,7 +31,7 @@ export function useMarkAsRead() {
 }
 
 export async function markAllNotificationsAsRead() {
-  await apiClient.patch('/v1/notifications/read-all');
+  await apiClient.post('/v1/notifications/read-all');
 }
 
 export function useMarkAllAsRead() {

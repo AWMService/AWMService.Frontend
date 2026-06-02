@@ -38,6 +38,13 @@ export const adminApi = {
   fetchRoles: async (universityId) => {
     const { data } = await apiClient.get('/v1/Roles', { params: { universityId } });
     return data;
+  },
+
+  // Students
+  fetchStudents: async ({ universityId, search, status }) => {
+    const params = { universityId, search, status };
+    const { data } = await apiClient.get('/v1/Students', { params });
+    return data;
   }
 };
 

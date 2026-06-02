@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useRole, ROLES, getIntlLocale, getLocalizedValue, useAuth, useCommissions, useGenerateProtocol, useProtocol } from '@awm/shared';
+import { useRole, ROLES, getIntlLocale, getLocalizedValue, useAuth, useCommissions, useGenerateProtocol, useDownloadProtocolPdf } from '@awm/shared';
 import './CommissionPage.css';
 
 function CommissionPage() {
@@ -20,9 +20,7 @@ function CommissionPage() {
 
     const generateProtocolMutation = useGenerateProtocol();
 
-    // For protocol preview, fetch protocol if commission has protocolId
-    const [previewProtocolId, setPreviewProtocolId] = useState(null);
-    const { data: protocolData } = useProtocol(previewProtocolId);
+    const downloadProtocolMutation = useDownloadProtocolPdf();
 
     const filteredCommissions = commissions.filter(c => {
         // Mock status logic: if commission has no upcoming schedule, treat as completed
@@ -40,12 +38,16 @@ function CommissionPage() {
     const handleConfirmGenerateProtocol = async () => {
         if (!protocolModal) return;
         try {
-            const result = await generateProtocolMutation.mutateAsync({
+            const newProtocolId = await generateProtocolMutation.mutateAsync({
                 commissionId: protocolModal.id,
                 // Add other required fields based on backend contract
             });
-            setPreviewProtocolId(result);
             setProtocolModal(null);
+            
+            // Download the newly generated protocol PDF
+            if (newProtocolId) {
+                downloadProtocolMutation.mutate(newProtocolId);
+            }
         } catch (error) {
             console.error('Failed to generate protocol', error);
         }
@@ -170,39 +172,9 @@ function CommissionPage() {
                             <p>{t('commission.chairman')}: {protocolModal.chairmanName || '—'} | {t('commission.secretary')}: {protocolModal.secretaryName || '—'}</p>
                         </div>
 
-                        <div className="protocol-table-wrapper">
-                            <table className="protocol-table">
-                                <thead>
-                                    <tr>
-                                        <th>№</th>
-                                        <th>{t('commission.studentFullName')}</th>
-                                        <th>{t('commission.thesisTitle')}</th>
-                                        <th>{t('commission.averageScore')}</th>
-                                        <th>{t('commission.decision')}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {(protocolData?.students || []).map((s, idx) => (
-                                        <tr key={s.id || idx} className={idx % 2 === 0 ? 'protocol-row-even' : ''}>
-                                            <td>{idx + 1}</td>
-                                            <td>{s.name}</td>
-                                            <td>{getLocalizedValue(s.thesis, i18n.language)}</td>
-                                            <td className="protocol-score">{s.avgScore}</td>
-                                            <td>
-                                                <span className={`protocol-decision ${s.decision}`}>
-                                                    {s.decision === 'credit' ? t('status.credit') : t('status.noCredit')}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {(!protocolData?.students || protocolData.students.length === 0) && (
-                                        <tr>
-                                            <td colSpan={5} style={{ textAlign: 'center' }}>{t('common.noData')}</td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
+                            <div className="protocol-preview-placeholder">
+                                <p>{t('commission.protocolWillBeGeneratedAndDownloaded')}</p>
+                            </div>
 
                         <div className="protocol-modal-footer">
                             <button className="action-btn secondary" onClick={() => setProtocolModal(null)}>

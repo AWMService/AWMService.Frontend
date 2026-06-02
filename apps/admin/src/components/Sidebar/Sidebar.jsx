@@ -12,22 +12,52 @@ export function AdminSidebar() {
 
   const navigationItems = [
     {
-      href: "/supervisors",
-      labelKey: "nav.supervisors",
+      href: "/users",
+      labelKey: "admin.users",
       icon: supervisorsIcon,
-      descriptionKey: "department.supervisors",
+      descriptionKey: "admin.users",
     },
     {
-      href: "/time-periods",
-      labelKey: "nav.timePeriods",
+      href: "/roles",
+      labelKey: "nav.roles",
+      icon: supervisorsIcon,
+      descriptionKey: "admin.roles",
+    },
+    {
+      href: "/departments",
+      labelKey: "nav.departments",
       icon: periodsIcon,
-      descriptionKey: "department.timePeriods",
+      descriptionKey: "nav.departments",
     },
     {
-      href: "/directions-topics?tab=directions",
-      labelKey: "nav.directionsTopics",
+      href: "/institutes",
+      labelKey: "nav.faculties",
       icon: graduationCapIcon,
-      descriptionKey: "department.directions",
+      descriptionKey: "nav.faculties",
+    },
+    {
+      href: "/education-levels",
+      labelKey: "admin.educationLevels",
+      icon: graduationCapIcon, // Use appropriate icon
+      descriptionKey: "admin.educationLevels",
+    },
+    {
+      href: "/programs",
+      labelKey: "admin.programs",
+      icon: periodsIcon,
+      descriptionKey: "admin.programs",
+    },
+    {
+      href: "/work-types",
+      labelKey: "admin.workTypes",
+      icon: settingsIcon,
+      descriptionKey: "admin.workTypes",
+    },
+    {
+      href: "/students",
+      labelKey: "nav.students",
+      icon: supervisorsIcon,
+      descriptionKey: "nav.students",
     },
     {
       href: "/settings",

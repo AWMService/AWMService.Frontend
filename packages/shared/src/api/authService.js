@@ -7,7 +7,7 @@ export const authService = {
     storeAuthTokens(data);
     return data;
   },
-  
+
   logout: () => {
     clearAuthTokens();
   },

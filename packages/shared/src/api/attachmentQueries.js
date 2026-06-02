@@ -131,10 +131,9 @@ export async function downloadExpertDocument(workId, checkId, fileName) {
 }
 
 export async function fetchCurrentWorkId() {
-  // TODO: Verify this endpoint or update when works controller is added
-  const { data } = await apiClient.get('/v1/student-works/my');
-  if (!data || data.length === 0) return null;
-  return data[0].id;
+  const { data } = await apiClient.get('/v1/works/my-progress');
+  if (!data || !data.workId) return null;
+  return data.workId;
 }
 
 export function useCurrentWorkId() {
