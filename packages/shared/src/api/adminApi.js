@@ -49,39 +49,21 @@ export const adminApi = {
 };
 
 export const orgApi = {
-  // Institutes
-  fetchInstitutes: async (universityId) => {
-    const { data } = await apiClient.get('/v1/Institutes', { params: { universityId } });
+  // Org Units
+  fetchOrgUnits: async (typeId) => {
+    const { data } = await apiClient.get('/v1/OrgUnits', { params: { typeId } });
     return data;
   },
-  createInstitute: async (instituteData) => {
-    const { data } = await apiClient.post('/v1/Institutes', instituteData);
+  createOrgUnit: async (orgUnitData) => {
+    const { data } = await apiClient.post('/v1/OrgUnits', orgUnitData);
     return data;
   },
-  updateInstitute: async (id, instituteData) => {
-    const { data } = await apiClient.put(`/v1/Institutes/${id}`, instituteData);
+  updateOrgUnit: async (id, orgUnitData) => {
+    const { data } = await apiClient.put(`/v1/OrgUnits/${id}`, orgUnitData);
     return data;
   },
-  deleteInstitute: async (id) => {
-    const { data } = await apiClient.delete(`/v1/Institutes/${id}`);
-    return data;
-  },
-  
-  // Departments
-  fetchDepartments: async (universityId) => {
-    const { data } = await apiClient.get('/v1/Departments', { params: { universityId } });
-    return data;
-  },
-  createDepartment: async (instituteId, deptData) => {
-    const { data } = await apiClient.post(`/v1/Institutes/${instituteId}/departments`, deptData);
-    return data;
-  },
-  updateDepartment: async (id, deptData) => {
-    const { data } = await apiClient.put(`/v1/org-units/${id}`, deptData);
-    return data;
-  },
-  deleteDepartment: async (id) => {
-    const { data } = await apiClient.delete(`/v1/org-units/${id}`);
+  deleteOrgUnit: async (id) => {
+    const { data } = await apiClient.delete(`/v1/OrgUnits/${id}`);
     return data;
   }
 };
@@ -105,21 +87,21 @@ export const eduApi = {
     return data;
   },
 
-  // Degree Levels
-  fetchDegreeLevels: async () => {
-    const { data } = await apiClient.get('/v1/degree-levels');
+  // Speciality Levels
+  fetchSpecialityLevels: async () => {
+    const { data } = await apiClient.get('/v1/speciality-levels');
     return data;
   },
-  createDegreeLevel: async (levelData) => {
-    const { data } = await apiClient.post('/v1/degree-levels', levelData);
+  createSpecialityLevel: async (levelData) => {
+    const { data } = await apiClient.post('/v1/speciality-levels', levelData);
     return data;
   },
-  updateDegreeLevel: async (id, levelData) => {
-    const { data } = await apiClient.put(`/v1/degree-levels/${id}`, levelData);
+  updateSpecialityLevel: async (id, levelData) => {
+    const { data } = await apiClient.put(`/v1/speciality-levels/${id}`, levelData);
     return data;
   },
-  deleteDegreeLevel: async (id) => {
-    const { data } = await apiClient.delete(`/v1/degree-levels/${id}`);
+  deleteSpecialityLevel: async (id) => {
+    const { data } = await apiClient.delete(`/v1/speciality-levels/${id}`);
     return data;
   }
 };
@@ -145,8 +127,8 @@ export const wfApi = {
 };
 
 export const staffApi = {
-  fetchStaffByDepartment: async (orgUnitId) => {
-    const { data } = await apiClient.get(`/v1/org-units/${orgUnitId}/supervisors/available`);
+  fetchOrgUnitEmployees: async (orgUnitId) => {
+    const { data } = await apiClient.get(`/v1/org-units/${orgUnitId}/employees/available`);
     return data;
   },
   createStaff: async (staffData) => {
@@ -158,47 +140,47 @@ export const staffApi = {
     return data;
   },
   updateWorkload: async (orgUnitId, userId, semesterId, specialityId, maxWorkload) => {
-    const { data } = await apiClient.put(`/v1/org-units/${orgUnitId}/supervisors/${userId}/workload`, 
+    const { data } = await apiClient.put(`/v1/org-units/${orgUnitId}/employees/${userId}/workload`, 
       { maxWorkload },
       { params: { semesterId, specialityId } }
     );
     return data;
   },
-  approveSupervisors: async (orgUnitId, semesterId, specialityId, assignments) => {
-    const { data } = await apiClient.post(`/v1/org-units/${orgUnitId}/supervisors/approve`, {
+  approveEmployees: async (orgUnitId, semesterId, specialityId, assignments) => {
+    const { data } = await apiClient.post(`/v1/org-units/${orgUnitId}/employees/approve`, {
       semesterId,
       specialityId,
       assignments
     });
     return data;
   },
-  fetchSupervisors: async (orgUnitId, semesterId, specialityId = null) => {
-    const { data } = await apiClient.get(`/v1/org-units/${orgUnitId}/supervisors/approved`, {
+  fetchApprovedEmployees: async (orgUnitId, semesterId, specialityId = null) => {
+    const { data } = await apiClient.get(`/v1/org-units/${orgUnitId}/employees/approved`, {
       params: { semesterId, specialityId }
     });
     return data;
   },
-  removeSupervisor: async (orgUnitId, userId, semesterId, specialityId = null) => {
-    const { data } = await apiClient.delete(`/v1/org-units/${orgUnitId}/supervisors/${userId}`, {
+  removeEmployee: async (orgUnitId, userId, semesterId, specialityId = null) => {
+    const { data } = await apiClient.delete(`/v1/org-units/${orgUnitId}/employees/${userId}`, {
       params: { semesterId, specialityId }
     });
     return data;
   },
-  fetchSupervisorsStatus: async (orgUnitId, semesterId, specialityId = null) => {
-    const { data } = await apiClient.get(`/v1/org-units/${orgUnitId}/supervisors/status`, {
+  fetchEmployeesStatus: async (orgUnitId, semesterId, specialityId = null) => {
+    const { data } = await apiClient.get(`/v1/org-units/${orgUnitId}/employees/status`, {
       params: { semesterId, specialityId }
     });
     return data;
   },
-  confirmSupervisors: async (orgUnitId, semesterId, specialityId = null) => {
-    const { data } = await apiClient.post(`/v1/org-units/${orgUnitId}/supervisors/confirm`, {
+  confirmEmployees: async (orgUnitId, semesterId, specialityId = null) => {
+    const { data } = await apiClient.post(`/v1/org-units/${orgUnitId}/employees/confirm`, {
       semesterId,
       specialityId
     });
     return data;
   },
-  unlockSupervisors: async (orgUnitId, semesterId, specialityId = null) => {
-    const { data } = await apiClient.post(`/v1/org-units/${orgUnitId}/supervisors/unlock`, {
+  unlockEmployees: async (orgUnitId, semesterId, specialityId = null) => {
+    const { data } = await apiClient.post(`/v1/org-units/${orgUnitId}/employees/unlock`, {
       semesterId,
       specialityId
     });

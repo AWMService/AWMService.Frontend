@@ -4,34 +4,34 @@ import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { 
     useAuth, 
-    useStaffByDepartment, 
-    useSupervisors, 
-    useUpdateStaffWorkload, 
-    useApproveSupervisors,
-    useSupervisorsStatus,
-    useConfirmSupervisors,
-    useUnlockSupervisors,
+    useOrgUnitEmployees, 
+    useApprovedEmployees, 
+    useUpdateEmployeeWorkload, 
+    useApproveEmployees,
+    useEmployeesStatus,
+    useConfirmEmployees,
+    useUnlockEmployees,
     ConfirmModal
 } from "@awm/shared";
-import "./SupervisorsPage.css";
-import { SupervisorCard, SupervisorSelectionDialog } from "@awm/shared";
+import "./EmployeesPage.css";
+import { EmployeeCard, EmployeeSelectionDialog } from "@awm/shared";
 import plusIcon from "../../assets/icons/plus-icon.svg";
 import searchIcon from "../../assets/icons/search-icon.svg";
 
-function SupervisorsPage() {
+function EmployeesPage() {
     const { t } = useTranslation();
     const { user } = useAuth();
     const orgUnitId = user?.orgUnitId;
     const semesterId = user?.currentSemesterId;
 
-    const { data: allTeachers = [], isLoading: isLoadingTeachers } = useStaffByDepartment(orgUnitId);
-    const { data: rawSupervisors = [], isLoading: isLoadingSupervisors } = useSupervisors(orgUnitId, semesterId);
-    const { data: statusData, isLoading: isLoadingStatus } = useSupervisorsStatus(orgUnitId, semesterId);
+    const { data: allTeachers = [], isLoading: isLoadingTeachers } = useOrgUnitEmployees(orgUnitId);
+    const { data: rawEmployees = [], isLoading: isLoadingEmployees } = useApprovedEmployees(orgUnitId, semesterId);
+    const { data: statusData, isLoading: isLoadingStatus } = useEmployeesStatus(orgUnitId, semesterId);
     
-    const approveMutation = useApproveSupervisors(orgUnitId, semesterId);
-    const updateWorkloadMutation = useUpdateStaffWorkload(orgUnitId, semesterId);
-    const confirmMutation = useConfirmSupervisors(orgUnitId, semesterId);
-    const unlockMutation = useUnlockSupervisors(orgUnitId, semesterId);
+    const approveMutation = useApproveEmployees(orgUnitId, semesterId);
+    const updateWorkloadMutation = useUpdateEmployeeWorkload(orgUnitId, semesterId);
+    const confirmMutation = useConfirmEmployees(orgUnitId, semesterId);
+    const unlockMutation = useUnlockEmployees(orgUnitId, semesterId);
 
     const [searchTerm, setSearchTerm] = useState("");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -53,28 +53,28 @@ function SupervisorsPage() {
         assignedDate: staff.assignedDate || new Date(), 
     });
 
-    const supervisors = useMemo(() => rawSupervisors.map(mapStaffToUI), [rawSupervisors]);
+    const employees = useMemo(() => rawEmployees.map(mapStaffToUI), [rawEmployees]);
     const teachersUI = useMemo(() => allTeachers.map(mapStaffToUI), [allTeachers]);
 
     const availableTeachers = useMemo(() => {
-        const supervisorIds = new Set(supervisors.map((s) => s.id));
-        return teachersUI.filter((t) => !supervisorIds.has(t.id));
-    }, [supervisors, teachersUI]);
+        const employeeIds = new Set(employees.map((e) => e.id));
+        return teachersUI.filter((t) => !employeeIds.has(t.id));
+    }, [employees, teachersUI]);
 
-    const filteredSupervisors = useMemo(
+    const filteredEmployees = useMemo(
         () =>
-            supervisors.filter(
-                (s) =>
-                    s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    s.specialization.toLowerCase().includes(searchTerm.toLowerCase())
+            employees.filter(
+                (e) =>
+                    e.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    e.specialization.toLowerCase().includes(searchTerm.toLowerCase())
             ),
-        [supervisors, searchTerm]
+        [employees, searchTerm]
     );
 
-    const handleAddSupervisors = async (selectedIds) => {
-        const currentAssignments = supervisors.map(s => ({
-            userId: s.id,
-            maxWorkload: s.maxStudents || 5
+    const handleAddEmployees = async (selectedIds) => {
+        const currentAssignments = employees.map(e => ({
+            userId: e.id,
+            maxWorkload: e.maxStudents || 5
         }));
         
         const newAssignments = selectedIds.map(id => {
@@ -90,12 +90,12 @@ function SupervisorsPage() {
         setIsDialogOpen(false);
     };
 
-    const handleRemoveSupervisor = async (id) => {
-        const remainingAssignments = supervisors
-            .filter(s => s.id !== id)
-            .map(s => ({
-                userId: s.id,
-                maxWorkload: s.maxStudents || 5
+    const handleRemoveEmployee = async (id) => {
+        const remainingAssignments = employees
+            .filter(e => e.id !== id)
+            .map(e => ({
+                userId: e.id,
+                maxWorkload: e.maxStudents || 5
             }));
         await approveMutation.mutateAsync(remainingAssignments);
     };
@@ -104,32 +104,32 @@ function SupervisorsPage() {
         await updateWorkloadMutation.mutateAsync({ userId: id, maxWorkload: maxStudents });
     };
 
-    const handleConfirmSupervisors = async () => {
+    const handleConfirmEmployees = async () => {
         await confirmMutation.mutateAsync();
         setIsConfirmModalOpen(false);
     };
 
-    const handleUnlockSupervisors = async () => {
+    const handleUnlockEmployees = async () => {
         await unlockMutation.mutateAsync();
         setIsUnlockModalOpen(false);
     };
 
-    if (isLoadingTeachers || isLoadingSupervisors || isLoadingStatus) {
-        return <div className="supervisors-page"><p>{t('common.loading', 'Loading...')}</p></div>;
+    if (isLoadingTeachers || isLoadingEmployees || isLoadingStatus) {
+        return <div className="employees-page"><p>{t('common.loading', 'Loading...')}</p></div>;
     }
 
     if (!orgUnitId) {
-        return <div className="supervisors-page"><p>{t('department.noDepartmentSelected', 'No department selected.')}</p></div>;
+        return <div className="employees-page"><p>{t('department.noOrgUnitSelected', 'No organization unit selected.')}</p></div>;
     }
 
     return (
-        <div className="supervisors-page">
+        <div className="employees-page">
             <div className="page-header">
                 <div className="page-header-info">
                     <div>
-                        <h1 className="page-title">{t('department.supervisorsTitle')}</h1>
+                        <h1 className="page-title">{t('department.employeesTitle')}</h1>
                         <p className="page-subtitle">
-                            {t('department.supervisorsSubtitle')}
+                            {t('department.employeesSubtitle')}
                         </p>
                     </div>
                 </div>
@@ -141,16 +141,16 @@ function SupervisorsPage() {
                             onClick={() => setIsUnlockModalOpen(true)}
                             disabled={unlockMutation.isPending}
                         >
-                            {t('department.unlockSupervisors', 'Разблокировать для изменений')}
+                            {t('department.unlockEmployees', 'Разблокировать для изменений')}
                         </button>
                     ) : (
                         <>
                             <button
                                 className="button secondary-button"
                                 onClick={() => setIsConfirmModalOpen(true)}
-                                disabled={confirmMutation.isPending || supervisors.length === 0}
+                                disabled={confirmMutation.isPending || employees.length === 0}
                             >
-                                {t('department.confirmSupervisors', 'Утвердить состав НР')}
+                                {t('department.confirmEmployees', 'Утвердить состав НР')}
                             </button>
                             <button
                                 className="button primary-button"
@@ -158,7 +158,7 @@ function SupervisorsPage() {
                                 disabled={approveMutation.isPending}
                             >
                                 <img src={plusIcon} alt="Add" className="button-icon" />
-                                {t('department.addSupervisors')}
+                                {t('department.addEmployees')}
                             </button>
                         </>
                     )}
@@ -172,7 +172,7 @@ function SupervisorsPage() {
                         <path d="m9 12 2 2 4-4" />
                     </svg>
                     <div className="banner-text">
-                        <strong>{t('department.supervisorsConfirmedBannerTitle', 'Состав научных руководителей утвержден.')}</strong> {t('department.supervisorsConfirmedBannerBody', 'Изменение состава заблокировано. Нагрузку преподавателей можно изменять без разблокировки.')}
+                        <strong>{t('department.employeesConfirmedBannerTitle', 'Состав научных руководителей утвержден.')}</strong> {t('department.employeesConfirmedBannerBody', 'Изменение состава заблокировано. Нагрузку преподавателей можно изменять без разблокировки.')}
                     </div>
                 </div>
             )}
@@ -181,53 +181,53 @@ function SupervisorsPage() {
                 <img src={searchIcon} alt="Search" className="search-bar-icon" />
                 <input
                     type="text"
-                    placeholder={t('department.searchSupervisors')}
+                    placeholder={t('department.searchEmployees')}
                     className="search-bar-input"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
 
-            <div className="supervisors-grid-layout">
-                {filteredSupervisors.map((supervisor) => (
-                    <SupervisorCard
-                        key={supervisor.id}
-                        supervisor={supervisor}
-                        onRemove={isConfirmed ? null : handleRemoveSupervisor}
+            <div className="employees-grid-layout">
+                {filteredEmployees.map((employee) => (
+                    <EmployeeCard
+                        key={employee.id}
+                        employee={employee}
+                        onRemove={isConfirmed ? null : handleRemoveEmployee}
                         onUpdateWorkload={handleUpdateWorkload}
                     />
                 ))}
-                {filteredSupervisors.length === 0 && (
+                {filteredEmployees.length === 0 && (
                     <div className="empty-state">
                         <p>{t('department.teachersNotFound')}</p>
                     </div>
                 )}
             </div>
 
-            <SupervisorSelectionDialog
+            <EmployeeSelectionDialog
                 isOpen={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
                 availableTeachers={availableTeachers}
-                onConfirm={handleAddSupervisors}
+                onConfirm={handleAddEmployees}
             />
 
             <ConfirmModal
                 isOpen={isConfirmModalOpen}
-                title={t('department.confirmSupervisorsTitle', 'Утверждение состава руководителей')}
-                message={t('department.confirmSupervisorsMessage', 'Вы уверены, что хотите утвердить состав научных руководителей? После утверждения внесение изменений (добавление/удаление) будет заблокировано. Нагрузку руководителей можно будет изменять без разблокировки.')}
-                onConfirm={handleConfirmSupervisors}
+                title={t('department.confirmEmployeesTitle', 'Утверждение состава руководителей')}
+                message={t('department.confirmEmployeesMessage', 'Вы уверены, что хотите утвердить состав научных руководителей? После утверждения внесение изменений (добавление/удаление) будет заблокировано. Нагрузку руководителей можно будет изменять без разблокировки.')}
+                onConfirm={handleConfirmEmployees}
                 onCancel={() => setIsConfirmModalOpen(false)}
             />
 
             <ConfirmModal
                 isOpen={isUnlockModalOpen}
-                title={t('department.unlockSupervisorsTitle', 'Разблокировка состава руководителей')}
-                message={t('department.unlockSupervisorsMessage', 'Вы уверены, что хотите разблокировать состав научных руководителей для редактирования? Вы сможете добавлять и удалять руководителей.')}
-                onConfirm={handleUnlockSupervisors}
+                title={t('department.unlockEmployeesTitle', 'Разблокировка состава руководителей')}
+                message={t('department.unlockEmployeesMessage', 'Вы уверены, что хотите разблокировать состав научных руководителей для редактирования? Вы сможете добавлять и удалять руководителей.')}
+                onConfirm={handleUnlockEmployees}
                 onCancel={() => setIsUnlockModalOpen(false)}
             />
         </div>
     );
 }
 
-export default SupervisorsPage;
+export default EmployeesPage;

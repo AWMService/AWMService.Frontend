@@ -66,7 +66,7 @@ export { default as CommissionScheduleCard } from './components/domain/TimePerio
 export { default as MembersModal } from './components/domain/TimePeriods/SetUp/MembersModal';
 export { default as TimePeriodCard } from './components/domain/TimePeriods/TimePeriodCard/TimePeriodCard';
 export { default as TimePeriodFormDialog } from './components/domain/TimePeriods/TimePeriodFormDialog/TimePeriodFormDialog';
-export { SupervisorCard } from './components/domain/supervisors/SupervisorCard';
-export { SupervisorSelectionDialog } from './components/domain/supervisors/SupervisorSelectionDialog';
-export { TeacherSelectionItem } from './components/domain/supervisors/TeacherSelectionItem';
+export { EmployeeCard } from './components/domain/employees/EmployeeCard';
+export { EmployeeSelectionDialog } from './components/domain/employees/EmployeeSelectionDialog';
+export { TeacherSelectionItem } from './components/domain/employees/TeacherSelectionItem';
 export { getInitials } from './utils/user';

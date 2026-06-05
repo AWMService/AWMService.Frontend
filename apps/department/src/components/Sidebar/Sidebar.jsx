@@ -16,10 +16,10 @@ export function Sidebar() {
 
   const navigationItems = [
     {
-      href: "/supervisors",
-      labelKey: "nav.supervisors",
+      href: "/employees",
+      labelKey: "nav.employees",
       icon: supervisorsIcon,
-      descriptionKey: "department.supervisors",
+      descriptionKey: "department.employees",
     },
     {
       href: "/initial-periods",
@@ -41,7 +41,8 @@ export function Sidebar() {
     },
     {
       href: "/evaluation-criteria",
-      labelKey: "nav.evaluationCriteria",
+      labelKey: "nav.evaluationCite 
+ria",
       icon: documentCheckIcon,
       descriptionKey: "department.evaluationCriteriaDescription",
     },

@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { RequireAuth, ROLES } from '@awm/shared';
 import { Header } from './components/Header/Header';
 import { Sidebar } from './components/Sidebar/Sidebar';
-import SupervisorsPage from './pages/Supervisors/SupervisorsPage.jsx';
+import EmployeesPage from './pages/Employees/EmployeesPage.jsx';
 import TimePeriodsPage from './pages/TimePeriods/TimePeriodsPage.jsx';
 import SettingsPage from './pages/Settings/SettingsPage.jsx';
 import TimePeriodSetupPage from './pages/TimePeriods/TimePeriodsSetupPage/TimePeriodSetupPage.jsx';
@@ -31,8 +31,8 @@ function App() {
                     <Sidebar />
                     <main className="content">
                         <Routes>
-                            <Route index element={<Navigate to="/supervisors" replace />} />
-                            <Route path="/supervisors" element={<SupervisorsPage />} />
+                            <Route index element={<Navigate to="/employees" replace />} />
+                            <Route path="/employees" element={<EmployeesPage />} />
                             <Route path="/time-periods" element={<TimePeriodsPage />} />
                             <Route path="/settings" element={<SettingsPage />} />
                             <Route path="/time-periods/:id/setup" element={<TimePeriodSetupPage />} />
@@ -49,7 +49,7 @@ function App() {
                             <Route path="/defense-readiness" element={<DefenseReadinessPage />} />
                             <Route path="/reviewers" element={<ReviewersPage />} />
                             <Route path="/reviewer-assignment" element={<ReviewerAssignmentPage />} />
-                            <Route path="*" element={<Navigate to="/supervisors" replace />} />
+                            <Route path="*" element={<Navigate to="/employees" replace />} />
                         </Routes>
                     </main>
                 </div>

@@ -1,67 +1,35 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orgApi, eduApi, wfApi } from './adminApi';
 
-// Institutes
-export const useInstitutes = (universityId = 1) => {
+// Org Units
+export const useOrgUnits = (typeId) => {
   return useQuery({
-    queryKey: ['institutes', universityId],
-    queryFn: () => orgApi.fetchInstitutes(universityId),
+    queryKey: ['orgUnits', typeId],
+    queryFn: () => orgApi.fetchOrgUnits(typeId),
   });
 };
 
-export const useCreateInstitute = () => {
+export const useCreateOrgUnit = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: orgApi.createInstitute,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['institutes'] }),
+    mutationFn: orgApi.createOrgUnit,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['orgUnits'] }),
   });
 };
 
-export const useUpdateInstitute = () => {
+export const useUpdateOrgUnit = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, ...data }) => orgApi.updateInstitute(id, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['institutes'] }),
+    mutationFn: ({ id, ...data }) => orgApi.updateOrgUnit(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['orgUnits'] }),
   });
 };
 
-export const useDeleteInstitute = () => {
+export const useDeleteOrgUnit = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: orgApi.deleteInstitute,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['institutes'] }),
-  });
-};
-
-// Departments
-export const useDepartments = (universityId = 1) => {
-  return useQuery({
-    queryKey: ['departments', universityId],
-    queryFn: () => orgApi.fetchDepartments(universityId),
-  });
-};
-
-export const useCreateDepartment = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ instituteId, ...data }) => orgApi.createDepartment(instituteId, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['departments'] }),
-  });
-};
-
-export const useUpdateDepartment = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, ...data }) => orgApi.updateDepartment(id, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['departments'] }),
-  });
-};
-
-export const useDeleteDepartment = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: orgApi.deleteDepartment,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['departments'] }),
+    mutationFn: orgApi.deleteOrgUnit,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['orgUnits'] }),
   });
 };
 
@@ -97,35 +65,35 @@ export const useDeleteProgram = () => {
   });
 };
 
-// Degree Levels
-export const useDegreeLevels = () => {
+// Speciality Levels
+export const useSpecialityLevels = () => {
   return useQuery({
-    queryKey: ['degreeLevels'],
-    queryFn: eduApi.fetchDegreeLevels,
+    queryKey: ['specialityLevels'],
+    queryFn: eduApi.fetchSpecialityLevels,
   });
 };
 
-export const useCreateDegreeLevel = () => {
+export const useCreateSpecialityLevel = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: eduApi.createDegreeLevel,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['degreeLevels'] }),
+    mutationFn: eduApi.createSpecialityLevel,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['specialityLevels'] }),
   });
 };
 
-export const useUpdateDegreeLevel = () => {
+export const useUpdateSpecialityLevel = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, ...data }) => eduApi.updateDegreeLevel(id, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['degreeLevels'] }),
+    mutationFn: ({ id, ...data }) => eduApi.updateSpecialityLevel(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['specialityLevels'] }),
   });
 };
 
-export const useDeleteDegreeLevel = () => {
+export const useDeleteSpecialityLevel = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: eduApi.deleteDegreeLevel,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['degreeLevels'] }),
+    mutationFn: eduApi.deleteSpecialityLevel,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['specialityLevels'] }),
   });
 };
 

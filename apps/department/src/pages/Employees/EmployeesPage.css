@@ -1,5 +1,5 @@
 
-.supervisors-page {
+.employees-page {
     background-color: #F9FAFB;
     flex: 1;
     margin-top: 64px;
@@ -141,8 +141,8 @@
     font-size: 0.875rem;
 }
 
-/* Supervisor Grid */
-.supervisors-grid-layout {
+/* Employees Grid */
+.employees-grid-layout {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -188,6 +188,3 @@
     stroke-linecap: round;
     stroke-linejoin: round;
 }
-
-
-

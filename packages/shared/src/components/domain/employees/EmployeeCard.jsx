@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getIntlLocale } from "@awm/shared";
-import "./SupervisorCard.css";
+import "./EmployeeCard.css";
 
-export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
+export function EmployeeCard({ employee, onRemove, onUpdateWorkload }) {
   const { t, i18n } = useTranslation();
   const locale = getIntlLocale(i18n.language);
   const loadPercent = Math.min(
-      Math.round((supervisor.currentStudents / supervisor.maxStudents) * 100),
+      Math.round((employee.currentStudents / employee.maxStudents) * 100),
       100
   );
 
@@ -16,27 +16,27 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
 
   const [isEditingWorkload, setIsEditingWorkload] = useState(false);
   const [newMaxStudents, setNewMaxStudents] = useState(
-      supervisor.maxStudents
+      employee.maxStudents
   );
 
   const handleSaveWorkload = () => {
-    onUpdateWorkload(supervisor.id, newMaxStudents);
+    onUpdateWorkload(employee.id, newMaxStudents);
     setIsEditingWorkload(false);
   };
 
   const handleCancelEdit = () => {
-    setNewMaxStudents(supervisor.maxStudents);
+    setNewMaxStudents(employee.maxStudents);
     setIsEditingWorkload(false);
   };
 
   return (
-      <div className="supervisor-card">
+      <div className="employee-card">
         <div className="card-header">
           <div>
-            <h3 className="card-title">{supervisor.name}</h3>
+            <h3 className="card-title">{employee.name}</h3>
             <p className="card-description">
-              {supervisor.positionTitle}
-              {supervisor.specialization && ` • ${supervisor.specialization}`}
+              {employee.positionTitle}
+              {employee.specialization && ` • ${employee.specialization}`}
             </p>
           </div>
 
@@ -58,7 +58,7 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
                 <button
                     className="icon-button danger"
                     title={t('common.delete')}
-                    onClick={() => onRemove(supervisor.id)}
+                    onClick={() => onRemove(employee.id)}
                 >
                   <svg viewBox="0 0 24 24">
                     <path d="M3 6h18" />
@@ -82,20 +82,20 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
                   <path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" />
                   <path d="m22 6-10 7L2 6" />
                 </svg>
-                <span>{supervisor.email}</span>
+                <span>{employee.email}</span>
               </div>
 
               <div className="contact-item">
                 <svg viewBox="0 0 24 24">
                   <path d="M22 16.92V21a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2H7a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92Z" />
                 </svg>
-                <span>{supervisor.phone}</span>
+                <span>{employee.phone}</span>
               </div>
             </div>
 
             <div>
               <h4 className="section-title">{t('department.workload')}</h4>
-              <p>{t('supervisor.currentStudents')}: {supervisor.currentStudents}</p>
+              <p>{t('employee.currentStudents')}: {employee.currentStudents}</p>
 
               {isEditingWorkload ? (
                   <div className="edit-workload-input">
@@ -131,7 +131,7 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
                   </div>
               ) : (
                   <div>
-                    <p>{t('supervisor.maxStudents')}: {supervisor.maxStudents}</p>
+                    <p>{t('employee.maxStudents')}: {employee.maxStudents}</p>
 
                     <div className="progress-wrapper">
                       <div className="progress-bar">
@@ -146,11 +146,11 @@ export function SupervisorCard({ supervisor, onRemove, onUpdateWorkload }) {
               )}
             </div>
 
-            {supervisor.assignedDate && (
+            {employee.assignedDate && (
                 <div>
                   <h4 className="section-title">{t('department.assignedDate')}</h4>
                   <span>
-                {new Date(supervisor.assignedDate).toLocaleDateString(locale)}
+                {new Date(employee.assignedDate).toLocaleDateString(locale)}
               </span>
                 </div>
             )}
