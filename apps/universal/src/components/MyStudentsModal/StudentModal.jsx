@@ -32,6 +32,7 @@ export default function StudentModal({ student, setStudent, setStudents }) {
 
     const getStageStyle = (stage) => {
         const s = stage ? stage.toString().toLowerCase() : "";
+        if (s === "awaitingdepartmentapproval") return "sm-badge-orange";
         if (s === "predefense" || s === "pre1") return "sm-badge-purple";
         if (s === "defense") return "sm-badge-green";
         if (s === "development") return "sm-badge-orange";
@@ -105,6 +106,7 @@ export default function StudentModal({ student, setStudent, setStudents }) {
 
     const stageKey = student.stageKey || student.stage
     const stageLabel = stageKey ? t(`student.${stageKey}`) : t('common.noData')
+    const isAwaitingApproval = student.isAwaitingDepartmentApproval === true
 
     return (
         <div className="sm-overlay" onClick={() => setStudent(null)}>
@@ -128,6 +130,7 @@ export default function StudentModal({ student, setStudent, setStudents }) {
                 </div>
 
                 {/* CONTENT GRID */}
+                {!isAwaitingApproval && (
                 <div className="sm-content-grid">
                     {/* LEFT COLUMN */}
                     <div className="sm-column">
@@ -223,8 +226,10 @@ export default function StudentModal({ student, setStudent, setStudents }) {
                         </div>
                     </div>
                 </div>
+                )}
 
                 {/* SUPERVISOR REVIEW SECTION */}
+                {!isAwaitingApproval && (
                 <div className={`sm-review-section ${isSubmitted ? "sm-review-submitted" : ""}`}>
                     <div className="sm-review-header">
                         <h4 className="sm-section-label">
@@ -293,6 +298,7 @@ export default function StudentModal({ student, setStudent, setStudents }) {
                         </div>
                     )}
                 </div>
+                )}
             </div>
         </div>
     )

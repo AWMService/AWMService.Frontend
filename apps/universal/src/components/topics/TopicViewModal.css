@@ -276,6 +276,48 @@
 .btn-cancel { background: #ffffff; border: 1px solid #e2e8f0; color: #64748b; }
 .btn-confirm-reject { background: #dc2626; color: white; }
 
+/* Мотивационное письмо (аккордеон) */
+.tv-motivation-section {
+    margin-top: 8px;
+}
+
+.tv-motivation-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    color: #0369a1;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.tv-motivation-toggle:hover {
+    background: #e0f2fe;
+}
+
+.tv-motivation-content {
+    margin-top: 6px;
+    padding: 10px 12px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #334155;
+    line-height: 1.5;
+    animation: fadeIn 0.2s;
+}
+
+.tv-motivation-content p {
+    margin: 0;
+    white-space: pre-wrap;
+}
+
 /* Остальные стили */
 .tv-tabs-mini {
     background: #f1f5f9;
@@ -406,3 +448,9 @@
 }
 
 .tv-empty-text { color: #cbd5e1; font-style: italic; }
+
+/* Override: в блоке заявок аватарка должна быть слева от текста (row) */
+.tv-req-header .tv-student-info {
+    flex-direction: row;
+    align-items: center;
+}

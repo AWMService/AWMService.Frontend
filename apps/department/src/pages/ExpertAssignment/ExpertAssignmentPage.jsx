@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { 
     useAuth, 
-    useStaffByDepartment, 
+    useOrgUnitEmployees, 
     useAssignedExperts, 
     useSaveExpertAssignments,
     useOrgUnitSpecialities 
@@ -18,7 +18,7 @@ export default function ExpertAssignmentPage() {
     const [selectedSpecialityId, setSelectedSpecialityId] = useState(null);
     const { data: specialities = [] } = useOrgUnitSpecialities(orgUnitId);
 
-    const { data: teachers = [], isLoading: isLoadingTeachers } = useStaffByDepartment(orgUnitId);
+    const { data: teachers = [], isLoading: isLoadingTeachers } = useOrgUnitEmployees(orgUnitId);
     const { data: expertAssignments = [], isLoading: isLoadingExperts } = useAssignedExperts(orgUnitId);
     const saveMutation = useSaveExpertAssignments(orgUnitId);
 

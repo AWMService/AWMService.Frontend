@@ -41,8 +41,7 @@ export function Sidebar() {
     },
     {
       href: "/evaluation-criteria",
-      labelKey: "nav.evaluationCite 
-ria",
+      labelKey: "nav.evaluationCriteria",
       icon: documentCheckIcon,
       descriptionKey: "department.evaluationCriteriaDescription",
     },

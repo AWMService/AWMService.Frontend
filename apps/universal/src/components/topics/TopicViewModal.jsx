@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getIntlLocale, getLocalizedValue, normalizeLanguage } from "@awm/shared";
-import { X, Calendar, BookOpen, Layers, Users, User, Info, Check, AlertCircle } from "lucide-react";
+import { X, Calendar, BookOpen, Layers, Users, User, Info, Check, AlertCircle, ChevronDown, ChevronUp, FileText } from "lucide-react";
 import "./TopicViewModal.css";
 
 export default function TopicViewModal({
@@ -21,6 +21,9 @@ export default function TopicViewModal({
     const [rejectingId, setRejectingId] = useState(null); // ID заявки, которую отклоняем
     const [rejectReason, setRejectReason] = useState(""); // Текст причины
     const [rejectError, setRejectError] = useState(false);
+
+    // Логика раскрытия мотивационного письма
+    const [expandedRequestId, setExpandedRequestId] = useState(null);
 
     useEffect(() => {
         if (!topic) return;
@@ -52,11 +55,7 @@ export default function TopicViewModal({
         rejected: t('status.rejected'),
     };
 
-    const workTypeLabels = {
-        diploma_project: t('supervisor.diplomaProject'),
-        diploma_work: t('supervisor.diplomaWork'),
-        course_work: t('supervisor.courseWork'),
-    };
+    // workTypeName приходит напрямую с бэкенда, маппинг не нужен
 
     // Списки
     const students = topic.students || []; // Уже принятые
@@ -81,6 +80,10 @@ export default function TopicViewModal({
     };
 
     // Обработчики кнопок
+    const toggleMotivationLetter = (reqId) => {
+        setExpandedRequestId((prev) => (prev === reqId ? null : reqId));
+    };
+
     const handleStartReject = (reqId) => {
         setRejectingId(reqId);
         setRejectReason("");
@@ -126,7 +129,7 @@ export default function TopicViewModal({
                             <Layers size={16} />
                             <div className="tv-info-content">
                                 <label>{t('supervisor.workType')}</label>
-                                <span>{workTypeLabels[topic.workType] || topic.workType}</span>
+                                <span>{topic.workTypeName || topic.workType || t('common.noData')}</span>
                             </div>
                         </div>
                         <div className="tv-info-item">
@@ -199,6 +202,25 @@ export default function TopicViewModal({
                                                 </div>
                                             )}
                                         </div>
+
+                                        {/* Мотивационное письмо (аккордеон) */}
+                                        {req.motivationLetter && rejectingId !== req.id && (
+                                            <div className="tv-motivation-section">
+                                                <button
+                                                    className="tv-motivation-toggle"
+                                                    onClick={() => toggleMotivationLetter(req.id)}
+                                                >
+                                                    <FileText size={14} />
+                                                    <span>{t('supervisor.motivationLetter')}</span>
+                                                    {expandedRequestId === req.id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                                                </button>
+                                                {expandedRequestId === req.id && (
+                                                    <div className="tv-motivation-content">
+                                                        <p>{req.motivationLetter}</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
 
                                         {/* Форма отказа */}
                                         {rejectingId === req.id && (

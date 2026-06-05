@@ -79,7 +79,8 @@
         "signIn": "Кіру",
         "loading": "Кірудеміз...",
         "usernamePlaceholder": "Логин",
-        "passwordPlaceholder": "Құпиясөз"
+        "passwordPlaceholder": "Құпиясөз",
+        "noRoleError": "Сіздің тіркелгіңізге рөл бекітілмеген. Администраторға жүгініңіз."
     },
     "roles": {
         "student": "Студент",
@@ -182,6 +183,7 @@
         "noPlaces": "Орын жоқ",
         "occupied": "Бос емес",
         "reapply": "Қайта өтініш беру",
+        "reapplyNotAllowed": "Қайта өтініш беруге болмайды",
         "reason": "Себебі: ",
         "scientificSupervisor": "Ғылыми жетекші:",
         "waitingCheck": "Тексеру күтілуде",
@@ -305,7 +307,10 @@
         "markAsRead": "Оқылды деп белгілеу",
         "noNotifications": "Хабарламалар жоқ",
         "noMaterials": "Материалдар әлі жүктелмеген",
-        "noTimeline": "Белсенділік тарихы бос"
+        "noTimeline": "Белсенділік тарихы бос",
+        "awaitingDepartmentApproval": "Кафедралық келісімді күтуде",
+        "preDefense": "Алдын ала қорғау",
+        "defense": "Қорғау"
     },
     "supervisor": {
         "topics": "Тақырыптар",
@@ -363,6 +368,7 @@
         "confirmDeleteTopic": "Бұл тақырыпты біржола жабуға сенімдісіз бе?",
         "fillDirectionFields": "Атауын (KK, RU) және сипаттамасын (KK) толтырыңыз",
         "rejectionReason": "Қабылданбау себебі:",
+        "motivationLetter": "Мотивациялық хат",
         "createdDate": "Құрылған күні",
         "approvedDate": "Мақұлданған күні",
         "supervisorFeedback": "Жетекші ескертулері",

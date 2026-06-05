@@ -4,7 +4,7 @@ import {
     ConfirmModal,
     useAuth,
     useCommissions,
-    useStaffByDepartment,
+    useOrgUnitEmployees,
     useCreateCommission,
     useUpdateCommission,
     useApprovePreDefensePeriods,
@@ -33,7 +33,7 @@ function CommissionsPage() {
     const { data: specialities = [] } = useOrgUnitSpecialities(orgUnitId);
 
     const { data: commissions = [], isLoading: isCommsLoading } = useCommissions(orgUnitId, semesterId, selectedSpecialityId);
-    const { data: staff = [], isLoading: isStaffLoading } = useStaffByDepartment(orgUnitId);
+    const { data: staff = [], isLoading: isStaffLoading } = useOrgUnitEmployees(orgUnitId);
 
     const createMutation = useCreateCommission(orgUnitId, semesterId, selectedSpecialityId);
     const updateMutation = useUpdateCommission(orgUnitId, semesterId, selectedSpecialityId);

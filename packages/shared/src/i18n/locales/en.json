@@ -79,7 +79,8 @@
         "signIn": "Sign In",
         "loading": "Signing in...",
         "usernamePlaceholder": "Username",
-        "passwordPlaceholder": "Password"
+        "passwordPlaceholder": "Password",
+        "noRoleError": "Your account has no assigned role. Please contact administrator."
     },
     "roles": {
         "student": "Student",
@@ -182,6 +183,7 @@
         "noPlaces": "No places",
         "occupied": "Occupied",
         "reapply": "Reapply",
+        "reapplyNotAllowed": "Re-application not allowed",
         "reason": "Reason: ",
         "scientificSupervisor": "Scientific supervisor:",
         "waitingCheck": "Awaiting check",
@@ -305,7 +307,10 @@
         "markAsRead": "Mark as read",
         "noNotifications": "No notifications",
         "noMaterials": "No materials uploaded yet",
-        "noTimeline": "Activity history is empty"
+        "noTimeline": "Activity history is empty",
+        "awaitingDepartmentApproval": "Awaiting department approval",
+        "preDefense": "Pre-defense",
+        "defense": "Defense"
     },
     "supervisor": {
         "topics": "Topics",
@@ -363,6 +368,7 @@
         "confirmDeleteTopic": "Are you sure you want to permanently close this topic?",
         "fillDirectionFields": "Fill in name (KK, RU) and description (KK)",
         "rejectionReason": "Rejection reason:",
+        "motivationLetter": "Motivation letter",
         "createdDate": "Date created",
         "approvedDate": "Date approved",
         "supervisorFeedback": "Supervisor feedback",

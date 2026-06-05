@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { ArrowLeft } from "lucide-react";
 import { 
     useAuth,
-    useStaffByDepartment,
+    useOrgUnitEmployees,
     useCreateCommission,
     useAutoDistributeStudents,
     useCommissions
@@ -38,7 +38,7 @@ export default function TimePeriodSetupPage() {
     const [commissions, setCommissions] = useState([]);
     
     // Fetch teachers/staff for commission selection
-    const { data: allTeachers = [] } = useStaffByDepartment(orgUnitId);
+    const { data: allTeachers = [] } = useOrgUnitEmployees(orgUnitId);
     const teachersList = useMemo(() => {
         return allTeachers.map(t => ({
             id: t.userId || t.id,

@@ -11,6 +11,7 @@ export default function MyStudentsPage() {
     const [selectedStudent, setSelectedStudent] = useState(null)
 
     const getCardStatusClass = (stageKey) => {
+        if (stageKey === "awaitingDepartmentApproval") return "sp-pill-orange";
         if (stageKey === "preDefense") return "sp-pill-purple";
         if (stageKey === "defense") return "sp-pill-green";
         return "sp-pill-gray";

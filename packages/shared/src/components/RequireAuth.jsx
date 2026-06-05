@@ -39,7 +39,12 @@ export function RequireAuth({ allowedRoles = [], children, fallback }) {
     }
 
     if (!isAllowed) {
-      window.location.assign(getCabinetUrl(user));
+      const cabinetUrl = getCabinetUrl(user);
+      if (cabinetUrl) {
+        window.location.assign(cabinetUrl);
+      } else {
+        redirectToLogin(window.location.href);
+      }
     }
   }, [allowedRoles, hasToken, isAllowed, isAuthenticated, isLoading, user]);
 

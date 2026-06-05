@@ -79,7 +79,8 @@
         "signIn": "Войти",
         "loading": "Входим...",
         "usernamePlaceholder": "Логин",
-        "passwordPlaceholder": "Пароль"
+        "passwordPlaceholder": "Пароль",
+        "noRoleError": "У вашей учетной записи нет назначенной роли. Обратитесь к администратору."
     },
     "roles": {
         "student": "Студент",
@@ -183,6 +184,7 @@
         "noPlaces": "Мест нет",
         "occupied": "Занято",
         "reapply": "Повторить",
+        "reapplyNotAllowed": "Повторная подача невозможна",
         "reason": "Причина: ",
         "scientificSupervisor": "Научный руководитель:",
         "waitingCheck": "Ожидание проверки",
@@ -306,7 +308,10 @@
         "markAsRead": "Отметить как прочитанное",
         "noNotifications": "Нет уведомлений",
         "noMaterials": "Материалы еще не загружены",
-        "noTimeline": "История активности пуста"
+        "noTimeline": "История активности пуста",
+        "awaitingDepartmentApproval": "Ожидает кафедрального согласования",
+        "preDefense": "Предзащита",
+        "defense": "Защита"
     },
     "supervisor": {
         "topics": "Темы",
@@ -364,6 +369,7 @@
         "confirmDeleteTopic": "Вы уверены, что хотите окончательно закрыть тему?",
         "fillDirectionFields": "Заполните название (KK, RU) и описание (KK)",
         "rejectionReason": "Причина отклонения:",
+        "motivationLetter": "Мотивационное письмо",
         "createdDate": "Дата создания",
         "approvedDate": "Дата утверждения",
         "supervisorFeedback": "Замечания руководителя",
