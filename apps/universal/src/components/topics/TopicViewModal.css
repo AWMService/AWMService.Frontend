@@ -383,6 +383,18 @@
     font-weight: 500;
 }
 
+.tv-student-speciality {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 400;
+}
+
+.tv-student-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
 .tv-empty-box {
     padding: 16px;
     background: #f8fafc;

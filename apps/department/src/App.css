@@ -3,21 +3,26 @@ body {}
 .app-container {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: 100vh;
+    padding-top: 64px; /* Space for fixed header */
+    box-sizing: border-box;
 }
 
 .main-layout {
     display: flex;
     flex-grow: 1;
+    overflow: hidden;
 }
 
 .content {
     flex-grow: 1;
     background-color: #F9FAFB;
+    overflow-y: auto;
+    padding: 24px;
 }
 
 @media (min-width: 1024px) {
     .content {
-        margin-left: 256px;
+        margin-left: 0; /* Sidebar is managed by flex layout now */
     }
 }

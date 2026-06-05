@@ -64,7 +64,7 @@ export default function TopicViewModal({
     // Если структура другая, поменяйте это поле.
     const requests = topic.requests || [];
 
-    const maxParticipants = topic.participantCount || 1;
+    const maxParticipants = topic.maxParticipants || 1;
     const remainingSlots = maxParticipants - students.length;
 
     const formatDate = (iso) => {
@@ -172,6 +172,9 @@ export default function TopicViewModal({
                                                 </div>
                                                 <div className="tv-req-details">
                                                     <span className="tv-student-name">{req.student?.fullName || t('roles.student')}</span>
+                                                    {req.student?.speciality && (
+                                                        <span className="tv-student-speciality">{req.student.speciality}</span>
+                                                    )}
                                                     <span className="tv-req-date">{t('department.submitted')} {formatDate(req.createdAt)}</span>
                                                 </div>
                                             </div>
@@ -249,7 +252,12 @@ export default function TopicViewModal({
                                             <div className="tv-student-avatar">
                                                 <User size={14} />
                                             </div>
-                                            <span className="tv-student-name">{student.fullName}</span>
+                                            <div className="tv-student-info">
+                                                <span className="tv-student-name">{student.fullName}</span>
+                                                {student.speciality && (
+                                                    <span className="tv-student-speciality">{student.speciality}</span>
+                                                )}
+                                            </div>
                                         </div>
                                     ))}
                                 </div>

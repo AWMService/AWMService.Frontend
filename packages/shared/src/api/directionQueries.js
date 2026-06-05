@@ -1,16 +1,39 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './apiClient';
 
-const read = (value, key) => value?.[key] ?? value?.[key.charAt(0).toUpperCase() + key.slice(1)];
+const read = (value, key) => {
+  if (!value) return undefined;
+  // Try exact match
+  if (value[key] !== undefined) return value[key];
+  
+  // Try PascalCase
+  const pascal = key.charAt(0).toUpperCase() + key.slice(1);
+  if (value[pascal] !== undefined) return value[pascal];
+
+  // Try case-insensitive search
+  const lowerKey = key.toLowerCase();
+  const realKey = Object.keys(value).find(k => k.toLowerCase() === lowerKey);
+  return realKey ? value[realKey] : undefined;
+};
 
 const readLocalized = (item, field) => {
-  const value = read(item, field);
-  const pascal = field.charAt(0).toUpperCase() + field.slice(1);
+  if (!item) return { ru: '', kk: '', en: '' };
+  
+  // 1. Try to get existing object: item.title or item.Title
+  const existing = read(item, field);
+  if (existing && typeof existing === 'object') {
+    return {
+      ru: read(existing, 'ru') || '',
+      kk: read(existing, 'kk') || read(existing, 'kz') || '',
+      en: read(existing, 'en') || '',
+    };
+  }
 
+  // 2. Fallback to flat fields: descriptionRu, DescriptionRu, etc.
   return {
-    ru: value?.ru ?? value?.Ru ?? read(item, `${field}Ru`) ?? read(item, `${pascal}Ru`) ?? '',
-    kk: value?.kk ?? value?.Kk ?? value?.kz ?? value?.Kz ?? read(item, `${field}Kz`) ?? read(item, `${pascal}Kz`) ?? '',
-    en: value?.en ?? value?.En ?? read(item, `${field}En`) ?? read(item, `${pascal}En`) ?? '',
+    ru: read(item, `${field}Ru`) || '',
+    kk: read(item, `${field}Kz`) || read(item, `${field}Kk`) || '',
+    en: read(item, `${field}En`) || '',
   };
 };
 
@@ -40,6 +63,7 @@ export const normalizeDirection = (item) => {
     currentStateId: read(item, 'currentStateId'),
     currentStateName,
     currentStateDisplayName,
+    supervisorFullName: read(item, 'supervisorFullName'),
     title: readLocalized(item, 'title'),
     description: readLocalized(item, 'description'),
     status: directionStatusFromState(currentStateName, currentStateDisplayName),

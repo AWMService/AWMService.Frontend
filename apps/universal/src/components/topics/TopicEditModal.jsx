@@ -14,7 +14,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
         descEn: "",
         directionId: "",
         workTypeId: "",
-        participantCount: 1,
+        maxParticipants: 1,
     });
 
     useEffect(() => {
@@ -28,7 +28,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                 descEn: topic.description?.en ?? "",
                 directionId: topic.directionId ?? "",
                 workTypeId: topic.workTypeId ?? "",
-                participantCount: topic.participantCount ?? 1,
+                maxParticipants: topic.maxParticipants ?? 1,
             });
         }
     }, [topic]);
@@ -55,7 +55,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
             },
             directionId: form.directionId,
             workTypeId: form.workTypeId,
-            participantCount: Number(form.participantCount),
+            maxParticipants: Number(form.maxParticipants),
         };
 
         onSave(updatedTopic);
@@ -208,14 +208,16 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                                 <Users size={16} className="tem-icon-muted" />
                                 <h3>{t('supervisor.students')}</h3>
                             </div>
-                            <input
-                                type="number"
-                                min="1"
-                                name="participantCount"
-                                value={form.participantCount}
+                            <select
+                                name="maxParticipants"
+                                value={form.maxParticipants}
                                 onChange={handleChange}
-                                className="tem-input-number"
-                            />
+                                className="tem-select"
+                            >
+                                <option value="1">{t('supervisor.oneStudent')}</option>
+                                <option value="2">{t('supervisor.twoStudents')}</option>
+                                <option value="3">{t('supervisor.threeStudents')}</option>
+                            </select>
                         </div>
                     </div>
                 </div>

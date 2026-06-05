@@ -35,8 +35,8 @@ export const adminApi = {
   },
 
   // Roles
-  fetchRoles: async (universityId) => {
-    const { data } = await apiClient.get('/v1/Roles', { params: { universityId } });
+  fetchRoles: async () => {
+    const { data } = await apiClient.get('/v1/Roles');
     return data;
   },
 

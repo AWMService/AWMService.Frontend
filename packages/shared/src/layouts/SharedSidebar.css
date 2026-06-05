@@ -51,6 +51,7 @@
   color: #4b5563;
   text-decoration: none;
   transition: all 0.2s ease;
+  border-left: 3px solid transparent;
 }
 
 .nav-item:hover {
@@ -59,8 +60,11 @@
 }
 
 .nav-item.active {
-  background: #eef2ff;
+  background: rgba(79, 70, 229, 0.08);
   color: #4f46e5;
+  border-left: 3px solid #4f46e5;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 .nav-icon {

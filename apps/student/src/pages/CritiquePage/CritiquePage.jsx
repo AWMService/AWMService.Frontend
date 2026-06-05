@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './CritiquePage.css';
 import infoIcon from '../../assets/icons/pre-defense/info-icon.svg';
@@ -21,7 +21,6 @@ import {
 
 const CritiquePage = () => {
     const { t } = useTranslation();
-    const fileInputRef = useRef(null);
     const [reviewFile, setReviewFile] = useState(null);
 
     // API data

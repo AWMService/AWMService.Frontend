@@ -38,7 +38,7 @@ export default function STopicsPage() {
     const { user } = useAuth();
     const locale = getIntlLocale(i18n.language);
     const currentLanguage = normalizeLanguage(i18n.language);
-    const supervisorId = user?.staffId;
+    const supervisorId = user?.userId;
     const semesterId = user?.currentSemesterId;
 
     const { data: topics = [], isLoading, error } = useTopicsBySupervisor(supervisorId, semesterId);
@@ -51,7 +51,20 @@ export default function STopicsPage() {
     const acceptMutation = useAcceptApplication();
     const rejectMutation = useRejectApplication();
 
-    const defaultWorkTypeId = workTypes[0]?.id;
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [isViewOpen, setIsViewOpen] = useState(false);
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [selectedTopic, setSelectedTopic] = useState(null);
+    const { data: selectedTopicDetail } = useTopicDetail(isViewOpen ? selectedTopic?.id : null);
+
+    const defaultWorkTypeId = useMemo(() => {
+        if (workTypes.length === 0) return null;
+        return workTypes.find(wt => 
+            wt.name === 'DiplomaWork' || 
+            wt.name === 'MasterThesis' || 
+            wt.name === 'PhD'
+        )?.id || workTypes[0].id;
+    }, [workTypes]);
 
     const statusLabels = {
         draft: t('status.draft'),
@@ -60,12 +73,6 @@ export default function STopicsPage() {
         rejected: t('status.rejected'),
         closed: t('student.occupied'),
     };
-
-    const [isCreateOpen, setIsCreateOpen] = useState(false);
-    const [isViewOpen, setIsViewOpen] = useState(false);
-    const [isEditOpen, setIsEditOpen] = useState(false);
-    const [selectedTopic, setSelectedTopic] = useState(null);
-    const { data: selectedTopicDetail } = useTopicDetail(isViewOpen ? selectedTopic?.id : null);
 
     const directionOptions = useMemo(() => directions
         .filter((direction) => direction.status === "approved")
@@ -80,8 +87,16 @@ export default function STopicsPage() {
     };
 
     const handleCreateTopic = async (topic) => {
-        const payload = topicPayloadFromForm({ form: topic, user, workTypeId: defaultWorkTypeId });
+        const payload = topicPayloadFromForm({ 
+            form: {
+                ...topic,
+                maxParticipants: topic.studentCount || topic.participantCount
+            }, 
+            user, 
+            workTypeId: topic.workTypeId || defaultWorkTypeId 
+        });
         await createMutation.mutateAsync(payload);
+        setIsCreateOpen(false);
     };
 
     const handleSendForReview = async (id) => {
@@ -107,7 +122,14 @@ export default function STopicsPage() {
     };
 
     const handleSaveEdit = async (updatedTopic) => {
-        const payload = topicPayloadFromForm({ form: updatedTopic, user, workTypeId: updatedTopic.workTypeId || defaultWorkTypeId });
+        const payload = topicPayloadFromForm({ 
+            form: {
+                ...updatedTopic,
+                maxParticipants: updatedTopic.maxParticipants
+            }, 
+            user, 
+            workTypeId: updatedTopic.workTypeId || defaultWorkTypeId 
+        });
         await updateMutation.mutateAsync({ id: updatedTopic.id, payload });
         setIsEditOpen(false);
         setSelectedTopic(null);
@@ -178,7 +200,7 @@ export default function STopicsPage() {
                                 {topic.status === "rejected" && (
                                     <div className="card-rejection-info">
                                         <Info size={14} />
-                                        <span>{getLocalizedValue(topic.reviewComment, currentLanguage)}</span>
+                                        <span>{topic.reviewComment}</span>
                                     </div>
                                 )}
 
@@ -187,7 +209,7 @@ export default function STopicsPage() {
                                         <Users size={14} />
                                         <span>
                                             {topic.acceptedApplicationsCount > 0
-                                                ? `${t('supervisor.students')}: ${topic.acceptedApplicationsCount}/${topic.participantCount}`
+                                                ? `${t('supervisor.students')}: ${topic.acceptedApplicationsCount}/${topic.maxParticipants}`
                                                 : t('supervisor.noApprovedStudents')}
                                         </span>
                                     </div>

@@ -1,16 +1,18 @@
 .shared-header {
   background: white;
   border-bottom: 1px solid #e5e7eb;
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 50;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   height: 64px;
 }
 
 .shared-header-content {
   display: flex;
   justify-content: space-between;
-  align-height: center;
+  align-items: center;
   height: 100%;
   padding: 0 1.5rem;
 }

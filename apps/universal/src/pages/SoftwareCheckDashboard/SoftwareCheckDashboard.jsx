@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import {
     getIntlLocale,
     useAuth,
-    usePendingChecks,
+    useAllExpertChecks,
     useCompleteQualityCheckMutation,
     downloadAttachment,
 } from '@awm/shared';

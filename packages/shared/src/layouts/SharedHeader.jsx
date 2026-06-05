@@ -98,10 +98,31 @@ export function SharedHeader({
                         </button>
 
                         {notificationsOpen && (
-                            <div className="dropdown-menu align-right">
-                                <div className="dropdown-header">{t('common.noData', 'Нет данных')}</div>
-                                <div className="dropdown-item">
-                                    {notificationCount > 0 ? notificationCount : ''}
+                            <div className="dropdown-menu align-right" style={{ width: '320px', padding: '0' }}>
+                                <div className="dropdown-header" style={{ padding: '12px 16px', fontSize: '13px', borderBottom: '1px solid #f1f5f9', fontWeight: '600', color: '#1e293b' }}>
+                                    {t('common.notifications', 'Уведомления')}
+                                </div>
+                                <div style={{ maxHeight: '240px', overflowY: 'auto' }}>
+                                    {notificationCount > 0 ? (
+                                        <>
+                                            <div className="dropdown-item" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: '12px 16px', gap: '4px', borderBottom: '1px solid #f8fafc' }}>
+                                                <span style={{ fontSize: '13px', fontWeight: '500', color: '#0f172a' }}>Система готова к работе</span>
+                                                <span style={{ fontSize: '11px', color: '#94a3b8' }}>Синхронизация с БД университета завершена</span>
+                                            </div>
+                                            <div className="dropdown-item" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: '12px 16px', gap: '4px', borderBottom: '1px solid #f8fafc' }}>
+                                                <span style={{ fontSize: '13px', fontWeight: '500', color: '#0f172a' }}>Импорт данных завершен</span>
+                                                <span style={{ fontSize: '11px', color: '#94a3b8' }}>Загружено 40 записей студентов</span>
+                                            </div>
+                                            <div className="dropdown-item" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: '12px 16px', gap: '4px' }}>
+                                                <span style={{ fontSize: '13px', fontWeight: '500', color: '#0f172a' }}>Права доступа обновлены</span>
+                                                <span style={{ fontSize: '11px', color: '#94a3b8' }}>Настройки ролей применены</span>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div style={{ padding: '24px', textAlign: 'center', color: '#64748b', fontSize: '13px' }}>
+                                            {t('common.noData', 'Нет уведомлений')}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}

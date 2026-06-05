@@ -68,6 +68,13 @@
     color: #FFFFFF;
 }
 
+/* Состояние: Недоступен */
+.step-circle.disabled {
+    border-color: #E2E8F0;
+    background-color: #F1F5F9;
+    color: #94A3B8;
+}
+
 /* Иконка галочки */
 .icon-svg {
     width: 20px; /* Увеличили иконку */
@@ -89,6 +96,10 @@
 .step-label.active {
     color: #566F9E;
     font-weight: 700;
+}
+
+.step-label.disabled {
+    color: #CBD5E1;
 }
 
 /* --- ЛИНИЯ (Connector) --- */

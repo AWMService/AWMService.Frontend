@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LanguageSelector, useAuth, SharedHeader } from '@awm/shared';
 
@@ -17,19 +16,7 @@ export function StudentHeader() {
         name: user?.name || user?.login || 'Студент',
         role: t('roles.student'),
       }}
-      userDropdownItems={
-        <>
-            <Link to="/profile" className="dropdown-item">
-                {t('student.profileTitle')}
-            </Link>
-            <Link to="/my-work" className="dropdown-item">
-                {t('student.myWorkTitle')}
-            </Link>
-            <Link to="/notifications" className="dropdown-item">
-                {t('student.notificationsTitle')}
-            </Link>
-        </>
-      }
+      userDropdownItems={null}
       onLogout={logout}
       notificationCount={0}
       actions={<LanguageSelector />}

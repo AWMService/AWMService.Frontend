@@ -1,20 +1,17 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { adminApi, useAuth } from '@awm/shared';
+import { adminApi } from '@awm/shared';
+import shieldIcon from '../../assets/icons/shield-icon.svg';
 import './RolesPage.css';
 
 function RolesPage() {
     const { t } = useTranslation();
-    const { user } = useAuth();
     
-    const universityId = user?.universityId || 1;
-
     // Fetch roles
     const { data: roles = [], isLoading, error } = useQuery({
-        queryKey: ['admin-roles', universityId],
-        queryFn: () => adminApi.fetchRoles(universityId),
-        enabled: !!universityId
+        queryKey: ['admin-roles'],
+        queryFn: () => adminApi.fetchRoles(),
     });
 
     if (error) return <div className="error-state">{t('common.error')}: {error.message}</div>;
@@ -33,25 +30,21 @@ function RolesPage() {
                     <div className="loading-state">{t('common.loading')}...</div>
                 ) : (
                     roles.map(role => (
-                        <div key={role.roleId} className="role-card">
+                        <div key={role.id} className="role-card">
                             <div className="role-card-header">
                                 <div className="role-icon">
-                                    <span className="material-icons">shield</span>
+                                    <img src={shieldIcon} alt="" className="role-icon-svg" />
                                 </div>
                                 <div className="role-info">
-                                    <h3>{role.displayName}</h3>
-                                    <span className="role-system-name">{role.systemName}</span>
+                                    <h3>{t(`roles.${(role.code || '').toLowerCase()}`) || role.name || role.code}</h3>
+                                    <span className="role-system-name">{role.code}</span>
                                 </div>
                             </div>
                             
                             <div className="role-stats">
                                 <div className="stat-item">
-                                    <span className="stat-value">{role.usersCount}</span>
+                                    <span className="stat-value">{role.usersCount ?? 0}</span>
                                     <span className="stat-label">{t('admin.users')}</span>
-                                </div>
-                                <div className="stat-item">
-                                    <span className="stat-value">{role.scopeLevel}</span>
-                                    <span className="stat-label">{t('admin.scope')}</span>
                                 </div>
                             </div>
 

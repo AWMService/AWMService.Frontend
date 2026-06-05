@@ -12,7 +12,6 @@ import {
     useDirectionsByDepartment,
     useRejectDirection,
     useRequestDirectionRevision,
-    useStaffByDepartment,
     useTopicCoordinationSummary,
     useWorkTypes,
 } from "@awm/shared";
@@ -46,7 +45,6 @@ const DirectionsAndThemes = () => {
 
     const { data: rawDirections = [], isLoading: directionsLoading, error: directionsError } = useDirectionsByDepartment(orgUnitId, semesterId);
     const { data: coordinationSummary, isLoading: topicsLoading, error: topicsError } = useTopicCoordinationSummary(orgUnitId, semesterId);
-    const { data: staff = [] } = useStaffByDepartment(orgUnitId);
     const { data: workTypes = [] } = useWorkTypes();
 
     const approveMutation = useApproveDirection();
@@ -55,39 +53,37 @@ const DirectionsAndThemes = () => {
     const approveTopicMutation = useApproveTopic();
     const deactivateTopicMutation = useDeactivateTopic();
 
-    const staffById = useMemo(() => new Map(staff.map((item) => [item.id, item])), [staff]);
     const workTypesById = useMemo(() => new Map(workTypes.map((item) => [item.id, item])), [workTypes]);
 
     const directions = useMemo(() => rawDirections.map((direction) => {
-        const supervisor = staffById.get(direction.supervisorId);
         const workType = workTypesById.get(direction.workTypeId);
 
         return {
             ...direction,
-            supervisor: supervisor?.fullName || supervisor?.email || `#${direction.supervisorId}`,
+            supervisor: direction.supervisorFullName || `#${direction.supervisorId}`,
             type: workType?.name || `#${direction.workTypeId}`,
             submittedAt: formatDate(direction.submittedAt || direction.createdAt, locale),
             rejectionReason: direction.reviewComment,
         };
-    }), [rawDirections, staffById, workTypesById, locale]);
+    }), [rawDirections, workTypesById, locale]);
 
     const themes = useMemo(() => (coordinationSummary?.topics || []).map((topic) => ({
-        id: topic.topicId,
+        id: topic.id,
         title: topic.title,
         description: {
-            ru: topic.lastRejectionReason || "",
-            kk: topic.lastRejectionReason || "",
-            en: topic.lastRejectionReason || "",
+            ru: topic.descriptionRu || "",
+            kk: topic.descriptionKz || "",
+            en: topic.descriptionEn || "",
         },
-        status: topic.isClosed ? "closed" : topic.isApproved ? "approved" : "pending",
+        status: topic.status,
         type: t('department.themeOfDiplomaWork'),
-        supervisor: topic.supervisorName || `#${topic.supervisorId}`,
-        submittedAt: "—",
+        supervisor: topic.supervisorFullName || `#${topic.supervisorId}`,
+        submittedAt: formatDate(topic.submittedAt, locale),
         rejectionReason: topic.lastRejectionReason,
         acceptedCount: topic.acceptedCount,
         pendingCount: topic.pendingCount,
         maxParticipants: topic.maxParticipants,
-    })), [coordinationSummary, t]);
+    })), [coordinationSummary, t, locale]);
 
     const [selectedDirection, setSelectedDirection] = useState(null);
     const [selectedTheme, setSelectedTheme] = useState(null);
@@ -108,7 +104,11 @@ const DirectionsAndThemes = () => {
                 { value: "all", label: t('common.all') },
                 { value: "pending", label: t('status.underReview') },
                 { value: "approved", label: t('status.approved') },
-                { value: "closed", label: t('status.closed', t('student.occupied')) },
+                { value: "rejected", label: t('status.rejected') },
+                { value: "revision", label: t('status.revision') },
+                { value: "closed", label: t('status.closed') },
+                { value: "inactive", label: t('status.inactive', 'Inactive') },
+                { value: "reconciled", label: t('status.reconciled', 'Reconciled') },
             ];
         }
     }, [isDirections, t]);
@@ -146,12 +146,12 @@ const DirectionsAndThemes = () => {
         setSelectedDirection(null);
     };
 
-    const updateThemeStatus = async (id, newStatus) => {
+    const updateThemeStatus = async (id, newStatus, comment = "") => {
         if (newStatus === "approved") {
-            await approveTopicMutation.mutateAsync(id);
+            await approveTopicMutation.mutateAsync({ id, payload: { isApproved: true, comment: "" } });
         }
         if (newStatus === "rejected") {
-            await deactivateTopicMutation.mutateAsync(id);
+            await deactivateTopicMutation.mutateAsync({ id, comment });
         }
         setSelectedTheme(null);
     };
@@ -232,18 +232,18 @@ const DirectionsAndThemes = () => {
                 )}
 
                 {isDirections &&
-                    filteredItems.map((dir) => (
+                    filteredItems.map((dir, index) => (
                         <DirectionCard
-                            key={dir.id}
+                            key={dir.id ?? `direction-${index}`}
                             direction={dir}
                             onView={setSelectedDirection}
                         />
                     ))}
 
                 {!isDirections &&
-                    filteredItems.map((theme) => (
+                    filteredItems.map((theme, index) => (
                         <DirectionCard
-                            key={theme.id}
+                            key={theme.id ?? `theme-${index}`}
                             direction={{
                                 ...theme,
                                 type: t('department.themeOfDiplomaWork'),

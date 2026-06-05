@@ -2,9 +2,9 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { SharedSidebar } from "@awm/shared";
 
-import supervisorsIcon from "../../assets/icons/supervisors-sidebar-icon.svg";
-import periodsIcon from "../../assets/icons/periods-sidebar-icon.svg";
-import settingsIcon from "../../assets/icons/settings-sidebar-icon.svg";
+import usersIcon from "../../assets/icons/users-icon.svg";
+import shieldIcon from "../../assets/icons/shield-icon.svg";
+import documentCheckIcon from "../../assets/icons/document-check-icon.svg";
 import graduationCapIcon from "../../assets/icons/graduation-cap-icon.svg";
 
 export function AdminSidebar() {
@@ -14,56 +14,26 @@ export function AdminSidebar() {
     {
       href: "/users",
       labelKey: "admin.users",
-      icon: supervisorsIcon,
-      descriptionKey: "admin.users",
+      icon: usersIcon,
+      descriptionKey: "admin.usersDescription",
     },
     {
       href: "/roles",
       labelKey: "nav.roles",
-      icon: supervisorsIcon,
-      descriptionKey: "admin.roles",
-    },
-    {
-      href: "/departments",
-      labelKey: "nav.departments",
-      icon: periodsIcon,
-      descriptionKey: "nav.departments",
-    },
-    {
-      href: "/institutes",
-      labelKey: "nav.faculties",
-      icon: graduationCapIcon,
-      descriptionKey: "nav.faculties",
-    },
-    {
-      href: "/education-levels",
-      labelKey: "admin.educationLevels",
-      icon: graduationCapIcon, // Use appropriate icon
-      descriptionKey: "admin.educationLevels",
-    },
-    {
-      href: "/programs",
-      labelKey: "admin.programs",
-      icon: periodsIcon,
-      descriptionKey: "admin.programs",
+      icon: shieldIcon,
+      descriptionKey: "admin.rolesDescription",
     },
     {
       href: "/work-types",
-      labelKey: "admin.workTypes",
-      icon: settingsIcon,
-      descriptionKey: "admin.workTypes",
+      labelKey: "admin.workTypesTitle",
+      icon: documentCheckIcon,
+      descriptionKey: "admin.workTypesDescription",
     },
     {
       href: "/students",
-      labelKey: "nav.students",
-      icon: supervisorsIcon,
-      descriptionKey: "nav.students",
-    },
-    {
-      href: "/settings",
-      labelKey: "auth.settings",
-      icon: settingsIcon,
-      descriptionKey: "admin.systemSettings",
+      labelKey: "admin.studentsTitle",
+      icon: graduationCapIcon,
+      descriptionKey: "admin.studentsDescription",
     },
   ];
 

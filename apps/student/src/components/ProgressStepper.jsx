@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import './ProgressStepper.css';
 import doneIcon from '../assets/icons/done-icon.svg';
 
-export function ProgressStepper({ currentStep = 1, highestCompletedStep = 1, activeCheckTypeCodes = null }) {
+export function ProgressStepper({ currentStep = 1, highestCompletedStep = 1, activeCheckTypeCodes = null, maxVisibleStep = null }) {
   const { t } = useTranslation();
 
   const allSteps = [
@@ -26,15 +26,17 @@ export function ProgressStepper({ currentStep = 1, highestCompletedStep = 1, act
   return (
       <div className="stepper-container">
         {steps.map((step, index) => {
+          const effectiveMaxStep = maxVisibleStep != null ? maxVisibleStep : highestCompletedStep;
           const isCompleted = step.id < currentStep;
           const isActive = step.id === currentStep;
-          const isAvailable = step.id <= highestCompletedStep;
+          const isAvailable = step.id <= effectiveMaxStep;
 
-          // Линия закрашивается, если мы прошли этот шаг
-          const isConnectorFilled = step.id < currentStep;
+          // Линия закрашивается только если оба соединяемых шага доступны
+          const nextStep = steps[index + 1];
+          const isConnectorFilled = nextStep && nextStep.id <= effectiveMaxStep && step.id < currentStep;
 
           const StepCircle = () => (
-              <div className={`step-circle ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}`}>
+              <div className={`step-circle ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''} ${!isAvailable ? 'disabled' : ''}`}>
                 {isCompleted ? (
                     <img src={doneIcon} alt="✓" className="icon-svg" />
                 ) : (
@@ -50,14 +52,14 @@ export function ProgressStepper({ currentStep = 1, highestCompletedStep = 1, act
                   {isAvailable ? (
                       <Link to={step.path} className="step-link">
                         <StepCircle />
-                        <span className={`step-label ${isActive ? 'active' : ''}`}>
+                        <span className={`step-label ${isActive ? 'active' : ''} ${!isAvailable ? 'disabled' : ''}`}>
                             {t(step.nameKey)}
                         </span>
                       </Link>
                   ) : (
                       <div className="step-link">
                         <StepCircle />
-                        <span className="step-label">{t(step.nameKey)}</span>
+                        <span className={`step-label ${!isAvailable ? 'disabled' : ''}`}>{t(step.nameKey)}</span>
                       </div>
                   )}
                 </div>

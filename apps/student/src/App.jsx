@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { RequireAuth, ROLES } from '@awm/shared';
+import { RequireAuth, ROLES, useAuth, useMyApplications, useMyWorkProgress } from '@awm/shared';
 import { StudentLayout } from './pages/StudentLayout.jsx';
 import ChooseThemePage from './pages/ChooseThemePage.jsx';
 import MyApplicationsPage from './pages/MyApplicationsPage.jsx';
@@ -10,11 +10,27 @@ import MySchedulePage from './pages/MySchedulePage/MySchedulePage.jsx';
 import ReviewStepPage from './pages/ReviewStepPage/ReviewStepPage.jsx';
 import AntiplagiarismPage from './pages/AntiplagiarismPage/AntiplagiarismPage.jsx';
 import CritiquePage from './pages/CritiquePage/CritiquePage.jsx';
-import ProfilePage from './pages/ProfilePage/ProfilePage.jsx';
-import MyWorkPage from './pages/MyWorkPage/MyWorkPage.jsx';
-import { NotificationsPage } from '@awm/shared';
 import documentCheckIcon from './assets/icons/document-check-icon.svg';
 import codeIcon from './assets/icons/code-icon.svg';
+
+function RequireStudentWork({ children }) {
+    const { user } = useAuth();
+    const { data: myApplications = [] } = useMyApplications(user?.currentSemesterId);
+    const { data: workProgress, isLoading } = useMyWorkProgress();
+
+    if (isLoading) return null;
+
+    const hasApprovedApplication = myApplications.some(a => a.status === 'approved');
+    const hasWork = !!workProgress;
+
+    // Если тема закреплена, но StudentWork еще не создан (кафедра не завершила согласование),
+    // блокируем доступ к защитным шагам
+    if (hasApprovedApplication && !hasWork) {
+        return <Navigate to="/choose-theme" replace />;
+    }
+
+    return children;
+}
 
 function App() {
     const { t } = useTranslation();
@@ -39,18 +55,15 @@ function App() {
                     <Route index element={<Navigate to="/choose-theme" replace />} />
                     <Route path="choose-theme" element={<ChooseThemePage />} />
                     <Route path="my-applications" element={<MyApplicationsPage />} />
-                    <Route path="pre-defense-1" element={<DefenseStepPage />} />
-                    <Route path="pre-defense-2" element={<DefenseStepPage />} />
-                    <Route path="pre-defense-3" element={<DefenseStepPage />} />
-                    <Route path="normocontrol" element={<ReviewStepPage {...normocontrolData} />} />
-                    <Route path="software-check" element={<ReviewStepPage {...softwareCheckData} />} />
-                    <Route path="antiplagiarism" element={<AntiplagiarismPage />} />
-                    <Route path="critique" element={<CritiquePage />} />
-                    <Route path="defense" element={<DefenseStepPage />} />
-                    <Route path="profile" element={<ProfilePage />} />
-                    <Route path="my-work" element={<MyWorkPage />} />
-                    <Route path="my-schedule" element={<MySchedulePage />} />
-                    <Route path="notifications" element={<NotificationsPage translationPrefix="student" />} />
+                    <Route path="pre-defense-1" element={<RequireStudentWork><DefenseStepPage /></RequireStudentWork>} />
+                    <Route path="pre-defense-2" element={<RequireStudentWork><DefenseStepPage /></RequireStudentWork>} />
+                    <Route path="pre-defense-3" element={<RequireStudentWork><DefenseStepPage /></RequireStudentWork>} />
+                    <Route path="normocontrol" element={<RequireStudentWork><ReviewStepPage {...normocontrolData} /></RequireStudentWork>} />
+                    <Route path="software-check" element={<RequireStudentWork><ReviewStepPage {...softwareCheckData} /></RequireStudentWork>} />
+                    <Route path="antiplagiarism" element={<RequireStudentWork><AntiplagiarismPage /></RequireStudentWork>} />
+                    <Route path="critique" element={<RequireStudentWork><CritiquePage /></RequireStudentWork>} />
+                    <Route path="defense" element={<RequireStudentWork><DefenseStepPage /></RequireStudentWork>} />
+                    <Route path="my-schedule" element={<RequireStudentWork><MySchedulePage /></RequireStudentWork>} />
                 </Route>
                 <Route path="*" element={<Navigate to="/choose-theme" replace />} />
             </Routes>

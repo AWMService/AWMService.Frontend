@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { X, Globe, AlignLeft, Info } from "lucide-react";
+import { X, Globe, AlignLeft, Info, Layers } from "lucide-react";
 import "./CreateDirectionModal.css";
 
-export default function CreateDirectionModal({ onClose, onCreate }) {
+export default function CreateDirectionModal({ onClose, onCreate, workTypes = [] }) {
     const { t } = useTranslation();
     const [title, setTitle] = useState({ kk: "", ru: "", en: "" });
     const [description, setDescription] = useState({ kk: "", ru: "", en: "" });
+    const [workTypeId, setWorkTypeId] = useState("");
+    
     const [touched, setTouched] = useState({
         title: { kk: false, ru: false, en: false },
-        description: { kk: false, ru: false, en: false }
+        description: { kk: false, ru: false, en: false },
+        workType: false
     });
     const [canSubmit, setCanSubmit] = useState(false);
 
@@ -17,15 +20,20 @@ export default function CreateDirectionModal({ onClose, onCreate }) {
         const valid =
             title.kk.trim() !== "" &&
             title.ru.trim() !== "" &&
-            description.kk.trim() !== "";
+            description.kk.trim() !== "" &&
+            workTypeId !== "";
         setCanSubmit(valid);
-    }, [title, description]);
+    }, [title, description, workTypeId]);
 
     const handleChangeTitle = (lang, value) => setTitle((s) => ({ ...s, [lang]: value }));
     const handleChangeDesc = (lang, value) => setDescription((s) => ({ ...s, [lang]: value }));
 
     const markTouched = (field, lang) => {
-        setTouched((t) => ({ ...t, [field]: { ...t[field], [lang]: true } }));
+        if (lang) {
+            setTouched((t) => ({ ...t, [field]: { ...t[field], [lang]: true } }));
+        } else {
+            setTouched((t) => ({ ...t, [field]: true }));
+        }
     };
 
     const handleSubmit = (e) => {
@@ -33,6 +41,7 @@ export default function CreateDirectionModal({ onClose, onCreate }) {
         setTouched({
             title: { kk: true, ru: true, en: true },
             description: { kk: true, ru: true, en: true },
+            workType: true
         });
 
         if (!canSubmit) return;
@@ -40,6 +49,7 @@ export default function CreateDirectionModal({ onClose, onCreate }) {
         onCreate({
             title: { kk: title.kk.trim(), ru: title.ru.trim(), en: title.en.trim() },
             description: { kk: description.kk.trim(), ru: description.ru.trim(), en: description.en.trim() },
+            workTypeId: parseInt(workTypeId, 10)
         });
     };
 
@@ -51,13 +61,34 @@ export default function CreateDirectionModal({ onClose, onCreate }) {
                         <h2>{t('supervisor.newDirection')}</h2>
                         <p>{t('supervisor.fillInfo')}</p>
                     </div>
-                    <button className="cdm-close-btn" onClick={onClose}>
+                    <button className="ctm-close-btn" onClick={onClose}>
                         <X size={20} />
                     </button>
                 </div>
 
                 <form className="cdm-form" onSubmit={handleSubmit} noValidate>
                     <div className="cdm-body">
+                        {/* Work Type Selection */}
+                        <div className="cdm-section">
+                            <div className="cdm-section-label">
+                                <Layers size={16} />
+                                <h3>{t('supervisor.workType')}</h3>
+                            </div>
+                            <select
+                                className={`cdm-select ${touched.workType && !workTypeId ? "error" : ""}`}
+                                value={workTypeId}
+                                onChange={(e) => setWorkTypeId(e.target.value)}
+                                onBlur={() => markTouched("workType")}
+                            >
+                                <option value="">{t('common.select')}</option>
+                                {workTypes.map((wt) => (
+                                    <option key={wt.id} value={wt.id}>
+                                        {wt.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
                         {/* Title Section */}
                         <div className="cdm-section">
                             <div className="cdm-section-label">

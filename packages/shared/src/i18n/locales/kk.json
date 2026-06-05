@@ -91,7 +91,13 @@
         "commissionMember": "Комиссия мүшесі",
         "department": "Кафедра меңгерушісі",
         "admin": "Әкімші",
-        "viceRector": "Проректор"
+        "viceRector": "Проректор",
+        "commission_chairman": "Комиссия төрағасы",
+        "commission_member": "Комиссия мүшесі",
+        "commission_secretary": "Комиссия хатшысы",
+        "dean_office": "Деканат",
+        "department_head": "Кафедра меңгерушісі",
+        "quality_expert": "Сапа сарапшысы"
     },
     "nav": {
         "home": "Басты бет",
@@ -133,7 +139,9 @@
     "student": {
         "chooseTheme": "Тақырып таңдау",
         "myApplications": "Менің өтініштерім",
+        "myApplicationsTitle": "Менің өтініштерім",
         "noApplications": "Әзірге өтінімдеріңіз жоқ",
+        "availableThemes": "Қолжетімді тақырыптар",
         "preDefense1": "Алдын ала қорғау 1",
         "preDefense2": "Алдын ала қорғау 2",
         "preDefense3": "Алдын ала қорғау 3",
@@ -722,6 +730,11 @@
     },
     "admin": {
         "users": "Пайдаланушылар",
+        "usersDescription": "Жүйе пайдаланушыларын басқару",
+        "roles": "Рөлдер",
+        "rolesDescription": "Пайдаланушы рөлдерін басқару",
+        "scope": "Көріну аймағы",
+        "inSystem": "жүйеде",
         "createUser": "Пайдаланушы құру",
         "editUser": "Пайдаланушыны өңдеу",
         "deleteUser": "Пайдаланушыны жою",

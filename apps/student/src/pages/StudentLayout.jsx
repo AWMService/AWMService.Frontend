@@ -1,10 +1,10 @@
 import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { useMyWorkProgress, useCurrentWorkId, useActiveCheckConfigurations } from '@awm/shared';
+import { useAuth, useMyWorkProgress, useMyApplications, useActiveCheckConfigurations } from '@awm/shared';
 import { StudentHeader } from '../components/StudentHeader';
 import { ProgressStepper } from '../components/ProgressStepper';
 
-const STANDALONE_PAGES = ['profile', 'my-work', 'notifications'];
+const STANDALONE_PAGES = ['my-applications'];
 
 const isStandalonePage = (path) =>
     STANDALONE_PAGES.some((page) => path.includes(page));
@@ -41,7 +41,9 @@ const stateToHighestStep = (stateName) => {
 
 export const StudentLayout = () => {
   const location = useLocation();
+  const { user } = useAuth();
   const { data: workProgress } = useMyWorkProgress();
+  const { data: myApplications = [] } = useMyApplications(user?.currentSemesterId);
   const { data: activeConfigs } = useActiveCheckConfigurations(
     workProgress?.orgUnitId,
     workProgress?.specialityId ?? null
@@ -56,6 +58,11 @@ export const StudentLayout = () => {
   const currentStep = getStepFromPath(location.pathname);
   const highestCompletedStep = stateToHighestStep(workProgress?.currentStateName);
 
+  // Если тема закреплена (approved), но StudentWork еще не создан — показываем только шаг 1
+  const hasApprovedApplication = myApplications.some(a => a.status === 'approved');
+  const hasWork = !!workProgress;
+  const maxVisibleStep = (hasApprovedApplication && !hasWork) ? 1 : null;
+
   const standalone = isStandalonePage(location.pathname);
 
   return (
@@ -67,6 +74,7 @@ export const StudentLayout = () => {
             currentStep={currentStep}
             highestCompletedStep={highestCompletedStep}
             activeCheckTypeCodes={activeCheckTypeCodes}
+            maxVisibleStep={maxVisibleStep}
           />
         )}
         <div className="student-page-content">

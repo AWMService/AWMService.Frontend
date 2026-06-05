@@ -10,15 +10,15 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
 
     if (!theme) return null;
 
-    const isPending = theme.status === "На рассмотрении";
-    const isRejected = theme.status === "Отклонено";
+    const isPending = theme.status === "pending" || theme.status === "На рассмотрении";
+    const isRejected = theme.status === "rejected" || theme.status === "Отклонено";
 
     const handleReject = () => {
         if (!rejectionReason.trim()) {
             return;
         }
 
-        onUpdateStatus(theme.id, "Отклонено", rejectionReason);
+        onUpdateStatus(theme.id, "rejected", rejectionReason);
         handleClose();
     };
 
@@ -131,7 +131,7 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                                         onClick={() =>
                                             onUpdateStatus(
                                                 theme.id,
-                                                "Утверждено"
+                                                "approved"
                                             )
                                         }
                                     >

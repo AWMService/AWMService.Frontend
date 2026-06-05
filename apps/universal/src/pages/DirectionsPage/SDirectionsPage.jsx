@@ -24,11 +24,10 @@ export default function SDirectionsPage() {
     const locale = getIntlLocale(i18n.language);
     const currentLanguage = normalizeLanguage(i18n.language);
 
-    const supervisorId = user?.staffId;
+    const supervisorId = user?.userId;
     const semesterId = user?.currentSemesterId;
 
     const { data: workTypes = [] } = useWorkTypes();
-    const defaultWorkTypeId = workTypes[0]?.id;
     const { data: directions = [], isLoading, error } = useDirectionsBySupervisor(supervisorId, semesterId);
 
     const createMutation = useCreateDirection();
@@ -48,12 +47,16 @@ export default function SDirectionsPage() {
         revision: t('status.revision'),
     }), [t]);
 
-    const isContextReady = !!user?.orgUnitId && !!supervisorId && !!semesterId && !!defaultWorkTypeId;
+    const isContextReady = !!user?.orgUnitId && !!supervisorId && !!semesterId;
     const isMutating = createMutation.isPending || updateMutation.isPending || submitMutation.isPending;
 
     const handleCreateDirection = async (form) => {
         if (!isContextReady) return;
-        const payload = directionPayloadFromForm({ form, user, workTypeId: defaultWorkTypeId });
+        const payload = directionPayloadFromForm({ 
+            form, 
+            user, 
+            workTypeId: form.workTypeId 
+        });
         await createMutation.mutateAsync(payload);
         setIsCreateModalOpen(false);
     };
@@ -63,7 +66,7 @@ export default function SDirectionsPage() {
     };
 
     const handleUpdateDirection = async (updated) => {
-        const workTypeId = selectedDirection?.workTypeId || defaultWorkTypeId;
+        const workTypeId = updated.workTypeId || selectedDirection?.workTypeId;
         const payload = directionPayloadFromForm({ form: updated, user, workTypeId });
         await updateMutation.mutateAsync({ id: updated.id, payload });
         setIsEditModalOpen(false);
@@ -201,6 +204,7 @@ export default function SDirectionsPage() {
                 <CreateDirectionModal
                     onClose={() => setIsCreateModalOpen(false)}
                     onCreate={handleCreateDirection}
+                    workTypes={workTypes}
                 />
             )}
             {isViewModalOpen && selectedDirection && (
@@ -220,6 +224,7 @@ export default function SDirectionsPage() {
                         setSelectedDirection(null);
                     }}
                     onSave={handleUpdateDirection}
+                    workTypes={workTypes}
                 />
             )}
         </div>

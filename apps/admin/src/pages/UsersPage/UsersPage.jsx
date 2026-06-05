@@ -15,16 +15,16 @@ function UsersPage() {
     // Fetch users
     const { data: users = [], isLoading, error } = useQuery({
         queryKey: ['admin-users', universityId, statusFilter, searchQuery],
-        queryFn: () => adminApi.fetchUsers({ 
-            universityId, 
+        queryFn: () => adminApi.fetchUsers({
+            universityId,
             isActive: statusFilter === 'all' ? null : statusFilter === 'active',
-            search: searchQuery 
+            search: searchQuery
         }),
         enabled: !!universityId
     });
 
     const getStatusBadge = (isActive) => {
-        return isActive 
+        return isActive
             ? { label: t('admin.active'), class: 'status-active' }
             : { label: t('admin.inactive'), class: 'status-inactive' };
     };
@@ -48,7 +48,7 @@ function UsersPage() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <select 
+                <select
                     className="filter-select"
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
@@ -72,16 +72,17 @@ function UsersPage() {
                     <div className="loading-state">{t('common.loading')}...</div>
                 ) : (
                     users.map(u => {
-                        const statusBadge = getStatusBadge(u.isActive);
+                        const statusBadge = getStatusBadge(u.isActive ?? true);
+                        const displayName = u.fullName || u.email || 'Unknown';
                         return (
-                            <div key={u.userId} className="table-row">
+                            <div key={u.id} className="table-row">
                                 <div className="col-name">
-                                    <div className="user-avatar">{u.login.substring(0, 2).toUpperCase()}</div>
-                                    <span>{u.login}</span>
+                                    <div className="user-avatar">{displayName.substring(0, 2).toUpperCase()}</div>
+                                    <span>{displayName}</span>
                                 </div>
                                 <div className="col-email">{u.email}</div>
                                 <div className="col-roles">
-                                    {u.roles.map(role => {
+                                    {(u.roles || []).map(role => {
                                         const normalized = normalizeRole(role);
                                         return (
                                             <span key={role} className="role-badge">

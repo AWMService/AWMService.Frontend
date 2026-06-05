@@ -91,7 +91,13 @@
         "commissionMember": "Commission Member",
         "department": "Department Head",
         "admin": "Administrator",
-        "viceRector": "Vice Rector"
+        "viceRector": "Vice Rector",
+        "commission_chairman": "Commission Chairman",
+        "commission_member": "Commission Member",
+        "commission_secretary": "Commission Secretary",
+        "dean_office": "Dean's Office",
+        "department_head": "Department Head",
+        "quality_expert": "Quality Expert"
     },
     "nav": {
         "home": "Home",
@@ -133,7 +139,9 @@
     "student": {
         "chooseTheme": "Choose Theme",
         "myApplications": "My Applications",
+        "myApplicationsTitle": "My Applications",
         "noApplications": "You do not have any applications yet",
+        "availableThemes": "Available themes",
         "preDefense1": "Pre-defense 1",
         "preDefense2": "Pre-defense 2",
         "preDefense3": "Pre-defense 3",
@@ -723,6 +731,11 @@
     },
     "admin": {
         "users": "Users",
+        "usersDescription": "Manage system users",
+        "roles": "Roles",
+        "rolesDescription": "Manage user roles and permissions",
+        "scope": "Scope",
+        "inSystem": "in the system",
         "createUser": "Create User",
         "editUser": "Edit User",
         "deleteUser": "Delete User",

@@ -7,6 +7,11 @@ const readLocalized = (item, field) => {
   const value = read(item, field);
   const pascal = field.charAt(0).toUpperCase() + field.slice(1);
 
+  // Backend sometimes sends a plain string instead of a localized object (e.g. directionTitle)
+  if (typeof value === 'string') {
+    return { ru: value, kk: value, en: value };
+  }
+
   return {
     ru: value?.ru ?? value?.Ru ?? read(item, `${field}Ru`) ?? read(item, `${pascal}Ru`) ?? '',
     kk: value?.kk ?? value?.Kk ?? value?.kz ?? value?.Kz ?? read(item, `${field}Kz`) ?? read(item, `${pascal}Kz`) ?? '',
@@ -15,17 +20,44 @@ const readLocalized = (item, field) => {
 };
 
 /**
- * Normalizes topic status from backend TopicStatus enum string.
- * Backend returns: "Draft", "Pending", "Approved", "Rejected", "Closed",
- *                  "Inactive", "Reconciled", "NeedsRevision"
+ * Normalizes topic status from backend TopicStatus enum (numeric or string).
  */
 const normalizeTopicStatus = (item) => {
-  const raw = String(read(item, 'status') || '').toLowerCase();
-  if (['draft', 'pending', 'approved', 'rejected', 'closed', 'inactive', 'reconciled', 'needsrevision'].includes(raw)) return raw;
+  const raw = read(item, 'status');
+  
+  if (typeof raw === 'number') {
+    switch (raw) {
+      case 0: return 'draft';
+      case 1: return 'pending';
+      case 2: return 'approved';
+      case 3: return 'rejected';
+      case 4: return 'closed';
+      case 5: return 'inactive';
+      case 6: return 'reconciled';
+      case 7: return 'needsrevision';
+      default: return 'draft';
+    }
+  }
+
+  const str = String(raw || '').toLowerCase();
+  if (['draft', 'pending', 'approved', 'rejected', 'closed', 'inactive', 'reconciled', 'needsrevision'].includes(str)) {
+      return str === 'needsrevision' ? 'revision' : str;
+  }
+  
   return 'draft';
 };
 
 export const normalizeApplicationStatus = (status) => {
+  if (typeof status === 'number') {
+    switch (status) {
+      case 1: return 'pending';
+      case 2: return 'approved';
+      case 3: return 'rejected';
+      case 4: return 'withdrawn';
+      default: return 'pending';
+    }
+  }
+
   const raw = String(status || '').toLowerCase();
   if (raw.includes('accept') || raw.includes('approved')) return 'approved';
   if (raw.includes('reject')) return 'rejected';
@@ -45,6 +77,8 @@ export const normalizeTopicApplication = (item) => {
     studentId: read(item, 'studentId'),
     studentName: read(item, 'studentName'),
     studentGroupCode: read(item, 'studentGroupCode'),
+    studentSpecialityName: read(item, 'studentSpecialityName') ?? read(item, 'studentSpeciality') ?? '',
+    directionTitle: readLocalized(item, 'directionTitle'),
     motivationLetter: read(item, 'motivationLetter'),
     appliedAt: read(item, 'appliedAt'),
     reviewedAt: read(item, 'reviewedAt'),
@@ -82,18 +116,19 @@ export const normalizeTopic = (item) => {
     title: readLocalized(item, 'title'),
     description: readLocalized(item, 'description'),
     directionTitle: readLocalized(item, 'directionTitle'),
-    supervisorName: read(item, 'supervisorName'),
+    supervisorName: read(item, 'supervisorFullName') ?? read(item, 'supervisorName'),
     workTypeName: read(item, 'workTypeName'),
     maxParticipants,
-    participantCount: acceptedApplicationsCount,
     availableSpots: read(item, 'availableSpots') ?? Math.max(0, maxParticipants - acceptedApplicationsCount),
     acceptedApplicationsCount,
     pendingApplicationsCount,
     applicationsCount: read(item, 'applicationsCount') ?? applications.length,
     status,
+    applications: (read(item, 'applications') || []).map(normalizeTopicApplication),
     isApproved: status === 'approved',
     isClosed: status === 'closed',
     reviewComment: read(item, 'reviewComment'),
+    submittedAt: read(item, 'submittedAt'),
     createdAt: read(item, 'createdAt'),
     applications,
     students: applications
@@ -102,6 +137,7 @@ export const normalizeTopic = (item) => {
         id: app.studentId,
         fullName: app.studentName,
         group: app.studentGroupCode,
+        speciality: app.studentSpecialityName,
       })),
     requests: applications
       .filter((app) => app.status === 'pending')
@@ -111,6 +147,7 @@ export const normalizeTopic = (item) => {
           id: app.studentId,
           fullName: app.studentName,
           group: app.studentGroupCode,
+          speciality: app.studentSpecialityName,
         },
         motivationLetter: app.motivationLetter,
         createdAt: app.appliedAt,
@@ -223,7 +260,7 @@ export const topicsApi = {
     return data;
   },
 
-  approve: async (id, payload = { isApproved: true }) => {
+  approve: async ({ id, payload = { isApproved: true, comment: "" } }) => {
     const { data } = await apiClient.post(`/v1/topics/${id}/review`, payload);
     return data;
   },
@@ -233,15 +270,21 @@ export const topicsApi = {
   },
 
   /** @deprecated Redirects to review with isApproved=false. Will be removed. */
-  deactivate: async (id, comment = '') => {
-    return topicsApi.approve(id, { isApproved: false, comment });
+  deactivate: async ({ id, comment = "" }) => {
+    return topicsApi.approve({ id, payload: { isApproved: false, comment } });
   },
 
   fetchCoordinationSummary: async ({ orgUnitId, semesterId }) => {
     const { data } = await apiClient.get('/v1/topics/org-unit', {
       params: { orgUnitId, semesterId },
     });
-    return normalizeReconciliationSummary(data);
+    // The endpoint returns a flat array of TopicResponse.
+    // We wrap it in a summary-like object so the UI components can use it consistently.
+    const normalizedTopics = (data || []).map(normalizeTopic);
+    return {
+      topics: normalizedTopics,
+      totalTopics: normalizedTopics.length,
+    };
   },
 
   // --- Reconciliation Stage (Согласование тем) ---
@@ -508,3 +551,4 @@ export const useWithdrawApplication = () => {
     onSuccess: () => invalidateTopics(queryClient),
   });
 };
+;

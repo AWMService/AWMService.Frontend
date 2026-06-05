@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import './SettingsPage.css';
 
 const DEFAULT_SETTINGS = {
-  departmentName: 'Кафедра информационных систем',
-  faculty: 'Факультет информационных технологий',
-  headOfDepartment: 'Иванов Иван Иванович',
-  phone: '+7 (495) 123-45-67',
-  email: 'is@university.edu',
+  departmentName: 'Программная инженерия',
+  faculty: 'Институт автоматики и информационных технологий',
+  headOfDepartment: 'Сыздыкова Заведующая Кафедрой',
+  phone: '+7 (727) 123-45-67',
+  email: 'head@university.edu',
   academicYear: '2025-2026',
   notifyNewDirections: true,
   notifyStudentApplications: true,
