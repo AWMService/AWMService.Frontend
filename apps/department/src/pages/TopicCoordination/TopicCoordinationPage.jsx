@@ -10,6 +10,7 @@ import {
     useMarkTopicsInactive,
     useSendTopicsBackForRevision,
     useCompleteReconciliation,
+    useOrgUnitSpecialities,
 } from "@awm/shared";
 import "./TopicCoordinationPage.css";
 
@@ -29,7 +30,10 @@ const TopicCoordinationPage = () => {
     const orgUnitId = user?.orgUnitId ?? user?.orgUnitId;
     const semesterId = user?.currentSemesterId ?? user?.currentSemesterId;
 
-    const { data: summary, isLoading, error } = useReconciliationSummary(orgUnitId, semesterId);
+    const { data: specialitiesData, isLoading: isLoadingSpecialities } = useOrgUnitSpecialities(orgUnitId);
+    const [selectedSpecialityId, setSelectedSpecialityId] = useState(null);
+
+    const { data: summary, isLoading, error } = useReconciliationSummary(orgUnitId, semesterId, selectedSpecialityId);
     const reconcileMutation = useReconcileTopics();
     const markInactiveMutation = useMarkTopicsInactive();
     const sendBackMutation = useSendTopicsBackForRevision();
@@ -155,7 +159,7 @@ const TopicCoordinationPage = () => {
     };
 
     const handleFinalize = async () => {
-        await completeMutation.mutateAsync({ orgUnitId, semesterId });
+        await completeMutation.mutateAsync({ orgUnitId, semesterId, specialityId: selectedSpecialityId });
         setFinalizeModalOpen(false);
     };
 
@@ -246,6 +250,26 @@ const TopicCoordinationPage = () => {
                     {STATUS_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>
                             {t(opt.labelKey, opt.value)}
+                        </option>
+                    ))}
+                </select>
+
+                <select
+                    className="tc-filter-select"
+                    value={selectedSpecialityId ?? ""}
+                    onChange={(e) => {
+                        const val = e.target.value;
+                        setSelectedSpecialityId(val ? Number(val) : null);
+                        setSelectedIds([]);
+                    }}
+                    disabled={isLoadingSpecialities || !specialitiesData?.length}
+                >
+                    <option value="">
+                        {t("department.allSpecialities", "Все специальности")}
+                    </option>
+                    {(specialitiesData || []).map((spec) => (
+                        <option key={spec.id} value={spec.id}>
+                            {spec.code} - {getLocalizedValue(spec.title, currentLanguage)}
                         </option>
                     ))}
                 </select>

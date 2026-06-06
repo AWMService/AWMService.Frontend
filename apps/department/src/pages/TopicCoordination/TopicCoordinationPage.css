@@ -94,12 +94,19 @@
     background: #ffffff;
     outline: none;
     cursor: pointer;
+    min-width: 160px;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .tc-filter-select:focus {
     border-color: #2563eb;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.tc-filter-select:disabled {
+    background: #f3f4f6;
+    color: #9ca3af;
+    cursor: not-allowed;
 }
 
 .tc-search-input {

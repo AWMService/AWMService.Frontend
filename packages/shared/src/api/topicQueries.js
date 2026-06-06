@@ -311,8 +311,8 @@ export const topicsApi = {
     return data;
   },
 
-  completeReconciliation: async ({ orgUnitId, semesterId }) => {
-    const { data } = await apiClient.post('/v1/topics/complete-reconciliation', { orgUnitId, semesterId });
+  completeReconciliation: async ({ orgUnitId, semesterId, specialityId }) => {
+    const { data } = await apiClient.post('/v1/topics/complete-reconciliation', { orgUnitId, semesterId, specialityId });
     return data;
   },
 
