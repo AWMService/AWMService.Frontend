@@ -48,7 +48,7 @@ function EmployeesPage() {
         specialization: "", 
         email: staff.email || "",
         phone: "",
-        currentStudents: staff.currentStudents || 0, 
+        currentStudents: staff.currentStudents ?? 0, 
         maxStudents: staff.maxWorkload !== undefined ? staff.maxWorkload : (staff.maxStudentsLoad || 0),
         assignedDate: staff.assignedDate || new Date(), 
     });

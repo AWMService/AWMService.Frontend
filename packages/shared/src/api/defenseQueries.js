@@ -48,6 +48,10 @@ export function useCreateEvaluationCriteria() {
 // ================= Schedules & Grading =================
 
 export const scheduleApi = {
+  fetchScheduleByWork: async (workId) => {
+    const { data } = await apiClient.get(`/v1/schedules/by-work/${workId}`);
+    return data;
+  },
   fetchGrades: async (scheduleId) => {
     const { data } = await apiClient.get(`/v1/schedules/${scheduleId}/grades`);
     return data;
@@ -75,6 +79,14 @@ export function useGenerateSchedule() {
       queryClient.invalidateQueries({ queryKey: ['preDefense'] });
       queryClient.invalidateQueries({ queryKey: ['defenseSchedule'] });
     },
+  });
+}
+
+export function useScheduleByWork(workId) {
+  return useQuery({
+    queryKey: ['schedule', 'byWork', workId],
+    queryFn: () => scheduleApi.fetchScheduleByWork(workId),
+    enabled: !!workId && workId > 0,
   });
 }
 

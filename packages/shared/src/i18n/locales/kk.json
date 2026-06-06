@@ -68,7 +68,11 @@
         "startLabel": "Басталуы:",
         "endLabel": "Аяқталуы:",
         "requiredFields": "Барлық міндетті өрістерді толтырыңыз",
-        "saved": "Сақталды"
+        "saved": "Сақталды",
+        "saveError": "Сақтау қатесі. Қайта көріңіз.",
+        "uploading": "Жүктелуде...",
+        "downloading": "Жүктеп алынуда...",
+        "downloadError": "Жүктеп алу қатесі."
     },
     "auth": {
         "login": "Кіру",
@@ -384,7 +388,27 @@
         "confirmSubmitReview": "Жібергеннен кейін өңдеу мүмкін болмайды",
         "reviewTextPlaceholder": "Студенттің жұмысы туралы пікір жазыңыз...",
         "reviewDocument": "Пікір құжаты (PDF/DOCX)",
-        "reviewSubmittedMessage": "Пікір жіберілді және өзгерту мүмкін емес"
+        "reviewSubmittedMessage": "Пікір жіберілді және өзгерту мүмкін емес",
+        "tabs": {
+            "info": "Ақпарат",
+            "documents": "Құжаттар",
+            "checks": "Тексерістер",
+            "schedule": "Кесте",
+            "history": "Тарих",
+            "review": "Пікір"
+        },
+        "qualityChecks": {
+            "type": "Тексеру түрі",
+            "softwareCheckShort": "БЖ",
+            "normControlShort": "НҚ"
+        },
+        "schedule": {
+            "defenseInfo": "Қорғау туралы ақпарат",
+            "date": "Күні",
+            "location": "Аудитория",
+            "notAssigned": "Кесте әлі белгіленбеген"
+        },
+        "reviewRequired": "Пікір мәтінін енгізіңіз немесе файлды тіркеңіз."
     },
     "reviewer": {
         "assignedWorks": "Тағайындалған жұмыстар",
@@ -732,7 +756,18 @@
         "modePreDefense": "Алдын ала қорғаулар",
         "modeGak": "МАК (Қорытынды қорғау)",
         "noGakCommissions": "МАК комиссиялары жасалмаған. «Комиссиялар» бетінде жасаңыз.",
-        "noPreDefenseCommissions": "Алдын ала қорғау комиссиялары жасалмаған."
+        "noPreDefenseCommissions": "Алдын ала қорғау комиссиялары жасалмаған.",
+        "employeesTitle": "Ғылыми жетекшілер",
+        "employeesSubtitle": "Белгіленген ғылыми жетекшілерді және олардың жүктемесін басқару",
+        "searchEmployees": "Аты бойынша іздеу...",
+        "addEmployees": "Жетекшілер қосу",
+        "confirmEmployees": "ҒЖ құрамын бекіту",
+        "unlockEmployees": "Өңдеуге рұқсат ету",
+        "noOrgUnitSelected": "Кафедра таңдалмаған."
+    },
+    "employee": {
+        "currentStudents": "Ағымдағы студенттер",
+        "maxStudents": "Ең көп студенттер"
     },
     "admin": {
         "users": "Пайдаланушылар",

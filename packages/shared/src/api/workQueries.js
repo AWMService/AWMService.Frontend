@@ -35,6 +35,20 @@ export const useMySupervisedWorks = (options = {}) => {
   });
 };
 
+export const fetchWorkHistory = async (workId) => {
+  const { data } = await apiClient.get(`/v1/works/${workId}/history`);
+  return data;
+};
+
+export const useWorkHistory = (workId, options = {}) => {
+  return useQuery({
+    queryKey: [...workKeys.all, 'history', workId],
+    queryFn: () => fetchWorkHistory(workId),
+    enabled: !!workId && workId > 0,
+    ...options,
+  });
+};
+
 export const fetchStudentDefenseStep = async () => {
   const { data } = await apiClient.get('/v1/schedules/my-defense-step');
   return data;

@@ -68,7 +68,11 @@
         "startLabel": "Начало:",
         "endLabel": "Конец:",
         "requiredFields": "Заполните все обязательные поля",
-        "saved": "Сохранено"
+        "saved": "Сохранено",
+        "saveError": "Ошибка сохранения. Попробуйте снова.",
+        "uploading": "Загрузка...",
+        "downloading": "Скачивание...",
+        "downloadError": "Ошибка скачивания."
     },
     "auth": {
         "login": "Вход",
@@ -385,7 +389,27 @@
         "confirmSubmitReview": "После отправки редактирование будет невозможно",
         "reviewTextPlaceholder": "Напишите отзыв о работе студента...",
         "reviewDocument": "Документ отзыва (PDF/DOCX)",
-        "reviewSubmittedMessage": "Отзыв отправлен и не может быть изменён"
+        "reviewSubmittedMessage": "Отзыв отправлен и не может быть изменён",
+        "tabs": {
+            "info": "Информация",
+            "documents": "Документы",
+            "checks": "Проверки",
+            "schedule": "Расписание",
+            "history": "История",
+            "review": "Отзыв"
+        },
+        "qualityChecks": {
+            "type": "Тип проверки",
+            "softwareCheckShort": "ПО",
+            "normControlShort": "НК"
+        },
+        "schedule": {
+            "defenseInfo": "Информация о защите",
+            "date": "Дата",
+            "location": "Аудитория",
+            "notAssigned": "Расписание ещё не назначено"
+        },
+        "reviewRequired": "Введите текст отзыва или прикрепите файл."
     },
     "reviewer": {
         "assignedWorks": "Назначенные работы",
@@ -739,7 +763,18 @@
         "modePreDefense": "Предзащиты",
         "modeGak": "ГАК (Финальная защита)",
         "noGakCommissions": "Комиссии ГАК не созданы. Создайте их на странице «Комиссии».",
-        "noPreDefenseCommissions": "Комиссии предзащит не созданы."
+        "noPreDefenseCommissions": "Комиссии предзащит не созданы.",
+        "employeesTitle": "Научные руководители",
+        "employeesSubtitle": "Управление назначенными научными руководителями и их нагрузкой",
+        "searchEmployees": "Поиск по имени...",
+        "addEmployees": "Добавить руководителей",
+        "confirmEmployees": "Утвердить состав НР",
+        "unlockEmployees": "Разблокировать для изменений",
+        "noOrgUnitSelected": "Кафедра не выбрана."
+    },
+    "employee": {
+        "currentStudents": "Текущие студенты",
+        "maxStudents": "Максимум студентов"
     },
     "admin": {
         "users": "Пользователи",

@@ -23,8 +23,8 @@ export function SharedSidebar({ navigationItems, headerTitle }) {
     };
 
     const handleNavClick = (e, item) => {
-        if (!item.onClick) {
-            // Let Link handle it natively, or use navigate if it's an a-tag
+        if (item.onClick) {
+            item.onClick(e);
         }
         setIsMobileMenuOpen(false);
     };

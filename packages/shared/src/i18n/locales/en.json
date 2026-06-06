@@ -68,7 +68,11 @@
         "startLabel": "Start:",
         "endLabel": "End:",
         "requiredFields": "Please fill in all required fields",
-        "saved": "Saved"
+        "saved": "Saved",
+        "saveError": "Failed to save. Please try again.",
+        "uploading": "Uploading...",
+        "downloading": "Downloading...",
+        "downloadError": "Download failed."
     },
     "auth": {
         "login": "Login",
@@ -384,7 +388,27 @@
         "confirmSubmitReview": "After submission, editing will not be possible",
         "reviewTextPlaceholder": "Write a review of the student's work...",
         "reviewDocument": "Review document (PDF/DOCX)",
-        "reviewSubmittedMessage": "Review has been submitted and cannot be edited"
+        "reviewSubmittedMessage": "Review has been submitted and cannot be edited",
+        "tabs": {
+            "info": "Information",
+            "documents": "Documents",
+            "checks": "Checks",
+            "schedule": "Schedule",
+            "history": "History",
+            "review": "Review"
+        },
+        "qualityChecks": {
+            "type": "Check type",
+            "softwareCheckShort": "SW",
+            "normControlShort": "NC"
+        },
+        "schedule": {
+            "defenseInfo": "Defense information",
+            "date": "Date",
+            "location": "Location",
+            "notAssigned": "Schedule not assigned yet"
+        },
+        "reviewRequired": "Please enter review text or attach a file."
     },
     "reviewer": {
         "assignedWorks": "Assigned Works",
@@ -733,7 +757,18 @@
         "modePreDefense": "Pre-Defenses",
         "modeGak": "GAK (Final Defense)",
         "noGakCommissions": "No GAK commissions found. Create them on the Commissions page.",
-        "noPreDefenseCommissions": "No pre-defense commissions found."
+        "noPreDefenseCommissions": "No pre-defense commissions found.",
+        "employeesTitle": "Scientific Supervisors",
+        "employeesSubtitle": "Management of appointed scientific supervisors and their workload",
+        "searchEmployees": "Search by name...",
+        "addEmployees": "Add Supervisors",
+        "confirmEmployees": "Confirm Supervisor List",
+        "unlockEmployees": "Unlock for Editing",
+        "noOrgUnitSelected": "No organization unit selected."
+    },
+    "employee": {
+        "currentStudents": "Current students",
+        "maxStudents": "Maximum students"
     },
     "admin": {
         "users": "Users",

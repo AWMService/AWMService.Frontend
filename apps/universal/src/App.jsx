@@ -19,24 +19,15 @@ import { NotificationsPage } from '@awm/shared';
 import './App.css';
 
 function AppContent() {
-    const { currentRole } = useRole();
+    const { hasRole } = useRole();
 
     // Определяем дефолтный путь в зависимости от роли
     const getDefaultRoute = () => {
-        switch (currentRole) {
-            case ROLES.SUPERVISOR:
-                return '/my-topics';
-            case ROLES.REVIEWER:
-                return '/reviews';
-            case ROLES.NORMOCONTROL:
-                return '/documents';
-            case ROLES.CHAIRMAN:
-            case ROLES.SECRETARY:
-            case ROLES.COMMISSION_MEMBER:
-                return '/schedule';
-            default:
-                return '/my-topics';
-        }
+        if (hasRole(ROLES.SUPERVISOR)) return '/my-topics';
+        if (hasRole(ROLES.REVIEWER)) return '/reviews';
+        if (hasRole(ROLES.NORMOCONTROL)) return '/documents';
+        if (hasRole(ROLES.CHAIRMAN) || hasRole(ROLES.SECRETARY) || hasRole(ROLES.COMMISSION_MEMBER)) return '/schedule';
+        return '/my-topics';
     };
 
     return (

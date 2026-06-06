@@ -113,6 +113,34 @@
     border-color: #2563eb;
 }
 
+/* Quality check badges on cards */
+.sp-check-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.sp-check-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.sp-check-pass {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.sp-check-fail {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
 /* --- МОДАЛЬНОЕ ОКНО (sm-) --- */
 .sm-overlay {
     position: fixed;
@@ -533,4 +561,329 @@
 
 .sm-review-btn-primary:hover {
     background: #4f46e5;
+}
+
+/* --- TABS --- */
+.sm-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0 32px;
+    background: white;
+}
+
+.sm-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 16px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748b;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.sm-tab:hover {
+    color: #334155;
+}
+
+.sm-tab-active {
+    color: #3b82f6;
+    border-bottom-color: #3b82f6;
+    font-weight: 600;
+}
+
+/* --- TAB CONTENT --- */
+.sm-tab-content {
+    padding: 24px 32px;
+    overflow-y: auto;
+    max-height: calc(90vh - 160px);
+}
+
+/* Info tab */
+.sm-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.sm-info-card {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.sm-info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.sm-info-row:last-child {
+    border-bottom: none;
+}
+
+.sm-info-label {
+    font-size: 13px;
+    color: #64748b;
+}
+
+.sm-info-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e293b;
+    text-align: right;
+    max-width: 60%;
+}
+
+/* Checks table */
+.sm-checks-wrapper {
+    overflow-x: auto;
+}
+
+.sm-checks-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.sm-checks-table th,
+.sm-checks-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.sm-checks-table th {
+    background: #f8fafc;
+    font-weight: 600;
+    color: #475569;
+}
+
+.sm-checks-table td {
+    color: #334155;
+}
+
+.sm-check-status-pass {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #15803d;
+    font-weight: 600;
+}
+
+.sm-check-status-fail {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #b91c1c;
+    font-weight: 600;
+}
+
+/* Schedule */
+.sm-schedule-wrapper {
+    max-width: 600px;
+}
+
+.sm-schedule-card {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.sm-schedule-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    color: #1e293b;
+}
+
+.sm-schedule-header h4 {
+    margin: 0;
+    font-size: 15px;
+}
+
+.sm-schedule-members {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.sm-schedule-members h5 {
+    margin: 0 0 10px 0;
+    font-size: 13px;
+    color: #475569;
+}
+
+.sm-member-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 13px;
+}
+
+.sm-member-role {
+    color: #64748b;
+    font-weight: 500;
+}
+
+.sm-member-name {
+    color: #1e293b;
+}
+
+/* Timeline */
+.sm-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.sm-timeline-item {
+    display: flex;
+    gap: 16px;
+}
+
+.sm-timeline-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 20px;
+}
+
+.sm-timeline-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #3b82f6;
+    flex-shrink: 0;
+    margin-top: 4px;
+}
+
+.sm-timeline-line {
+    width: 2px;
+    flex: 1;
+    min-height: 24px;
+    background: #e5e7eb;
+    margin: 4px 0;
+}
+
+.sm-timeline-content {
+    padding-bottom: 20px;
+    flex: 1;
+}
+
+.sm-timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.sm-timeline-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.sm-timeline-date {
+    font-size: 12px;
+    color: #94a3b8;
+    white-space: nowrap;
+}
+
+.sm-timeline-desc {
+    font-size: 13px;
+    color: #64748b;
+    margin: 4px 0 0 0;
+}
+
+/* Review wrapper */
+.sm-review-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sm-review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sm-review-card {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 16px;
+    border-left: 4px solid #6366f1;
+}
+
+.sm-review-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 12px;
+}
+
+.sm-review-author {
+    font-weight: 600;
+    color: #475569;
+}
+
+.sm-review-date {
+    color: #94a3b8;
+}
+
+.sm-review-text {
+    margin: 0;
+    font-size: 13px;
+    color: #334155;
+    line-height: 1.5;
+}
+
+.sm-review-form {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.sm-review-error {
+    color: #dc2626;
+    font-size: 13px;
+    margin: 8px 0 0 0;
+}
+
+.sm-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 40px;
+    color: #94a3b8;
+}
+
+.sm-empty-state p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* Docs grid */
+.sm-docs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+@media (max-width: 768px) {
+    .sm-info-grid,
+    .sm-docs-grid {
+        grid-template-columns: 1fr;
+    }
 }
