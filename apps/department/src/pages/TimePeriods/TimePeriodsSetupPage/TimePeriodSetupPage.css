@@ -1,9 +1,6 @@
 /* ===== PAGE ===== */
 .setup-page {
     font-family: "Segoe UI", Roboto, sans-serif;
-    padding: 40px;
-    background: #f5f7fb;
-    margin-top: 64px;
 }
 
 .custom-calendar {

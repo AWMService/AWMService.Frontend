@@ -68,6 +68,14 @@ export const scheduleApi = {
     // generateData includes: CommissionId, StartDate, Location, SlotDurationMinutes, WorkIds
     const { data } = await apiClient.post('/v1/schedules/generate', generateData);
     return data;
+  },
+  updateSchedule: async (id, scheduleData) => {
+    const { data } = await apiClient.put(`/v1/schedules/${id}`, scheduleData);
+    return data;
+  },
+  deleteSchedule: async (id) => {
+    const { data } = await apiClient.delete(`/v1/schedules/${id}`);
+    return data;
   }
 };
 
@@ -75,6 +83,28 @@ export function useGenerateSchedule() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (generateData) => scheduleApi.generateSchedule(generateData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['preDefense'] });
+      queryClient.invalidateQueries({ queryKey: ['defenseSchedule'] });
+    },
+  });
+}
+
+export function useUpdateSchedule() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...data }) => scheduleApi.updateSchedule(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['preDefense'] });
+      queryClient.invalidateQueries({ queryKey: ['defenseSchedule'] });
+    },
+  });
+}
+
+export function useDeleteSchedule() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id) => scheduleApi.deleteSchedule(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['preDefense'] });
       queryClient.invalidateQueries({ queryKey: ['defenseSchedule'] });

@@ -96,14 +96,6 @@ export default function ReviewersPage() {
     return (
         <div className="reviewers-page">
             <div className="page-header">
-                <div className="page-header-info">
-                    <div>
-                        <h1 className="page-title">{t("reviewer.reviewers", "Reviewers")}</h1>
-                        <p className="page-subtitle">
-                            {t("reviewer.reviewersSubtitle", "Manage external reviewers database and their contact information")}
-                        </p>
-                    </div>
-                </div>
                 <button 
                     className="button primary-button" 
                     onClick={handleOpenAddModal}

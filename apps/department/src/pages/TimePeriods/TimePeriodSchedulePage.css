@@ -1,13 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 .dept-schedule-page {
-    min-height: 100vh;
     font-family: 'Inter', sans-serif;
     position: relative;
     overflow-x: hidden;
     padding-bottom: 80px;
-    margin-top: 64px; /* Отступ под навбар */
-    background: #f8fafc;
 }
 
 /* --- ФОНОВЫЕ СФЕРЫ --- */

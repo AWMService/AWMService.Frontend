@@ -21,9 +21,10 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
 
     useEffect(() => {
         if (editingCommission) {
+            const type = editingCommission.commissionTypeId === 2 ? 'GAK' : 'PreDefense';
             setFormData({
                 name: editingCommission.name || '',
-                type: editingCommission.commissionType || 'PreDefense',
+                type: type,
                 chairmanId: editingCommission.chairmanId || '',
                 secretaryId: editingCommission.secretaryId || '',
                 memberIds: editingCommission.memberIds || [],
@@ -40,7 +41,7 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
         if (!memberSearch) return staff;
         const q = memberSearch.toLowerCase();
         return staff.filter(
-            (s) => s.fullName.toLowerCase().includes(q) || s.positionName?.toLowerCase().includes(q)
+            (s) => (s.fullName || '').toLowerCase().includes(q) || (s.positionTitle || '').toLowerCase().includes(q)
         );
     }, [memberSearch, staff]);
 
@@ -114,7 +115,7 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
                             <select name="specialityId" value={formData.specialityId} onChange={handleChange}>
                                 <option value="">{t('department.allSpecialities', 'Все специальности')}</option>
                                 {specialities.map((s) => (
-                                    <option key={s.id} value={s.id}>{s.name}</option>
+                                    <option key={s.id} value={s.id}>{s.code} — {s.title}</option>
                                 ))}
                             </select>
                         </label>
@@ -135,11 +136,17 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
                         {t('commission.chairman')}
                         <select name="chairmanId" value={formData.chairmanId} onChange={handleChange} required>
                             <option value="">{t('department.selectTeacher')}</option>
-                            {staff.map((s) => (
-                                <option key={s.userId} value={s.userId}>
-                                    {s.fullName} {s.positionName ? `— ${s.positionName}` : ''}
-                                </option>
-                            ))}
+                            {staff.map((s) => {
+                                const isSecretary = String(s.userId) === String(formData.secretaryId);
+                                const isMember = formData.memberIds.includes(s.userId);
+                                return (
+                                    <option key={s.userId} value={s.userId} disabled={isSecretary || isMember}>
+                                        {s.fullName} {s.positionTitle ? `— ${s.positionTitle}` : ''}
+                                        {isSecretary ? ` (${t('commission.secretary')})` : ''}
+                                        {isMember ? ` (${t('commission.member')})` : ''}
+                                    </option>
+                                );
+                            })}
                         </select>
                     </label>
 
@@ -147,11 +154,17 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
                         {t('commission.secretary')}
                         <select name="secretaryId" value={formData.secretaryId} onChange={handleChange} required>
                             <option value="">{t('department.selectTeacher')}</option>
-                            {staff.map((s) => (
-                                <option key={s.userId} value={s.userId}>
-                                    {s.fullName} {s.positionName ? `— ${s.positionName}` : ''}
-                                </option>
-                            ))}
+                            {staff.map((s) => {
+                                const isChairman = String(s.userId) === String(formData.chairmanId);
+                                const isMember = formData.memberIds.includes(s.userId);
+                                return (
+                                    <option key={s.userId} value={s.userId} disabled={isChairman || isMember}>
+                                        {s.fullName} {s.positionTitle ? `— ${s.positionTitle}` : ''}
+                                        {isChairman ? ` (${t('commission.chairman')})` : ''}
+                                        {isMember ? ` (${t('commission.member')})` : ''}
+                                    </option>
+                                );
+                            })}
                         </select>
                     </label>
 
@@ -165,19 +178,25 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
                                 value={memberSearch}
                                 onChange={(e) => setMemberSearch(e.target.value)}
                             />
-                            {filteredStaff.map((s) => (
-                                <label key={s.userId} className="commission-modal__member-item">
-                                    <input
-                                        type="checkbox"
-                                        checked={formData.memberIds.includes(s.userId)}
-                                        onChange={() => handleMemberToggle(s.userId)}
-                                    />
-                                    <span>{s.fullName}</span>
-                                    <span className="commission-modal__member-position">
-                                        {s.positionName}
-                                    </span>
-                                </label>
-                            ))}
+                            {filteredStaff.map((s) => {
+                                const isChairman = String(s.userId) === String(formData.chairmanId);
+                                const isSecretary = String(s.userId) === String(formData.secretaryId);
+                                if (isChairman || isSecretary) return null;
+
+                                return (
+                                    <label key={s.userId} className="commission-modal__member-item">
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.memberIds.includes(s.userId)}
+                                            onChange={() => handleMemberToggle(s.userId)}
+                                        />
+                                        <span>{s.fullName}</span>
+                                        <span className="commission-modal__member-position">
+                                            {s.positionTitle}
+                                        </span>
+                                    </label>
+                                );
+                            })}
                         </div>
                     </div>
 

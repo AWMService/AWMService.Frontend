@@ -1,8 +1,5 @@
 .commissions-page {
-    background-color: #F9FAFB;
     flex: 1;
-    margin-top: 64px;
-    padding: 56px;
 }
 
 .commissions-page .page-header {
@@ -28,10 +25,6 @@
 @media (max-width: 900px) {
     .commissions-grid {
         grid-template-columns: 1fr;
-    }
-
-    .commissions-page {
-        padding: 24px 16px;
     }
 }
 

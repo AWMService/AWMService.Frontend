@@ -125,15 +125,6 @@ function EmployeesPage() {
     return (
         <div className="employees-page">
             <div className="page-header">
-                <div className="page-header-info">
-                    <div>
-                        <h1 className="page-title">{t('department.employeesTitle')}</h1>
-                        <p className="page-subtitle">
-                            {t('department.employeesSubtitle')}
-                        </p>
-                    </div>
-                </div>
-
                 <div className="header-actions">
                     {isConfirmed ? (
                         <button

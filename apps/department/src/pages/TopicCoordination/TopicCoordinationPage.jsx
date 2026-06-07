@@ -201,14 +201,6 @@ const TopicCoordinationPage = () => {
 
     return (
         <div className="topic-coordination-page">
-            {/* Header */}
-            <div className="page-header-info">
-                <div>
-                    <h1 className="page-title">{t("department.topicReconciliationTitle", "Согласование тем")}</h1>
-                    <p className="page-subtitle">{t("department.topicReconciliationSubtitle", "Массовое согласование тем, обработка проблемных случаев, формирование финального списка")}</p>
-                </div>
-            </div>
-
             {/* Stats summary */}
             <div className="tc-stats-summary">
                 <span className="tc-stat-item">

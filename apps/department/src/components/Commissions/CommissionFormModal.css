@@ -120,6 +120,7 @@
 }
 
 .commission-modal__member-item input[type="checkbox"] {
+    appearance: auto;
     accent-color: #3b82f6;
     width: 15px;
     height: 15px;

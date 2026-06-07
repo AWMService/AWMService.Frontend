@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { Calendar, CheckCircle2, PlayCircle, Clock, Sparkles, AlertCircle } from "lucide-react";
 import { 
     ConfirmModal, 
     getIntlLocale, 
@@ -153,7 +154,7 @@ export default function InitialPeriodsPage() {
             setIsApproved(true);
             setIsConfirmOpen(false);
         } catch {
-            setOrderError("Failed to save periods. Please try again.");
+            setOrderError("Failed to save stages. Please try again.");
         }
     };
 
@@ -182,23 +183,26 @@ export default function InitialPeriodsPage() {
         });
     };
 
+    const getStageStatus = (start, end) => {
+        if (!start || !end) return { code: "pending", text: t("common.statusPending", "Ожидает"), color: "#9ca3af", icon: Clock };
+        const now = new Date();
+        const startDate = new Date(start + "T00:00:00");
+        const endDate = new Date(end + "T23:59:59");
+        if (now < startDate) return { code: "upcoming", text: t("common.statusUpcoming", "Предстоит"), color: "#3b82f6", icon: Calendar };
+        if (now > endDate) return { code: "completed", text: t("common.statusCompleted", "Завершен"), color: "#10b981", icon: CheckCircle2 };
+        return { code: "active", text: t("common.statusActive", "Активен"), color: "#f59e0b", icon: PlayCircle };
+    };
+
     if (isLoading) {
-        return <div className="initial-periods-page"><p>{t('common.loading', 'Loading...')}</p></div>;
+        return <div className="initial-periods-page"><div className="loader-pulse">{t('common.loading', 'Загрузка...')}</div></div>;
     }
 
     if (!orgUnitId || !semesterId) {
-        return <div className="initial-periods-page"><p>{t('department.noDepartmentSelected', 'Department or Academic Year missing.')}</p></div>;
+        return <div className="initial-periods-page"><p>{t('department.noDepartmentSelected', 'Кафедра или учебный год не выбраны.')}</p></div>;
     }
 
     return (
         <div className="initial-periods-page">
-            <div className="page-header">
-                <div>
-                    <h1 className="page-title">{t("department.initialPeriodsTitle")}</h1>
-                    <p className="page-subtitle">{t("department.initialPeriodsSubtitle")}</p>
-                </div>
-            </div>
-
             {/* Speciality Selector */}
             <div className="speciality-selector-wrapper">
                 <span className="selector-label">{t("student.specialty")}:</span>
@@ -223,26 +227,61 @@ export default function InitialPeriodsPage() {
             {/* ===================== SUMMARY VIEW ===================== */}
             {isApproved ? (
                 <div className="periods-summary">
-                    {PERIOD_CONFIG.map(({ key, labelKey }) => (
-                        <div key={key} className="period-summary-card">
-                            <div className="period-summary-card__info">
-                                <span className="period-summary-card__name">{t(labelKey)}</span>
-                                <span className="period-summary-card__dates">
-                                    {formatDate(formData[key].startDate)} — {formatDate(formData[key].endDate)}
-                                </span>
-                            </div>
-                            <span className="period-summary-card__status">
-                                {t("department.approved")}
-                            </span>
-                        </div>
-                    ))}
+                    {/* Pipeline visualization */}
+                    <div className="stages-timeline">
+                        <div className="timeline-progress-line" />
+                        {PERIOD_CONFIG.map(({ key, labelKey }, idx) => {
+                            const status = getStageStatus(formData[key].startDate, formData[key].endDate);
+                            const IconComponent = status.icon;
+                            return (
+                                <div key={key} className={`timeline-node ${status.code}`}>
+                                    <div className="node-badge" style={{ backgroundColor: status.color + "22", borderColor: status.color, color: status.color }}>
+                                        <IconComponent size={20} className={status.code === 'active' ? 'pulse-icon' : ''} />
+                                    </div>
+                                    <div className="node-content">
+                                        <h4 className="node-title">{t(labelKey)}</h4>
+                                        <p className="node-dates">
+                                            {formatDate(formData[key].startDate)} — {formatDate(formData[key].endDate)}
+                                        </p>
+                                        <span className="node-status-pill" style={{ color: status.color, backgroundColor: status.color + "15" }}>
+                                            {status.text}
+                                        </span>
+                                    </div>
+                                    {idx < PERIOD_CONFIG.length - 1 && <div className="node-connector" />}
+                                </div>
+                            );
+                        })}
+                    </div>
 
-                    <div className="periods-summary__actions" style={{ display: "flex", gap: "12px" }}>
-                        <button className="button secondary-button" onClick={handleEdit}>
+                    <div className="stage-cards-grid">
+                        {PERIOD_CONFIG.map(({ key, labelKey }) => {
+                            const status = getStageStatus(formData[key].startDate, formData[key].endDate);
+                            return (
+                                <div key={key} className={`stage-display-card ${status.code}`}>
+                                    <div className="stage-card-glow" style={{ background: `radial-gradient(circle at 100% 0%, ${status.color}15, transparent 60%)` }} />
+                                    <div className="card-header-row">
+                                        <span className="card-label">{t("common.stageResults", "Этап")}</span>
+                                        <span className="status-badge" style={{ color: status.color, borderColor: status.color + "44", background: status.color + "11" }}>
+                                            {status.text}
+                                        </span>
+                                    </div>
+                                    <h3 className="card-title-text">{t(labelKey)}</h3>
+                                    <div className="card-dates-row">
+                                        <Calendar size={16} />
+                                        <span>{formatDate(formData[key].startDate)} — {formatDate(formData[key].endDate)}</span>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    <div className="periods-summary__actions">
+                        <button className="button secondary-button ripple-effect" onClick={handleEdit}>
+                            <Sparkles size={16} style={{ marginRight: '6px' }} />
                             {t("department.editPeriods")}
                         </button>
                         {selectedSpecialityId && (
-                            <button className="button secondary-button" onClick={handleResetOverride} style={{ color: "#DC2626", borderColor: "#FCA5A5" }}>
+                            <button className="button reset-button" onClick={handleResetOverride}>
                                 {t("department.resetToDefaults", "Сбросить к общим срокам кафедры")}
                             </button>
                         )}
@@ -252,47 +291,51 @@ export default function InitialPeriodsPage() {
                 /* ===================== FORM VIEW ===================== */
                 <div className="periods-form">
                     {selectedSpecialityId && periodsData.length === 0 && (
-                        <div className="periods-form__order-error" style={{ color: "#1E3A8A", background: "#EFF6FF", borderColor: "#BFDBFE", marginBottom: "8px" }}>
-                            {t("department.usingInheritedDates", "Внимание: для данной специальности используются общие сроки кафедры. Вы можете изменить их и сохранить индивидуальные настройки.")}
+                        <div className="inherited-dates-warning">
+                            <AlertCircle size={18} />
+                            <span>{t("department.usingInheritedDates", "Внимание: для данной специальности используются общие сроки кафедры. Вы можете настроить индивидуальные сроки ниже.")}</span>
                         </div>
                     )}
 
-                    {PERIOD_CONFIG.map(({ key, labelKey }) => (
-                        <div key={key} className="period-group">
-                            <div className="period-group__title">{t(labelKey)}</div>
-                            <div className="period-group__dates">
-                                <div className="period-group__date-field">
-                                    <label>{t("common.startDate")}</label>
-                                    <input
-                                        type="date"
-                                        value={formData[key].startDate}
-                                        onChange={(e) => handleDateChange(key, "startDate", e.target.value)}
-                                    />
+                    <div className="stage-form-cards-grid">
+                        {PERIOD_CONFIG.map(({ key, labelKey }) => (
+                            <div key={key} className="stage-form-card">
+                                <div className="form-card-title">{t(labelKey)}</div>
+                                <div className="period-group__dates">
+                                    <div className="period-group__date-field">
+                                        <label>{t("common.startDate")}</label>
+                                        <input
+                                            type="date"
+                                            value={formData[key].startDate}
+                                            onChange={(e) => handleDateChange(key, "startDate", e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="period-group__date-field">
+                                        <label>{t("common.endDate")}</label>
+                                        <input
+                                            type="date"
+                                            value={formData[key].endDate}
+                                            onChange={(e) => handleDateChange(key, "endDate", e.target.value)}
+                                        />
+                                    </div>
                                 </div>
-                                <div className="period-group__date-field">
-                                    <label>{t("common.endDate")}</label>
-                                    <input
-                                        type="date"
-                                        value={formData[key].endDate}
-                                        onChange={(e) => handleDateChange(key, "endDate", e.target.value)}
-                                    />
-                                </div>
+                                {errors[key] && (
+                                    <div className="period-group__error">{errors[key]}</div>
+                                )}
                             </div>
-                            {errors[key] && (
-                                <div className="period-group__error">{errors[key]}</div>
-                            )}
-                        </div>
-                    ))}
+                        ))}
+                    </div>
 
                     {orderError && (
                         <div className="periods-form__order-error">{orderError}</div>
                     )}
 
-                    <div className="periods-form__actions" style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
+                    <div className="periods-form__actions">
                         {selectedSpecialityId && periodsData.length > 0 && (
                             <button
                                 className="button secondary-button"
                                 onClick={() => setIsApproved(true)}
+                                style={{ marginRight: '12px' }}
                             >
                                 {t("common.cancel", "Отмена")}
                             </button>
@@ -324,6 +367,7 @@ export default function InitialPeriodsPage() {
         </div>
     );
 }
+
 
 
 

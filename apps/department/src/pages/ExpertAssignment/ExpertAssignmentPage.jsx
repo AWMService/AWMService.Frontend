@@ -8,7 +8,6 @@ import {
     useOrgUnitSpecialities 
 } from "@awm/shared";
 import "./ExpertAssignmentPage.css";
-import shieldCheckIcon from "../../assets/icons/shield-check-icon.svg";
 
 export default function ExpertAssignmentPage() {
     const { t } = useTranslation();
@@ -120,15 +119,6 @@ export default function ExpertAssignmentPage() {
                 </div>
             )}
             <div className="page-header">
-                <div className="page-header-info">
-                    <div className="page-header-icon-bg">
-                        <img src={shieldCheckIcon} alt="" className="page-header-icon" />
-                    </div>
-                    <div>
-                        <h1 className="page-title">{t("department.expertAssignmentTitle")}</h1>
-                        <p className="page-subtitle">{t("department.expertAssignmentSubtitle")}</p>
-                    </div>
-                </div>
                 <div className="ea-header-actions">
                     {saveSuccess && (
                         <span className="ea-save-success-msg">

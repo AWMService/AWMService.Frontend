@@ -48,11 +48,6 @@ function SettingsPage() {
 
   return (
     <div className="settings-page">
-      <div className="page-header">
-        <h1>{t('department.settingsTitle')}</h1>
-        <p className="page-subtitle">{t('department.settingsSubtitle')}</p>
-      </div>
-
       <div className="settings-card">
         {/* Department Profile */}
         <div className="settings-group">

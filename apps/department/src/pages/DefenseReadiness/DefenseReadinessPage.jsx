@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ConfirmModal, useAuth, useDefenseReadiness, useAdmitToDefense, useActiveCheckConfigurations, useDownloadAdmittedStudentsList, useNotifyUnreadyStudents } from "@awm/shared";
 import "./DefenseReadinessPage.css";
-import documentCheckIcon from "../../assets/icons/document-check-icon.svg";
 
 function CheckBadge({ passed }) {
     if (passed) {
@@ -128,18 +127,6 @@ export default function DefenseReadinessPage() {
 
     return (
         <div className="defense-readiness-page">
-            <div className="page-header">
-                <div className="page-header-info">
-                    <div className="page-header-icon-bg">
-                        <img src={documentCheckIcon} alt="" className="page-header-icon" />
-                    </div>
-                    <div>
-                        <h1 className="page-title">{t("department.defenseReadinessTitle")}</h1>
-                        <p className="page-subtitle">{t("department.defenseReadinessSubtitle")}</p>
-                    </div>
-                </div>
-            </div>
-
             {/* KPI Cards */}
             <div className="dr-kpi-cards">
                 <div className="dr-kpi-card dr-kpi-card--green">

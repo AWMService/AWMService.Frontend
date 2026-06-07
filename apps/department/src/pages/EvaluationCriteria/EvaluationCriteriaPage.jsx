@@ -156,7 +156,6 @@ function EvaluationCriteriaPage() {
             )}
             <div className="page-header">
                 <div>
-                    <h1 className="page-title">{t('criteria.title', 'Критерии оценивания')}</h1>
                     <div className="work-type-selector">
                         <button 
                             className={`type-btn ${workTypeId === 1 ? 'active' : ''}`}

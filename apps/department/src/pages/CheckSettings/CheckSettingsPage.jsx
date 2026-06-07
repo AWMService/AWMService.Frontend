@@ -7,7 +7,6 @@ import {
     useDeleteCheckConfiguration 
 } from "@awm/shared";
 import "./CheckSettingsPage.css";
-import shieldCheckIcon from "../../assets/icons/shield-check-icon.svg";
 import plusIcon from "../../assets/icons/plus-icon.svg";
 
 // Mapped specialities for department UI representation
@@ -78,17 +77,6 @@ export default function CheckSettingsPage() {
     return (
         <div className="check-settings-page">
             <div className="page-header">
-                <div className="page-header-info">
-                    <div className="page-header-icon-bg">
-                        <img src={shieldCheckIcon} alt="" className="page-header-icon" />
-                    </div>
-                    <div>
-                        <h1 className="page-title">{t("department.notifyReviews", "Quality Check Settings")}</h1>
-                        <p className="page-subtitle">
-                            Configure mandatory quality checks and thresholds for department specialities
-                        </p>
-                    </div>
-                </div>
                 {!isFormOpen && (
                     <button 
                         className="button primary-button" 

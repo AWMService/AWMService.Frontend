@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
     getIntlLocale,
@@ -30,7 +30,6 @@ const formatDate = (value, locale) => {
 
 const DirectionsAndThemes = () => {
     const location = useLocation();
-    const navigate = useNavigate();
     const { t, i18n } = useTranslation();
     const { user } = useAuth();
     const currentLanguage = normalizeLanguage(i18n.language);
@@ -113,14 +112,6 @@ const DirectionsAndThemes = () => {
         }
     }, [isDirections, t]);
 
-    const changeTab = (tab) => {
-        navigate(`?tab=${tab}`);
-        setSearchQuery("");
-        setFilterStatus("all");
-        setSelectedDirection(null);
-        setSelectedTheme(null);
-    };
-
     const items = isDirections ? directions : themes;
 
     const getCount = (status) => {
@@ -161,35 +152,6 @@ const DirectionsAndThemes = () => {
 
     return (
         <div className="projects-page">
-            <div className="page-header-info">
-                <div>
-                    <h1 className="page-title">
-                        {isDirections ? t('supervisor.directionsDP') : t('supervisor.themesDP')}
-                    </h1>
-                    <p className="page-subtitle">
-                        {isDirections
-                            ? t('department.directionsSubtitle')
-                            : t('department.themesSubtitle')}
-                    </p>
-                </div>
-            </div>
-
-            <div className="projects-tabs">
-                <button
-                    className={`tab-btn ${isDirections ? "active" : ""}`}
-                    onClick={() => changeTab(TABS.DIRECTIONS)}
-                >
-                    {t('department.directions')} <span>{directions.length}</span>
-                </button>
-
-                <button
-                    className={`tab-btn ${!isDirections ? "active" : ""}`}
-                    onClick={() => changeTab(TABS.THEMES)}
-                >
-                    {t('supervisor.topics')} <span>{themes.length}</span>
-                </button>
-            </div>
-
             <div className="projects-controls">
                 <input
                     type="text"

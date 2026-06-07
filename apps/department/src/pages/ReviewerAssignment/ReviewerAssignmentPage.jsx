@@ -7,7 +7,6 @@ import {
     useAssignReviewer,
 } from '@awm/shared';
 import './ReviewerAssignmentPage.css';
-import usersIcon from '../../assets/icons/users-icon.svg';
 
 const TABS = ['all', 'notAssigned', 'assigned', 'reviewReceived'];
 
@@ -137,19 +136,6 @@ export default function ReviewerAssignmentPage() {
 
     return (
         <div className="ra-page">
-            {/* Header */}
-            <div className="page-header">
-                <div className="page-header-info">
-                    <div className="page-header-icon-bg">
-                        <img src={usersIcon} alt="" className="page-header-icon" />
-                    </div>
-                    <div>
-                        <h1 className="page-title">{t('department.reviewerAssignmentTitle')}</h1>
-                        <p className="page-subtitle">{t('department.reviewerAssignmentSubtitle')}</p>
-                    </div>
-                </div>
-            </div>
-
             {/* KPI */}
             <div className="ra-kpi-row">
                 <div className="ra-kpi-card">

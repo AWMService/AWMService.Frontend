@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import {
     ConfirmModal,
     useAuth,
@@ -7,7 +8,6 @@ import {
     useOrgUnitEmployees,
     useCreateCommission,
     useUpdateCommission,
-    useApprovePreDefensePeriods,
     useOrgUnitSpecialities,
     commissionApi
 } from "@awm/shared";
@@ -16,13 +16,9 @@ import CommissionFormModal from "../../components/Commissions/CommissionFormModa
 import plusIcon from "../../assets/icons/plus-icon.svg";
 import "./CommissionsPage.css";
 
-// Temporary delete mutation until we add it to commissionQueries.js
-
-// We need to add deleteCommission to apiClient or commissionApi if not there.
-// I'll update commissionQueries.js to include it.
-
 function CommissionsPage() {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const { user } = useAuth();
     const queryClient = useQueryClient();
     
@@ -37,21 +33,6 @@ function CommissionsPage() {
 
     const createMutation = useCreateCommission(orgUnitId, semesterId, selectedSpecialityId);
     const updateMutation = useUpdateCommission(orgUnitId, semesterId, selectedSpecialityId);
-    const approveMutation = useApprovePreDefensePeriods();
-
-    const [approveError, setApproveError] = useState(null);
-    const [approveSuccess, setApproveSuccess] = useState(false);
-
-    const handleApprove = async () => {
-        setApproveError(null);
-        setApproveSuccess(false);
-        try {
-            await approveMutation.mutateAsync({ orgUnitId, semesterId });
-            setApproveSuccess(true);
-        } catch (err) {
-            setApproveError(err?.response?.data?.detail || t('common.error'));
-        }
-    };
     
     const deleteMutation = useMutation({
         mutationFn: (id) => commissionApi.deleteCommission(id),
@@ -87,9 +68,16 @@ function CommissionsPage() {
     const handleFormSubmit = async (formData) => {
         try {
             if (editingCommission) {
-                // For update, we might need a separate UpdateCommissionRequest on backend
-                // or just update name for now if PUT /v1/commissions/{id} only supports that
-                await updateMutation.mutateAsync({ id: editingCommission.id, name: formData.name });
+                await updateMutation.mutateAsync({
+                    id: editingCommission.id,
+                    name: formData.name,
+                    commissionTypeId: formData.commissionTypeId,
+                    preDefenseNumber: formData.preDefenseNumber,
+                    specialityId: formData.specialityId,
+                    chairmanUserId: formData.chairmanUserId,
+                    secretaryUserId: formData.secretaryUserId,
+                    memberUserIds: formData.memberUserIds
+                });
             } else {
                 await createMutation.mutateAsync({
                     ...formData,
@@ -103,14 +91,6 @@ function CommissionsPage() {
             console.error("Failed to submit commission", error);
         }
     };
-
-    // ... inside return, update card rendering:
-    // {commissions.map((commission) => {
-    //    const chairman = commission.members?.find(m => m.roleType === 2)?.fullName;
-    //    const secretary = commission.members?.find(m => m.roleType === 3)?.fullName;
-    //    const memberCount = commission.members?.filter(m => m.roleType === 4).length || 0;
-    // ...
-
 
     const handleFormClose = () => {
         setIsFormOpen(false);
@@ -156,34 +136,13 @@ function CommissionsPage() {
                 </div>
             )}
             <div className="page-header">
-                <div>
-                    <h1 className="page-title">{t('department.commissionsTitle')}</h1>
-                </div>
                 <div className="page-header__actions">
-                    <button
-                        className="button secondary-button"
-                        onClick={handleApprove}
-                        disabled={approveMutation.isPending || commissions.length === 0}
-                    >
-                        {approveMutation.isPending
-                            ? t('common.loading')
-                            : t('department.approvePreDefenseCommissions', 'Утвердить периоды предзащит и комиссии')}
-                    </button>
                     <button className="button primary-button" onClick={handleCreate}>
                         <img src={plusIcon} alt="" className="button-icon" />
                         {t('department.createCommission')}
                     </button>
                 </div>
             </div>
-
-            {approveSuccess && (
-                <div className="alert alert--success">
-                    {t('department.approvePreDefenseSuccess', 'Периоды предзащит и комиссии утверждены.')}
-                </div>
-            )}
-            {approveError && (
-                <div className="alert alert--error">{approveError}</div>
-            )}
 
             <div className="commissions-grid">
                 {commissions.length === 0 && (
@@ -239,6 +198,13 @@ function CommissionsPage() {
                                     {t('department.editCommission')}
                                 </button>
                                 <button
+                                    className="commission-card__action-btn"
+                                    onClick={() => navigate('/defenses?tab=distribution')}
+                                    style={{ border: '1px solid #4f46e5', color: '#4f46e5' }}
+                                >
+                                    {t('commission.schedule', 'Расписание')}
+                                </button>
+                                <button
                                     className="commission-card__action-btn commission-card__action-btn--danger"
                                     onClick={() => setDeleteTarget(commission)}
                                 >
@@ -272,6 +238,3 @@ function CommissionsPage() {
 }
 
 export default CommissionsPage;
-
-
-

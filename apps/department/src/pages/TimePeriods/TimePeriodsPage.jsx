@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { Calendar, Trash2, Settings, CalendarClock, Plus, AlertCircle, RefreshCw } from "lucide-react";
 import {
     useAuth,
     usePeriods,
@@ -11,15 +13,85 @@ import {
 } from "@awm/shared";
 import "./TimePeriodsPage.css";
 
-import { TimePeriodCard, TimePeriodFormDialog } from "@awm/shared";
+import { TimePeriodFormDialog } from "@awm/shared";
 
-import plusIcon from "../../assets/icons/plus-icon.svg";
+const PRE_DEFENSE_STAGES  = ["PreDefense1", "PreDefense2", "PreDefense3"];
+const FINAL_DEFENSE_STAGES = ["FinalDefense", "ChecksPeriod"];
 
-const DEFENSE_STAGES = ["PreDefense1", "PreDefense2", "PreDefense3", "FinalDefense"];
-const CHECKS_STAGES  = ["ChecksPeriod"];
+// Premium Local Stage Card component
+function StageCard({ period, onDelete, onSetup, onSchedule }) {
+    const { t } = useTranslation();
+    const isChecks = period.stageKey === "ChecksPeriod";
+    const isFinal = period.stageKey === "FinalDefense";
+    
+    // Choose status colors based on stage types
+    let statusColor = "#3b82f6"; // blue (PreDefense1)
+    if (period.stageKey === "PreDefense2") statusColor = "#f59e0b"; // amber
+    if (period.stageKey === "PreDefense3") statusColor = "#ef4444"; // red
+    if (isChecks) statusColor = "#0f766e"; // teal
+    if (isFinal) statusColor = "#10b981"; // emerald
+
+    return (
+        <div className="premium-stage-card">
+            <div className="card-top-glow" style={{ background: `radial-gradient(circle at 100% 0%, ${statusColor}15, transparent 65%)` }} />
+            
+            <div className="stage-card-header">
+                <div className="title-section">
+                    <h3 className="stage-card-title">{period.name}</h3>
+                    <div className="stage-card-dates">
+                        <Calendar size={14} />
+                        <span>{period.startDate} — {period.endDate}</span>
+                    </div>
+                </div>
+                <div className="actions-section">
+                    <span className="stage-status-pill" style={{ color: statusColor, backgroundColor: statusColor + "12", borderColor: statusColor + "25" }}>
+                        {t('commission.statusUpcoming', 'Предстоит')}
+                    </span>
+                    <button className="stage-delete-btn" onClick={onDelete} title={t('common.delete', 'Удалить')}>
+                        <Trash2 size={16} />
+                    </button>
+                </div>
+            </div>
+
+            <div className="stage-progress-section">
+                <div className="stage-progress-bar-container">
+                    <div className="stage-progress-fill" style={{ width: `${period.progress}%`, backgroundColor: statusColor }} />
+                </div>
+                <span className="stage-progress-label">{period.progress}%</span>
+            </div>
+
+            <div className="stage-meta-grid">
+                <div className="meta-item">
+                    <span className="meta-count">{period.commissions}</span>
+                    <span className="meta-label">{t('commission.commissions', 'Комиссии')}</span>
+                </div>
+                <div className="meta-item">
+                    <span className="meta-count">{period.students}</span>
+                    <span className="meta-label">{t('commission.students', 'Студенты')}</span>
+                </div>
+                <div className="meta-item">
+                    <span className="meta-count">{period.dates}</span>
+                    <span className="meta-label">{t('common.date', 'Дата')}</span>
+                </div>
+            </div>
+
+            <div className="stage-actions-row">
+                <button className="stage-action-btn primary" onClick={onSetup}>
+                    <Settings size={14} />
+                    <span>{t('department.setupPeriod', 'Настройка')}</span>
+                </button>
+                <button className="stage-action-btn secondary" onClick={onSchedule}>
+                    <CalendarClock size={14} />
+                    <span>{t('commission.schedule', 'Расписание')}</span>
+                </button>
+            </div>
+        </div>
+    );
+}
 
 export default function TimePeriodsPage() {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const { user } = useAuth();
 
     const orgUnitId  = user?.orgUnitId;
@@ -28,26 +100,26 @@ export default function TimePeriodsPage() {
     // Speciality selector
     const [selectedSpecialityId, setSelectedSpecialityId] = useState(null);
 
-    // Defense periods state
-    const [localPeriods, setLocalPeriods]             = useState([]);
-    const [hasUnsavedChanges, setHasUnsavedChanges]   = useState(false);
-    const [isDialogOpen, setIsDialogOpen]             = useState(false);
-    const [isConfirmOpen, setIsConfirmOpen]           = useState(false);
+    // Pre-defense periods state (Stage 7)
+    const [localPreDefensePeriods, setLocalPreDefensePeriods] = useState([]);
+    const [hasUnsavedPDChanges, setHasUnsavedPDChanges]       = useState(false);
+    const [isPDDialogOpen, setIsPDDialogOpen]                 = useState(false);
+    const [isPDConfirmOpen, setIsPDConfirmOpen]               = useState(false);
 
-    // Checks period state
-    const [localChecksPeriods, setLocalChecksPeriods]               = useState([]);
-    const [hasUnsavedChecksChanges, setHasUnsavedChecksChanges]     = useState(false);
-    const [isChecksDialogOpen, setIsChecksDialogOpen]               = useState(false);
-    const [isChecksConfirmOpen, setIsChecksConfirmOpen]             = useState(false);
+    // Final defense & Checks periods state (Stage 9)
+    const [localFinalDefensePeriods, setLocalFinalDefensePeriods]     = useState([]);
+    const [hasUnsavedFDChanges, setHasUnsavedFDChanges]               = useState(false);
+    const [isFDDialogOpen, setIsFDDialogOpen]                         = useState(false);
+    const [isFDConfirmOpen, setIsFDConfirmOpen]                       = useState(false);
 
     // Queries
-    const { data: specialities = [] }                          = useOrgUnitSpecialities(orgUnitId);
-    const { data: periodsData = [], isLoading }                = usePeriods(orgUnitId, semesterId, selectedSpecialityId);
+    const { data: specialities = [] }           = useOrgUnitSpecialities(orgUnitId);
+    const { data: periodsData = [], isLoading } = usePeriods(orgUnitId, semesterId, selectedSpecialityId);
 
     // Mutations
-    const approveMutation = useApproveDefensePeriods(orgUnitId, semesterId, selectedSpecialityId);
-    const checksMutation  = useApproveChecksPeriods(orgUnitId, semesterId, selectedSpecialityId);
-    const resetMutation   = useResetStagesOverride(orgUnitId, semesterId);
+    const approvePDMutation = useApproveDefensePeriods(orgUnitId, semesterId, selectedSpecialityId);
+    const approveFDMutation = useApproveChecksPeriods(orgUnitId, semesterId, selectedSpecialityId);
+    const resetMutation     = useResetStagesOverride(orgUnitId, semesterId);
 
     // Helper: translate stage key to display label
     const stageLabel = (key) => ({
@@ -64,97 +136,97 @@ export default function TimePeriodsPage() {
         stageKey:  p.workflowStage,
         startDate: p.startDate ? p.startDate.split('T')[0] : "",
         endDate:   p.endDate   ? p.endDate.split('T')[0]   : "",
-        commissions: 0,
-        students:    0,
-        dates:       0,
-        progress:    0,
+        commissions: p.commissionsCount || 0,
+        students:    p.studentsCount || 0,
+        dates:       p.datesCount || 0,
+        progress:    p.progress || 0,
         status:      "upcoming",
     });
 
     useEffect(() => {
         if (periodsData && periodsData.length > 0) {
-            setLocalPeriods(
-                periodsData.filter(p => DEFENSE_STAGES.includes(p.workflowStage)).map(mapPeriod)
+            setLocalPreDefensePeriods(
+                periodsData.filter(p => PRE_DEFENSE_STAGES.includes(p.workflowStage)).map(mapPeriod)
             );
-            setLocalChecksPeriods(
-                periodsData.filter(p => CHECKS_STAGES.includes(p.workflowStage)).map(mapPeriod)
+            setLocalFinalDefensePeriods(
+                periodsData.filter(p => FINAL_DEFENSE_STAGES.includes(p.workflowStage)).map(mapPeriod)
             );
-            setHasUnsavedChanges(false);
-            setHasUnsavedChecksChanges(false);
+            setHasUnsavedPDChanges(false);
+            setHasUnsavedFDChanges(false);
         } else {
-            setLocalPeriods([]);
-            setLocalChecksPeriods([]);
-            setHasUnsavedChanges(false);
-            setHasUnsavedChecksChanges(false);
+            setLocalPreDefensePeriods([]);
+            setLocalFinalDefensePeriods([]);
+            setHasUnsavedPDChanges(false);
+            setHasUnsavedFDChanges(false);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [periodsData]);
 
-    // ── Defense period handlers ──────────────────────────────────────────────
-    const handleAddPeriod = (formData) => {
-        setLocalPeriods(prev => [...prev, {
-            id:        `new-${Date.now()}`,
+    // ── Stage 7 handlers ──────────────────────────────────────────────────
+    const handleAddPDPeriod = (formData) => {
+        setLocalPreDefensePeriods(prev => [...prev, {
+            id:        `new-pd-${Date.now()}`,
             name:      stageLabel(formData.name),
             stageKey:  formData.name,
             startDate: formData.startDate,
             endDate:   formData.endDate,
             commissions: 0, students: 0, dates: 0, progress: 0, status: "upcoming",
         }]);
-        setHasUnsavedChanges(true);
-        setIsDialogOpen(false);
+        setHasUnsavedPDChanges(true);
+        setIsPDDialogOpen(false);
     };
 
-    const deletePeriod = (id) => {
-        setLocalPeriods(prev => prev.filter(p => p.id !== id));
-        setHasUnsavedChanges(true);
+    const deletePDPeriod = (id) => {
+        setLocalPreDefensePeriods(prev => prev.filter(p => p.id !== id));
+        setHasUnsavedPDChanges(true);
     };
 
-    const handleSaveAndApprove = async () => {
-        const payload = localPeriods.map(p => ({
+    const handleSaveAndApprovePD = async () => {
+        const payload = localPreDefensePeriods.map(p => ({
             workflowStage: p.stageKey,
             startDate:     new Date(p.startDate).toISOString(),
             endDate:       new Date(p.endDate).toISOString(),
         }));
         try {
-            await approveMutation.mutateAsync(payload);
-            setHasUnsavedChanges(false);
-            setIsConfirmOpen(false);
+            await approvePDMutation.mutateAsync(payload);
+            setHasUnsavedPDChanges(false);
+            setIsPDConfirmOpen(false);
         } catch (err) {
-            console.error("Failed to approve defense periods", err);
+            console.error("Failed to approve Stage 7 periods", err);
         }
     };
 
-    // ── Checks period handlers ───────────────────────────────────────────────
-    const handleAddChecksPeriod = (formData) => {
-        setLocalChecksPeriods(prev => [...prev, {
-            id:        `new-checks-${Date.now()}`,
+    // ── Stage 9 handlers ──────────────────────────────────────────────────
+    const handleAddFDPeriod = (formData) => {
+        setLocalFinalDefensePeriods(prev => [...prev, {
+            id:        `new-fd-${Date.now()}`,
             name:      stageLabel(formData.name),
             stageKey:  formData.name,
             startDate: formData.startDate,
             endDate:   formData.endDate,
             commissions: 0, students: 0, dates: 0, progress: 0, status: "upcoming",
         }]);
-        setHasUnsavedChecksChanges(true);
-        setIsChecksDialogOpen(false);
+        setHasUnsavedFDChanges(true);
+        setIsFDDialogOpen(false);
     };
 
-    const deleteChecksPeriod = (id) => {
-        setLocalChecksPeriods(prev => prev.filter(p => p.id !== id));
-        setHasUnsavedChecksChanges(true);
+    const deleteFDPeriod = (id) => {
+        setLocalFinalDefensePeriods(prev => prev.filter(p => p.id !== id));
+        setHasUnsavedFDChanges(true);
     };
 
-    const handleSaveAndApproveChecks = async () => {
-        const payload = localChecksPeriods.map(p => ({
+    const handleSaveAndApproveFD = async () => {
+        const payload = localFinalDefensePeriods.map(p => ({
             workflowStage: p.stageKey,
             startDate:     new Date(p.startDate).toISOString(),
             endDate:       new Date(p.endDate).toISOString(),
         }));
         try {
-            await checksMutation.mutateAsync(payload);
-            setHasUnsavedChecksChanges(false);
-            setIsChecksConfirmOpen(false);
+            await approveFDMutation.mutateAsync(payload);
+            setHasUnsavedFDChanges(false);
+            setIsFDConfirmOpen(false);
         } catch (err) {
-            console.error("Failed to approve checks periods", err);
+            console.error("Failed to approve Stage 9 periods", err);
         }
     };
 
@@ -170,40 +242,21 @@ export default function TimePeriodsPage() {
     };
 
     if (isLoading) {
-        return <div className="time-periods-page"><p>{t('common.loading', 'Loading...')}</p></div>;
+        return <div className="time-periods-page"><div className="loader-pulse">{t('common.loading', 'Загрузка...')}</div></div>;
     }
 
     if (!orgUnitId || !semesterId) {
-        return <div className="time-periods-page"><p>{t('department.noDepartmentSelected', 'Department or Academic Year missing.')}</p></div>;
+        return <div className="time-periods-page"><p>{t('department.noDepartmentSelected', 'Кафедра или учебный год не выбраны.')}</p></div>;
     }
 
-    const hasDefenseOverride = selectedSpecialityId && periodsData.some(p => DEFENSE_STAGES.includes(p.workflowStage));
-    const hasChecksOverride  = selectedSpecialityId && periodsData.some(p => CHECKS_STAGES.includes(p.workflowStage));
+    const hasPDOverride = selectedSpecialityId && periodsData.some(p => PRE_DEFENSE_STAGES.includes(p.workflowStage));
+    const hasFDOverride = selectedSpecialityId && periodsData.some(p => FINAL_DEFENSE_STAGES.includes(p.workflowStage));
 
     return (
         <div className="time-periods-page">
-            {/* ── Page header ─────────────────────────────────────────────── */}
-            <div className="page-header">
-                <div className="page-header-info">
-                    <div>
-                        <h1 className="page-title">{t('department.timePeriodsTitle')}</h1>
-                        <p className="page-subtitle">{t('department.timePeriodsSubtitle')}</p>
-                    </div>
-                </div>
-            </div>
-
             {/* ── Speciality selector ─────────────────────────────────────── */}
-            <div className="speciality-selector-wrapper" style={{
-                marginBottom: "2rem",
-                background: "#ffffff",
-                border: "1px solid #E5E7EB",
-                borderRadius: "12px",
-                padding: "16px 20px",
-                display: "flex",
-                alignItems: "center",
-                gap: "16px"
-            }}>
-                <span className="selector-label" style={{ fontSize: "0.875rem", fontWeight: "600", color: "#374151" }}>
+            <div className="speciality-selector-wrapper">
+                <span className="selector-label">
                     {t("student.specialty")}:
                 </span>
                 <select
@@ -212,21 +265,10 @@ export default function TimePeriodsPage() {
                     onChange={(e) => {
                         const val = e.target.value;
                         setSelectedSpecialityId(val ? Number(val) : null);
-                        setLocalPeriods([]);
-                        setLocalChecksPeriods([]);
-                        setHasUnsavedChanges(false);
-                        setHasUnsavedChecksChanges(false);
-                    }}
-                    style={{
-                        padding: "0.6rem 2rem 0.6rem 1rem",
-                        borderRadius: "0.375rem",
-                        border: "1px solid #E5E7EB",
-                        fontSize: "0.875rem",
-                        color: "#1F2937",
-                        backgroundColor: "#ffffff",
-                        outline: "none",
-                        cursor: "pointer",
-                        minWidth: "320px"
+                        setLocalPreDefensePeriods([]);
+                        setLocalFinalDefensePeriods([]);
+                        setHasUnsavedPDChanges(false);
+                        setHasUnsavedFDChanges(false);
                     }}
                 >
                     <option value="">{t("department.allSpecialities", "Общее для кафедры (По умолчанию)")}</option>
@@ -237,62 +279,65 @@ export default function TimePeriodsPage() {
             </div>
 
             {/* ════════════════════════════════════════════════════════════════
-                SECTION 1 — Defense periods (PreDefense 1/2/3 + FinalDefense)
+                SECTION 1 — Stage 7: Pre-defense periods
             ════════════════════════════════════════════════════════════════ */}
-            <div style={{ marginBottom: "2.5rem" }}>
-                <div className="page-header" style={{ marginBottom: "1rem" }}>
-                    <div>
-                        <h2 style={{ fontSize: "1.125rem", fontWeight: "600", color: "#111827", margin: 0 }}>
-                            {t('department.timePeriodsTitle')}
+            <div className="dashboard-section">
+                <div className="section-header">
+                    <div className="section-title-wrapper">
+                        <h2 className="section-title">
+                            {t('department.stage7Title', 'Этап 7: Предзащиты')}
                         </h2>
-                        <p style={{ fontSize: "0.875rem", color: "#6B7280", margin: "4px 0 0" }}>
-                            {t('department.timePeriodsSubtitle')}
+                        <p className="section-subtitle">
+                            {t('department.stage7Subtitle', 'Утверждение периодов предзащит и комиссий')}
                         </p>
                     </div>
-                    <div style={{ display: "flex", gap: "10px" }}>
-                        {hasDefenseOverride && !hasUnsavedChanges && (
+                    <div className="section-actions">
+                        {hasPDOverride && !hasUnsavedPDChanges && (
                             <button
-                                className="button secondary-button"
+                                className="button reset-button"
                                 onClick={handleResetOverride}
-                                style={{ color: "#DC2626", borderColor: "#FCA5A5" }}
                             >
+                                <RefreshCw size={14} style={{ marginRight: '6px' }} />
                                 {t('department.resetToDefaults', 'Сбросить к общим срокам')}
                             </button>
                         )}
-                        {hasUnsavedChanges && (
+                        {hasUnsavedPDChanges && (
                             <button
-                                className="button secondary-button"
-                                onClick={() => setIsConfirmOpen(true)}
-                                disabled={approveMutation.isPending}
+                                className="button save-btn ripple-effect"
+                                onClick={() => setIsPDConfirmOpen(true)}
+                                disabled={approvePDMutation.isPending}
                             >
                                 {t('common.save', 'Сохранить')}
                             </button>
                         )}
                         <button
-                            className="button primary-button"
-                            onClick={() => setIsDialogOpen(true)}
+                            className="button primary-button ripple-effect"
+                            onClick={() => setIsPDDialogOpen(true)}
                         >
-                            <img src={plusIcon} alt="Add" className="button-icon" />
+                            <Plus size={16} style={{ marginRight: '6px' }} />
                             {t('department.addPeriod')}
                         </button>
                     </div>
                 </div>
 
-                {selectedSpecialityId && !hasDefenseOverride && !hasUnsavedChanges && (
-                    <div className="periods-form__order-error" style={{ color: "#1E3A8A", background: "#EFF6FF", borderColor: "#BFDBFE", marginBottom: "1rem" }}>
-                        {t("department.usingInheritedDates", "Внимание: для данной специальности используются общие сроки кафедры.")}
+                {selectedSpecialityId && !hasPDOverride && !hasUnsavedPDChanges && (
+                    <div className="inherited-dates-warning">
+                        <AlertCircle size={18} />
+                        <span>{t("department.usingInheritedDates", "Внимание: для данной специальности используются общие сроки кафедры.")}</span>
                     </div>
                 )}
 
-                <div className="periods-list">
-                    {localPeriods.map((period) => (
-                        <TimePeriodCard
+                <div className="stage-cards-grid">
+                    {localPreDefensePeriods.map((period) => (
+                        <StageCard
                             key={period.id}
                             period={period}
-                            onDelete={() => deletePeriod(period.id)}
+                            onDelete={() => deletePDPeriod(period.id)}
+                            onSetup={() => navigate(`/defenses?tab=distribution&stageId=${period.id}`)}
+                            onSchedule={() => navigate(`/defenses?tab=distribution&stageId=${period.id}`)}
                         />
                     ))}
-                    {localPeriods.length === 0 && (
+                    {localPreDefensePeriods.length === 0 && (
                         <div className="empty-state">
                             <p>{t('department.periodsNotFound', 'Периоды не добавлены.')}</p>
                         </div>
@@ -301,118 +346,101 @@ export default function TimePeriodsPage() {
             </div>
 
             {/* ════════════════════════════════════════════════════════════════
-                SECTION 2 — Checks period (ChecksPeriod)
+                SECTION 2 — Stage 9: Experts and Final Defense
             ════════════════════════════════════════════════════════════════ */}
-            <div style={{
-                borderTop: "2px solid #E5E7EB",
-                paddingTop: "2rem",
-                marginBottom: "2.5rem"
-            }}>
-                <div className="page-header" style={{ marginBottom: "1rem" }}>
-                    <div>
-                        <h2 style={{ fontSize: "1.125rem", fontWeight: "600", color: "#111827", margin: 0 }}>
-                            {t('department.checksPeriodSectionTitle', 'Период проверок')}
+            <div className="dashboard-section stage-9-section">
+                <div className="section-header">
+                    <div className="section-title-wrapper">
+                        <h2 className="section-title">
+                            {t('department.stage9Title', 'Этап 9: Эксперты и защиты')}
                         </h2>
-                        <p style={{ fontSize: "0.875rem", color: "#6B7280", margin: "4px 0 0" }}>
-                            {t('department.checksPeriodSectionSubtitle', 'Настройка сроков нормоконтроля, антиплагиата и рецензирования')}
+                        <p className="section-subtitle">
+                            {t('department.stage9Subtitle', 'Настройка сроков проверок, рецензирования и финальной защиты')}
                         </p>
                     </div>
-                    <div style={{ display: "flex", gap: "10px" }}>
-                        {hasUnsavedChecksChanges && (
+                    <div className="section-actions">
+                        {hasUnsavedFDChanges && (
                             <button
-                                className="button secondary-button"
-                                onClick={() => setIsChecksConfirmOpen(true)}
-                                disabled={checksMutation.isPending}
+                                className="button save-btn ripple-effect"
+                                onClick={() => setIsFDConfirmOpen(true)}
+                                disabled={approveFDMutation.isPending}
                             >
                                 {t('common.save', 'Сохранить')}
                             </button>
                         )}
-                        {!hasUnsavedChecksChanges && localChecksPeriods.length > 0 && (
+                        {!hasUnsavedFDChanges && localFinalDefensePeriods.length > 0 && (
                             <button
-                                className="button primary-button"
-                                style={{ background: "#059669" }}
-                                onClick={() => setIsChecksConfirmOpen(true)}
-                                disabled={checksMutation.isPending}
+                                className="button approve-all-btn ripple-effect"
+                                onClick={() => setIsFDConfirmOpen(true)}
+                                disabled={approveFDMutation.isPending}
                             >
-                                {t('department.approveChecksPeriods', 'Утвердить период проверок и экспертов')}
-                            </button>
-                        )}
-                        {hasUnsavedChecksChanges && localChecksPeriods.length > 0 && (
-                            <button
-                                className="button primary-button"
-                                style={{ background: "#059669" }}
-                                onClick={() => setIsChecksConfirmOpen(true)}
-                                disabled={checksMutation.isPending}
-                            >
-                                {t('department.approveChecksPeriods', 'Утвердить период проверок и экспертов')}
+                                {t('department.approveFinalStages', 'Утвердить экспертов и периоды')}
                             </button>
                         )}
                         <button
-                            className="button primary-button"
-                            style={{ background: "#0F766E" }}
-                            onClick={() => setIsChecksDialogOpen(true)}
+                            className="button secondary-button ripple-effect"
+                            onClick={() => setIsFDDialogOpen(true)}
                         >
-                            <img src={plusIcon} alt="Add" className="button-icon" />
-                            {t('department.addChecksPeriod', 'Добавить период проверок')}
+                            <Plus size={16} style={{ marginRight: '6px' }} />
+                            {t('department.addPeriod')}
                         </button>
                     </div>
                 </div>
 
-                {hasChecksOverride && !hasUnsavedChecksChanges && (
-                    <div className="periods-form__order-error" style={{ color: "#1E3A8A", background: "#EFF6FF", borderColor: "#BFDBFE", marginBottom: "1rem" }}>
-                        {t("department.usingInheritedDates", "Внимание: для данной специальности используются общие сроки кафедры.")}
+                {hasFDOverride && !hasUnsavedFDChanges && (
+                    <div className="inherited-dates-warning">
+                        <AlertCircle size={18} />
+                        <span>{t("department.usingInheritedDates", "Внимание: для данной специальности используются общие сроки кафедры.")}</span>
                     </div>
                 )}
 
-                <div className="periods-list">
-                    {localChecksPeriods.map((period) => (
-                        <TimePeriodCard
+                <div className="stage-cards-grid">
+                    {localFinalDefensePeriods.map((period) => (
+                        <StageCard
                             key={period.id}
                             period={period}
-                            onDelete={() => deleteChecksPeriod(period.id)}
+                            onDelete={() => deleteFDPeriod(period.id)}
+                            onSetup={() => navigate(`/defenses?tab=distribution&stageId=${period.id}`)}
+                            onSchedule={() => navigate(`/defenses?tab=distribution&stageId=${period.id}`)}
                         />
                     ))}
-                    {localChecksPeriods.length === 0 && (
+                    {localFinalDefensePeriods.length === 0 && (
                         <div className="empty-state">
-                            <p>{t('department.periodsNotFound', 'Период проверок не задан.')}</p>
+                            <p>{t('department.periodsNotFound', 'Периоды не заданы.')}</p>
                         </div>
                     )}
                 </div>
             </div>
 
             {/* ── Dialogs ──────────────────────────────────────────────────── */}
-            {/* Defense periods dialog */}
             <TimePeriodFormDialog
-                isOpen={isDialogOpen}
-                onClose={() => setIsDialogOpen(false)}
-                onSubmit={handleAddPeriod}
-                allowedStages={DEFENSE_STAGES}
+                isOpen={isPDDialogOpen}
+                onClose={() => setIsPDDialogOpen(false)}
+                onSubmit={handleAddPDPeriod}
+                allowedStages={PRE_DEFENSE_STAGES}
             />
 
-            {/* Checks period dialog */}
             <TimePeriodFormDialog
-                isOpen={isChecksDialogOpen}
-                onClose={() => setIsChecksDialogOpen(false)}
-                onSubmit={handleAddChecksPeriod}
-                allowedStages={CHECKS_STAGES}
+                isOpen={isFDDialogOpen}
+                onClose={() => setIsFDDialogOpen(false)}
+                onSubmit={handleAddFDPeriod}
+                allowedStages={FINAL_DEFENSE_STAGES}
             />
 
-            {/* Defense approve confirm */}
             <ConfirmModal
-                isOpen={isConfirmOpen}
-                title={t("department.approveDefensePeriods", "Утвердить периоды защит")}
+                isOpen={isPDConfirmOpen}
+                title={t("department.approvePDTitle", "Утвердить периоды предзащит")}
                 message={t("department.periodsApproved", "Вы уверены, что хотите утвердить эти периоды?")}
-                onConfirm={handleSaveAndApprove}
-                onCancel={() => setIsConfirmOpen(false)}
+                onConfirm={handleSaveAndApprovePD}
+                onCancel={() => setIsPDConfirmOpen(false)}
             />
 
-            {/* Checks approve confirm */}
             <ConfirmModal
-                isOpen={isChecksConfirmOpen}
-                title={t("department.approveChecksPeriods", "Утвердить период проверок и экспертов")}
+                isOpen={isFDConfirmOpen}
+                title={t("department.approveFDTitle", "Утвердить экспертов и периоды защиты")}
                 message={t("department.checksPeriodsApproveConfirm", "Утвердить период проверок? Это зафиксирует сроки нормоконтроля, антиплагиата и рецензирования.")}
-                onConfirm={handleSaveAndApproveChecks}
-                onCancel={() => setIsChecksConfirmOpen(false)}
+                onConfirm={handleSaveAndApproveFD}
+                onCancel={() => setIsFDConfirmOpen(false)}
             />
         </div>
     );
