@@ -6,7 +6,8 @@ import {
     useOrgUnitSpecialities,
     useEvaluationCriteria,
     useCreateEvaluationCriteria,
-    evaluationApi
+    evaluationApi,
+    useWorkTypes
 } from "@awm/shared";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import plusIcon from "../../assets/icons/plus-icon.svg";
@@ -25,57 +26,53 @@ function CriteriaForm({ initialData, onSubmit, onCancel }) {
     return (
         <form className="criteria-form" onSubmit={handleSubmit}>
             <div className="criteria-form__fields">
-                <input 
-                    type="text" 
-                    placeholder={t('criteria.name')} 
-                    value={formData.criteriaName}
-                    onChange={e => setFormData({...formData, criteriaName: e.target.value})}
-                    required
-                />
-                <input 
-                    type="number" 
-                    placeholder={t('criteria.maxScore')} 
-                    value={formData.maxScore}
-                    onChange={e => setFormData({...formData, maxScore: parseInt(e.target.value)})}
-                    required
-                    min="1"
-                />
-                <input 
-                    type="number" 
-                    step="0.1"
-                    placeholder={t('criteria.weight')} 
-                    value={formData.weight}
-                    onChange={e => setFormData({...formData, weight: parseFloat(e.target.value)})}
-                    required
-                    min="0"
-                />
-                <input 
-                    type="number" 
-                    placeholder={t('criteria.sortOrder', 'Порядок')} 
-                    value={formData.sortOrder}
-                    onChange={e => setFormData({...formData, sortOrder: parseInt(e.target.value) || 0})}
-                    min="0"
-                    className="criteria-form__sort-order"
-                />
+                <div className="form-group">
+                    <label>{t('criteria.name', 'Название критерия')}</label>
+                    <input 
+                        type="text" 
+                        placeholder={t('criteria.namePlaceholder', 'Например: Актуальность темы')} 
+                        value={formData.criteriaName}
+                        onChange={e => setFormData({...formData, criteriaName: e.target.value})}
+                        required
+                    />
+                </div>
+                <div className="form-group">
+                    <label title={t('criteria.maxScoreHelp', 'Оценка ставится от 0 до этого значения')}>
+                        {t('criteria.maxScore', 'Макс. балл')} ℹ️
+                    </label>
+                    <input 
+                        type="number" 
+                        value={formData.maxScore}
+                        onChange={e => setFormData({...formData, maxScore: parseInt(e.target.value)})}
+                        required
+                        min="1"
+                    />
+                </div>
+                <div className="form-group">
+                    <label title={t('criteria.weightHelp', 'Например, 0.5 (оценка умножается на этот вес)')}>
+                        {t('criteria.weight', 'Вес')} ℹ️
+                    </label>
+                    <input 
+                        type="number" 
+                        step="0.1"
+                        value={formData.weight}
+                        onChange={e => setFormData({...formData, weight: parseFloat(e.target.value)})}
+                        required
+                        min="0"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>{t('criteria.sortOrder', 'Порядок')}</label>
+                    <input 
+                        type="number" 
+                        value={formData.sortOrder}
+                        onChange={e => setFormData({...formData, sortOrder: parseInt(e.target.value) || 0})}
+                        min="0"
+                        className="criteria-form__sort-order"
+                    />
+                </div>
             </div>
 
-            {/* Defense stage type tabs */}
-            <div className="defense-stage-tabs">
-                <button 
-                    type="button"
-                    className={`stage-tab ${formData.defenseStageType === 1 ? 'active' : ''}`}
-                    onClick={() => setFormData({...formData, defenseStageType: 1})}
-                >
-                    {t('criteria.preDefense', 'Предзащиты')}
-                </button>
-                <button 
-                    type="button"
-                    className={`stage-tab ${formData.defenseStageType === 2 ? 'active' : ''}`}
-                    onClick={() => setFormData({...formData, defenseStageType: 2})}
-                >
-                    {t('criteria.gakDefense', 'Защита ГАК')}
-                </button>
-            </div>
             <div className="criteria-form__actions">
                 <button type="submit" className="button primary-button">{t('common.save')}</button>
                 <button type="button" className="button secondary-button" onClick={onCancel}>{t('common.cancel')}</button>
@@ -99,6 +96,14 @@ function EvaluationCriteriaPage() {
     const [deleteTarget, setDeleteTarget] = useState(null);
 
     const { data: specialities = [] } = useOrgUnitSpecialities(orgUnitId);
+    const { data: workTypes = [] } = useWorkTypes();
+    
+    React.useEffect(() => {
+        if (workTypes.length > 0 && !workTypes.find(wt => String(wt.id) === String(workTypeId))) {
+            setWorkTypeId(workTypes[0].id);
+        }
+    }, [workTypes, workTypeId]);
+
     const { data: criteria = [], isLoading } = useEvaluationCriteria(workTypeId, orgUnitId, selectedSpecialityId, defenseStageType);
     
     const createMutation = useCreateEvaluationCriteria();
@@ -157,18 +162,15 @@ function EvaluationCriteriaPage() {
             <div className="page-header">
                 <div>
                     <div className="work-type-selector">
-                        <button 
-                            className={`type-btn ${workTypeId === 1 ? 'active' : ''}`}
-                            onClick={() => setWorkTypeId(1)}
-                        >
-                            {t('criteria.diplomaProject', 'Дипломный проект')}
-                        </button>
-                        <button 
-                            className={`type-btn ${workTypeId === 2 ? 'active' : ''}`}
-                            onClick={() => setWorkTypeId(2)}
-                        >
-                            {t('criteria.diplomaWork', 'Дипломная работа')}
-                        </button>
+                        {workTypes.map(wt => (
+                            <button 
+                                key={wt.id}
+                                className={`type-btn ${workTypeId === wt.id ? 'active' : ''}`}
+                                onClick={() => setWorkTypeId(wt.id)}
+                            >
+                                {wt.name}
+                            </button>
+                        ))}
                     </div>
                 </div>
                 {!isAdding && (

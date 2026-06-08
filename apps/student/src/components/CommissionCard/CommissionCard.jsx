@@ -13,12 +13,24 @@ export const CommissionCard = ({ commission }) => {
             </div>
             <div className="card-body compact-body">
                 <div className="commission-list">
-                    {commission.map((member, index) => (
-                        <div key={index} className="member-item">
-                            <div className="member-name">{member.name}</div>
-                            <div className="member-role">{member.role}</div>
-                        </div>
-                    ))}
+                    {commission.map((member, index) => {
+                        const roleLabels = {
+                            'CommissionChairman': 'Председатель ГАК',
+                            'CommissionSecretary': 'Секретарь ГАК',
+                            'CommissionMember': 'Член ГАК',
+                            'Chairman': 'Председатель ГАК',
+                            'Secretary': 'Секретарь ГАК',
+                            'Member': 'Член ГАК'
+                        };
+                        const localizedRole = t(`roles.${member.role}`, roleLabels[member.role] || member.role);
+                        
+                        return (
+                            <div key={index} className="member-item">
+                                <div className="member-name">{member.name}</div>
+                                <div className="member-role">{localizedRole}</div>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </div>

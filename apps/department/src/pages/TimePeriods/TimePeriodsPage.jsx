@@ -19,7 +19,7 @@ const PRE_DEFENSE_STAGES  = ["PreDefense1", "PreDefense2", "PreDefense3"];
 const FINAL_DEFENSE_STAGES = ["FinalDefense", "ChecksPeriod"];
 
 // Premium Local Stage Card component
-function StageCard({ period, onDelete, onSetup, onSchedule }) {
+function StageCard({ period, onDelete, onSetup, onEdit }) {
     const { t } = useTranslation();
     const isChecks = period.stageKey === "ChecksPeriod";
     const isFinal = period.stageKey === "FinalDefense";
@@ -33,8 +33,6 @@ function StageCard({ period, onDelete, onSetup, onSchedule }) {
 
     return (
         <div className="premium-stage-card">
-            <div className="card-top-glow" style={{ background: `radial-gradient(circle at 100% 0%, ${statusColor}15, transparent 65%)` }} />
-            
             <div className="stage-card-header">
                 <div className="title-section">
                     <h3 className="stage-card-title">{period.name}</h3>
@@ -78,11 +76,11 @@ function StageCard({ period, onDelete, onSetup, onSchedule }) {
             <div className="stage-actions-row">
                 <button className="stage-action-btn primary" onClick={onSetup}>
                     <Settings size={14} />
-                    <span>{t('department.setupPeriod', 'Настройка')}</span>
+                    <span>{t('department.setupPeriod', 'Настройка этапа')}</span>
                 </button>
-                <button className="stage-action-btn secondary" onClick={onSchedule}>
+                <button className="stage-action-btn secondary" onClick={onEdit}>
                     <CalendarClock size={14} />
-                    <span>{t('commission.schedule', 'Расписание')}</span>
+                    <span>{t('common.edit', 'Редактировать')}</span>
                 </button>
             </div>
         </div>
@@ -111,6 +109,10 @@ export default function TimePeriodsPage() {
     const [hasUnsavedFDChanges, setHasUnsavedFDChanges]               = useState(false);
     const [isFDDialogOpen, setIsFDDialogOpen]                         = useState(false);
     const [isFDConfirmOpen, setIsFDConfirmOpen]                       = useState(false);
+
+    // Edit dialog states
+    const [editingPDPeriod, setEditingPDPeriod] = useState(null);
+    const [editingFDPeriod, setEditingFDPeriod] = useState(null);
 
     // Queries
     const { data: specialities = [] }           = useOrgUnitSpecialities(orgUnitId);
@@ -163,15 +165,27 @@ export default function TimePeriodsPage() {
     }, [periodsData]);
 
     // ── Stage 7 handlers ──────────────────────────────────────────────────
+    const openPDEdit = (period) => {
+        setEditingPDPeriod(period);
+        setIsPDDialogOpen(true);
+    };
+
     const handleAddPDPeriod = (formData) => {
-        setLocalPreDefensePeriods(prev => [...prev, {
-            id:        `new-pd-${Date.now()}`,
-            name:      stageLabel(formData.name),
-            stageKey:  formData.name,
-            startDate: formData.startDate,
-            endDate:   formData.endDate,
-            commissions: 0, students: 0, dates: 0, progress: 0, status: "upcoming",
-        }]);
+        if (editingPDPeriod) {
+            setLocalPreDefensePeriods(prev => prev.map(p => 
+                p.id === editingPDPeriod.id ? { ...p, startDate: formData.startDate, endDate: formData.endDate, stageKey: formData.name, name: stageLabel(formData.name) } : p
+            ));
+        } else {
+            setLocalPreDefensePeriods(prev => [...prev, {
+                id:        `new-pd-${Date.now()}`,
+                name:      stageLabel(formData.name),
+                stageKey:  formData.name,
+                startDate: formData.startDate,
+                endDate:   formData.endDate,
+                commissions: 0, students: 0, dates: 0, progress: 0, status: "upcoming",
+            }]);
+        }
+        setEditingPDPeriod(null);
         setHasUnsavedPDChanges(true);
         setIsPDDialogOpen(false);
     };
@@ -197,15 +211,27 @@ export default function TimePeriodsPage() {
     };
 
     // ── Stage 9 handlers ──────────────────────────────────────────────────
+    const openFDEdit = (period) => {
+        setEditingFDPeriod(period);
+        setIsFDDialogOpen(true);
+    };
+
     const handleAddFDPeriod = (formData) => {
-        setLocalFinalDefensePeriods(prev => [...prev, {
-            id:        `new-fd-${Date.now()}`,
-            name:      stageLabel(formData.name),
-            stageKey:  formData.name,
-            startDate: formData.startDate,
-            endDate:   formData.endDate,
-            commissions: 0, students: 0, dates: 0, progress: 0, status: "upcoming",
-        }]);
+        if (editingFDPeriod) {
+            setLocalFinalDefensePeriods(prev => prev.map(p => 
+                p.id === editingFDPeriod.id ? { ...p, startDate: formData.startDate, endDate: formData.endDate, stageKey: formData.name, name: stageLabel(formData.name) } : p
+            ));
+        } else {
+            setLocalFinalDefensePeriods(prev => [...prev, {
+                id:        `new-fd-${Date.now()}`,
+                name:      stageLabel(formData.name),
+                stageKey:  formData.name,
+                startDate: formData.startDate,
+                endDate:   formData.endDate,
+                commissions: 0, students: 0, dates: 0, progress: 0, status: "upcoming",
+            }]);
+        }
+        setEditingFDPeriod(null);
         setHasUnsavedFDChanges(true);
         setIsFDDialogOpen(false);
     };
@@ -334,7 +360,7 @@ export default function TimePeriodsPage() {
                             period={period}
                             onDelete={() => deletePDPeriod(period.id)}
                             onSetup={() => navigate(`/defenses?tab=distribution&stageId=${period.id}`)}
-                            onSchedule={() => navigate(`/defenses?tab=distribution&stageId=${period.id}`)}
+                            onEdit={() => openPDEdit(period)}
                         />
                     ))}
                     {localPreDefensePeriods.length === 0 && (
@@ -401,7 +427,7 @@ export default function TimePeriodsPage() {
                             period={period}
                             onDelete={() => deleteFDPeriod(period.id)}
                             onSetup={() => navigate(`/defenses?tab=distribution&stageId=${period.id}`)}
-                            onSchedule={() => navigate(`/defenses?tab=distribution&stageId=${period.id}`)}
+                            onEdit={() => openFDEdit(period)}
                         />
                     ))}
                     {localFinalDefensePeriods.length === 0 && (
@@ -415,16 +441,18 @@ export default function TimePeriodsPage() {
             {/* ── Dialogs ──────────────────────────────────────────────────── */}
             <TimePeriodFormDialog
                 isOpen={isPDDialogOpen}
-                onClose={() => setIsPDDialogOpen(false)}
+                onClose={() => { setIsPDDialogOpen(false); setEditingPDPeriod(null); }}
                 onSubmit={handleAddPDPeriod}
                 allowedStages={PRE_DEFENSE_STAGES}
+                editingPeriod={editingPDPeriod}
             />
 
             <TimePeriodFormDialog
                 isOpen={isFDDialogOpen}
-                onClose={() => setIsFDDialogOpen(false)}
+                onClose={() => { setIsFDDialogOpen(false); setEditingFDPeriod(null); }}
                 onSubmit={handleAddFDPeriod}
                 allowedStages={FINAL_DEFENSE_STAGES}
+                editingPeriod={editingFDPeriod}
             />
 
             <ConfirmModal

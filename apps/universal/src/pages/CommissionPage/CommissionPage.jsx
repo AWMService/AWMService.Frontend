@@ -124,11 +124,11 @@ function CommissionPage() {
                         <div className="commission-members">
                             <div className="member">
                                 <span className="member-role">{t('commission.chairman')}:</span>
-                                <span className="member-name">{commission.chairmanName || '—'}</span>
+                                <span className="member-name">{commission.members?.find(m => m.roleType === 2)?.fullName || '—'}</span>
                             </div>
                             <div className="member">
                                 <span className="member-role">{t('commission.secretary')}:</span>
-                                <span className="member-name">{commission.secretaryName || '—'}</span>
+                                <span className="member-name">{commission.members?.find(m => m.roleType === 3)?.fullName || '—'}</span>
                             </div>
                         </div>
 
@@ -169,7 +169,7 @@ function CommissionPage() {
                         <div className="protocol-modal-meta">
                             <p><strong>{getLocalizedValue(protocolModal.name, i18n.language)}</strong></p>
                             <p>{t('commission.date')}: {formatDate(protocolModal.nextDate)} | {t('commission.time')}: {protocolModal.nextTime || '—'} | {t('commission.room')}: {protocolModal.room || '—'}</p>
-                            <p>{t('commission.chairman')}: {protocolModal.chairmanName || '—'} | {t('commission.secretary')}: {protocolModal.secretaryName || '—'}</p>
+                            <p>{t('commission.chairman')}: {protocolModal.members?.find(m => m.roleType === 2)?.fullName || '—'} | {t('commission.secretary')}: {protocolModal.members?.find(m => m.roleType === 3)?.fullName || '—'}</p>
                         </div>
 
                             <div className="protocol-preview-placeholder">

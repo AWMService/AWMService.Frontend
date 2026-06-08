@@ -8,6 +8,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [decision, setDecision] = useState("Допущен");
     const [gradeLetter, setGradeLetter] = useState("Отлично");
+    const [comments, setComments] = useState("");
 
     // PZ-1 is informational — decision is always "Допущен" regardless of scores
     const isInformationalPreDefense = preDefenseNumber === 1;
@@ -19,8 +20,9 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
     const protocolId = student?.protocolId;
 
     // Fetch real data
-    const workTypeId = 1; // DP by default for pre-defense
-    const { data: criteria = [] } = useEvaluationCriteria(workTypeId, user?.orgUnitId);
+    const workTypeId = student?.workTypeId || 1; // DP by default for pre-defense
+    const defenseStageType = preDefenseNumber ? 1 : 2;
+    const { data: criteria = [] } = useEvaluationCriteria(workTypeId, user?.orgUnitId, null, defenseStageType);
     const { data: grades = [] } = useGradesBySchedule(scheduleId);
 
     const startReconciliationMutation = useStartReconciliation();
@@ -50,6 +52,29 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
         }
     };
 
+    // Calculate members from grades using criteria weights
+    const members = Array.from(new Set(grades.map(g => g.assignmentId))).map(assignmentId => {
+        const memberGrades = grades.filter(g => g.assignmentId === assignmentId);
+        const memberName = memberGrades[0]?.memberName || "Unknown";
+        const totalScore = memberGrades.reduce((sum, g) => {
+            const c = criteria.find(x => x.id === g.criteriaId);
+            const weight = c?.weight != null ? c.weight : 1.0;
+            return sum + (g.score * weight);
+        }, 0);
+        return {
+            id: assignmentId,
+            name: memberName,
+            status: "submitted",
+            score: parseFloat(totalScore.toFixed(1))
+        };
+    });
+
+    const calculatedAverage = members.length
+        ? (members.reduce((a, b) => a + b.score, 0) / members.length).toFixed(1)
+        : 0;
+
+    const averageScore = student?.averageScore || calculatedAverage;
+
     const handleFinalLock = async () => {
         try {
             let effectiveDecision;
@@ -63,38 +88,29 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
                 effectiveGradeLetter = undefined;
             }
 
-            // 1. Create protocol
-            const generatedId = await generateProtocolMutation.mutateAsync({
-                scheduleId: scheduleId,
-                finalScoreNumeric: parseFloat(averageScore),
-                decision: effectiveDecision,
-                finalGradeLetter: effectiveGradeLetter,
-            });
+            let pId = protocolId;
 
-            // 2. Finalize protocol (pass attendance status)
-            await finalizeProtocolMutation.mutateAsync({ id: generatedId, isStudentPresent: isPresent });
-            onClose();
+            if (!pId) {
+                // 1. Create protocol
+                const generatedId = await generateProtocolMutation.mutateAsync({
+                    scheduleId: scheduleId,
+                    finalScoreNumeric: parseFloat(averageScore),
+                    decision: effectiveDecision,
+                    finalGradeLetter: effectiveGradeLetter,
+                    comments: comments,
+                });
+                pId = generatedId;
+            }
+
+            if (pId) {
+                // 2. Finalize protocol (pass attendance status)
+                await finalizeProtocolMutation.mutateAsync({ id: pId, isStudentPresent: isPresent });
+                onClose();
+            }
         } catch (error) {
             console.error('Failed to finalize protocol', error);
         }
     };
-
-    // Calculate members from grades
-    const members = Array.from(new Set(grades.map(g => g.assignmentId))).map(assignmentId => {
-        const memberGrades = grades.filter(g => g.assignmentId === assignmentId);
-        const memberName = memberGrades[0]?.memberName || "Unknown";
-        const totalScore = memberGrades.reduce((sum, g) => sum + g.score, 0);
-        return {
-            id: assignmentId,
-            name: memberName,
-            status: "submitted",
-            score: totalScore
-        };
-    });
-
-    const averageScore = members.length
-        ? (members.reduce((a, b) => a + b.score, 0) / members.length).toFixed(1)
-        : 0;
 
     const status = isFinalized ? "completed" : (student?.globalStatus || "gathering");
 
@@ -246,6 +262,31 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
                                 <option value="Допущен">{t('journal.admitted', 'Допущен')}</option>
                                 <option value="Не допущен">{t('journal.notAdmitted', 'Не допущен')}</option>
                             </select>
+                        </div>
+                    )}
+
+                    {/* Комментарии */}
+                    {!isFinalized && status === "reviewing" && (
+                        <div className="sec-decision-section" style={{ marginBottom: "15px" }}>
+                            <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold", fontSize: "14px" }}>
+                                {t('journal.comments', 'Комментарии к протоколу')}:
+                            </label>
+                            <textarea
+                                value={comments}
+                                onChange={(e) => setComments(e.target.value)}
+                                style={{
+                                    width: "100%",
+                                    padding: "8px 12px",
+                                    borderRadius: "6px",
+                                    border: "1px solid #d1d5db",
+                                    backgroundColor: "#fff",
+                                    fontSize: "14px",
+                                    outline: "none",
+                                    minHeight: "80px",
+                                    resize: "vertical"
+                                }}
+                                placeholder={t('journal.commentsPlaceholder', 'Оставьте комментарий...')}
+                            />
                         </div>
                     )}
 

@@ -5,22 +5,32 @@ import { SubmissionCard } from '../../components/SubmissionCard/SubmissionCard.j
 import { ScheduleCard } from '../../components/ScheduleCard/ScheduleCard.jsx';
 import { Results } from '../../components/Results/Results.jsx';
 import { CommissionCard } from '../../components/CommissionCard/CommissionCard.jsx';
-import { useUploadAttachment, useCurrentWorkId, useStudentDefenseStep } from '@awm/shared';
+import { useUploadAttachment, useCurrentWorkId, useStudentDefenseStep, useAttachments, useDeleteAttachment } from '@awm/shared';
 
 const DefenseStepPage = () => {
   const { t } = useTranslation();
   const { data: defenseStep, isLoading } = useStudentDefenseStep();
   const { data: workId } = useCurrentWorkId();
   const uploadMutation = useUploadAttachment(workId);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [file, setFile] = useState(null);
+  const { data: attachments = [] } = useAttachments(workId);
+  const deleteMutation = useDeleteAttachment(workId);
+
+  const finalAttachment = attachments.find(a => a.attachmentTypeId === 1);
+  const presentationAttachment = attachments.find(a => a.attachmentTypeId === 2);
+
+  const [localFile, setLocalFile] = useState(null);
   const [uploadError, setUploadError] = useState(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   // Presentation upload (final defense only)
-  const [presentationFile, setPresentationFile] = useState(null);
-  const [presentationSubmitted, setPresentationSubmitted] = useState(false);
+  const [localPresentation, setLocalPresentation] = useState(null);
   const [presentationError, setPresentationError] = useState(null);
+
+  const isSubmitted = !!finalAttachment;
+  const file = isSubmitted ? { name: finalAttachment.fileName, size: finalAttachment.fileSizeBytes } : localFile;
+
+  const presentationSubmitted = !!presentationAttachment;
+  const presentationFile = presentationSubmitted ? { name: presentationAttachment.fileName, size: presentationAttachment.fileSizeBytes } : localPresentation;
 
   const schedule = defenseStep?.schedule
     ? {
@@ -53,44 +63,58 @@ const DefenseStepPage = () => {
 
   const handleFileChange = (e) => {
     if (e.target.files.length > 0) {
-      setFile(e.target.files[0]);
+      setLocalFile(e.target.files[0]);
     }
   };
 
   const handleSubmit = async () => {
-    if (!file || !workId) return;
+    if (!localFile || !workId) return;
     setUploadError(null);
     try {
-      await uploadMutation.mutateAsync({ file, attachmentType: 'Final' });
-      setIsSubmitted(true);
+      await uploadMutation.mutateAsync({ file: localFile, attachmentType: 'Final' });
+      setLocalFile(null);
     } catch (err) {
       setUploadError(err.message || t('common.error'));
     }
   };
 
-  const handleFileDelete = () => {
-    setFile(null);
-    setIsSubmitted(false);
+  const handleFileDelete = async () => {
+    if (finalAttachment) {
+      try {
+        await deleteMutation.mutateAsync(finalAttachment.id);
+      } catch (err) {
+        setUploadError(err.message || t('common.error'));
+      }
+    } else {
+      setLocalFile(null);
+    }
   };
 
   const handlePresentationChange = (e) => {
-    if (e.target.files.length > 0) setPresentationFile(e.target.files[0]);
+    if (e.target.files.length > 0) setLocalPresentation(e.target.files[0]);
   };
 
   const handlePresentationSubmit = async () => {
-    if (!presentationFile || !workId) return;
+    if (!localPresentation || !workId) return;
     setPresentationError(null);
     try {
-      await uploadMutation.mutateAsync({ file: presentationFile, attachmentType: 'Presentation' });
-      setPresentationSubmitted(true);
+      await uploadMutation.mutateAsync({ file: localPresentation, attachmentType: 'Presentation' });
+      setLocalPresentation(null);
     } catch (err) {
       setPresentationError(err.message || t('common.error'));
     }
   };
 
-  const handlePresentationDelete = () => {
-    setPresentationFile(null);
-    setPresentationSubmitted(false);
+  const handlePresentationDelete = async () => {
+    if (presentationAttachment) {
+      try {
+        await deleteMutation.mutateAsync(presentationAttachment.id);
+      } catch (err) {
+        setPresentationError(err.message || t('common.error'));
+      }
+    } else {
+      setLocalPresentation(null);
+    }
   };
 
   const isFinalDefense = defenseStep?.stepType === 'defense';

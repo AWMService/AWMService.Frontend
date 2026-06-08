@@ -56,11 +56,13 @@ export const StudentLayout = () => {
     : null;
 
   const currentStep = getStepFromPath(location.pathname);
-  const highestCompletedStep = stateToHighestStep(workProgress?.currentStateName);
+  const baseHighestStep = stateToHighestStep(workProgress?.currentStateName);
 
-  // Если тема закреплена (approved), но StudentWork еще не создан — показываем только шаг 1
+  // Если тема закреплена (approved), но StudentWork еще не создан — показываем только шаг 1, но он уже ПРОЙДЕН
   const hasApprovedApplication = myApplications.some(a => a.status === 'approved');
   const hasWork = !!workProgress;
+  
+  const highestCompletedStep = (!hasWork && hasApprovedApplication) ? 2 : baseHighestStep;
   const maxVisibleStep = (hasApprovedApplication && !hasWork) ? 1 : null;
 
   const standalone = isStandalonePage(location.pathname);

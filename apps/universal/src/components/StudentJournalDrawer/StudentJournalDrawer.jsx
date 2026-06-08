@@ -25,6 +25,7 @@ export default function StudentJournalDrawer({
     onDecisionTypeChange,
     decisionComment,
     onDecisionCommentChange,
+    onDownloadDoc,
 }) {
     const { t } = useTranslation();
 
@@ -46,11 +47,22 @@ export default function StudentJournalDrawer({
                 <div className="s-docs-section">
                     <h4>{t('common.attachedMaterials')}</h4>
                     <div className="s-docs-list">
-                        {mockDocs.map((doc, i) => (
-                            <div key={i} className="s-doc-item">
+                        {mockDocs.length === 0 ? (
+                            <div className="s-doc-item" style={{opacity: 0.6}}>
+                                <div className="s-doc-info">
+                                    <span className="s-doc-name">{t('common.noData')}</span>
+                                </div>
+                            </div>
+                        ) : mockDocs.map((doc, i) => (
+                            <div 
+                                key={i} 
+                                className="s-doc-item" 
+                                style={{cursor: 'pointer'}} 
+                                onClick={() => onDownloadDoc?.(doc)}
+                            >
                                 <FileIcon />
                                 <div className="s-doc-info">
-                                    <span className="s-doc-name">{getLocalizedValue(doc.name)}</span>
+                                    <span className="s-doc-name" style={{color: '#3b82f6', textDecoration: 'underline'}}>{getLocalizedValue(doc.name)}</span>
                                     <span className="s-doc-size">{doc.size}</span>
                                 </div>
                             </div>

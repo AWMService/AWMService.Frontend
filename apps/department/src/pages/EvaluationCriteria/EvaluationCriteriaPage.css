@@ -165,6 +165,20 @@
     border: 1px solid #D1D5DB;
     border-radius: 6px;
     font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #4B5563;
 }
 
 .criteria-form__actions {

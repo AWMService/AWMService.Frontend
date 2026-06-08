@@ -51,7 +51,8 @@ export default function SecretaryStudentList() {
                     globalStatus: slot.isReconciliationStarted ? "reviewing" : "gathering",
                     averageScore: slot.averageScore,
                     scheduleId: slot.id,
-                    protocolId: slot.protocolId
+                    protocolId: slot.protocolId,
+                    workTypeId: slot.workTypeId
                 }
             ],
         }));

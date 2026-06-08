@@ -27,13 +27,13 @@ export function ProgressStepper({ currentStep = 1, highestCompletedStep = 1, act
       <div className="stepper-container">
         {steps.map((step, index) => {
           const effectiveMaxStep = maxVisibleStep != null ? maxVisibleStep : highestCompletedStep;
-          const isCompleted = step.id < currentStep;
+          const isCompleted = step.id < highestCompletedStep;
           const isActive = step.id === currentStep;
           const isAvailable = step.id <= effectiveMaxStep;
 
-          // Линия закрашивается только если оба соединяемых шага доступны
+          // Линия закрашивается только если оба соединяемых шага доступны и первый завершен или текущий активен
           const nextStep = steps[index + 1];
-          const isConnectorFilled = nextStep && nextStep.id <= effectiveMaxStep && step.id < currentStep;
+          const isConnectorFilled = nextStep && nextStep.id <= effectiveMaxStep && step.id < highestCompletedStep;
 
           const StepCircle = () => (
               <div className={`step-circle ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''} ${!isAvailable ? 'disabled' : ''}`}>

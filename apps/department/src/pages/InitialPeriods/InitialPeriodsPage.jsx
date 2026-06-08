@@ -227,38 +227,11 @@ export default function InitialPeriodsPage() {
             {/* ===================== SUMMARY VIEW ===================== */}
             {isApproved ? (
                 <div className="periods-summary">
-                    {/* Pipeline visualization */}
-                    <div className="stages-timeline">
-                        <div className="timeline-progress-line" />
-                        {PERIOD_CONFIG.map(({ key, labelKey }, idx) => {
-                            const status = getStageStatus(formData[key].startDate, formData[key].endDate);
-                            const IconComponent = status.icon;
-                            return (
-                                <div key={key} className={`timeline-node ${status.code}`}>
-                                    <div className="node-badge" style={{ backgroundColor: status.color + "22", borderColor: status.color, color: status.color }}>
-                                        <IconComponent size={20} className={status.code === 'active' ? 'pulse-icon' : ''} />
-                                    </div>
-                                    <div className="node-content">
-                                        <h4 className="node-title">{t(labelKey)}</h4>
-                                        <p className="node-dates">
-                                            {formatDate(formData[key].startDate)} — {formatDate(formData[key].endDate)}
-                                        </p>
-                                        <span className="node-status-pill" style={{ color: status.color, backgroundColor: status.color + "15" }}>
-                                            {status.text}
-                                        </span>
-                                    </div>
-                                    {idx < PERIOD_CONFIG.length - 1 && <div className="node-connector" />}
-                                </div>
-                            );
-                        })}
-                    </div>
-
                     <div className="stage-cards-grid">
                         {PERIOD_CONFIG.map(({ key, labelKey }) => {
                             const status = getStageStatus(formData[key].startDate, formData[key].endDate);
                             return (
                                 <div key={key} className={`stage-display-card ${status.code}`}>
-                                    <div className="stage-card-glow" style={{ background: `radial-gradient(circle at 100% 0%, ${status.color}15, transparent 60%)` }} />
                                     <div className="card-header-row">
                                         <span className="card-label">{t("common.stageResults", "Этап")}</span>
                                         <span className="status-badge" style={{ color: status.color, borderColor: status.color + "44", background: status.color + "11" }}>
