@@ -67,8 +67,8 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        // Map to backend request format (CreateCommissionRequest):
-        // ChairmanUserId, SecretaryUserId, MemberUserIds
+        
+        
         onSubmit({
             name: formData.name,
             commissionTypeId: formData.type === 'PreDefense' ? 1 : 2,

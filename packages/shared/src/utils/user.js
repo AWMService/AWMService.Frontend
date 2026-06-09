@@ -1,9 +1,4 @@
-/**
- * Extracts initials from a user's full name.
- * e.g., "Сергеев Николай Сергеевич" -> "СН"
- * @param {string} fullName 
- * @returns {string}
- */
+
 export function getInitials(fullName) {
   if (!fullName) return '';
   const parts = fullName.trim().split(/\s+/);

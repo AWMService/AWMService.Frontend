@@ -8,7 +8,7 @@ import './RolesPage.css';
 function RolesPage() {
     const { t } = useTranslation();
     
-    // Fetch roles
+    
     const { data: roles = [], isLoading, error } = useQuery({
         queryKey: ['admin-roles'],
         queryFn: () => adminApi.fetchRoles(),

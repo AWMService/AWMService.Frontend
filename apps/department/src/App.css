@@ -4,7 +4,7 @@ body {}
     display: flex;
     flex-direction: column;
     height: 100vh;
-    padding-top: 64px; /* Space for fixed header */
+    padding-top: 64px; 
     box-sizing: border-box;
 }
 
@@ -21,6 +21,6 @@ body {}
 
 @media (min-width: 1024px) {
     .content {
-        margin-left: 0; /* Sidebar is managed by flex layout now */
+        margin-left: 0; 
     }
 }

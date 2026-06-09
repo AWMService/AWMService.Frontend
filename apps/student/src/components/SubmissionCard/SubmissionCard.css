@@ -25,7 +25,7 @@
     padding: 20px;
 }
 
-/* Info Alert */
+
 .info-alert {
     background: #f0f9ff;
     border: 1px solid #bae6fd;
@@ -37,7 +37,7 @@
     line-height: 1.5;
 }
 
-/* Dropzone */
+
 .dropzone {
     display: block;
     border: 2px dashed #cbd5e1;
@@ -84,7 +84,7 @@
     margin: 0;
 }
 
-/* File Preview Row */
+
 .file-preview-row {
     display: flex;
     align-items: center;
@@ -131,7 +131,7 @@
     text-transform: uppercase;
 }
 
-/* Buttons */
+
 .card-actions {
     display: flex;
     justify-content: flex-end;

@@ -8,13 +8,13 @@ export default function DocumentPreviewModal({ document, onClose }) {
     const { t, i18n } = useTranslation();
     const locale = getIntlLocale(i18n.language);
 
-    // Hooks must run unconditionally — enabled: !!workId prevents API calls when null
+    
     const { data: attachments = [] } = useAttachments(document?.workId);
     const { data: checks = [] } = useQualityChecks(document?.workId);
 
     if (!document) return null;
 
-    // Latest attachment for download (most recently uploaded file)
+    
     const latestAttachment = attachments
         .slice()
         .sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt))[0];
@@ -23,7 +23,7 @@ export default function DocumentPreviewModal({ document, onClose }) {
     const docName = latestAttachment?.fileName
         || `${document.studentName.replace(/\s/g, '_')}_${documentType}.docx`;
 
-    // Real version history: previous NormControl check attempts
+    
     const checkHistory = checks
         .filter(c => c.checkTypeName === 'NormControl' || c.checkType === 'NormControl')
         .sort((a, b) => a.attemptNumber - b.attemptNumber)
@@ -34,7 +34,7 @@ export default function DocumentPreviewModal({ document, onClose }) {
             comment:   c.comment,
         }));
 
-    // Fallback: show at least the current version from the card
+    
     const versions = checkHistory.length > 0
         ? checkHistory
         : [{ version: document.version, date: document.submittedDate, isPassed: null, comment: null }];
@@ -102,7 +102,7 @@ export default function DocumentPreviewModal({ document, onClose }) {
                         )}
                     </div>
 
-                    {/* Version history from real check attempts */}
+                    {}
                     <div className="dpm-section">
                         <h3 className="dpm-section-title">
                             <Clock size={16} />

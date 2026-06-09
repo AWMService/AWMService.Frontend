@@ -1,7 +1,7 @@
 import { apiClient } from './apiClient';
 
 export const adminApi = {
-  // Users
+  
   fetchUsers: async ({ universityId, isActive, search }) => {
     const params = { universityId };
     if (isActive !== undefined && isActive !== null && isActive !== 'all') {
@@ -34,13 +34,13 @@ export const adminApi = {
     return data;
   },
 
-  // Roles
+  
   fetchRoles: async () => {
     const { data } = await apiClient.get('/v1/Roles');
     return data;
   },
 
-  // Students
+  
   fetchStudents: async ({ universityId, search, status }) => {
     const params = { universityId, search, status };
     const { data } = await apiClient.get('/v1/Students', { params });
@@ -49,7 +49,7 @@ export const adminApi = {
 };
 
 export const orgApi = {
-  // Org Units
+  
   fetchOrgUnits: async (typeId) => {
     const { data } = await apiClient.get('/v1/OrgUnits', { params: { typeId } });
     return data;
@@ -69,7 +69,7 @@ export const orgApi = {
 };
 
 export const eduApi = {
-  // Academic Programs
+  
   fetchPrograms: async () => {
     const { data } = await apiClient.get('/v1/academic-programs');
     return data;
@@ -87,7 +87,7 @@ export const eduApi = {
     return data;
   },
 
-  // Speciality Levels
+  
   fetchSpecialityLevels: async () => {
     const { data } = await apiClient.get('/v1/speciality-levels');
     return data;
@@ -107,7 +107,7 @@ export const eduApi = {
 };
 
 export const wfApi = {
-  // Work Types
+  
   fetchWorkTypes: async () => {
     const { data } = await apiClient.get('/v1/WorkTypes');
     return data;

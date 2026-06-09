@@ -40,7 +40,7 @@ function EmployeesPage() {
 
     const isConfirmed = statusData?.isConfirmed || false;
 
-    // Map backend staff format to UI component format
+    
     const mapStaffToUI = (staff) => ({
         id: staff.userId || staff.id,
         name: staff.fullName || "Unknown",

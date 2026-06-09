@@ -114,7 +114,7 @@
     color: #DC2626;
 }
 
-/* Form Styles */
+
 .criteria-form {
     width: 100%;
     display: flex;
@@ -132,7 +132,7 @@
     max-width: 80px;
 }
 
-/* Defense Stage Type Tabs */
+
 .defense-stage-tabs {
     display: flex;
     background: #E0E7FF;

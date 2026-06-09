@@ -8,7 +8,7 @@ const emptyForm = { name: '', degreeLevelId: '' };
 export default function WorkTypesPage() {
     const { t } = useTranslation();
     
-    // API Hooks
+    
     const { data: items = [], isLoading } = useWorkTypes();
     const createMutation = useCreateWorkType();
     const updateMutation = useUpdateWorkType();

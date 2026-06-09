@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orgApi, eduApi, wfApi } from './adminApi';
 
-// Org Units
+
 export const useOrgUnits = (typeId) => {
   return useQuery({
     queryKey: ['orgUnits', typeId],
@@ -33,7 +33,7 @@ export const useDeleteOrgUnit = () => {
   });
 };
 
-// Programs
+
 export const usePrograms = () => {
   return useQuery({
     queryKey: ['programs'],
@@ -65,7 +65,7 @@ export const useDeleteProgram = () => {
   });
 };
 
-// Speciality Levels
+
 export const useSpecialityLevels = () => {
   return useQuery({
     queryKey: ['specialityLevels'],
@@ -97,7 +97,7 @@ export const useDeleteSpecialityLevel = () => {
   });
 };
 
-// Work Types
+
 export const useWorkTypes = () => {
   return useQuery({
     queryKey: ['workTypes'],

@@ -49,7 +49,7 @@ function SettingsPage() {
   return (
     <div className="settings-page">
       <div className="settings-card">
-        {/* Department Profile */}
+        {}
         <div className="settings-group">
           <h2>{t('department.departmentProfile')}</h2>
 
@@ -104,7 +104,7 @@ function SettingsPage() {
           />
         </div>
 
-        {/* Academic Year */}
+        {}
         <div className="settings-group">
           <h2>{t('department.academicYear')}</h2>
 
@@ -123,7 +123,7 @@ function SettingsPage() {
           </select>
         </div>
 
-        {/* Notification Settings */}
+        {}
         <div className="settings-group">
           <h2>{t('department.notificationSettings')}</h2>
 

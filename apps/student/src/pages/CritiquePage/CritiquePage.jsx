@@ -23,14 +23,14 @@ const CritiquePage = () => {
     const { t } = useTranslation();
     const [reviewFile, setReviewFile] = useState(null);
 
-    // API data
+    
     const { data: workId } = useCurrentWorkId();
     const { data: reviewer, isLoading: reviewerLoading } = useAssignedReviewer(workId);
     const { data: reviews = [], isLoading: reviewsLoading, refetch: refetchReviews } = useReviewsByWork(workId);
     const { data: workProgress } = useMyWorkProgress();
     const uploadMutation = useUploadExternalReview();
 
-    // Derive review status from API
+    
     const externalReview = reviews.find(
         (r) => r.type === 'ExternalReview' || r.reviewType === 'ExternalReview' || r.type === 2
     );
@@ -40,12 +40,12 @@ const CritiquePage = () => {
         ? 'sent_to_reviewer'
         : 'not_received';
 
-    // Period from workProgress (semester start/end as fallback)
+    
     const periodData = workProgress
-        ? { startDate: '—', endDate: '—' } // Period stage not implemented yet
+        ? { startDate: '—', endDate: '—' } 
         : { startDate: '—', endDate: '—' };
 
-    // Expert card data from reviewer entity
+    
     const expertData = reviewer
         ? {
               name: reviewer.fullName,
@@ -190,7 +190,7 @@ const CritiquePage = () => {
             );
         }
 
-        // status === 'received'
+        
         return (
             <>
                 <InfoBox icon={doneIcon} type="success">

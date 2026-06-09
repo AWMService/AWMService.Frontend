@@ -21,7 +21,7 @@ const SoftwareCheckDashboard = () => {
 
     const [activeTab, setActiveTab] = useState('pending');
 
-    // Per-card inline rejection state
+    
     const [rejectingId, setRejectingId] = useState(null);
     const [rejectComment, setRejectComment] = useState('');
     const [submitting, setSubmitting] = useState({});
@@ -31,7 +31,7 @@ const SoftwareCheckDashboard = () => {
         if (check.status === 1) status = 'passed';
         if (check.status === 2) status = 'failed';
         
-        // Map string status from backend (from QualityCheckStatus)
+        
         if (check.status === 'Approved') status = 'passed';
         if (check.status === 'SentForRevision') status = 'failed';
         if (check.status === 'Pending') status = 'pending';
@@ -106,12 +106,12 @@ const SoftwareCheckDashboard = () => {
 
     return (
         <div className="edu-container">
-            {/* Header */}
+            {}
             <div style={{ marginBottom: '1.5rem' }}>
                 <h1 className="edu-main-title">{t('softwareCheck.workReview')}</h1>
             </div>
 
-            {/* Tabs */}
+            {}
             <div style={{ display: 'flex', gap: '0', marginBottom: '1.5rem', borderBottom: '1px solid #e2e8f0' }}>
                 {tabs.map(tab => (
                     <button
@@ -149,7 +149,7 @@ const SoftwareCheckDashboard = () => {
                 ))}
             </div>
 
-            {/* Document list */}
+            {}
             {filteredDocs.length === 0 ? (
                 <div style={{ textAlign: 'center', color: '#94a3b8', padding: '3rem 0', fontSize: '0.9rem' }}>
                     {t('softwareCheck.noDocuments')}
@@ -163,7 +163,7 @@ const SoftwareCheckDashboard = () => {
                         return (
                             <div key={doc.id} className="edu-topic-card" style={{ padding: '1rem 1.25rem' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
-                                    {/* Student + topic info */}
+                                    {}
                                     <div style={{ flex: 1, minWidth: 0 }}>
                                         <p style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.2rem', color: '#0f172a' }}>
                                             {doc.studentName}
@@ -178,7 +178,7 @@ const SoftwareCheckDashboard = () => {
                                             )}
                                         </p>
 
-                                        {/* Submission material */}
+                                        {}
                                         {doc.submissionUrl ? (
                                             <a
                                                 href={doc.submissionUrl}
@@ -202,7 +202,7 @@ const SoftwareCheckDashboard = () => {
                                         )}
                                     </div>
 
-                                    {/* Action area */}
+                                    {}
                                     {doc.status === 'pending' && (
                                         <div className="sw-actions" style={{ flexShrink: 0 }}>
                                             {!isRejecting ? (
@@ -252,7 +252,7 @@ const SoftwareCheckDashboard = () => {
                                         </div>
                                     )}
 
-                                    {/* Completed status badge */}
+                                    {}
                                     {doc.status !== 'pending' && (
                                         <div style={{ flexShrink: 0, textAlign: 'right' }}>
                                             <span style={{

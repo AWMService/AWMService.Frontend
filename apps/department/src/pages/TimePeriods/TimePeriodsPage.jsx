@@ -18,18 +18,18 @@ import { TimePeriodFormDialog } from "@awm/shared";
 const PRE_DEFENSE_STAGES  = ["PreDefense1", "PreDefense2", "PreDefense3"];
 const FINAL_DEFENSE_STAGES = ["FinalDefense", "ChecksPeriod"];
 
-// Premium Local Stage Card component
+
 function StageCard({ period, onDelete, onSetup, onEdit }) {
     const { t } = useTranslation();
     const isChecks = period.stageKey === "ChecksPeriod";
     const isFinal = period.stageKey === "FinalDefense";
     
-    // Choose status colors based on stage types
-    let statusColor = "#3b82f6"; // blue (PreDefense1)
-    if (period.stageKey === "PreDefense2") statusColor = "#f59e0b"; // amber
-    if (period.stageKey === "PreDefense3") statusColor = "#ef4444"; // red
-    if (isChecks) statusColor = "#0f766e"; // teal
-    if (isFinal) statusColor = "#10b981"; // emerald
+    
+    let statusColor = "#3b82f6"; 
+    if (period.stageKey === "PreDefense2") statusColor = "#f59e0b"; 
+    if (period.stageKey === "PreDefense3") statusColor = "#ef4444"; 
+    if (isChecks) statusColor = "#0f766e"; 
+    if (isFinal) statusColor = "#10b981"; 
 
     return (
         <div className="premium-stage-card">
@@ -95,35 +95,35 @@ export default function TimePeriodsPage() {
     const orgUnitId  = user?.orgUnitId;
     const semesterId = user?.currentSemesterId;
 
-    // Speciality selector
+    
     const [selectedSpecialityId, setSelectedSpecialityId] = useState(null);
 
-    // Pre-defense periods state (Stage 7)
+    
     const [localPreDefensePeriods, setLocalPreDefensePeriods] = useState([]);
     const [hasUnsavedPDChanges, setHasUnsavedPDChanges]       = useState(false);
     const [isPDDialogOpen, setIsPDDialogOpen]                 = useState(false);
     const [isPDConfirmOpen, setIsPDConfirmOpen]               = useState(false);
 
-    // Final defense & Checks periods state (Stage 9)
+    
     const [localFinalDefensePeriods, setLocalFinalDefensePeriods]     = useState([]);
     const [hasUnsavedFDChanges, setHasUnsavedFDChanges]               = useState(false);
     const [isFDDialogOpen, setIsFDDialogOpen]                         = useState(false);
     const [isFDConfirmOpen, setIsFDConfirmOpen]                       = useState(false);
 
-    // Edit dialog states
+    
     const [editingPDPeriod, setEditingPDPeriod] = useState(null);
     const [editingFDPeriod, setEditingFDPeriod] = useState(null);
 
-    // Queries
+    
     const { data: specialities = [] }           = useOrgUnitSpecialities(orgUnitId);
     const { data: periodsData = [], isLoading } = usePeriods(orgUnitId, semesterId, selectedSpecialityId);
 
-    // Mutations
+    
     const approvePDMutation = useApproveDefensePeriods(orgUnitId, semesterId, selectedSpecialityId);
     const approveFDMutation = useApproveChecksPeriods(orgUnitId, semesterId, selectedSpecialityId);
     const resetMutation     = useResetStagesOverride(orgUnitId, semesterId);
 
-    // Helper: translate stage key to display label
+    
     const stageLabel = (key) => ({
         PreDefense1:  t('student.preDefense1'),
         PreDefense2:  t('student.preDefense2'),
@@ -161,10 +161,10 @@ export default function TimePeriodsPage() {
             setHasUnsavedPDChanges(false);
             setHasUnsavedFDChanges(false);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
     }, [periodsData]);
 
-    // ── Stage 7 handlers ──────────────────────────────────────────────────
+    
     const openPDEdit = (period) => {
         setEditingPDPeriod(period);
         setIsPDDialogOpen(true);
@@ -210,7 +210,7 @@ export default function TimePeriodsPage() {
         }
     };
 
-    // ── Stage 9 handlers ──────────────────────────────────────────────────
+    
     const openFDEdit = (period) => {
         setEditingFDPeriod(period);
         setIsFDDialogOpen(true);
@@ -256,7 +256,7 @@ export default function TimePeriodsPage() {
         }
     };
 
-    // ── Reset override ───────────────────────────────────────────────────────
+    
     const handleResetOverride = async () => {
         if (window.confirm(t("department.confirmResetOverride", "Вы действительно хотите удалить индивидуальные сроки для этой специальности и вернуться к общим срокам кафедры?"))) {
             try {
@@ -280,7 +280,7 @@ export default function TimePeriodsPage() {
 
     return (
         <div className="time-periods-page">
-            {/* ── Speciality selector ─────────────────────────────────────── */}
+            {}
             <div className="speciality-selector-wrapper">
                 <span className="selector-label">
                     {t("student.specialty")}:
@@ -304,9 +304,7 @@ export default function TimePeriodsPage() {
                 </select>
             </div>
 
-            {/* ════════════════════════════════════════════════════════════════
-                SECTION 1 — Stage 7: Pre-defense periods
-            ════════════════════════════════════════════════════════════════ */}
+            {}
             <div className="dashboard-section">
                 <div className="section-header">
                     <div className="section-title-wrapper">
@@ -371,9 +369,7 @@ export default function TimePeriodsPage() {
                 </div>
             </div>
 
-            {/* ════════════════════════════════════════════════════════════════
-                SECTION 2 — Stage 9: Experts and Final Defense
-            ════════════════════════════════════════════════════════════════ */}
+            {}
             <div className="dashboard-section stage-9-section">
                 <div className="section-header">
                     <div className="section-title-wrapper">
@@ -438,7 +434,7 @@ export default function TimePeriodsPage() {
                 </div>
             </div>
 
-            {/* ── Dialogs ──────────────────────────────────────────────────── */}
+            {}
             <TimePeriodFormDialog
                 isOpen={isPDDialogOpen}
                 onClose={() => { setIsPDDialogOpen(false); setEditingPDPeriod(null); }}

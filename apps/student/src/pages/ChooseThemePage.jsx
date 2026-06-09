@@ -42,7 +42,7 @@ export default function ChooseThemePage() {
     return map;
   }, [myApplications]);
 
-  // Определяем, есть ли закрепленная тема (approved заявка)
+  
   const assignedApplication = useMemo(() =>
     myApplications.find(a => a.status === 'approved'),
   [myApplications]);
@@ -92,7 +92,7 @@ export default function ChooseThemePage() {
       return true;
     });
 
-    // Закрепленная тема всегда первая
+    
     result.sort((a, b) => {
       if (a.isAssigned && !b.isAssigned) return -1;
       if (!a.isAssigned && b.isAssigned) return 1;
@@ -143,7 +143,7 @@ export default function ChooseThemePage() {
 
   return (
     <div className="student-content-container">
-      {/* Вкладки */}
+      {}
       <div className="student-tabs">
         <button
           className={`student-tab ${activeTab === 'themes' ? 'active' : ''}`}

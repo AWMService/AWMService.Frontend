@@ -1,6 +1,6 @@
-/* --- ГЛОБАЛЬНАЯ СТРАНИЦА --- */
+
 .sp-page-root {
-    padding: 40px 64px; /* Уменьшил верхний отступ для баланса */
+    padding: 40px 64px; 
     min-height: 100vh;
     font-family: 'Segoe UI', Roboto, sans-serif;
     background: #f8fafc;
@@ -22,7 +22,7 @@
     margin: 0;
 }
 
-/* Сетка карточек */
+
 .sp-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -113,7 +113,7 @@
     border-color: #2563eb;
 }
 
-/* Quality check badges on cards */
+
 .sp-check-badges {
     display: flex;
     flex-wrap: wrap;
@@ -141,7 +141,7 @@
     color: #b91c1c;
 }
 
-/* --- МОДАЛЬНОЕ ОКНО (sm-) --- */
+
 .sm-overlay {
     position: fixed;
     inset: 0;
@@ -225,7 +225,7 @@
 
 .sm-close-btn:hover { background: #f1f5f9; border-color: #cbd5e1; }
 
-/* Сетка контента */
+
 .sm-content-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -298,7 +298,7 @@
     gap: 8px;
 }
 
-/* Оценки */
+
 .sm-grades-wrapper {
     border: 1px solid #e2e8f0;
     border-radius: 12px;
@@ -347,7 +347,7 @@
 .sm-score-yellow { background: #fffbeb; color: #d97706; }
 .sm-score-red   { background: #fef2f2; color: #dc2626; }
 
-/* Замечания */
+
 .sm-notes-container {
     height: 200px;
     overflow-y: auto;
@@ -400,14 +400,14 @@
 
 .sm-send-btn:hover { background: #4f46e5; }
 
-/* Утилиты отступов */
+
 .sm-mt-mid { margin-top: 24px; }
 .sm-mt-large { margin-top: 32px; }
 .sm-empty { text-align: center; color: #94a3b8; font-size: 13px; padding: 20px; }
 .sm-icon-action { background: none; border: none; color: #64748b; cursor: pointer; }
 .sm-icon-action:hover { color: #1e293b; }
 
-/* --- SUPERVISOR REVIEW SECTION --- */
+
 .sm-review-section {
     border: 1px solid #e5e7eb;
     border-radius: 8px;
@@ -563,7 +563,7 @@
     background: #4f46e5;
 }
 
-/* --- TABS --- */
+
 .sm-tabs {
     display: flex;
     gap: 0;
@@ -597,14 +597,14 @@
     font-weight: 600;
 }
 
-/* --- TAB CONTENT --- */
+
 .sm-tab-content {
     padding: 24px 32px;
     overflow-y: auto;
     max-height: calc(90vh - 160px);
 }
 
-/* Info tab */
+
 .sm-info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -641,7 +641,7 @@
     max-width: 60%;
 }
 
-/* Checks table */
+
 .sm-checks-wrapper {
     overflow-x: auto;
 }
@@ -685,7 +685,7 @@
     font-weight: 600;
 }
 
-/* Schedule */
+
 .sm-schedule-wrapper {
     max-width: 600px;
 }
@@ -737,7 +737,7 @@
     color: #1e293b;
 }
 
-/* Timeline */
+
 .sm-timeline {
     display: flex;
     flex-direction: column;
@@ -804,7 +804,7 @@
     margin: 4px 0 0 0;
 }
 
-/* Review wrapper */
+
 .sm-review-wrapper {
     display: flex;
     flex-direction: column;
@@ -874,7 +874,7 @@
     font-size: 14px;
 }
 
-/* Docs grid */
+
 .sm-docs-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;

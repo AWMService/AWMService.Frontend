@@ -54,7 +54,7 @@ const AntiplagiarismPage = () => {
         ?.find(c => c.checkTypeCode === 'ANTIPLAGIARISM')
         ?.minimumPassValue ?? null;
 
-    // Filter by checkTypeId === 2 (AntiPlagiarism) — more reliable than string name comparison
+    
     const antiChecks = checks.filter(c => c.checkTypeId === 2).sort((a, b) => b.attemptNumber - a.attemptNumber);
     const latestCheck = antiChecks[0];
 
@@ -66,13 +66,13 @@ const AntiplagiarismPage = () => {
     const originality = latestCheck?.resultValue != null ? Math.round(Number(latestCheck.resultValue)) : 0;
     const comments = latestCheck?.comment || '';
     
-    // Get latest attachment of type 'Final' or 'Draft' as current file
+    
     const latestFile = workProgress?.attachments
         ?.filter(a => a.attachmentType === 'Final' || a.attachmentType === 'Draft')
         ?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
 
     const currentFile = latestFile 
-        ? { name: latestFile.fileName, size: '?? KB' } // Size is not in WorkProgressAttachmentResponse currently
+        ? { name: latestFile.fileName, size: '?? KB' } 
         : { name: t('common.noData'), size: '' };
 
     const [isModalOpen, setIsModalOpen] = useState(false);

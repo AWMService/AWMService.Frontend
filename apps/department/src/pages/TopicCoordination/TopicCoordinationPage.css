@@ -2,7 +2,7 @@
     font-family: "Inter", sans-serif;
 }
 
-/* ===================== HEADER ===================== */
+
 
 .topic-coordination-page .page-title {
     font-size: 26px;
@@ -71,7 +71,7 @@
     color: #b45309;
 }
 
-/* ===================== FILTERS ===================== */
+
 
 .tc-filters {
     display: flex;
@@ -127,7 +127,7 @@
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
-/* ===================== TABLE ===================== */
+
 
 .tc-table-wrapper {
     overflow-x: auto;
@@ -212,7 +212,7 @@
     font-variant-numeric: tabular-nums;
 }
 
-/* ===================== TOPIC CELL ===================== */
+
 
 .tc-topic-cell {
     display: flex;
@@ -246,7 +246,7 @@
     font-weight: 600;
 }
 
-/* ===================== STATUS BADGES ===================== */
+
 
 .tc-status-badge {
     display: inline-block;
@@ -294,7 +294,7 @@
     color: #b45309;
 }
 
-/* ===================== ACTION BUTTONS ===================== */
+
 
 .tc-action-group {
     display: flex;
@@ -355,7 +355,7 @@
     background-color: #fecaca;
 }
 
-/* ===================== BULK ACTIONS BAR ===================== */
+
 
 .tc-bulk-bar {
     position: sticky;
@@ -432,7 +432,7 @@
     background-color: #b91c1c;
 }
 
-/* ===================== REVISION MODAL ===================== */
+
 
 .tc-reject-modal-backdrop {
     position: fixed;
@@ -539,7 +539,7 @@
     cursor: not-allowed;
 }
 
-/* ===================== FINALIZE ===================== */
+
 
 .tc-finalize-section {
     margin-top: 24px;
@@ -575,7 +575,7 @@
     text-align: center;
 }
 
-/* ===================== EMPTY STATE ===================== */
+
 
 .tc-no-results {
     text-align: center;

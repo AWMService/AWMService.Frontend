@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './apiClient';
 
 const STAGE_MAP = {
-  // Frontend String -> Backend Int
+  
   "DirectionSubmission": 1,
   "TopicCreation": 2,
   "TopicSelection": 3,
@@ -15,7 +15,7 @@ const STAGE_MAP = {
 };
 
 const STAGE_MAP_REV = {
-  // Backend Int -> Frontend String
+  
   1: "DirectionSubmission",
   2: "TopicCreation",
   3: "TopicSelection",

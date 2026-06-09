@@ -103,7 +103,7 @@ export const normalizeRole = (role) => {
     return null;
   }
 
-  // Map database PK IDs (from Auth.RoleAccesses seeding) to frontend roles
+  
   const idMap = {
     1: ROLES.ADMIN,
     2: ROLES.DEPARTMENT,

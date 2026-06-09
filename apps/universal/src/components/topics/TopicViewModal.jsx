@@ -17,12 +17,12 @@ export default function TopicViewModal({
     const [titleTab, setTitleTab] = useState(currentLanguage);
     const [descTab, setDescTab] = useState(currentLanguage);
 
-    // Логика отказа
-    const [rejectingId, setRejectingId] = useState(null); // ID заявки, которую отклоняем
-    const [rejectReason, setRejectReason] = useState(""); // Текст причины
+    
+    const [rejectingId, setRejectingId] = useState(null); 
+    const [rejectReason, setRejectReason] = useState(""); 
     const [rejectError, setRejectError] = useState(false);
 
-    // Логика раскрытия мотивационного письма
+    
     const [expandedRequestId, setExpandedRequestId] = useState(null);
 
     useEffect(() => {
@@ -40,7 +40,7 @@ export default function TopicViewModal({
                 : ["kk", "kz", "ru", "en"].find((lang) => availableDescriptions[lang]) || "en"
         );
 
-        // Сброс состояния при открытии новой темы
+        
         setRejectingId(null);
         setRejectReason("");
         setRejectError(false);
@@ -55,12 +55,12 @@ export default function TopicViewModal({
         rejected: t('status.rejected'),
     };
 
-    // workTypeName приходит напрямую с бэкенда, маппинг не нужен
+    
 
-    // Списки
-    const students = topic.students || []; // Уже принятые
-    // Предполагаем, что заявки приходят в topic.requests.
-    // Если структура другая, поменяйте это поле.
+    
+    const students = topic.students || []; 
+    
+    
     const requests = topic.requests || [];
 
     const maxParticipants = topic.maxParticipants || 1;
@@ -79,7 +79,7 @@ export default function TopicViewModal({
         }
     };
 
-    // Обработчики кнопок
+    
     const toggleMotivationLetter = (reqId) => {
         setExpandedRequestId((prev) => (prev === reqId ? null : reqId));
     };
@@ -123,7 +123,7 @@ export default function TopicViewModal({
                 </div>
 
                 <div className="tv-body">
-                    {/* Инфо-сетка */}
+                    {}
                     <div className="tv-info-grid">
                         <div className="tv-info-item">
                             <Layers size={16} />
@@ -155,7 +155,7 @@ export default function TopicViewModal({
                         </div>
                     </div>
 
-                    {/* --- НОВАЯ СЕКЦИЯ: ЗАЯВКИ (ТОЛЬКО ЕСЛИ ЕСТЬ) --- */}
+                    {}
                     {requests.length > 0 && (
                         <div className="tv-section requests-section">
                             <div className="tv-section-header">
@@ -182,7 +182,7 @@ export default function TopicViewModal({
                                                 </div>
                                             </div>
 
-                                            {/* Кнопки действий (скрываем, если открыта форма отказа) */}
+                                            {}
                                             {rejectingId !== req.id && (
                                                 <div className="tv-req-actions">
                                                     <button
@@ -203,7 +203,7 @@ export default function TopicViewModal({
                                             )}
                                         </div>
 
-                                        {/* Мотивационное письмо (аккордеон) */}
+                                        {}
                                         {req.motivationLetter && rejectingId !== req.id && (
                                             <div className="tv-motivation-section">
                                                 <button
@@ -222,7 +222,7 @@ export default function TopicViewModal({
                                             </div>
                                         )}
 
-                                        {/* Форма отказа */}
+                                        {}
                                         {rejectingId === req.id && (
                                             <div className="tv-reject-form">
                                                 <textarea
@@ -253,7 +253,7 @@ export default function TopicViewModal({
                         </div>
                     )}
 
-                    {/* СЕКЦИЯ ПРИНЯТЫХ СТУДЕНТОВ */}
+                    {}
                     <div className="tv-section">
                         <div className="tv-section-header">
                             <div className="tv-section-title">
@@ -291,7 +291,7 @@ export default function TopicViewModal({
                         </div>
                     </div>
 
-                    {/* Название */}
+                    {}
                     <div className="tv-section">
                         <div className="tv-section-header">
                             <div className="tv-section-title">
@@ -315,7 +315,7 @@ export default function TopicViewModal({
                         </div>
                     </div>
 
-                    {/* Описание */}
+                    {}
                     <div className="tv-section">
                         <div className="tv-section-header">
                             <div className="tv-section-title">

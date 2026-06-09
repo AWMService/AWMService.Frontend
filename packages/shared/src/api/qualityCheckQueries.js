@@ -9,7 +9,7 @@ export const CHECK_TYPES = {
 
 export async function fetchQualityChecks(workId) {
   const { data } = await apiClient.get(`/v1/quality-checks/by-work/${workId}`);
-  // Alias checkTypeName → checkType for consistent filtering in consumers (e.g. ReviewStepPage)
+  
   return data.map(c => ({ ...c, checkType: c.checkTypeName }));
 }
 
@@ -56,7 +56,7 @@ export function usePendingChecks(orgUnitId, semesterId, checkType) {
   });
 }
 
-// Fetch all checks for expert (pending + approved + revision) — stable across page reloads
+
 export async function fetchAllExpertChecks(orgUnitId, semesterId, checkType) {
   const params = { orgUnitId, semesterId, includeCompleted: true };
   if (checkType != null) {
@@ -74,7 +74,7 @@ export function useAllExpertChecks(orgUnitId, semesterId, checkType) {
   });
 }
 
-// Complete quality check (expert decision)
+
 export async function completeQualityCheck(workId, checkId, checkData) {
   const { data } = await apiClient.post(`/v1/quality-checks/works/${workId}/${checkId}/complete`, checkData);
   return data;
@@ -92,7 +92,7 @@ export function useCompleteQualityCheck(workId) {
   });
 }
 
-// Generic version — workId passed per-call, for list pages where each item has its own workId
+
 export function useCompleteQualityCheckMutation() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -105,7 +105,7 @@ export function useCompleteQualityCheckMutation() {
   });
 }
 
-// Fetch Check Configurations for a department
+
 export async function fetchCheckConfigurations(orgUnitId) {
   const { data } = await apiClient.get('/v1/quality-checks/configurations', {
     params: { orgUnitId },
@@ -121,7 +121,7 @@ export function useCheckConfigurations(orgUnitId) {
   });
 }
 
-// Save Check Configuration
+
 export async function saveCheckConfiguration(configData) {
   const { data } = await apiClient.post('/v1/quality-checks/configurations', configData);
   return data;
@@ -137,7 +137,7 @@ export function useSaveCheckConfiguration(orgUnitId) {
   });
 }
 
-// Delete Check Configuration
+
 export async function deleteCheckConfiguration(id) {
   const { data } = await apiClient.delete(`/v1/quality-checks/configurations/${id}`);
   return data;
@@ -153,8 +153,8 @@ export function useDeleteCheckConfiguration(orgUnitId) {
   });
 }
 
-// Fetch active check configurations for a student's org unit and speciality
-// Returns only IsActive=true records. Empty array → no rules configured → caller should show all steps.
+
+
 export async function fetchActiveCheckConfigurations(orgUnitId, specialityId) {
   const params = { orgUnitId };
   if (specialityId != null) params.specialityId = specialityId;
@@ -170,7 +170,7 @@ export function useActiveCheckConfigurations(orgUnitId, specialityId) {
   });
 }
 
-// Fetch Assigned Experts for a department
+
 export async function fetchAssignedExperts(orgUnitId) {
   const { data } = await apiClient.get('/v1/quality-checks/experts', {
     params: { orgUnitId },
@@ -186,7 +186,7 @@ export function useAssignedExperts(orgUnitId) {
   });
 }
 
-// Save Expert Assignments
+
 export async function saveExpertAssignments(assignmentData) {
   const { data } = await apiClient.post('/v1/quality-checks/experts', assignmentData);
   return data;

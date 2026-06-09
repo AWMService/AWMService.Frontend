@@ -43,7 +43,7 @@
     margin-top: 0.25rem;
 }
 
-/* Bulk assignment bar */
+
 .ea-bulk-bar {
     display: flex;
     align-items: center;
@@ -77,7 +77,7 @@
     cursor: not-allowed;
 }
 
-/* Table */
+
 .ea-table-wrapper {
     background: #fff;
     border: 1px solid #e5e7eb;
@@ -164,7 +164,7 @@
     font-size: 0.8125rem;
 }
 
-/* Bulk assignment modal */
+
 .ea-modal-overlay {
     position: fixed;
     inset: 0;

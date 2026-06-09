@@ -14,7 +14,7 @@ export const commissionApi = {
     return data;
   },
   createCommission: async (commissionData) => {
-    // commissionData includes: OrgUnitId, SemesterId, SpecialityId, CommissionTypeId, PreDefenseNumber, Name, ChairmanUserId, SecretaryUserId, MemberUserIds
+    
     const { data } = await apiClient.post('/v1/commissions', commissionData);
     return data;
   },

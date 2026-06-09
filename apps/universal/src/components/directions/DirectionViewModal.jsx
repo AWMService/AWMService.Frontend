@@ -59,7 +59,7 @@ export default function DirectionViewModal({ onClose, direction }) {
                 </div>
 
                 <div className="dvm-content">
-                    {/* Если статус отклонен — показываем причину сразу сверху */}
+                    {}
                     {(direction.status === "rejected" || direction.status === "revision") && (direction.rejectionReason || direction.reviewComment) && (
                         <div className="dvm-rejection-alert">
                             <AlertCircle size={20} />

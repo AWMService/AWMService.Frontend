@@ -22,7 +22,7 @@ const getCommissionTypeAndNumber = (stageId) => {
 
 export default function TimePeriodSchedulePage() {
     const { t, i18n } = useTranslation();
-    const { id } = useParams(); // Stage ID (e.g. 5, 6, 7, 8)
+    const { id } = useParams(); 
     const navigate = useNavigate();
     const { user } = useAuth();
     const locale = getIntlLocale(i18n.language);
@@ -33,10 +33,10 @@ export default function TimePeriodSchedulePage() {
     const [selectedCommissionId, setSelectedCommissionId] = useState(null);
     const [selectedDate, setSelectedDate] = useState('');
 
-    // Fetch department commissions
+    
     const { data: commissions = [], isLoading: isCommissionsLoading } = useCommissions(orgUnitId, semesterId);
 
-    // Filter commissions for this specific stage
+    
     const filteredCommissions = useMemo(() => {
         const { commissionTypeId, preDefenseNumber } = getCommissionTypeAndNumber(id);
         return commissions.filter(c => 
@@ -45,7 +45,7 @@ export default function TimePeriodSchedulePage() {
         );
     }, [commissions, id]);
 
-    // Auto-select first commission
+    
     React.useEffect(() => {
         if (filteredCommissions.length > 0 && !selectedCommissionId) {
             setSelectedCommissionId(filteredCommissions[0].id);
@@ -54,24 +54,24 @@ export default function TimePeriodSchedulePage() {
 
     const selectedCommission = filteredCommissions.find(c => c.id === selectedCommissionId);
 
-    // Fetch schedule for the selected commission
+    
     const { data: schedule = [], isLoading: isScheduleLoading } = usePreDefenseSchedule(selectedCommissionId);
     const { mutate: downloadScheduleReport, isPending: isDownloading } = useDownloadScheduleReport();
 
-    // Get unique dates in schedule
+    
     const uniqueDates = useMemo(() => {
         const dates = schedule.map(s => s.date);
         return [...new Set(dates)].filter(Boolean).sort();
     }, [schedule]);
 
-    // Auto-select first date
+    
     React.useEffect(() => {
         if (uniqueDates.length > 0 && (!selectedDate || !uniqueDates.includes(selectedDate))) {
             setSelectedDate(uniqueDates[0]);
         }
     }, [uniqueDates, selectedDate]);
 
-    // Filter slots for the selected date
+    
     const dailySlots = useMemo(() => {
         return schedule
             .filter(s => s.date === selectedDate)

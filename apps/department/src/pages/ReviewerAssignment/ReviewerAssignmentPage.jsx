@@ -136,7 +136,7 @@ export default function ReviewerAssignmentPage() {
 
     return (
         <div className="ra-page">
-            {/* KPI */}
+            {}
             <div className="ra-kpi-row">
                 <div className="ra-kpi-card">
                     <span className="ra-kpi-label">{t('department.total')}</span>
@@ -156,7 +156,7 @@ export default function ReviewerAssignmentPage() {
                 </div>
             </div>
 
-            {/* Tabs */}
+            {}
             <div className="ra-tabs">
                 {TABS.map((tab) => (
                     <button
@@ -169,7 +169,7 @@ export default function ReviewerAssignmentPage() {
                 ))}
             </div>
 
-            {/* Table */}
+            {}
             {isLoading ? (
                 <div className="ra-loading-state">{t('common.loading')}</div>
             ) : filtered.length === 0 ? (
@@ -228,7 +228,7 @@ export default function ReviewerAssignmentPage() {
                 </div>
             )}
 
-            {/* Assign Modal */}
+            {}
             {assignModalWorkId !== null && (
                 <AssignReviewerModal
                     workId={assignModalWorkId}

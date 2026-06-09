@@ -22,7 +22,7 @@ const DefenseStepPage = () => {
   const [uploadError, setUploadError] = useState(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
-  // Presentation upload (final defense only)
+  
   const [localPresentation, setLocalPresentation] = useState(null);
   const [presentationError, setPresentationError] = useState(null);
 
@@ -48,7 +48,7 @@ const DefenseStepPage = () => {
   const infoText = t('student.uploadFinalVersion');
   const hasAttemptTracking = defenseStep?.stepType === 'pre-defense' && attemptNumber != null;
 
-  // Normalise API result fields to what Results component expects
+  
   const rawResults = defenseStep?.results;
   const results = rawResults
     ? {

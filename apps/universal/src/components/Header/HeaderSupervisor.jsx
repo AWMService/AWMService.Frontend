@@ -70,7 +70,7 @@ export function HeaderSupervisor() {
         <header className="header">
             <div className="header-content">
 
-                {/* ЛЕВАЯ ЧАСТЬ */}
+                {}
                 <div className="header-left">
                     <div className="logo-section">
                         <div className="logo-box">{t('roles.supervisor').charAt(0)}</div>
@@ -84,10 +84,10 @@ export function HeaderSupervisor() {
                     <div className="page-tittle">{currentPageName}</div>
                 </div>
 
-                {/* ПРАВАЯ ЧАСТЬ */}
+                {}
                 <div className="header-right">
 
-                    {/* 🔔 Уведомления */}
+                    {}
                     <div className="nav-item-dropdown" ref={notificationsRef}>
                         <button
                             className="icon-btn"
@@ -113,7 +113,7 @@ export function HeaderSupervisor() {
                         )}
                     </div>
 
-                    {/* 🌐 Язык */}
+                    {}
                     <div className="nav-item-dropdown" ref={languageRef}>
                         <button
                             className="lang-selector"
@@ -141,7 +141,7 @@ export function HeaderSupervisor() {
                         )}
                     </div>
 
-                    {/* 👤 Пользователь */}
+                    {}
                     <div className="nav-item-dropdown" ref={userRef}>
                         <div
                             className="user-profile"

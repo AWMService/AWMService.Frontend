@@ -1,10 +1,10 @@
-// Shared styles
+
 import './styles/theme.css';
 
-// Shared assets
-// Icons can be imported directly from '@awm/shared/src/assets/icons/...'
 
-// i18n
+
+
+
 export { default as i18n } from './i18n';
 export { 
   resources, 
@@ -17,7 +17,7 @@ export {
   normalizeLanguage
 } from './i18n';
 
-// Context
+
 export {
   RoleProvider,
   useRole,
@@ -31,32 +31,32 @@ export {
   useAuth
 } from './context/AuthContext';
 
-// Components
+
 export { LanguageSelector } from './components/LanguageSelector';
 export { RoleSelector } from './components/RoleSelector';
 export { ProtectedRoute } from './components/ProtectedRoute';
 export { RequireAuth, LoginRedirect } from './components/RequireAuth';
 export { SingleSignOnPage } from './components/SingleSignOnPage';
 export { ConfirmModal } from './components/ConfirmModal/ConfirmModal';
-// Re-export react-i18next hooks for convenience
+
 export { useTranslation, Trans } from 'react-i18next';
 
-// API
+
 export * from './api';
 export * from './auth/authRouting';
 export * from './auth/roles';
 
-// Utils
+
 export { getLocalizedText } from './utils/localization';
 
-// Shared Pages
+
 export { default as NotificationsPage } from './pages/NotificationsPage/NotificationsPage';
 
-// Shared Layouts
+
 export { SharedHeader } from './layouts/SharedHeader';
 export { SharedSidebar } from './layouts/SharedSidebar';
 
-// Domain Components
+
 export { default as DirectionCard } from './components/domain/Directions/DirectionCard/DirectionCard';
 export { default as DirectionModal } from './components/domain/Directions/DirectionModal/DirectionModal';
 export { default as DirectionStatusBadge } from './components/domain/Directions/DirectionStatusBadge/DirectionStatusBadge';

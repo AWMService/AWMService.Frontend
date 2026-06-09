@@ -26,7 +26,7 @@ export default function StudentModal({ student, setStudent }) {
     const isVirtual = student?.isAwaitingDepartmentApproval === true
     const isRealWork = !isVirtual && workId > 0
 
-    // API hooks
+    
     const { data: attachments = [], isLoading: attachmentsLoading } = useAttachments(isRealWork ? workId : null)
     const { data: qualityChecks = [], isLoading: checksLoading } = useQualityChecks(isRealWork ? workId : null)
     const { data: scheduleData, isLoading: scheduleLoading } = useScheduleByWork(isRealWork ? workId : null)
@@ -36,7 +36,7 @@ export default function StudentModal({ student, setStudent }) {
     const uploadAttachmentMutation = useUploadAttachment(isRealWork ? workId : null)
     const createReviewMutation = useCreateSupervisorReview(isRealWork ? workId : null)
 
-    // Review form state
+    
     const [reviewText, setReviewText] = useState("")
     const [reviewFile, setReviewFile] = useState(null)
     const [reviewError, setReviewError] = useState("")
@@ -121,7 +121,7 @@ export default function StudentModal({ student, setStudent }) {
         <div className="sm-overlay" onClick={() => setStudent(null)}>
             <div className="sm-window" onClick={e => e.stopPropagation()}>
 
-                {/* HEADER */}
+                {}
                 <div className="sm-header">
                     <div className="sm-header-info">
                         <h2 className="sm-title">{student.students.map(s => getLocalizedValue(s.name)).join(", ")}</h2>
@@ -138,7 +138,7 @@ export default function StudentModal({ student, setStudent }) {
                     </button>
                 </div>
 
-                {/* TABS */}
+                {}
                 <div className="sm-tabs">
                     {tabs.map(tab => (
                         <button
@@ -152,10 +152,10 @@ export default function StudentModal({ student, setStudent }) {
                     ))}
                 </div>
 
-                {/* CONTENT */}
+                {}
                 <div className="sm-tab-content">
 
-                    {/* INFO TAB */}
+                    {}
                     {activeTab === 'info' && (
                         <div className="sm-info-grid">
                             <div className="sm-info-card">
@@ -191,7 +191,7 @@ export default function StudentModal({ student, setStudent }) {
                         </div>
                     )}
 
-                    {/* DOCUMENTS TAB */}
+                    {}
                     {activeTab === 'documents' && (
                         <div className="sm-docs-grid">
                             <section className="sm-section">
@@ -248,7 +248,7 @@ export default function StudentModal({ student, setStudent }) {
                         </div>
                     )}
 
-                    {/* CHECKS TAB */}
+                    {}
                     {activeTab === 'checks' && (
                         <div className="sm-checks-wrapper">
                             {checksLoading ? (
@@ -287,7 +287,7 @@ export default function StudentModal({ student, setStudent }) {
                         </div>
                     )}
 
-                    {/* SCHEDULE TAB */}
+                    {}
                     {activeTab === 'schedule' && (
                         <div className="sm-schedule-wrapper">
                             {scheduleLoading ? (
@@ -337,7 +337,7 @@ export default function StudentModal({ student, setStudent }) {
                         </div>
                     )}
 
-                    {/* HISTORY TAB */}
+                    {}
                     {activeTab === 'history' && (
                         <div className="sm-history-wrapper">
                             {historyLoading ? (
@@ -366,7 +366,7 @@ export default function StudentModal({ student, setStudent }) {
                         </div>
                     )}
 
-                    {/* REVIEW TAB */}
+                    {}
                     {activeTab === 'review' && (
                         <div className="sm-review-wrapper">
                             {reviewsLoading ? (

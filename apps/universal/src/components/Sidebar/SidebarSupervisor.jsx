@@ -54,7 +54,7 @@ export function SidebarSupervisor() {
         }
     ];
 
-    // Проверка активности пункта меню
+    
     const isItemActive = (item) => {
         if (pathname === item.href) return true;
 
@@ -90,7 +90,7 @@ export function SidebarSupervisor() {
 
     return (
         <>
-            {/* Desktop Sidebar */}
+            {}
             <aside className="sidebar-desktop">
                 <div className="sidebar-desktop-content">
                     <nav className="sidebar-nav">
@@ -102,7 +102,7 @@ export function SidebarSupervisor() {
                 </div>
             </aside>
 
-            {/* Mobile Menu Button */}
+            {}
             <div className="mobile-menu-button-wrapper">
                 <button
                     className="mobile-menu-button"
@@ -117,7 +117,7 @@ export function SidebarSupervisor() {
                 </button>
             </div>
 
-            {/* Overlay */}
+            {}
             {isMobileMenuOpen && (
                 <div
                     className="mobile-menu-overlay"
@@ -125,7 +125,7 @@ export function SidebarSupervisor() {
                 />
             )}
 
-            {/* Mobile Sidebar */}
+            {}
             <div className={`sidebar-mobile ${isMobileMenuOpen ? "open" : ""}`}>
                 <div className="sidebar-mobile-content">
                     <nav className="sidebar-nav">

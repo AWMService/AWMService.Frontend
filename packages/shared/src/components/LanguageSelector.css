@@ -83,7 +83,7 @@
   opacity: 0.8;
 }
 
-/* Buttons variant */
+
 .language-selector--buttons {
   display: flex;
   gap: 4px;
@@ -112,7 +112,7 @@
   color: white;
 }
 
-/* Light theme support */
+
 [data-theme="light"] .language-selector__trigger {
   background: rgba(0, 0, 0, 0.05);
   border-color: rgba(0, 0, 0, 0.1);

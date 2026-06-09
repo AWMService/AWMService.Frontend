@@ -4,7 +4,7 @@ body {}
     display: flex;
     flex-direction: column;
     height: 100vh;
-    padding-top: 64px; /* Space for fixed header */
+    padding-top: 64px; 
     box-sizing: border-box;
 }
 
@@ -23,11 +23,11 @@ body {}
 
 @media (min-width: 1024px) {
     .content {
-        margin-left: 0; /* Removing margin-left as Sidebar is flexed */
+        margin-left: 0; 
     }
 }
 
-/* Shared page styles */
+
 .page-header {
     display: flex;
     justify-content: space-between;
@@ -150,7 +150,7 @@ body {}
     color: #6B7280;
 }
 
-/* Shared dialog/modal styles */
+
 .dialog-backdrop {
     position: fixed;
     inset: 0;

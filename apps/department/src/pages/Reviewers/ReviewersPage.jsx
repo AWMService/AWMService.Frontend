@@ -15,7 +15,7 @@ export default function ReviewersPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingReviewer, setEditingReviewer] = useState(null);
 
-    // Form states
+    
     const [fullName, setFullName] = useState("");
     const [position, setPosition] = useState("");
     const [academicDegree, setAcademicDegree] = useState("");

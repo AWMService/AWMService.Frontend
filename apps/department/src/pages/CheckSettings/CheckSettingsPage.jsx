@@ -9,7 +9,7 @@ import {
 import "./CheckSettingsPage.css";
 import plusIcon from "../../assets/icons/plus-icon.svg";
 
-// Mapped specialities for department UI representation
+
 const SPECIALITIES = [
     { id: 1, name: "Информационные системы" },
     { id: 2, name: "Вычислительная техника и ПО" },
@@ -26,7 +26,7 @@ export default function CheckSettingsPage() {
     const deleteMutation = useDeleteCheckConfiguration(orgUnitId);
 
     const [isFormOpen, setIsFormOpen] = useState(false);
-    const [checkTypeId, setCheckTypeId] = useState(1); // Default to NormControl
+    const [checkTypeId, setCheckTypeId] = useState(1); 
     const [specialityId, setSpecialityId] = useState("");
     const [minPassValue, setMinPassValue] = useState("");
     const [isActive, setIsActive] = useState(true);
@@ -47,7 +47,7 @@ export default function CheckSettingsPage() {
 
             await saveMutation.mutateAsync(payload);
             setIsFormOpen(false);
-            // Reset form
+            
             setSpecialityId("");
             setMinPassValue("");
             setIsActive(true);

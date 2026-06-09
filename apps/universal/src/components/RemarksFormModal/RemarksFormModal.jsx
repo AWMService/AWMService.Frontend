@@ -14,7 +14,7 @@ export default function RemarksFormModal({ document, onClose, onSubmit }) {
     const [file, setFile] = useState(null);
     const [touched, setTouched] = useState({ category: false, text: false });
 
-    // Real check history for this work (enabled only when workId is available)
+    
     const { data: checks = [] } = useQualityChecks(document?.workId);
 
     if (!document) return null;
@@ -47,7 +47,7 @@ export default function RemarksFormModal({ document, onClose, onSubmit }) {
         });
     };
 
-    // Real previous remarks from API: failed NormControl checks with comments
+    
     const previousRemarks = checks
         .filter(c => (c.checkTypeName === 'NormControl' || c.checkType === 'NormControl') && !c.isPassed && c.comment)
         .sort((a, b) => a.attemptNumber - b.attemptNumber)
@@ -72,7 +72,7 @@ export default function RemarksFormModal({ document, onClose, onSubmit }) {
 
                 <form onSubmit={handleSubmit} noValidate>
                     <div className="rfm-body">
-                        {/* New remark form */}
+                        {}
                         <div className="rfm-section">
                             <h3 className="rfm-section-title">
                                 <MessageSquare size={16} />
@@ -127,7 +127,7 @@ export default function RemarksFormModal({ document, onClose, onSubmit }) {
                             </div>
                         </div>
 
-                        {/* Previous remarks from API */}
+                        {}
                         {previousRemarks.length > 0 && (
                             <div className="rfm-section">
                                 <h3 className="rfm-section-title">

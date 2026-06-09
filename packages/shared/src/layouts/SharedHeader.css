@@ -69,7 +69,7 @@
   color: #374151;
 }
 
-/* User Profile */
+
 .user-profile {
   display: flex;
   align-items: center;
@@ -113,7 +113,7 @@
   color: #6b7280;
 }
 
-/* Icons & Buttons */
+
 .icon-btn {
   position: relative;
   width: 40px;
@@ -134,7 +134,7 @@
 
 .icon-btn img {
   filter: none !important; 
-  /* To override inverted style if icon doesn't need it or use inverted */
+  
 }
 
 .red-badge {
@@ -158,7 +158,7 @@
   transform: rotate(180deg);
 }
 
-/* Dropdown */
+
 .nav-item-dropdown {
   position: relative;
 }

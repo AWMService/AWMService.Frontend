@@ -42,17 +42,17 @@ export default function InitialPeriodsPage() {
     const [orderError, setOrderError] = useState("");
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-    // Queries
+    
     const { data: specialities = [] } = useOrgUnitSpecialities(orgUnitId);
     const { data: periodsData = [], isLoading } = usePeriods(orgUnitId, semesterId, selectedSpecialityId);
     const { data: defaultPeriodsData = [] } = usePeriods(orgUnitId, semesterId, null);
 
-    // Mutations
+    
     const approveMutation = useApproveInitialPeriods(orgUnitId, semesterId, selectedSpecialityId);
     const resetMutation = useResetStagesOverride(orgUnitId, semesterId);
 
     useEffect(() => {
-        // Fallback to department defaults if this is a speciality with no overrides yet
+        
         const sourceData = (selectedSpecialityId && (!periodsData || periodsData.length === 0))
             ? defaultPeriodsData
             : periodsData;
@@ -75,11 +75,11 @@ export default function InitialPeriodsPage() {
                 });
                 setFormData(newFormData);
                 
-                // If it is from the selected speciality's own data, mark as approved/saved
+                
                 if (periodsData && periodsData.length > 0) {
                     setIsApproved(true);
                 } else {
-                    // Inherited defaults are not yet saved as speciality override
+                    
                     setIsApproved(false);
                 }
             } else {
@@ -203,7 +203,7 @@ export default function InitialPeriodsPage() {
 
     return (
         <div className="initial-periods-page">
-            {/* Speciality Selector */}
+            {}
             <div className="speciality-selector-wrapper">
                 <span className="selector-label">{t("student.specialty")}:</span>
                 <select
@@ -224,7 +224,7 @@ export default function InitialPeriodsPage() {
                 </select>
             </div>
 
-            {/* ===================== SUMMARY VIEW ===================== */}
+            {}
             {isApproved ? (
                 <div className="periods-summary">
                     <div className="stage-cards-grid">
@@ -261,7 +261,7 @@ export default function InitialPeriodsPage() {
                     </div>
                 </div>
             ) : (
-                /* ===================== FORM VIEW ===================== */
+                
                 <div className="periods-form">
                     {selectedSpecialityId && periodsData.length === 0 && (
                         <div className="inherited-dates-warning">

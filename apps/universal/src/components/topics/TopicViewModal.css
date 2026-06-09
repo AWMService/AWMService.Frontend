@@ -20,7 +20,7 @@
     flex-direction: column;
     overflow: hidden;
     animation: tv-slide-up 0.2s ease-out;
-    max-height: 90vh; /* Ограничиваем высоту */
+    max-height: 90vh; 
 }
 
 @keyframes tv-slide-up {
@@ -28,7 +28,7 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Header */
+
 .tv-header {
     padding: 16px 24px;
     border-bottom: 1px solid #f1f5f9;
@@ -71,14 +71,14 @@
 
 .tv-close-btn:hover { color: #64748b; }
 
-/* Body */
+
 .tv-body {
     padding: 20px 24px;
     overflow-y: auto;
-    flex: 1; /* Занимает доступное место */
+    flex: 1; 
 }
 
-/* Сетка инфо-блоков */
+
 .tv-info-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -111,7 +111,7 @@
     font-weight: 500;
 }
 
-/* Sections */
+
 .tv-section { margin-bottom: 24px; }
 
 .tv-section-header {
@@ -136,7 +136,7 @@
 
 .text-orange { color: #f97316; }
 
-/* ЗАЯВКИ (Requests) - СТИЛИ */
+
 .requests-section {
     background: #fff7ed;
     border: 1px solid #ffedd5;
@@ -229,7 +229,7 @@
 }
 .btn-reject:hover { background: #fecaca; }
 
-/* Форма отказа внутри карточки */
+
 .tv-reject-form {
     margin-top: 10px;
     padding-top: 10px;
@@ -276,7 +276,7 @@
 .btn-cancel { background: #ffffff; border: 1px solid #e2e8f0; color: #64748b; }
 .btn-confirm-reject { background: #dc2626; color: white; }
 
-/* Мотивационное письмо (аккордеон) */
+
 .tv-motivation-section {
     margin-top: 8px;
 }
@@ -318,7 +318,7 @@
     white-space: pre-wrap;
 }
 
-/* Остальные стили */
+
 .tv-tabs-mini {
     background: #f1f5f9;
     padding: 2px;
@@ -356,7 +356,7 @@
 
 .desc-area { min-height: 80px; white-space: pre-wrap; }
 
-/* Footer */
+
 .tv-footer {
     padding: 16px 24px;
     border-top: 1px solid #f1f5f9;
@@ -384,7 +384,7 @@
     .tv-info-grid { grid-template-columns: 1fr; }
 }
 
-/* Элементы списка студентов */
+
 .tv-remaining-slots {
     font-size: 11px;
     background: #eff6ff;
@@ -449,7 +449,7 @@
 
 .tv-empty-text { color: #cbd5e1; font-style: italic; }
 
-/* Override: в блоке заявок аватарка должна быть слева от текста (row) */
+
 .tv-req-header .tv-student-info {
     flex-direction: row;
     align-items: center;

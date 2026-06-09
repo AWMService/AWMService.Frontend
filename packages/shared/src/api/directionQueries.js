@@ -3,14 +3,14 @@ import { apiClient } from './apiClient';
 
 const read = (value, key) => {
   if (!value) return undefined;
-  // Try exact match
+  
   if (value[key] !== undefined) return value[key];
   
-  // Try PascalCase
+  
   const pascal = key.charAt(0).toUpperCase() + key.slice(1);
   if (value[pascal] !== undefined) return value[pascal];
 
-  // Try case-insensitive search
+  
   const lowerKey = key.toLowerCase();
   const realKey = Object.keys(value).find(k => k.toLowerCase() === lowerKey);
   return realKey ? value[realKey] : undefined;
@@ -19,7 +19,7 @@ const read = (value, key) => {
 const readLocalized = (item, field) => {
   if (!item) return { ru: '', kk: '', en: '' };
   
-  // 1. Try to get existing object: item.title or item.Title
+  
   const existing = read(item, field);
   if (existing && typeof existing === 'object') {
     return {
@@ -29,7 +29,7 @@ const readLocalized = (item, field) => {
     };
   }
 
-  // 2. Fallback to flat fields: descriptionRu, DescriptionRu, etc.
+  
   return {
     ru: read(item, `${field}Ru`) || '',
     kk: read(item, `${field}Kz`) || read(item, `${field}Kk`) || '',

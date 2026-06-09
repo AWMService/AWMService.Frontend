@@ -1,4 +1,4 @@
-/* Desktop Sidebar */
+
 .shared-sidebar-desktop {
   display: none;
   width: 256px;
@@ -22,7 +22,7 @@
   padding: 1.5rem 1rem;
 }
 
-/* Nav & Items */
+
 .shared-sidebar-nav {
   display: flex;
   flex-direction: column;
@@ -105,7 +105,7 @@
   color: #818cf8;
 }
 
-/* Mobile Toggle */
+
 .shared-mobile-menu-button-wrapper {
   display: none;
 }
@@ -145,7 +145,7 @@
   filter: brightness(0) invert(1);
 }
 
-/* Mobile Sidebar Overlay */
+
 .shared-mobile-menu-overlay {
   position: fixed;
   inset: 0;
@@ -160,7 +160,7 @@
   to { opacity: 1; }
 }
 
-/* Mobile Sidebar Drawer */
+
 .shared-sidebar-mobile {
   position: fixed;
   inset: 0;

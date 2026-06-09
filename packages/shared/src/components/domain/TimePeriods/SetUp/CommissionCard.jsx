@@ -92,7 +92,7 @@ export default function CommissionCard({ commission, onChange, onRemove, teacher
 
     return (
         <div className="commission-card">
-            {/* ===== HEADER ===== */}
+            {}
             <div className="commission-header">
                 <input
                     className="commission-name"

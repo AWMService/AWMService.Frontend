@@ -1,6 +1,6 @@
-/* SoftwareCheckDashboard — extends shared .edu-* classes from anti.css */
 
-/* Material link (repo URL) */
+
+
 .sw-material-link {
     display: inline-flex;
     align-items: center;
@@ -17,7 +17,7 @@
     text-decoration: underline;
 }
 
-/* Download archive button (text-style) */
+
 .sw-download-btn {
     display: inline-flex;
     align-items: center;
@@ -37,7 +37,7 @@
     text-decoration: underline;
 }
 
-/* Actions container */
+
 .sw-actions {
     display: flex;
     flex-direction: column;
@@ -45,7 +45,7 @@
     align-items: flex-end;
 }
 
-/* Pass button */
+
 .sw-btn-pass {
     padding: 0.4rem 1rem;
     font-size: 0.8rem;
@@ -68,7 +68,7 @@
     cursor: not-allowed;
 }
 
-/* Fail button */
+
 .sw-btn-fail {
     padding: 0.4rem 1rem;
     font-size: 0.8rem;
@@ -91,7 +91,7 @@
     cursor: not-allowed;
 }
 
-/* Cancel button */
+
 .sw-btn-cancel {
     padding: 0.4rem 0.7rem;
     font-size: 0.8rem;
@@ -107,7 +107,7 @@
     background: #f1f5f9;
 }
 
-/* Inline rejection textarea area */
+
 .sw-reject-area {
     display: flex;
     flex-direction: column;

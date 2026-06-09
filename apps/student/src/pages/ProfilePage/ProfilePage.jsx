@@ -10,7 +10,7 @@ export default function ProfilePage() {
 
     const currentLang = i18n.language || 'ru';
 
-    // Calculate student details dynamically
+    
     const fullName = user?.name || '—';
     const email = user?.email || '—';
     const course = work?.course || '—';
@@ -57,7 +57,7 @@ export default function ProfilePage() {
             <h1 className="profile-page-title">{t('student.profileTitle')}</h1>
 
             <div className="profile-cards-grid">
-                {/* Student Info Card */}
+                {}
                 <div className="profile-card">
                     <h2 className="profile-card-title">{t('student.studentInfo')}</h2>
                     <div className="profile-info-list">
@@ -92,7 +92,7 @@ export default function ProfilePage() {
                     </div>
                 </div>
 
-                {/* Current Work Card */}
+                {}
                 <div className="profile-card">
                     <h2 className="profile-card-title">{t('student.currentWork')}</h2>
                     <div className="profile-info-list">
@@ -120,7 +120,7 @@ export default function ProfilePage() {
                 </div>
             </div>
 
-            {/* Progress Summary Card */}
+            {}
             <div className="profile-card profile-progress-card">
                 <h2 className="profile-card-title">{t('student.progressSummary')}</h2>
                 <div className="profile-checklist">

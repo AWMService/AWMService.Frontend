@@ -51,9 +51,9 @@ function CommissionsPage() {
     };
 
     const handleEdit = (commission) => {
-        // Find chairman and secretary from members array
-        const chairman = commission.members?.find(m => m.roleType === 2); // StaffRoleType.CommissionChairman
-        const secretary = commission.members?.find(m => m.roleType === 3); // StaffRoleType.CommissionSecretary
+        
+        const chairman = commission.members?.find(m => m.roleType === 2); 
+        const secretary = commission.members?.find(m => m.roleType === 3); 
         const members = commission.members?.filter(m => m.roleType === 4).map(m => m.userId) || [];
 
         setEditingCommission({

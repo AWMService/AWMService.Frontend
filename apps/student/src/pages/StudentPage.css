@@ -5,7 +5,7 @@
 
 .student-main-content {
   padding: 2rem;
-  margin-top: 64px; /* Header height */
+  margin-top: 64px; 
 }
 
 .student-page-content {
@@ -35,7 +35,7 @@
 
 .filter-select {
     flex-shrink: 0;
-    width: 220px; /* Adjust width as needed */
+    width: 220px; 
     padding: 0.75rem;
     border: 1px solid #D9DBE0;
     border-radius: 5px;
@@ -61,7 +61,7 @@
     font-size: 15px;
 }
 
-/* Apply Modal */
+
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -155,7 +155,7 @@
     color: #475569;
 }
 
-/* My Applications Page */
+
 
 .my-applications-header {
     margin-bottom: 1.5rem;

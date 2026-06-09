@@ -1,15 +1,11 @@
-/* ===============================
-   GLOBAL FIX (ОЧЕНЬ ВАЖНО)
-================================ */
+
 
 .commission-card,
 .commission-card * {
     box-sizing: border-box;
 }
 
-/* ===============================
-   CARD
-================================ */
+
 
 .commission-card {
     background: #ffffff;
@@ -21,9 +17,7 @@
     gap: 20px;
 }
 
-/* ===============================
-   HEADER
-================================ */
+
 
 .commission-header {
     border-bottom: 1px solid #e5e7eb;
@@ -40,9 +34,7 @@
     background: transparent;
 }
 
-/* ===============================
-   FIELD
-================================ */
+
 
 .field {
     display: flex;
@@ -55,9 +47,7 @@
     margin-bottom: 6px;
 }
 
-/* ===============================
-   SELECT (SEARCHABLE)
-================================ */
+
 
 .select-box {
     position: relative;
@@ -85,9 +75,7 @@
     box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
 
-/* ===============================
-   DROPDOWN
-================================ */
+
 
 .select-dropdown {
     position: absolute;
@@ -116,9 +104,7 @@
     color: #2563eb;
 }
 
-/* ===============================
-   MEMBERS ROW
-================================ */
+
 
 .members-row {
     display: flex;
@@ -146,9 +132,7 @@
     text-decoration: underline;
 }
 
-/* ===============================
-   MEMBERS CHIPS
-================================ */
+
 
 .members-chips {
     display: flex;
@@ -167,13 +151,13 @@
 }
 
 
-/* ===== Select wrapper ===== */
+
 
 .select-box {
     position: relative;
 }
 
-/* ===== Clear (X) button ===== */
+
 
 .clear-btn {
     position: absolute;
@@ -191,7 +175,7 @@
     color: #2563eb;
 }
 
-/* ===== Empty dropdown ===== */
+
 
 .select-empty {
     padding: 12px;

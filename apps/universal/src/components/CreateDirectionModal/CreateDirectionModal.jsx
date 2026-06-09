@@ -68,7 +68,7 @@ export default function CreateDirectionModal({ onClose, onCreate, workTypes = []
 
                 <form className="cdm-form" onSubmit={handleSubmit} noValidate>
                     <div className="cdm-body">
-                        {/* Work Type Selection */}
+                        {}
                         <div className="cdm-section">
                             <div className="cdm-section-label">
                                 <Layers size={16} />
@@ -89,7 +89,7 @@ export default function CreateDirectionModal({ onClose, onCreate, workTypes = []
                             </select>
                         </div>
 
-                        {/* Title Section */}
+                        {}
                         <div className="cdm-section">
                             <div className="cdm-section-label">
                                 <Globe size={16} />
@@ -131,7 +131,7 @@ export default function CreateDirectionModal({ onClose, onCreate, workTypes = []
                             </div>
                         </div>
 
-                        {/* Description Section */}
+                        {}
                         <div className="cdm-section">
                             <div className="cdm-section-label">
                                 <AlignLeft size={16} />

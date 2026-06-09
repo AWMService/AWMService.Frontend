@@ -43,7 +43,7 @@ export default function NotificationsPage({ translationPrefix = 'department' }) 
 
     return (
         <div className="notifications-page">
-            {/* Header */}
+            {}
             <div className="notifications-header">
                 <h1>{t(`${translationPrefix}.notificationsTitle`, 'Уведомления')}</h1>
                 {unreadCount > 0 && (
@@ -53,7 +53,7 @@ export default function NotificationsPage({ translationPrefix = 'department' }) 
                 )}
             </div>
 
-            {/* Filter bar */}
+            {}
             <div className="notifications-filter-bar">
                 <div className="filter-pills">
                     <span className="filter-pill active">
@@ -69,7 +69,7 @@ export default function NotificationsPage({ translationPrefix = 'department' }) 
                 </button>
             </div>
 
-            {/* Notification list */}
+            {}
             <div className="notifications-list">
                 {notifications.length === 0 && (
                     <div className="notifications-empty">

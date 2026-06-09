@@ -43,20 +43,20 @@ const TopicCoordinationPage = () => {
     const [filterStatus, setFilterStatus] = useState("all");
     const [searchTerm, setSearchTerm] = useState("");
 
-    // Revision modal state
+    
     const [revisionModalOpen, setRevisionModalOpen] = useState(false);
     const [revisionComment, setRevisionComment] = useState("");
     const [revisionTargetIds, setRevisionTargetIds] = useState([]);
     const [revisionError, setRevisionError] = useState(false);
 
-    // Finalize confirm
+    
     const [finalizeModalOpen, setFinalizeModalOpen] = useState(false);
 
-    // Mark inactive confirm
+    
     const [inactiveModalOpen, setInactiveModalOpen] = useState(false);
     const [inactiveTargetIds, setInactiveTargetIds] = useState([]);
 
-    /* ===================== DERIVED DATA ===================== */
+    
 
     const topics = useMemo(() => (summary?.topics || []).map((item) => ({
         id: item.id,
@@ -95,10 +95,10 @@ const TopicCoordinationPage = () => {
         });
     }, [topics, filterStatus, searchTerm]);
 
-    // Only actionable topics (approved/closed) can be selected
+    
     const isActionable = (status) => status === "approved" || status === "closed";
 
-    /* ===================== HANDLERS ===================== */
+    
 
     const handleSelectAll = (e) => {
         if (e.target.checked) {
@@ -163,7 +163,7 @@ const TopicCoordinationPage = () => {
         setFinalizeModalOpen(false);
     };
 
-    /* ===================== HELPERS ===================== */
+    
 
     const getStatusBadge = (status) => {
         const labelMap = {
@@ -186,7 +186,7 @@ const TopicCoordinationPage = () => {
         actionableInFiltered.length > 0 &&
         actionableInFiltered.every((t) => selectedIds.includes(t.id));
 
-    // Check whether finalize is possible: no topics in approved/closed/needsrevision
+    
     const hasUnprocessed = topics.some(
         (t) => t.status === "approved" || t.status === "closed" || t.status === "needsrevision"
     );
@@ -197,11 +197,11 @@ const TopicCoordinationPage = () => {
         sendBackMutation.isPending ||
         completeMutation.isPending;
 
-    /* ===================== RENDER ===================== */
+    
 
     return (
         <div className="topic-coordination-page">
-            {/* Stats summary */}
+            {}
             <div className="tc-stats-summary">
                 <span className="tc-stat-item">
                     {stats.total} {t("department.topicsCount", "тем")}
@@ -232,7 +232,7 @@ const TopicCoordinationPage = () => {
                 )}
             </div>
 
-            {/* Filters */}
+            {}
             <div className="tc-filters">
                 <select
                     className="tc-filter-select"
@@ -275,7 +275,7 @@ const TopicCoordinationPage = () => {
                 />
             </div>
 
-            {/* Table */}
+            {}
             <div className="tc-table-wrapper">
                 {isLoading ? (
                     <p className="tc-no-results">{t("common.loading")}...</p>
@@ -375,7 +375,7 @@ const TopicCoordinationPage = () => {
                 )}
             </div>
 
-            {/* Bulk actions bar */}
+            {}
             {selectedIds.length > 0 && (
                 <div className="tc-bulk-bar">
                     <span className="tc-bulk-bar__label">
@@ -405,7 +405,7 @@ const TopicCoordinationPage = () => {
                 </div>
             )}
 
-            {/* Revision modal (Send back for revision) */}
+            {}
             {revisionModalOpen && (
                 <div className="tc-reject-modal-backdrop" onClick={() => setRevisionModalOpen(false)}>
                     <div className="tc-reject-modal" onClick={(e) => e.stopPropagation()}>
@@ -447,7 +447,7 @@ const TopicCoordinationPage = () => {
                 </div>
             )}
 
-            {/* Mark Inactive confirmation */}
+            {}
             <ConfirmModal
                 isOpen={inactiveModalOpen}
                 title={t("department.confirmMarkInactive", "Пометить как неактуальные?")}
@@ -458,7 +458,7 @@ const TopicCoordinationPage = () => {
                 cancelText={t("common.cancel", "Отмена")}
             />
 
-            {/* Finalize section */}
+            {}
             <div className="tc-finalize-section">
                 <button
                     className="tc-finalize-btn"
@@ -474,7 +474,7 @@ const TopicCoordinationPage = () => {
                 )}
             </div>
 
-            {/* Finalize confirmation */}
+            {}
             <ConfirmModal
                 isOpen={finalizeModalOpen}
                 title={t("department.confirmFinalize", "Завершить согласование тем?")}

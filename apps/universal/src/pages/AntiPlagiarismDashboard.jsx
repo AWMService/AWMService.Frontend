@@ -16,12 +16,12 @@ const AntiPlagiarismDashboard = () => {
 
     const threshold = apConfigs?.find(c => c.checkTypeCode === 'ANTIPLAGIARISM')?.minimumPassValue ?? null;
 
-    // Local state: track docs completed during the session (same pattern as NormocontrolPage)
+    
     const [passedDocs, setPassedDocs] = useState([]);
     const [failedDocs, setFailedDocs] = useState([]);
     const [activeTab, setActiveTab] = useState('pending');
-    const [percentages, setPercentages] = useState({}); // { [checkId]: string }
-    const [submitting, setSubmitting] = useState({}); // { [checkId]: boolean }
+    const [percentages, setPercentages] = useState({}); 
+    const [submitting, setSubmitting] = useState({}); 
 
     const displayDocuments = useMemo(() => pendingChecks.map(check => ({
         id: check.id,
@@ -50,10 +50,10 @@ const AntiPlagiarismDashboard = () => {
             await completeMutation.mutateAsync({
                 workId: doc.workId,
                 checkId: doc.id,
-                // Backend auto-overrides isPassed=false if resultValue < MinimumPassValue
+                
                 checkData: { isPassed: true, resultValue: pct },
             });
-            // Optimistic categorisation based on known threshold (backend is authoritative)
+            
             const passed = threshold == null || pct >= threshold;
             if (passed) {
                 setPassedDocs(prev => [...prev, { ...doc, status: 'passed', resultValue: pct }]);
@@ -76,7 +76,7 @@ const AntiPlagiarismDashboard = () => {
 
     return (
         <div className="edu-container">
-            {/* Header */}
+            {}
             <div style={{ marginBottom: '1.5rem' }}>
                 <h1 className="edu-main-title">{t('antiplagiarism.workReview')}</h1>
                 {threshold != null && (
@@ -86,7 +86,7 @@ const AntiPlagiarismDashboard = () => {
                 )}
             </div>
 
-            {/* Tabs */}
+            {}
             <div style={{ display: 'flex', gap: '0', marginBottom: '1.5rem', borderBottom: '1px solid #e2e8f0' }}>
                 {tabs.map(tab => (
                     <button
@@ -124,7 +124,7 @@ const AntiPlagiarismDashboard = () => {
                 ))}
             </div>
 
-            {/* Document list */}
+            {}
             {filteredDocs.length === 0 ? (
                 <div style={{ textAlign: 'center', color: '#94a3b8', padding: '3rem 0', fontSize: '0.9rem' }}>
                     {t('antiplagiarism.noDocuments')}
@@ -140,7 +140,7 @@ const AntiPlagiarismDashboard = () => {
                         return (
                             <div key={doc.id} className="edu-topic-card" style={{ padding: '1rem 1.25rem' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-                                    {/* Student + topic info */}
+                                    {}
                                     <div style={{ flex: 1, minWidth: 0 }}>
                                         <p style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.2rem', color: '#0f172a' }}>
                                             {doc.studentName}
@@ -156,7 +156,7 @@ const AntiPlagiarismDashboard = () => {
                                         </p>
                                     </div>
 
-                                    {/* Action area */}
+                                    {}
                                     {doc.status === 'pending' ? (
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
                                             <span style={{ fontSize: '0.8rem', color: '#64748b', whiteSpace: 'nowrap' }}>

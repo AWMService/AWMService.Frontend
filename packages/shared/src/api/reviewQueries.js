@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './apiClient';
 
-// Reviews for a specific work
+
 export async function fetchReviewsByWork(workId) {
   const { data } = await apiClient.get(`/v1/works/${workId}/reviews`);
   return data;
@@ -15,7 +15,7 @@ export function useReviewsByWork(workId) {
   });
 }
 
-// Supervisor review
+
 export async function createSupervisorReview(workId, formData) {
   const { data } = await apiClient.post(`/v1/works/${workId}/reviews/supervisor`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
@@ -33,7 +33,7 @@ export function useCreateSupervisorReview(workId) {
   });
 }
 
-// External review upload
+
 export async function uploadExternalReview(workId, formData) {
   await apiClient.post(`/v1/works/${workId}/reviews/external`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
@@ -51,7 +51,7 @@ export function useUploadExternalReview() {
   });
 }
 
-// Review status for department (for secretaries / department heads)
+
 export async function fetchReviewStatus(orgUnitId, semesterId) {
   const { data } = await apiClient.get('/v1/works/review-status', {
     params: { orgUnitId, semesterId },
@@ -67,7 +67,7 @@ export function useReviewStatus(orgUnitId, semesterId) {
   });
 }
 
-// Assigned reviewer for a work
+
 export async function fetchAssignedReviewer(workId) {
   const { data } = await apiClient.get(`/v1/works/${workId}/assigned-reviewer`);
   return data;
@@ -81,7 +81,7 @@ export function useAssignedReviewer(workId) {
   });
 }
 
-// Assign reviewer to a work (reviewerEntityId = Reviewer entity ID, not UserId)
+
 export async function assignReviewerToWork(workId, reviewerEntityId) {
   const { data } = await apiClient.post(`/v1/works/${workId}/assign-reviewer`, { reviewerEntityId });
   return data;
@@ -98,7 +98,7 @@ export function useAssignReviewer(workId) {
   });
 }
 
-// My reviewer assignments
+
 export async function fetchMyReviewerAssignments() {
   const { data } = await apiClient.get('/v1/reviews/my-assignments');
   return data;
@@ -111,7 +111,7 @@ export function useMyReviewerAssignments() {
   });
 }
 
-// Fetch all reviewers
+
 export async function fetchReviewers(searchTerm) {
   const { data } = await apiClient.get('/v1/reviewers', {
     params: { searchTerm },
@@ -126,7 +126,7 @@ export function useReviewers(searchTerm) {
   });
 }
 
-// Create reviewer
+
 export async function createReviewer(reviewerData) {
   const { data } = await apiClient.post('/v1/reviewers', reviewerData);
   return data;
@@ -142,7 +142,7 @@ export function useCreateReviewer() {
   });
 }
 
-// Update reviewer
+
 export async function updateReviewer(id, reviewerData) {
   const { data } = await apiClient.put(`/v1/reviewers/${id}`, reviewerData);
   return data;
@@ -158,7 +158,7 @@ export function useUpdateReviewer() {
   });
 }
 
-// Delete reviewer
+
 export async function deleteReviewer(id) {
   const { data } = await apiClient.delete(`/v1/reviewers/${id}`);
   return data;

@@ -14,7 +14,7 @@
     margin-bottom: 2rem;
 }
 
-/* Layout */
+
 .anti-grid {
     display: grid;
     grid-template-columns: 1fr 320px;
@@ -22,7 +22,7 @@
     margin-top: 1.5rem;
 }
 
-/* Cards Design */
+
 .glass-card {
     background: #FFFFFF;
     border: 1px solid #E2E8F0;
@@ -44,7 +44,7 @@
     color: #1E293B;
 }
 
-/* File Display */
+
 .file-item {
     display: flex;
     align-items: center;
@@ -77,7 +77,7 @@
     color: #64748B;
 }
 
-/* Results Section */
+
 .results-container {
     display: flex;
     gap: 1.5rem;
@@ -125,7 +125,7 @@
     font-weight: bold;
 }
 
-/* Circular Progress */
+
 .progress-circle-wrapper {
     position: relative;
     display: inline-flex;
@@ -149,14 +149,14 @@
     margin-left: 1px;
 }
 
-/* Sidebar */
+
 .anti-sidebar {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
 
-/* Buttons */
+
 .anti-actions {
     margin-top: 1rem;
 }
@@ -195,7 +195,7 @@
     border-color: #CBD5E1;
 }
 
-/* Badges */
+
 .status-badge {
     background: #DBEAFE;
     color: #1E40AF;

@@ -38,7 +38,7 @@ apiClient.interceptors.response.use(
     if (error.response) {
       const { status, data } = error.response;
       
-      // Normalize error to standard AppError format
+      
       const appError = {
         status,
         code: data?.code || data?.extensions?.code || 'UNKNOWN_ERROR',

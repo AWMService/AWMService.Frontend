@@ -22,7 +22,7 @@ function App() {
                     <Sidebar />
                     <main className="content">
                         <Routes>
-                            {/* Unified Dashboards */}
+                            {}
                             <Route index element={<Navigate to="/staff" replace />} />
                             <Route path="/staff" element={<StaffDashboard />} />
                             <Route path="/periods" element={<PeriodsDashboard />} />
@@ -30,12 +30,12 @@ function App() {
                             <Route path="/defenses" element={<DefensesDashboard />} />
                             <Route path="/settings-dashboard" element={<SettingsDashboard />} />
                             
-                            {/* Special Sub-pages */}
+                            {}
                             <Route path="/time-periods/:id/setup" element={<div style={{ padding: '32px' }}><TimePeriodSetupPage /></div>} />
                             <Route path="/time-periods/:id/schedule" element={<div style={{ padding: '32px' }}><TimePeriodSchedulePage /></div>} />
                             <Route path="/notifications" element={<div style={{ padding: '32px' }}><NotificationsPage translationPrefix="department" /></div>} />
                             
-                            {/* Redirects for old paths */}
+                            {}
                             <Route path="/employees" element={<Navigate to="/staff?tab=employees" replace />} />
                             <Route path="/reviewers" element={<Navigate to="/staff?tab=reviewers" replace />} />
                             <Route path="/settings" element={<Navigate to="/settings-dashboard?tab=profile" replace />} />

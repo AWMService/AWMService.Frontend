@@ -3,7 +3,7 @@
     max-width: 900px;
 }
 
-/* Header */
+
 .notifications-header {
     display: flex;
     align-items: center;
@@ -32,7 +32,7 @@
     font-weight: 600;
 }
 
-/* Filter bar */
+
 .notifications-filter-bar {
     display: flex;
     align-items: center;
@@ -89,7 +89,7 @@
     cursor: default;
 }
 
-/* Notification list */
+
 .notifications-list {
     display: flex;
     flex-direction: column;
@@ -103,7 +103,7 @@
     font-size: 15px;
 }
 
-/* Notification card */
+
 .notification-card {
     display: flex;
     gap: 12px;
@@ -135,7 +135,7 @@
     font-weight: 700;
 }
 
-/* Icon area */
+
 .notification-icon {
     flex-shrink: 0;
     display: flex;
@@ -144,7 +144,7 @@
     font-size: 18px;
 }
 
-/* Content area */
+
 .notification-content {
     flex: 1;
     min-width: 0;

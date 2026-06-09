@@ -7,7 +7,7 @@ const readLocalized = (item, field) => {
   const value = read(item, field);
   const pascal = field.charAt(0).toUpperCase() + field.slice(1);
 
-  // Backend sometimes sends a plain string instead of a localized object (e.g. directionTitle)
+  
   if (typeof value === 'string') {
     return { ru: value, kk: value, en: value };
   }
@@ -19,9 +19,7 @@ const readLocalized = (item, field) => {
   };
 };
 
-/**
- * Normalizes topic status from backend TopicStatus enum (numeric or string).
- */
+
 const normalizeTopicStatus = (item) => {
   const raw = read(item, 'status');
   
@@ -155,10 +153,7 @@ export const normalizeTopic = (item) => {
   };
 };
 
-/**
- * Normalizes the reconciliation summary response from backend.
- * Maps TopicReconciliationSummaryResponse → frontend model.
- */
+
 export const normalizeReconciliationSummary = (summary) => ({
   totalTopics: read(summary, 'totalTopics') ?? 0,
   topicsWithAcceptedStudents: read(summary, 'topicsWithAcceptedStudents') ?? 0,
@@ -278,8 +273,8 @@ export const topicsApi = {
     const { data } = await apiClient.get('/v1/topics/org-unit', {
       params: { orgUnitId, semesterId },
     });
-    // The endpoint returns a flat array of TopicResponse.
-    // We wrap it in a summary-like object so the UI components can use it consistently.
+    
+    
     const normalizedTopics = (data || []).map(normalizeTopic);
     return {
       topics: normalizedTopics,
@@ -287,7 +282,7 @@ export const topicsApi = {
     };
   },
 
-  // --- Reconciliation Stage (Согласование тем) ---
+  
 
   fetchReconciliationSummary: async ({ orgUnitId, semesterId, specialityId } = {}) => {
     const { data } = await apiClient.get('/v1/topics/reconciliation', {

@@ -25,15 +25,15 @@ export default function ExpertAssignmentPage() {
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
 
-    // Initialize state from fetched assignments
+    
     useEffect(() => {
         if (expertAssignments && teachers) {
             const initialMap = {};
             teachers.forEach(t => {
                 initialMap[t.userId || t.id] = {
-                    1: false, // NormControl
-                    2: false, // AntiPlagiarism
-                    3: false  // SoftwareCheck
+                    1: false, 
+                    2: false, 
+                    3: false  
                 };
             });
             expertAssignments.forEach(a => {

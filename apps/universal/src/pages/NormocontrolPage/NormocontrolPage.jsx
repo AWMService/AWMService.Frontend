@@ -5,7 +5,7 @@ import DocumentPreviewModal from '../../components/DocumentPreviewModal/Document
 import RemarksFormModal from '../../components/RemarksFormModal/RemarksFormModal';
 import './NormocontrolPage.css';
 
-// API status values from QualityCheckStatus enum on backend
+
 const API_STATUS = { Pending: 0, Approved: 1, SentForRevision: 2 };
 
 function mapStatus(apiStatus) {
@@ -21,7 +21,7 @@ function NormocontrolPage() {
     const orgUnitId = user?.orgUnitId;
     const semesterId = user?.currentSemesterId;
 
-    // Fetch all checks (pending + approved + revision) — stable across page reloads
+    
     const { data: allChecks = [] } = useAllExpertChecks(orgUnitId, semesterId, 'NormControl');
     const completeCheckMutation = useCompleteQualityCheckMutation();
 

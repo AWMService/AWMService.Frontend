@@ -28,7 +28,7 @@ export function RoleSelector({ variant = 'dropdown' }) {
   };
 
   if (availableRoles.length <= 1) {
-    return null; // Не показывать если только одна роль
+    return null; 
   }
 
   if (variant === 'tabs') {

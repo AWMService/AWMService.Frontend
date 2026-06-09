@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './apiClient';
 
-// ================= Evaluation Criteria =================
+
 
 export const evaluationApi = {
   fetchCriteria: async (workTypeId, orgUnitId = null, specialityId = null, defenseStageType = null) => {
@@ -45,7 +45,7 @@ export function useCreateEvaluationCriteria() {
   });
 }
 
-// ================= Schedules & Grading =================
+
 
 export const scheduleApi = {
   fetchScheduleByWork: async (workId) => {
@@ -65,7 +65,7 @@ export const scheduleApi = {
     return data;
   },
   generateSchedule: async (generateData) => {
-    // generateData includes: CommissionId, StartDate, Location, SlotDurationMinutes, WorkIds
+    
     const { data } = await apiClient.post('/v1/schedules/generate', generateData);
     return data;
   },
@@ -152,7 +152,7 @@ export function useStartReconciliation() {
   });
 }
 
-// ================= Protocols =================
+
 
 export const protocolApi = {
   createProtocol: async (protocolData) => {
@@ -278,8 +278,8 @@ export function useNotifyUnreadyStudents() {
   });
 }
 
-// ================= Legacy / Compatibility =================
-// Keep these for now if they are used elsewhere, but point them to new unified logic where possible
+
+
 
 export const useSubmitPreDefenseGrade = useSubmitGrade;
 export const useStartPreDefenseReconciliation = useStartReconciliation;

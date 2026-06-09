@@ -23,8 +23,8 @@ function RequireStudentWork({ children }) {
     const hasApprovedApplication = myApplications.some(a => a.status === 'approved');
     const hasWork = !!workProgress;
 
-    // Если тема закреплена, но StudentWork еще не создан (кафедра не завершила согласование),
-    // блокируем доступ к защитным шагам
+    
+    
     if (hasApprovedApplication && !hasWork) {
         return <Navigate to="/choose-theme" replace />;
     }

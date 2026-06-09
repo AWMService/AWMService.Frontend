@@ -21,7 +21,7 @@ export default function SchedulePage() {
 
     const { data: commissions = [], isLoading: isCommissionsLoading } = useCommissions(orgUnitId, semesterId);
 
-    // Auto-select first commission if none selected
+    
     React.useEffect(() => {
         if (commissions.length > 0 && !selectedCommissionId) {
             setSelectedCommissionId(commissions[0].id);
@@ -46,7 +46,7 @@ export default function SchedulePage() {
         return [...new Set(dates)].filter(Boolean);
     }, [scheduleData]);
 
-    // Auto-select first date if none selected
+    
     React.useEffect(() => {
         if (uniqueDates.length > 0 && (!selectedDate || !uniqueDates.includes(selectedDate))) {
             setSelectedDate(uniqueDates[0]);

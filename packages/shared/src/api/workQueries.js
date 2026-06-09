@@ -90,10 +90,7 @@ export const useAdmitToDefense = () => {
   });
 };
 
-/**
- * Saves the GitHub/GitLab repo URL for a software check submission.
- * Stores it in StudentWork.MetadataJson under key "softwareCheckRepoUrl".
- */
+
 export const useSaveRepoUrl = (workId) => {
   return useMutation({
     mutationFn: async (repoUrl) => {

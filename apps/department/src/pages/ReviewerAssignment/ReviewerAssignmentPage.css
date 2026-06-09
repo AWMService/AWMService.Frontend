@@ -1,4 +1,4 @@
-/* ===== ReviewerAssignmentPage ===== */
+
 
 .ra-page {
     display: flex;
@@ -6,7 +6,7 @@
     gap: 20px;
 }
 
-/* KPI Row */
+
 .ra-kpi-row {
     display: flex;
     gap: 16px;
@@ -40,7 +40,7 @@
 .ra-kpi-value--yellow { color: #f59e0b; }
 .ra-kpi-value--green  { color: #22c55e; }
 
-/* Tabs */
+
 .ra-tabs {
     display: flex;
     gap: 4px;
@@ -69,7 +69,7 @@
     border-bottom-color: var(--color-primary, #6366f1);
 }
 
-/* Table */
+
 .ra-table-wrapper {
     overflow-x: auto;
     border-radius: 12px;
@@ -114,7 +114,7 @@
 .ra-reviewer-assigned { color: var(--color-text, #111827); font-weight: 500; }
 .ra-reviewer-none     { color: var(--color-text-secondary, #9ca3af); }
 
-/* Badge */
+
 .ra-badge {
     display: inline-block;
     padding: 3px 10px;
@@ -128,7 +128,7 @@
 .ra-badge--yellow { background: #fffbeb; color: #f59e0b; }
 .ra-badge--green  { background: #f0fdf4; color: #22c55e; }
 
-/* Assign button */
+
 .ra-btn-assign {
     background: var(--color-primary, #6366f1);
     color: #fff;
@@ -151,7 +151,7 @@
     cursor: not-allowed;
 }
 
-/* Empty / Loading states */
+
 .ra-empty-state,
 .ra-loading-state {
     text-align: center;
@@ -163,7 +163,7 @@
     border: 1px dashed var(--color-border, #e5e7eb);
 }
 
-/* ===== Modal ===== */
+
 
 .ra-modal-overlay {
     position: fixed;

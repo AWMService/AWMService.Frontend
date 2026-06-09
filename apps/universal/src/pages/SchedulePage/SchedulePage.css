@@ -30,7 +30,7 @@
     margin-top: 4px;
 }
 
-/* --- ПЕРЕКЛЮЧАТЕЛЬ ДАТ --- */
+
 .date-picker-row {
     display: flex;
     gap: 12px;
@@ -38,7 +38,7 @@
     margin: 20px auto 0;
     overflow-x: auto;
     padding-bottom: 8px;
-    scrollbar-width: none; /* Скрыть скролл в FF */
+    scrollbar-width: none; 
 }
 
 .date-picker-row::-webkit-scrollbar { display: none; }
@@ -59,8 +59,8 @@
 
 .date-tab.active {
     background: #6366f1;
-    border: 1px solid #4f46e5; /* Чуть более темная рамка для четкости края */
-    transform: none; /* Убираем прыжок, если он мешает */
+    border: 1px solid #4f46e5; 
+    transform: none; 
 }
 
 .date-tab.active .date-tab-day,
@@ -71,7 +71,7 @@
 .date-tab-day { font-size: 20px; font-weight: 800; color: #1e293b; }
 .date-tab-month { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #94a3b8; }
 
-/* --- ТАЙМЛАЙН --- */
+
 .timeline-container {
     max-width: 800px;
     margin: 40px auto;
@@ -111,7 +111,7 @@
     z-index: 2;
 }
 
-/* --- КАРТОЧКА --- */
+
 .card-wrapper {
     flex: 1;
     cursor: pointer;
@@ -183,7 +183,7 @@
     border-radius: 12px;
 }
 
-/* ИНФОРМАЦИЯ О КОМИССИИ */
+
 .member-row {
     display: flex;
     align-items: center;
@@ -196,7 +196,7 @@
 .icon-blue { color: #6366f1; }
 .icon-gray { color: #94a3b8; }
 
-/* ВЫПАДАЮЩИЙ СПИСОК */
+
 .dropdown-content {
     max-height: 0;
     opacity: 0;
@@ -249,7 +249,7 @@
     opacity: 0.6;
 }
 
-/* СОСТОЯНИЕ "ПУСТО" */
+
 .empty-state {
     text-align: center;
     padding: 60px 20px;
@@ -261,7 +261,7 @@
 
 .empty-icon { font-size: 48px; margin-bottom: 16px; }
 
-/* АДАПТИВНОСТЬ */
+
 @media (max-width: 600px) {
     .timeline-item { gap: 15px; }
     .timeline-time { min-width: 50px; }

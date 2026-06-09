@@ -58,7 +58,7 @@ export default function MembersModal({ isOpen, selected = [], onClose, onConfirm
                     />
                 </div>
 
-                {/* LIST */}
+                {}
                 <div className="modal-list">
                     {filtered.map((t) => {
                         const active = checked.includes(t.id);

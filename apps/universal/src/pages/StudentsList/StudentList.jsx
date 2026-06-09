@@ -15,7 +15,7 @@ export default function StudentList() {
     const [scores, setScores] = useState({});
     const [status, setStatus] = useState("editing");
 
-    // Protocol state
+    
     const [readinessPercent, setReadinessPercent] = useState(0);
     const [decisionType, setDecisionType] = useState(1);
     const [decisionComment, setDecisionComment] = useState("");
@@ -35,12 +35,12 @@ export default function StudentList() {
         }
     }, [workTypes, workTypeId]);
 
-    // Build topics/students from defense schedule slots that have assigned works
+    
     const topics = useMemo(() => {
         if (!defenseSchedule) return [];
         const slotsWithWorks = defenseSchedule.filter(slot => slot.studentWorkId);
         
-        // Group by topic or keep as individual items
+        
         return slotsWithWorks.map((slot, i) => ({
             id: slot.id || i,
             title: {
@@ -73,25 +73,25 @@ export default function StudentList() {
         }));
     }, [defenseSchedule]);
 
-    // Determine the active workTypeId to fetch criteria for
+    
     const activeWorkTypeId = selectedStudent?.workTypeId || (defenseSchedule?.length > 0 && defenseSchedule[0].workTypeId) || workTypeId;
 
-    // Load criteria for grading based on commission stage type and selected work type
+    
     const orgUnitId = user?.orgUnitId;
     const { data: criteriaList = [], isLoading: isCriteriaLoading } = useEvaluationCriteria(activeWorkTypeId, orgUnitId, null, defenseStageType);
 
-    // Load existing grades for selected schedule
+    
     const selectedScheduleId = selectedStudent?.scheduleId;
     const { data: existingGrades = [] } = useGradesBySchedule(selectedScheduleId);
 
-    // Fetch attachments for selected student
+    
     const { data: attachments = [] } = useAttachments(selectedStudent?.id);
 
     useEffect(() => {
         if (existingGrades.length > 0 && isJournalOpen) {
             const gradeMap = {};
             existingGrades.forEach(g => {
-                // Filter grades only for the current user
+                
                 if (g.userId === user?.userId || g.userId === undefined) {
                     gradeMap[g.criteriaId || g.id] = g.score;
                 }
@@ -100,7 +100,7 @@ export default function StudentList() {
         }
     }, [existingGrades, isJournalOpen, user]);
 
-    // Блокировка прокрутки страницы при открытом drawer
+    
     useEffect(() => {
         if (isJournalOpen) {
             document.body.style.overflow = "hidden";
@@ -121,7 +121,7 @@ export default function StudentList() {
         setScores((prev) => ({ ...prev, [id]: num }));
     };
 
-    // Calculate total score using criteria weights
+    
     const totalScore = criteriaList.reduce((sum, criteria) => {
         const score = scores[criteria.id] || 0;
         const weight = criteria.weight != null ? criteria.weight : 1.0;
@@ -145,7 +145,7 @@ export default function StudentList() {
     const handleSendGrades = async () => {
         if (!selectedScheduleId) return;
         try {
-            // Submit each criteria score
+            
             for (const [criteriaId, score] of Object.entries(scores)) {
                 await submitGradeMutation.mutateAsync({
                     scheduleId: selectedScheduleId,
@@ -172,7 +172,7 @@ export default function StudentList() {
     const handleFinalize = async () => {
         if (!selectedScheduleId) return;
         try {
-            // Check if protocol is already created
+            
             let pId = selectedStudent?.protocolId;
             if (!pId) {
                 const newProtocolId = await generateProtocolMutation.mutateAsync({

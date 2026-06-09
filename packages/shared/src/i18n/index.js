@@ -65,7 +65,7 @@ i18n
     },
 
     interpolation: {
-      escapeValue: false, // React already escapes by default
+      escapeValue: false, 
     },
 
     react: {
@@ -75,14 +75,14 @@ i18n
 
 export default i18n;
 
-// Hook for changing language
+
 export const changeLanguage = (lang) => {
   const normalized = normalizeLanguage(lang);
   i18n.changeLanguage(normalized);
   localStorage.setItem('awm-language', normalized);
 };
 
-// Get current language
+
 export const getCurrentLanguage = () => {
   return normalizeLanguage(i18n.language || defaultLanguage);
 };

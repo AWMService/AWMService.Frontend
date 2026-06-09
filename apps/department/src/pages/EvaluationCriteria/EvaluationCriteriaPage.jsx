@@ -13,7 +13,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import plusIcon from "../../assets/icons/plus-icon.svg";
 import "./EvaluationCriteriaPage.css";
 
-// Form for adding/editing criteria (simplified inline or could be a modal)
+
 function CriteriaForm({ initialData, onSubmit, onCancel }) {
     const { t } = useTranslation();
     const [formData, setFormData] = useState(initialData || { criteriaName: '', maxScore: 10, weight: 1.0, sortOrder: 0 });
@@ -88,9 +88,9 @@ function EvaluationCriteriaPage() {
     
     const orgUnitId = user?.orgUnitId;
 
-    const [workTypeId, setWorkTypeId] = useState(1); // 1 = DP, 2 = DR (WorkTypes)
+    const [workTypeId, setWorkTypeId] = useState(1); 
     const [selectedSpecialityId, setSelectedSpecialityId] = useState(null);
-    const [defenseStageType, setDefenseStageType] = useState(1); // 1=PreDefense, 2=GAK
+    const [defenseStageType, setDefenseStageType] = useState(1); 
     const [isAdding, setIsFormOpen] = useState(false);
     const [editingId, setEditingId] = useState(null);
     const [deleteTarget, setDeleteTarget] = useState(null);
@@ -181,7 +181,7 @@ function EvaluationCriteriaPage() {
                 )}
             </div>
 
-            {/* Defense stage type tabs */}
+            {}
             <div className="defense-stage-tabs">
                 <button 
                     className={`stage-tab ${defenseStageType === 1 ? 'active' : ''}`}

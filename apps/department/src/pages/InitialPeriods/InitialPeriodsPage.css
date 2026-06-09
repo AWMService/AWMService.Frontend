@@ -1,4 +1,4 @@
-/* InitialPeriodsPage.css - Premium Dashboard Design System */
+
 
 .initial-periods-page {
     flex: 1;
@@ -10,7 +10,7 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===================== LOADING STATE ===================== */
+
 .loader-pulse {
     font-size: 1rem;
     font-weight: 500;
@@ -26,7 +26,7 @@
     50% { opacity: 1; }
 }
 
-/* ===================== SPECIALITY SELECTOR ===================== */
+
 .speciality-selector-wrapper {
     margin-bottom: 2rem;
     background: rgba(255, 255, 255, 0.8);
@@ -74,7 +74,7 @@
     box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
 }
 
-/* ===================== PIPELINE / TIMELINE ===================== */
+
 .stages-timeline {
     position: relative;
     display: flex;
@@ -173,10 +173,10 @@
 }
 
 .node-connector {
-    display: none; /* Only used on mobile fallback layouts */
+    display: none; 
 }
 
-/* ===================== SUMMARY GRID ===================== */
+
 .stage-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -261,7 +261,7 @@
     color: #9ca3af;
 }
 
-/* ===================== WARNINGS ===================== */
+
 .inherited-dates-warning {
     display: flex;
     align-items: center;
@@ -296,7 +296,7 @@
     gap: 8px;
 }
 
-/* ===================== STAGE FORM ===================== */
+
 .stage-form-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -372,7 +372,7 @@
     margin-top: 8px;
 }
 
-/* ===================== ACTIONS & BUTTONS ===================== */
+
 .periods-summary__actions,
 .periods-form__actions {
     display: flex;
@@ -442,7 +442,7 @@
     border-color: #ef4444;
 }
 
-/* ===================== RESPONSIVE ===================== */
+
 @media (max-width: 992px) {
     .stages-timeline {
         flex-direction: column;

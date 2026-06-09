@@ -47,7 +47,7 @@
     color: #6b7280;
 }
 
-/* Table styling */
+
 .table-wrapper {
     background: #fff;
     border: 1px solid #e5e7eb;
@@ -136,7 +136,7 @@
     background-color: #fef2f2;
 }
 
-/* Modal styling */
+
 .modal-overlay {
     position: fixed;
     inset: 0;

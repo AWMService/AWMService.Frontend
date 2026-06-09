@@ -13,7 +13,7 @@ export default function CommissionSetupStep({
 }) {
     const { t } = useTranslation();
 
-    // Local state to track open dropdowns for member multi-select on each card
+    
     const [openMembersCardId, setOpenMembersCardId] = useState(null);
 
     const handleSpecialityChange = (comm, specIdStr) => {
@@ -90,7 +90,7 @@ export default function CommissionSetupStep({
                         }}>
                             <div className="card-top-glow" style={{ position: 'absolute', top: 0, right: 0, width: '120px', height: '120px', background: 'radial-gradient(circle at 100% 0%, #4f46e508, transparent 70%)', pointerEvents: 'none' }} />
                             
-                            {/* Card Header */}
+                            {}
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <input
                                     className="commission-name-input"
@@ -118,7 +118,7 @@ export default function CommissionSetupStep({
                                 </button>
                             </div>
 
-                            {/* Specialty Binding */}
+                            {}
                             <div className="form-group-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                                     <label style={{ fontSize: '0.725rem', fontWeight: '700', color: '#4b5563', textTransform: 'uppercase' }}>
@@ -152,7 +152,7 @@ export default function CommissionSetupStep({
                                 </div>
                             </div>
 
-                            {/* Chairman Selection */}
+                            {}
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                                 <label style={{ fontSize: '0.725rem', fontWeight: '700', color: '#4b5563', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}>
                                     <Award size={14} style={{ color: '#4f46e5' }} /> {t('commission.chairman', 'Председатель')}
@@ -169,7 +169,7 @@ export default function CommissionSetupStep({
                                 </select>
                             </div>
 
-                            {/* Secretary Selection */}
+                            {}
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                                 <label style={{ fontSize: '0.725rem', fontWeight: '700', color: '#4b5563', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}>
                                     <Shield size={14} style={{ color: '#0f766e' }} /> {t('department.technicalSecretary', 'Технический секретарь')}
@@ -186,7 +186,7 @@ export default function CommissionSetupStep({
                                 </select>
                             </div>
 
-                            {/* Multi-Select Members Collapsible Dropdown */}
+                            {}
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', position: 'relative' }}>
                                 <label style={{ fontSize: '0.725rem', fontWeight: '700', color: '#4b5563', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}>
                                     <Users size={14} style={{ color: '#10b981' }} /> {t('commission.members', 'Члены комиссии')}
@@ -270,7 +270,7 @@ export default function CommissionSetupStep({
                                 )}
                             </div>
 
-                            {/* Render Members Chips directly on card */}
+                            {}
                             {c.members && c.members.length > 0 && (
                                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '4px' }}>
                                     {c.members.map(memberId => {
@@ -326,7 +326,7 @@ export default function CommissionSetupStep({
     );
 }
 
-// Inline simple icons
+
 function PlusIcon() {
     return (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px' }}>

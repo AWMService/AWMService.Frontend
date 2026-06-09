@@ -18,7 +18,7 @@ export function ProgressStepper({ currentStep = 1, highestCompletedStep = 1, act
     { id: 8, nameKey: 'student.defense',        path: '/defense' },
   ];
 
-  // null = no filter (show all); array = show only steps without checkTypeCode OR whose code is in the list
+  
   const steps = activeCheckTypeCodes === null
     ? allSteps
     : allSteps.filter(s => !s.checkTypeCode || activeCheckTypeCodes.includes(s.checkTypeCode));
@@ -31,7 +31,7 @@ export function ProgressStepper({ currentStep = 1, highestCompletedStep = 1, act
           const isActive = step.id === currentStep;
           const isAvailable = step.id <= effectiveMaxStep;
 
-          // Линия закрашивается только если оба соединяемых шага доступны и первый завершен или текущий активен
+          
           const nextStep = steps[index + 1];
           const isConnectorFilled = nextStep && nextStep.id <= effectiveMaxStep && step.id < highestCompletedStep;
 
@@ -47,7 +47,7 @@ export function ProgressStepper({ currentStep = 1, highestCompletedStep = 1, act
 
           return (
               <React.Fragment key={step.id}>
-                {/* Блок шага */}
+                {}
                 <div className={`step-wrapper ${!isAvailable ? 'disabled' : ''}`}>
                   {isAvailable ? (
                       <Link to={step.path} className="step-link">
@@ -64,7 +64,7 @@ export function ProgressStepper({ currentStep = 1, highestCompletedStep = 1, act
                   )}
                 </div>
 
-                {/* Соединительная линия */}
+                {}
                 {index < steps.length - 1 && (
                     <div className={`connector-line ${isConnectorFilled ? 'filled' : ''}`} />
                 )}

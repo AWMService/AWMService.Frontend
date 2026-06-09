@@ -48,7 +48,7 @@ export default function DefenseReadinessPage() {
     const [selectedIds, setSelectedIds] = useState([]);
     const [confirmModal, setConfirmModal] = useState({ isOpen: false, isBulk: false, studentId: null });
     const [isNotifyConfirmOpen, setIsNotifyConfirmOpen] = useState(false);
-    const [filter, setFilter] = useState('all'); // 'all' | 'ready' | 'admitted'
+    const [filter, setFilter] = useState('all'); 
 
     const kpiCounts = useMemo(() => {
         let admitted = 0, notAdmitted = 0, inProgress = 0;
@@ -127,7 +127,7 @@ export default function DefenseReadinessPage() {
 
     return (
         <div className="defense-readiness-page">
-            {/* KPI Cards */}
+            {}
             <div className="dr-kpi-cards">
                 <div className="dr-kpi-card dr-kpi-card--green">
                     <span className="dr-kpi-label">{t("department.admittedToDefense")}</span>
@@ -143,7 +143,7 @@ export default function DefenseReadinessPage() {
                 </div>
             </div>
 
-            {/* Bulk bar */}
+            {}
             <div className="dr-bulk-bar">
                 <span className="dr-selected-count">
                     {t("department.selectedCount", { count: selectedIds.length })}
@@ -157,7 +157,7 @@ export default function DefenseReadinessPage() {
                 </button>
             </div>
 
-            {/* Next-step navigation */}
+            {}
             <div className="dr-next-steps">
                 <button className="dr-next-step-btn" onClick={() => navigate('/commissions?type=gak')}>
                     {t("department.createGakCommission")}
@@ -186,7 +186,7 @@ export default function DefenseReadinessPage() {
                 </button>
             </div>
 
-            {/* Filter tabs */}
+            {}
             <div className="dr-filter-tabs">
                 <button
                     className={`dr-filter-tab${filter === 'all' ? ' active' : ''}`}
@@ -208,7 +208,7 @@ export default function DefenseReadinessPage() {
                 </button>
             </div>
 
-            {/* Table */}
+            {}
             <div className="dr-table-wrapper">
                 <table className="dr-table">
                     <thead>

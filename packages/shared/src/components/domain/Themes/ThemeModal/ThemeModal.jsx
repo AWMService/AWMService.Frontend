@@ -35,7 +35,7 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
         <div className="tm-overlay" onClick={handleClose}>
             <div className="tm-content" onClick={(e) => e.stopPropagation()}>
 
-                {/* HEADER */}
+                {}
                 <div className="tm-header">
                     <div
                         className={`tm-status ${
@@ -64,7 +64,7 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                     </div>
                 </div>
 
-                {/* SCROLL */}
+                {}
                 <div className="tm-scroll-area">
                     <h2 className="tm-title">{getTitle()}</h2>
                     <p className="tm-subtitle">
@@ -102,7 +102,7 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                             </div>
                         </div>
 
-                        {/* ПРИЧИНА ОТКАЗА (READ ONLY) */}
+                        {}
                         {isRejected && theme.rejectionReason && (
                             <div className="tm-rejected-info">
                                 <span className="tm-rejected-info__label">
@@ -115,7 +115,7 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                         )}
                     </div>
 
-                    {/* FOOTER */}
+                    {}
                     <div className="tm-footer">
                         {isPending ? (
                             !showRejection ? (

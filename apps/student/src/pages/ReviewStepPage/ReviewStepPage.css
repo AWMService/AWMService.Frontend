@@ -1,6 +1,6 @@
 .review-step-page {
     padding: 24px 32px;
-    background-color: #F8F9FC; /* Светлый фон страницы */
+    background-color: #F8F9FC; 
     min-height: auto;
     font-family: 'Inter', -apple-system, sans-serif;
     color: #1F2937;
@@ -47,7 +47,7 @@
     gap: 20px;
 }
 
-/* Общий стиль карточек, используемый везде */
+
 .card {
     background-color: #FFFFFF;
     padding: 20px;
@@ -71,7 +71,7 @@
     gap: 8px;
 }
 
-/* Кнопки */
+
 .btn-primary {
     background-color: #566F9E;
     color: white;
@@ -94,14 +94,14 @@
     cursor: not-allowed;
 }
 
-/* Адаптив */
+
 @media (max-width: 900px) {
     .review-step-grid {
         grid-template-columns: 1fr;
     }
 }
 
-/* Toggle переключатель ZIP / URL */
+
 .submit-mode-toggle {
     display: inline-flex;
     background-color: #FFFFFF;
@@ -133,7 +133,7 @@
     color: #FFFFFF;
 }
 
-/* Карточка ввода URL */
+
 .repo-url-card {
     max-width: 640px;
 }

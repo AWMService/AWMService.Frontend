@@ -38,7 +38,7 @@ const ROLE_MENU_CONFIG = {
     ],
 };
 
-// Priority for /schedule when multiple roles have it
+
 const SCHEDULE_ROLE_PRIORITY = [ROLES.COMMISSION_MEMBER, ROLES.SECRETARY, ROLES.CHAIRMAN, ROLES.SUPERVISOR];
 
 export function UniversalSidebar() {
@@ -47,9 +47,9 @@ export function UniversalSidebar() {
 
     const navigationItems = useMemo(() => {
         const items = [];
-        const seenHrefs = new Map(); // href -> item
+        const seenHrefs = new Map(); 
 
-        // Collect items from all user roles
+        
         availableRoles.forEach((role) => {
             const roleItems = ROLE_MENU_CONFIG[role] || [];
             roleItems.forEach((item) => {
@@ -60,20 +60,20 @@ export function UniversalSidebar() {
             });
         });
 
-        // Resolve /schedule target role by priority
+        
         if (seenHrefs.has("/schedule")) {
             const scheduleRole = SCHEDULE_ROLE_PRIORITY.find((r) => availableRoles.includes(r));
             const scheduleItem = seenHrefs.get("/schedule");
             scheduleItem.role = scheduleRole || scheduleItem.role;
         }
 
-        // Add notifications at the end
+        
         items.push({
             href: "/notifications",
             labelKey: "nav.notifications",
             icon: bellIcon,
             descriptionKey: "universal.notificationsDescription",
-            role: null, // No role switch needed
+            role: null, 
         });
 
         return items;
@@ -81,7 +81,7 @@ export function UniversalSidebar() {
 
     const handleItemClick = useCallback(
         (item) => () => {
-            // Switch role first if needed, then Link handles navigation
+            
             if (item.role && item.role !== currentRole) {
                 switchRole(item.role);
             }

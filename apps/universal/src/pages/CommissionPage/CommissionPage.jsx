@@ -23,7 +23,7 @@ function CommissionPage() {
     const downloadProtocolMutation = useDownloadProtocolPdf();
 
     const filteredCommissions = commissions.filter(c => {
-        // Mock status logic: if commission has no upcoming schedule, treat as completed
+        
         const hasUpcoming = c.hasUpcomingSchedule !== false;
         if (activeTab === 'upcoming') return hasUpcoming;
         if (activeTab === 'completed') return !hasUpcoming;
@@ -40,11 +40,11 @@ function CommissionPage() {
         try {
             const newProtocolId = await generateProtocolMutation.mutateAsync({
                 commissionId: protocolModal.id,
-                // Add other required fields based on backend contract
+                
             });
             setProtocolModal(null);
             
-            // Download the newly generated protocol PDF
+            
             if (newProtocolId) {
                 downloadProtocolMutation.mutate(newProtocolId);
             }

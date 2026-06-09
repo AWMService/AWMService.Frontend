@@ -24,7 +24,7 @@ export function SingleSignOnPage() {
         token: getToken(),
         refreshToken: getRefreshToken(),
       });
-      // Prevent infinite loop: if no role or redirect points back to login
+      
       if (redirectUrl && redirectUrl !== getLoginUrl()) {
         window.location.replace(redirectUrl);
       } else if (!redirectUrl) {

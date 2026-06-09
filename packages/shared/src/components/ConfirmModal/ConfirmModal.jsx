@@ -10,7 +10,7 @@ export function ConfirmModal({
     onCancel, 
     confirmText,
     cancelText,
-    variant = 'primary' // 'primary' | 'danger'
+    variant = 'primary' 
 }) {
     const { t } = useTranslation();
     

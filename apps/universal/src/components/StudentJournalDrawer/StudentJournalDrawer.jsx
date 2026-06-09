@@ -126,7 +126,7 @@ export default function StudentJournalDrawer({
                     </div>
                 )}
 
-                {/* Protocol fields: Readiness % and Decision */}
+                {}
                 <div className="s-protocol-fields">
                     <div className="s-protocol-field">
                         <label className="s-field-label">{t('journal.readinessPercent', '% готовности ДП')}</label>

@@ -78,7 +78,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                 </div>
 
                 <div className="tem-body">
-                    {/* Название */}
+                    {}
                     <div className="tem-section">
                         <div className="tem-section-label">
                             <Globe size={16} className="tem-icon-muted" />
@@ -118,7 +118,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                         </div>
                     </div>
 
-                    {/* Описание */}
+                    {}
                     <div className="tem-section">
                         <div className="tem-section-label">
                             <AlignLeft size={16} className="tem-icon-muted" />
@@ -147,7 +147,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                                 />
                             </div>
 
-                            {/* 🔥 EN DESCRIPTION */}
+                            {}
                             <div className="tem-field vertical">
                                 <div className="tem-lang-tag">EN</div>
                                 <textarea
@@ -162,7 +162,7 @@ export default function TopicEditModal({ open, onClose, topic, onSave, direction
                         </div>
                     </div>
 
-                    {/* Параметры */}
+                    {}
                     <div className="tem-grid-params">
                         <div className="tem-section">
                             <div className="tem-section-label">

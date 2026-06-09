@@ -20,7 +20,7 @@ export default function FinalizationStep({ commissions, onFinish }) {
                     {t('department.finalizationDesc', 'Все параметры предзащит и комиссий настроены. Составы зарегистрированы в базе данных, а студенты успешно распределены.')}
                 </p>
 
-                {/* Summary Grid stats */}
+                {}
                 <div className="final-stats-summary" style={{ display: 'flex', justifyContent: 'center', gap: '24px', margin: '24px 0' }}>
                     <div className="summary-stat-box" style={{ background: '#f8fafc', padding: '16px 24px', borderRadius: '12px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
                         <span style={{ display: 'block', fontSize: '1.75rem', fontWeight: '850', color: '#4f46e5' }}>{commissions.length}</span>
@@ -30,7 +30,7 @@ export default function FinalizationStep({ commissions, onFinish }) {
                     </div>
                 </div>
 
-                {/* Detailed Commissions List */}
+                {}
                 <div className="commissions-summary-list" style={{ display: 'flex', flexDirection: 'column', gap: '12px', margin: '24px 0', maxHeight: '240px', overflowY: 'auto', textAlign: 'left', padding: '4px' }}>
                     {commissions.map(c => (
                         <div key={c.id} className="summary-comm-item" style={{

@@ -5,7 +5,7 @@ import { getIntlLocale } from "@awm/shared";
 import { Calendar, Clock, Users, ArrowRight, UserCheck, AlertCircle, Sparkles, HelpCircle } from "lucide-react";
 import "./DistributionStep.css";
 
-// Premium Local Commission Column component for Kanban Board
+
 function CommissionScheduleColumn({ commission }) {
     const { t, i18n } = useTranslation();
     const locale = getIntlLocale(i18n.language);
@@ -50,7 +50,7 @@ function CommissionScheduleColumn({ commission }) {
 
                                 <div className="students-container">
                                     {session.students.map((student, index) => {
-                                        // Generate initials
+                                        
                                         const initials = student.name
                                             ? student.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
                                             : "ST";
@@ -122,7 +122,7 @@ export default function DistributionStep({ commissions, setCommissions, autoDist
 
         if (!student || !student.scheduleId) return;
 
-        // 1. Update local state immediately for smooth UI feedback
+        
         setCommissions(prev => {
             const next = [...prev];
             const sComm = next.find(c => c.id === sourceCommId);
@@ -138,7 +138,7 @@ export default function DistributionStep({ commissions, setCommissions, autoDist
             return next;
         });
 
-        // 2. Call parent callback to sync with DB
+        
         const destComm = commissions.find(c => c.id === destCommId);
         const destDate = destSessId.split('T')[0];
         const destTime = destSessId.split('T')[1];
@@ -232,7 +232,7 @@ export default function DistributionStep({ commissions, setCommissions, autoDist
     );
 }
 
-// Small icon helper
+
 function RefreshCw({ size }) {
     return (
         <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

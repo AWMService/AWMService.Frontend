@@ -217,7 +217,7 @@ export default function STopicsPage() {
                                         <BookText size={14} />
                                         <span>{topic.workTypeName || topic.workTypeId}</span>
                                     </div>
-                                    {/* Индикатор новых заявок */}
+                                    {}
                                     {topic.pendingApplicationsCount > 0 && (
                                         <div className="stat-item requests-indicator">
                                             <div className="indicator-dot"></div>
@@ -262,7 +262,7 @@ export default function STopicsPage() {
                 )}
             </div>
 
-            {/* ===== MODALS ===== */}
+            {}
             <CreateTopicModal
                 open={isCreateOpen}
                 onClose={() => setIsCreateOpen(false)}

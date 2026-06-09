@@ -30,7 +30,7 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Header */
+
 .dvm-header {
     padding: 24px 28px;
     border-bottom: 1px solid #f1f5f9;
@@ -72,7 +72,7 @@
 
 .dvm-close-btn:hover { color: #64748b; }
 
-/* Rejection Section */
+
 .dvm-rejection-alert {
     display: flex;
     gap: 12px;
@@ -96,7 +96,7 @@
     line-height: 1.5;
 }
 
-/* Content */
+
 .dvm-content {
     padding: 28px;
     overflow-y: auto;
@@ -116,7 +116,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #64748b; /* Нейтральный цвет для иконок и текста */
+    color: #64748b; 
 }
 
 .dvm-info-text label {
@@ -132,7 +132,7 @@
     font-weight: 500;
 }
 
-/* Sections */
+
 .dvm-section { margin-bottom: 24px; }
 
 .dvm-section-header {
@@ -191,7 +191,7 @@
 
 .description-area { min-height: 80px; }
 
-/* Footer */
+
 .dvm-footer {
     padding: 20px 28px;
     border-top: 1px solid #f1f5f9;
@@ -200,7 +200,7 @@
 }
 
 .dvm-btn-primary {
-    background: #2563eb; /* Синий цвет вместо черного */
+    background: #2563eb; 
     color: #fff;
     border: none;
     padding: 10px 24px;

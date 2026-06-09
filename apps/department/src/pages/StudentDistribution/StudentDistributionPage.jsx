@@ -58,29 +58,29 @@ export default function StudentDistributionPage() {
     const departmentId = user?.orgUnitId;
     const semesterId = user?.currentSemesterId;
 
-    // Specialty & Stage State
+    
     const [selectedSpecialityId, setSelectedSpecialityId] = useState(null);
     const [activeStageKey, setActiveStageKey] = useState("PreDefense1");
 
-    // Search queries
+    
     const [scheduleSearch, setScheduleSearch] = useState("");
     const [unassignedSearch, setUnassignedSearch] = useState("");
 
-    // Inline edit / schedule states
+    
     const [editingSlotId, setEditingSlotId] = useState(null);
     const [editFormData, setEditFormData] = useState({ commissionId: '', date: '', time: '', location: '' });
-    const [assignState, setAssignState] = useState({}); // { [workId]: { commissionId, date, time, location } }
+    const [assignState, setAssignState] = useState({}); 
 
-    // Commission Form Modal States
+    
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingCommission, setEditingCommission] = useState(null);
     const [deleteTarget, setDeleteTarget] = useState(null);
 
-    // Confirm modals for schedule actions
+    
     const [unscheduleTarget, setUnscheduleTarget] = useState(null);
     const [showClearConfirm, setShowClearConfirm] = useState(false);
 
-    // Toast notification state
+    
     const [toasts, setToasts] = useState([]);
     const toastIdRef = useRef(0);
 
@@ -92,7 +92,7 @@ export default function StudentDistributionPage() {
         }, 4000);
     }, []);
 
-    // Queries
+    
     const { data: specialities = [] } = useOrgUnitSpecialities(departmentId);
     const { data: periods = [] } = usePeriods(departmentId, semesterId, selectedSpecialityId);
     const { data: allCommissions = [], isLoading: isCommsLoading } = useCommissions(departmentId, semesterId);
@@ -103,7 +103,7 @@ export default function StudentDistributionPage() {
         specialityId: selectedSpecialityId 
     });
 
-    // Mutations
+    
     const createCommissionMutation = useCreateCommission(departmentId, semesterId, selectedSpecialityId);
     const updateCommissionMutation = useUpdateCommission(departmentId, semesterId, selectedSpecialityId);
     const deleteCommissionMutation = useDeleteCommission(departmentId, semesterId, selectedSpecialityId);
@@ -112,14 +112,14 @@ export default function StudentDistributionPage() {
     const deleteScheduleMutation = useDeleteSchedule();
     const generateScheduleMutation = useGenerateSchedule();
 
-    // Map URL stageId configuration to active stage key
+    
     const stageIdParam = searchParams.get('stageId');
     useEffect(() => {
         if (periods && periods.length > 0 && stageIdParam) {
             const matchedPeriod = periods.find(p => p.id === Number(stageIdParam) || p.id.toString() === stageIdParam);
             if (matchedPeriod && matchedPeriod.workflowStage) {
                 setActiveStageKey(matchedPeriod.workflowStage);
-                // Clear the param to avoid re-triggering if user manually changes the stage
+                
                 const nextParams = new URLSearchParams(searchParams);
                 nextParams.delete('stageId');
                 setSearchParams(nextParams);
@@ -136,7 +136,7 @@ export default function StudentDistributionPage() {
         return periods.find(p => p.workflowStage === activeStageKey);
     }, [periods, activeStageKey]);
 
-    // Client-side filter for stage and specialty commissions
+    
     const filteredCommissions = useMemo(() => {
         const stageComms = allCommissions.filter(c => 
             c.commissionTypeId === activeStage.typeId && 
@@ -146,14 +146,14 @@ export default function StudentDistributionPage() {
         if (selectedSpecialityId) {
             const specComms = stageComms.filter(c => c.specialityId === selectedSpecialityId);
             if (specComms.length > 0) return specComms;
-            // Fallback to general department commissions (specialityId is null)
+            
             return stageComms.filter(c => !c.specialityId);
         }
 
         return stageComms;
     }, [allCommissions, activeStage, selectedSpecialityId]);
 
-    // Fetch schedules for filtered commissions
+    
     const scheduleQueries = useQueries({
         queries: filteredCommissions.map(c => ({
             queryKey: ['preDefense', 'schedule', c.id],
@@ -176,7 +176,7 @@ export default function StudentDistributionPage() {
         });
     }, [scheduleQueries, filteredCommissions]);
 
-    // Format assigned student schedules
+    
     const scheduledStudents = useMemo(() => {
         return allSchedules
             .filter(slot => slot.studentWorkId)
@@ -193,7 +193,7 @@ export default function StudentDistributionPage() {
             }));
     }, [allSchedules, t]);
 
-    // Cohort analysis based on active stage
+    
     const cohortStudents = useMemo(() => {
         return allStudents.filter(student => {
             const state = student.currentState;
@@ -213,7 +213,7 @@ export default function StudentDistributionPage() {
         });
     }, [allStudents, activeStageKey]);
 
-    // Derive unassigned students
+    
     const unassignedStudents = useMemo(() => {
         return cohortStudents.filter(student => {
             const isScheduled = scheduledStudents.some(s => s.studentWorkId === student.workId);
@@ -221,7 +221,7 @@ export default function StudentDistributionPage() {
         });
     }, [cohortStudents, scheduledStudents]);
 
-    // Search filtering
+    
     const filteredScheduledStudents = useMemo(() => {
         if (!scheduleSearch) return scheduledStudents;
         const term = scheduleSearch.toLowerCase();
@@ -240,7 +240,7 @@ export default function StudentDistributionPage() {
         );
     }, [unassignedStudents, unassignedSearch]);
 
-    // Handlers: Auto distribute
+    
     const handleAutoDistribute = async () => {
         try {
             await autoDistributeMutation.mutateAsync({
@@ -260,7 +260,7 @@ export default function StudentDistributionPage() {
         }
     };
 
-    // Handlers: Manual Rescheduling
+    
     const startEditingSlot = (slot) => {
         setEditingSlotId(slot.id);
         setEditFormData({
@@ -294,7 +294,7 @@ export default function StudentDistributionPage() {
         }
     };
 
-    // Handlers: Unschedule Student
+    
     const handleUnschedule = (scheduleId) => {
         setUnscheduleTarget(scheduleId);
     };
@@ -314,7 +314,7 @@ export default function StudentDistributionPage() {
         }
     };
 
-    // Handlers: Clear entire schedule for this stage
+    
     const handleClearAllSchedule = async () => {
         setShowClearConfirm(false);
         let failCount = 0;
@@ -334,7 +334,7 @@ export default function StudentDistributionPage() {
         }
     };
 
-    // Handlers: Manual Assignment (Unassigned Panel)
+    
     const handleAssignChange = (workId, field, value) => {
         setAssignState(prev => ({
             ...prev,
@@ -364,7 +364,7 @@ export default function StudentDistributionPage() {
             queryClient.invalidateQueries({ queryKey: ['works'] });
             queryClient.invalidateQueries({ queryKey: ['preDefense'] });
             
-            // Clear state
+            
             setAssignState(prev => {
                 const next = { ...prev };
                 delete next[student.workId];
@@ -377,7 +377,7 @@ export default function StudentDistributionPage() {
         }
     };
 
-    // Handlers: Commissions CRUD
+    
     const handleCreateCommission = () => {
         setEditingCommission(null);
         setIsFormOpen(true);
@@ -467,7 +467,7 @@ export default function StudentDistributionPage() {
 
     return (
         <div className="unified-distribution-workspace">
-            {/* Top Workspace Controls Bar */}
+            {}
             <div className="workspace-controls-bar">
                 <div className="workspace-stage-speciality">
                     <select
@@ -508,9 +508,9 @@ export default function StudentDistributionPage() {
                 )}
             </div>
 
-            {/* Main 3-Column Workspace Grid */}
+            {}
             <div className="workspace-grid">
-                {/* Column 1: Commissions (30%) */}
+                {}
                 <div className="workspace-column">
                     <div className="column-header">
                         <div className="column-title-group">
@@ -577,7 +577,7 @@ export default function StudentDistributionPage() {
                     </div>
                 </div>
 
-                {/* Column 2: Scheduled / Active schedule (45%) */}
+                {}
                 <div className="workspace-column">
                     <div className="column-header">
                         <div className="column-title-group">
@@ -747,7 +747,7 @@ export default function StudentDistributionPage() {
                     </div>
                 </div>
 
-                {/* Column 3: Unassigned Students list (25%) */}
+                {}
                 <div className="workspace-column">
                     <div className="column-header">
                         <div className="column-title-group">
@@ -836,7 +836,7 @@ export default function StudentDistributionPage() {
                 </div>
             </div>
 
-            {/* Commissions Modals */}
+            {}
             <CommissionFormModal
                 isOpen={isFormOpen}
                 onClose={() => {
@@ -876,7 +876,7 @@ export default function StudentDistributionPage() {
                 variant="danger"
             />
 
-            {/* Toast notifications */}
+            {}
             {toasts.length > 0 && (
                 <div className="toast-container">
                     {toasts.map(toast => (

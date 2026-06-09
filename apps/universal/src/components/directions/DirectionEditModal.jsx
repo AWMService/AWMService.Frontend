@@ -71,7 +71,7 @@ export default function DirectionEditModal({ direction, onClose, onSave, workTyp
                 </div>
 
                 <div className="dem-body">
-                    {/* Work Type Selection */}
+                    {}
                     <div className="dem-section">
                         <div className="dem-section-label">
                             <Layers size={16} />
@@ -91,7 +91,7 @@ export default function DirectionEditModal({ direction, onClose, onSave, workTyp
                         </select>
                     </div>
 
-                    {/* Title Section */}
+                    {}
                     <div className="dem-section">
                         <div className="dem-section-label">
                             <Globe size={16} />
@@ -113,7 +113,7 @@ export default function DirectionEditModal({ direction, onClose, onSave, workTyp
                         </div>
                     </div>
 
-                    {/* Description Section */}
+                    {}
                     <div className="dem-section">
                         <div className="dem-section-label">
                             <AlignLeft size={16} />

@@ -49,8 +49,8 @@ export const StudentLayout = () => {
     workProgress?.specialityId ?? null
   );
 
-  // null → no rules configured or still loading → show all steps (safe fallback)
-  // array → filter stepper to only configured check types
+  
+  
   const activeCheckTypeCodes = (activeConfigs && activeConfigs.length > 0)
     ? activeConfigs.map(c => c.checkTypeCode).filter(Boolean)
     : null;
@@ -58,7 +58,7 @@ export const StudentLayout = () => {
   const currentStep = getStepFromPath(location.pathname);
   const baseHighestStep = stateToHighestStep(workProgress?.currentStateName);
 
-  // Если тема закреплена (approved), но StudentWork еще не создан — показываем только шаг 1, но он уже ПРОЙДЕН
+  
   const hasApprovedApplication = myApplications.some(a => a.status === 'approved');
   const hasWork = !!workProgress;
   

@@ -15,19 +15,19 @@ export default function SecretaryStudentList() {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [attendance, setAttendance] = useState({});
 
-    // Fetch real schedule data
+    
     const { data: schedule = [], isLoading: isScheduleLoading } = useDefenseSchedule(Number(commissionId));
     
-    // Download report mutation
+    
     const downloadReportMutation = useDownloadScheduleReport();
 
-    // Extract commission pre-defense number from first slot (all slots share the same commission)
+    
     const preDefenseNumber = schedule.length > 0 ? (schedule[0]?.preDefenseNumber ?? null) : null;
 
-    // Convert schedule slots to the "topics" format used by UI
+    
     const topics = useMemo(() => {
         if (!schedule) return [];
-        // Group slots by topic if they belong to the same work, or just show as individual cards
+        
         return schedule.filter(slot => slot.studentWorkId).map((slot, i) => ({
             id: slot.id || i,
             title: {
@@ -101,7 +101,7 @@ export default function SecretaryStudentList() {
 
     if (isScheduleLoading) return <div className="s-page-container"><p>{t('common.loading')}</p></div>;
 
-    // ... (rest of the code)
+    
 
     return (
         <div className={`s-page-container ${isDrawerOpen ? "s-drawer-open" : ""}`}>

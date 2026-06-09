@@ -1,4 +1,4 @@
-/* FinalizationStep.css - Success State Styling */
+
 
 .final-step-container {
     position: relative;
@@ -101,7 +101,7 @@
     }
 }
 
-/* Custom scrollbar for commissions summary list */
+
 .commissions-summary-list::-webkit-scrollbar {
     width: 5px;
 }

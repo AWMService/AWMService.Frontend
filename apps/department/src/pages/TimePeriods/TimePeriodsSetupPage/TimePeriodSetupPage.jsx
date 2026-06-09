@@ -38,18 +38,18 @@ const generateSessionsForPeriod = (startDateStr, endDateStr) => {
     const start = new Date(startDateStr);
     const end = new Date(endDateStr);
     
-    // Normalize to date parts to avoid time offsets
+    
     const startDate = new Date(start.getFullYear(), start.getMonth(), start.getDate());
     const endDate = new Date(end.getFullYear(), end.getMonth(), end.getDate());
 
-    // Limit to maximum 10 days to prevent browser freezing in case of misconfiguration
+    
     let count = 0;
     for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
         if (++count > 10) break;
         
         const dateStr = d.toISOString().split('T')[0];
         
-        // Define standard times for pre-defenses, e.g. 9:00 to 14:00 with 30-min intervals
+        
         const hourStart = 9;
         const hourEnd = 14; 
         
@@ -71,7 +71,7 @@ const generateSessionsForPeriod = (startDateStr, endDateStr) => {
 
 export default function TimePeriodSetupPage() {
     const navigate = useNavigate();
-    const { id } = useParams(); // Stage ID (e.g. 5, 6, 7, 8)
+    const { id } = useParams(); 
     const { t } = useTranslation();
     const { user } = useAuth();
 
@@ -81,10 +81,10 @@ export default function TimePeriodSetupPage() {
     const [currentStep, setCurrentStep] = useState(1);
     const [commissions, setCommissions] = useState([]);
     
-    // Fetch specialties
+    
     const { data: specialities = [] } = useOrgUnitSpecialities(orgUnitId);
 
-    // Fetch teachers/staff for commission selection
+    
     const { data: allTeachers = [] } = useOrgUnitEmployees(orgUnitId);
     const teachersList = useMemo(() => {
         return allTeachers.map(t => ({
@@ -93,22 +93,22 @@ export default function TimePeriodSetupPage() {
         }));
     }, [allTeachers]);
 
-    // Fetch students for distribution
+    
     const { data: students = [] } = useDefenseReadiness({ orgUnitId, semesterId });
 
-    // Backend mutations
+    
     const createCommissionMutation = useCreateCommission(orgUnitId, semesterId);
     const autoDistributeMutation = useAutoDistributeStudents();
     const updateScheduleMutation = useUpdateSchedule();
 
-    // Fetch periods to get dates for stage
+    
     const { data: periods = [] } = usePeriods(orgUnitId, semesterId);
     const currentPeriod = useMemo(() => {
         const stageId = Number(id);
         return periods.find(p => p.id === stageId);
     }, [periods, id]);
 
-    // Fetch existing commissions to populate if any exist in DB
+    
     const { data: existingCommissions = [] } = useCommissions(orgUnitId, semesterId);
     const filteredCommissions = useMemo(() => {
         const { commissionTypeId, preDefenseNumber } = getCommissionTypeAndNumber(id);
@@ -129,7 +129,7 @@ export default function TimePeriodSetupPage() {
         }));
     }, [existingCommissions, id]);
 
-    // Fetch schedules for all commissions in the setup
+    
     const scheduleQueries = useQueries({
         queries: commissions.map(c => ({
             queryKey: ['preDefense', 'schedule', c.dbId],
@@ -138,7 +138,7 @@ export default function TimePeriodSetupPage() {
         }))
     });
 
-    // Sync query data into commissions state
+    
     React.useEffect(() => {
         if (commissions.length > 0) {
             setCommissions(prev => {
@@ -148,7 +148,7 @@ export default function TimePeriodSetupPage() {
                     
                     const sessionsMap = {};
                     
-                    // First generate standard sessions if currentPeriod exists
+                    
                     if (currentPeriod) {
                         const standardSessions = generateSessionsForPeriod(currentPeriod.startDate, currentPeriod.endDate);
                         standardSessions.forEach(s => {
@@ -185,7 +185,7 @@ export default function TimePeriodSetupPage() {
 
                     const sessions = Object.values(sessionsMap).sort((a, b) => a.sessionId.localeCompare(b.sessionId));
                     
-                    // Only update if sessions array changed or was empty
+                    
                     const oldSessionsStr = JSON.stringify(c.sessions || []);
                     const newSessionsStr = JSON.stringify(sessions);
                     if (oldSessionsStr !== newSessionsStr) {
@@ -203,14 +203,14 @@ export default function TimePeriodSetupPage() {
         }
     }, [scheduleQueries, currentPeriod, commissions.length, currentStep]);
 
-    // Initialize commissions state with existing ones
+    
     React.useEffect(() => {
         if (filteredCommissions.length > 0 && commissions.length === 0) {
             setCommissions(filteredCommissions);
         }
     }, [filteredCommissions, commissions.length]);
 
-    // --- ЛОГИКА НАВИГАЦИИ НАЗАД ---
+    
     const handleBack = () => {
         if (currentStep > 1) {
             setCurrentStep(prev => prev - 1);
@@ -246,7 +246,7 @@ export default function TimePeriodSetupPage() {
         );
     };
 
-    // Step 1 Finish: Save designed commissions to backend
+    
     const handleSaveCommissions = async () => {
         const { commissionTypeId, preDefenseNumber } = getCommissionTypeAndNumber(id);
         const savedCommissions = [];
@@ -278,7 +278,7 @@ export default function TimePeriodSetupPage() {
         }
     };
 
-    // Step 2 Trigger auto distribute on backend
+    
     const handleAutoDistribute = async () => {
         const { commissionTypeId, preDefenseNumber } = getCommissionTypeAndNumber(id);
         try {
@@ -289,7 +289,7 @@ export default function TimePeriodSetupPage() {
                 preDefenseNumber,
                 specialityId: null
             });
-            setCurrentStep(2); // Stay on step 2 but boards will show
+            setCurrentStep(2); 
         } catch (error) {
             console.error("Auto distribution failed", error);
             alert(error.message || t('department.distributionFailed', 'Ошибка при распределении'));

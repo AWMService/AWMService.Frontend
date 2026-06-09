@@ -95,7 +95,7 @@
   flex: 1;
 }
 
-/* Tabs variant */
+
 .role-selector--tabs {
   display: flex;
   gap: 4px;
@@ -127,7 +127,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Light theme */
+
 [data-theme="light"] .role-selector__trigger {
   background: rgba(0, 0, 0, 0.04);
   border-color: rgba(0, 0, 0, 0.1);

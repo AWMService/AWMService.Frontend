@@ -21,9 +21,9 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
     const { data: apiAttachments = [] } = useAttachments(workId);
     const deleteMutation = useDeleteAttachment(workId);
     const uploadMutation = useUploadAttachment(workId);
-    // checkType string is used for: period query key + submitMutation arg
+    
     const checkType = route === 'software-check' ? 'SoftwareCheck' : 'NormControl';
-    // checkTypeId is used for reliable filtering of quality check results (avoids title locale mismatch)
+    
     const checkTypeId = route === 'software-check' ? 3 : 1;
     const { data: checks = [] } = useQualityChecks(workId);
     const { data: activePeriod } = useActivePeriod(
@@ -52,13 +52,13 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
         workProgress?.specialityId ?? null
     );
 
-    // Map checkType string to the backend constant code
+    
     const checkCode = checkType === 'SoftwareCheck' ? 'SOFTWARECHECK'
                     : checkType === 'NormControl'    ? 'NORMCONTROL'
                     : 'ANTIPLAGIARISM';
 
-    // If configurations are loaded and non-empty, verify this check is required.
-    // If no configurations exist (empty array) → treat as "show all" fallback.
+    
+    
     const isCheckRequired = !activeConfigs
         || activeConfigs.length === 0
         || activeConfigs.some(c => c.checkTypeCode === checkCode);

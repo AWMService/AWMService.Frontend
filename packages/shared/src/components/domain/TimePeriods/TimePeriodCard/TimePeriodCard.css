@@ -7,7 +7,7 @@
     font-family: "Segoe UI", Roboto, Arial, sans-serif;
 }
 
-/* ===== Header ===== */
+
 
 .tp-card__header {
     display: flex;
@@ -28,7 +28,7 @@
     margin-top: 4px;
 }
 
-/* ===== Header actions ===== */
+
 
 .tp-card__header-actions {
     display: flex;
@@ -45,7 +45,7 @@
     padding: 4px 10px;
 }
 
-/* ===== Icon buttons ===== */
+
 
 .tp-card__icon-btn {
     width: 32px;
@@ -77,7 +77,7 @@
     stroke: #dc2626;
 }
 
-/* ===== Progress ===== */
+
 
 .tp-card__progress-wrapper {
     margin-top: 14px;
@@ -108,7 +108,7 @@
     text-align: right;
 }
 
-/* ===== Summary ===== */
+
 
 .tp-card__summary {
     display: flex;
@@ -118,7 +118,7 @@
     margin-top: 12px;
 }
 
-/* ===== Actions ===== */
+
 
 .tp-card__actions {
     display: flex;

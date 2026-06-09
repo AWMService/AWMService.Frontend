@@ -1,11 +1,11 @@
-/* TimePeriodsPage.css - Premium Dashboard Design System */
+
 
 .time-periods-page {
     flex: 1;
     animation: fadeIn 0.4s ease-out;
 }
 
-/* ===================== DASHBOARD LAYOUT ===================== */
+
 .dashboard-section {
     background: #ffffff;
     border: 1px solid rgba(229, 231, 235, 0.5);
@@ -48,7 +48,7 @@
     gap: 12px;
 }
 
-/* ===================== PREMIUM STAGE CARD ===================== */
+
 .premium-stage-card {
     position: relative;
     background: #ffffff;
@@ -140,7 +140,7 @@
     color: #ef4444;
 }
 
-/* ===================== CARD PROGRESS ===================== */
+
 .stage-progress-section {
     display: flex;
     align-items: center;
@@ -169,7 +169,7 @@
     color: #4b5563;
 }
 
-/* ===================== CARD META GRID ===================== */
+
 .stage-meta-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -201,7 +201,7 @@
     margin-top: 2px;
 }
 
-/* ===================== CARD ACTIONS ===================== */
+
 .stage-actions-row {
     display: flex;
     gap: 10px;
@@ -246,7 +246,7 @@
     border-color: #d1d5db;
 }
 
-/* ===================== STAGE BUTTONS ===================== */
+
 .save-btn {
     background: #10b981;
     color: #ffffff;
@@ -265,7 +265,7 @@
     background: #0d5c56;
 }
 
-/* ===================== EMPTY STATE ===================== */
+
 .empty-state {
     grid-column: 1 / -1;
     background: #fafafa;
@@ -277,7 +277,7 @@
     font-weight: 500;
 }
 
-/* ===================== RESPONSIVE ===================== */
+
 @media (max-width: 768px) {
     .section-header {
         flex-direction: column;

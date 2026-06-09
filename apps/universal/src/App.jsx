@@ -11,7 +11,7 @@ import StudentList from './pages/StudentsList/StudentList.jsx';
 import SecretaryStudentList from './pages/StudentsList/SecretaryStudent/SecretaryStudentList.jsx';
 import AntiPlagiarismDashboard from './pages/AntiPlagiarismDashboard.jsx';
 import SoftwareCheckDashboard from './pages/SoftwareCheckDashboard/SoftwareCheckDashboard.jsx';
-// Страницы для других ролей
+
 import ReviewerWorksPage from './pages/ReviewerWorksPage/ReviewerWorksPage.jsx';
 import NormocontrolPage from './pages/NormocontrolPage/NormocontrolPage.jsx';
 import CommissionPage from './pages/CommissionPage/CommissionPage.jsx';
@@ -21,14 +21,14 @@ import './App.css';
 function AppContent() {
     const { currentRole, hasRole } = useRole();
 
-    // ОПРЕДЕЛЯЕМ дефолтный путь в зависимости от ТЕКУЩЕЙ роли, а не от всех ролей пользователя
+    
     const getDefaultRoute = () => {
         if (currentRole === ROLES.SUPERVISOR) return '/my-topics';
         if (currentRole === ROLES.REVIEWER) return '/reviews';
         if (currentRole === ROLES.NORMOCONTROL) return '/documents';
         if (currentRole === ROLES.CHAIRMAN || currentRole === ROLES.SECRETARY || currentRole === ROLES.COMMISSION_MEMBER) return '/schedule';
         
-        // Fallback for edge cases where currentRole doesn't match the specific universal apps tabs
+        
         if (hasRole(ROLES.SUPERVISOR)) return '/my-topics';
         return '/my-topics';
     };
@@ -42,7 +42,7 @@ function AppContent() {
                     <Routes>
                         <Route index element={<Navigate to={getDefaultRoute()} replace />} />
                         
-                        {/* Руководитель */}
+                        {}
                         <Route path="/my-topics" element={
                             <ProtectedRoute allowedRoles={[ROLES.SUPERVISOR]} fallback="/">
                                 <STopicsPage />
@@ -59,21 +59,21 @@ function AppContent() {
                             </ProtectedRoute>
                         } />
                         
-                        {/* Рецензент */}
+                        {}
                         <Route path="/reviews" element={
                             <ProtectedRoute allowedRoles={[ROLES.REVIEWER]} fallback="/">
                                 <ReviewerWorksPage />
                             </ProtectedRoute>
                         } />
                         
-                        {/* Нормоконтроль */}
+                        {}
                         <Route path="/documents" element={
                             <ProtectedRoute allowedRoles={[ROLES.NORMOCONTROL]} fallback="/">
                                 <NormocontrolPage />
                             </ProtectedRoute>
                         } />
                         
-                        {/* Комиссия (Председатель, Секретарь, Член комиссии) */}
+                        {}
                         <Route path="/schedule" element={
                             <ProtectedRoute allowedRoles={[ROLES.SUPERVISOR, ROLES.CHAIRMAN, ROLES.SECRETARY, ROLES.COMMISSION_MEMBER]} fallback="/">
                                 <SchedulePage />
@@ -95,7 +95,7 @@ function AppContent() {
                             </ProtectedRoute>
                         } />
                         
-                        {/* Проверки */}
+                        {}
                         <Route path="/checks" element={
                             <ProtectedRoute allowedRoles={[ROLES.SUPERVISOR]} fallback="/">
                                 <AntiPlagiarismDashboard />
@@ -107,7 +107,7 @@ function AppContent() {
                             </ProtectedRoute>
                         } />
                         
-                        {/* Уведомления (все роли) */}
+                        {}
                         <Route path="/notifications" element={
                             <ProtectedRoute allowedRoles={UNIVERSAL_ROLES} fallback="/">
                                 <NotificationsPage translationPrefix="department" />

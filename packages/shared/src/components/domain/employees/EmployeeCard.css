@@ -128,7 +128,7 @@
 }
 
 
-/* ================= PROGRESS BAR ================= */
+
 
 .progress-wrapper {
     margin-top: 8px;
@@ -151,7 +151,7 @@
     transition: width 0.3s ease;
 }
 
-/* load levels */
+
 .progress-fill.low {
     background-color:  rgba(96, 165, 250, 0.8);
 }

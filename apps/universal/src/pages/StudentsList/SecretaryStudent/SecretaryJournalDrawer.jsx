@@ -10,17 +10,17 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
     const [gradeLetter, setGradeLetter] = useState("Отлично");
     const [comments, setComments] = useState("");
 
-    // PZ-1 is informational — decision is always "Допущен" regardless of scores
+    
     const isInformationalPreDefense = preDefenseNumber === 1;
-    // GAK commission has no pre-defense number
+    
     const isGAK = preDefenseNumber === null;
 
     const scheduleId = student?.scheduleId;
     const isFinalized = !!student?.protocolId;
     const protocolId = student?.protocolId;
 
-    // Fetch real data
-    const workTypeId = student?.workTypeId || 1; // DP by default for pre-defense
+    
+    const workTypeId = student?.workTypeId || 1; 
     const defenseStageType = preDefenseNumber ? 1 : 2;
     const { data: criteria = [] } = useEvaluationCriteria(workTypeId, user?.orgUnitId, null, defenseStageType);
     const { data: grades = [] } = useGradesBySchedule(scheduleId);
@@ -52,7 +52,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
         }
     };
 
-    // Calculate members from grades using criteria weights
+    
     const members = Array.from(new Set(grades.map(g => g.assignmentId))).map(assignmentId => {
         const memberGrades = grades.filter(g => g.assignmentId === assignmentId);
         const memberName = memberGrades[0]?.memberName || "Unknown";
@@ -91,7 +91,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
             let pId = protocolId;
 
             if (!pId) {
-                // 1. Create protocol
+                
                 const generatedId = await generateProtocolMutation.mutateAsync({
                     scheduleId: scheduleId,
                     finalScoreNumeric: parseFloat(averageScore),
@@ -103,7 +103,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
             }
 
             if (pId) {
-                // 2. Finalize protocol (pass attendance status)
+                
                 await finalizeProtocolMutation.mutateAsync({ id: pId, isStudentPresent: isPresent });
                 onClose();
             }
@@ -129,7 +129,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
                 </div>
 
                 <div className="s-drawer-body">
-                    {/* Список комиссии */}
+                    {}
                     <div className="sec-members-section">
                         <h4>{t('commission.commissionList')}</h4>
                         <ul className="sec-members-list">
@@ -150,7 +150,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
 
                     <hr className="s-divider" />
 
-                    {/* Таблица согласования */}
+                    {}
                     {status !== "gathering" && (
                         <div className="sec-reconciliation-section">
                             <h4>{t('commission.criteria')}</h4>
@@ -198,7 +198,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
 
                     <hr className="s-divider" />
 
-                    {/* Предупреждение о неявке */}
+                    {}
                     {!isPresent && !isFinalized && (
                         <div style={{
                             backgroundColor: "#fef3c7",
@@ -213,7 +213,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
                         </div>
                     )}
 
-                    {/* Итоговая оценка ГАК (Отлично / Хорошо / Удовлетворительно / Неудовлетворительно) */}
+                    {}
                     {!isFinalized && status === "reviewing" && isGAK && (
                         <div className="sec-decision-section" style={{ marginBottom: "15px" }}>
                             <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold", fontSize: "14px" }}>
@@ -240,7 +240,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
                         </div>
                     )}
 
-                    {/* Решение комиссии — только для ПЗ-2 и ПЗ-3 (не ГАК) */}
+                    {}
                     {!isFinalized && status === "reviewing" && !isInformationalPreDefense && !isGAK && (
                         <div className="sec-decision-section" style={{ marginBottom: "15px" }}>
                             <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold", fontSize: "14px" }}>
@@ -265,7 +265,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
                         </div>
                     )}
 
-                    {/* Комментарии */}
+                    {}
                     {!isFinalized && status === "reviewing" && (
                         <div className="sec-decision-section" style={{ marginBottom: "15px" }}>
                             <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold", fontSize: "14px" }}>
@@ -290,7 +290,7 @@ export default function SecretaryJournalDrawer({ open, onClose, student, isPrese
                         </div>
                     )}
 
-                    {/* Итоговый балл */}
+                    {}
                     <div className={`sec-summary-box ${status === 'completed' ? 'locked' : ''}`}>
                         <span>
                             {status === 'completed' ? t('journal.gradeInProtocol') : t('journal.currentAverage')}
