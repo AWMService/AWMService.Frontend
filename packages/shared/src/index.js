@@ -6,10 +6,10 @@ import './styles/theme.css';
 
 
 export { default as i18n } from './i18n';
-export { 
-  resources, 
-  supportedLanguages, 
-  defaultLanguage, 
+export {
+  resources,
+  supportedLanguages,
+  defaultLanguage,
   changeLanguage,
   getCurrentLanguage,
   getIntlLocale,
@@ -25,7 +25,6 @@ export {
   UNIVERSAL_ROLES,
   ROLE_META
 } from './context/RoleContext';
-
 export {
   AuthProvider,
   useAuth

@@ -4,16 +4,12 @@ import { normalizeRoles, ROLE_META, ROLES, UNIVERSAL_ROLES } from '../auth/roles
 import { getCabinetTarget, appendAuthTokensToUrl } from '../auth/authRouting';
 import { getToken, getRefreshToken } from '../api';
 export { ROLE_META, ROLES, UNIVERSAL_ROLES };
-
 const RoleContext = createContext(null);
-
 export function RoleProvider({ children, availableRoles = [], defaultRole = null }) {
   const { user, isLoading } = useAuth();
-  
   const activeRoles = user?.roles?.length > 0
     ? normalizeRoles(user.roles)
     : availableRoles;
-
   const [currentRole, setCurrentRole] = useState(() => {
     const saved = localStorage.getItem('awm-current-role');
     if (saved && activeRoles.includes(saved)) {
@@ -21,7 +17,6 @@ export function RoleProvider({ children, availableRoles = [], defaultRole = null
     }
     return defaultRole || activeRoles[0] || null;
   });
-
   useEffect(() => {
     if (!isLoading && activeRoles.length > 0) {
       if (!currentRole || !activeRoles.includes(currentRole)) {
@@ -29,13 +24,11 @@ export function RoleProvider({ children, availableRoles = [], defaultRole = null
       }
     }
   }, [activeRoles, currentRole, isLoading]);
-
   useEffect(() => {
     if (currentRole) {
       localStorage.setItem('awm-current-role', currentRole);
     }
   }, [currentRole]);
-
   const switchRole = (role) => {
     if (activeRoles.includes(role)) {
       if (typeof window !== 'undefined') {
@@ -59,9 +52,7 @@ export function RoleProvider({ children, availableRoles = [], defaultRole = null
       setCurrentRole(role);
     }
   };
-
   const hasRole = (role) => activeRoles.includes(role);
-
   const value = {
     currentRole,
     availableRoles: activeRoles,
@@ -69,14 +60,12 @@ export function RoleProvider({ children, availableRoles = [], defaultRole = null
     hasRole,
     roleMeta: ROLE_META[currentRole] || null,
   };
-
   return (
     <RoleContext.Provider value={value}>
       {children}
     </RoleContext.Provider>
   );
 }
-
 export function useRole() {
   const context = useContext(RoleContext);
   if (!context) {
@@ -84,5 +73,4 @@ export function useRole() {
   }
   return context;
 }
-
 export default RoleContext;

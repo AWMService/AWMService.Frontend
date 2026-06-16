@@ -1,20 +1,17 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ConfirmModal, useWorkTypes, useCreateWorkType, useUpdateWorkType, useDeleteWorkType, useDegreeLevels } from '@awm/shared';
-import './WorkTypesPage.css';
+import { ConfirmModal, useInstitutes, useCreateInstitute, useUpdateInstitute, useDeleteInstitute } from '@awm/shared';
+import './InstitutesPage.css';
 
-const emptyForm = { name: '', degreeLevelId: '' };
+const emptyForm = { name: '', address: '' };
 
-export default function WorkTypesPage() {
+export default function InstitutesPage() {
     const { t } = useTranslation();
-
-
-    const { data: items = [], isLoading } = useWorkTypes();
-    const createMutation = useCreateWorkType();
-    const updateMutation = useUpdateWorkType();
-    const deleteMutation = useDeleteWorkType();
-
-    const { data: degreeLevels = [] } = useDegreeLevels();
+    
+    const { data: items = [], isLoading } = useInstitutes();
+    const createMutation = useCreateInstitute();
+    const updateMutation = useUpdateInstitute();
+    const deleteMutation = useDeleteInstitute();
 
     const [searchTerm, setSearchTerm] = useState('');
     const [isFormOpen, setIsFormOpen] = useState(false);
@@ -34,22 +31,17 @@ export default function WorkTypesPage() {
 
     const openEdit = (item) => {
         setEditingItem(item);
-        setFormData({ name: item.name, degreeLevelId: item.degreeLevelId || '' });
+        setFormData({ name: item.name, address: item.address });
         setIsFormOpen(true);
     };
 
     const handleSave = () => {
         if (!formData.name.trim()) return;
-
-        const payload = {
-            ...formData,
-            degreeLevelId: formData.degreeLevelId ? Number(formData.degreeLevelId) : null,
-        };
-
+        
         if (editingItem) {
-            updateMutation.mutate({ id: editingItem.id, ...payload });
+            updateMutation.mutate({ id: editingItem.id, name: formData.name, address: formData.address });
         } else {
-            createMutation.mutate(payload);
+            createMutation.mutate({ name: formData.name, address: formData.address, universityId: 1 });
         }
         setIsFormOpen(false);
         setEditingItem(null);
@@ -63,14 +55,14 @@ export default function WorkTypesPage() {
     };
 
     return (
-        <div className="work-types-page">
+        <div className="institutes-page">
             <div className="page-header">
                 <div>
-                    <h1>{t('admin.workTypesTitle')}</h1>
-                    <p className="page-subtitle">{filtered.length} {t('admin.workTypesTitle').toLowerCase()}</p>
+                    <h1>{t('admin.institutesTitle')}</h1>
+                    <p className="page-subtitle">{filtered.length} {t('admin.institutesTitle').toLowerCase()}</p>
                 </div>
                 <button className="btn-primary" onClick={openCreate}>
-                    + {t('admin.createWorkType')}
+                    + {t('admin.createInstitute')}
                 </button>
             </div>
 
@@ -84,30 +76,27 @@ export default function WorkTypesPage() {
                 />
             </div>
 
-            <div className="work-types-table">
+            <div className="institutes-table">
                 <div className="table-header">
                     <div className="col-num">№</div>
                     <div className="col-name">{t('common.name')}</div>
-                    <div className="col-level">{t('admin.level')}</div>
+                    <div className="col-address">{t('admin.address')}</div>
+                    <div className="col-count">{t('admin.facultyCount')}</div>
                     <div className="col-actions">{t('common.actions')}</div>
                 </div>
 
-                {filtered.map((item, idx) => {
-                    const levelName = degreeLevels.find(l => l.id === item.degreeLevelId)?.name || '';
-                    return (
-                        <div key={item.id} className="table-row">
-                            <div className="col-num">{idx + 1}</div>
-                            <div className="col-name">{item.name}</div>
-                            <div className="col-level">
-                                {levelName && <span className="level-badge">{levelName}</span>}
-                            </div>
-                            <div className="col-actions">
-                                <button className="action-btn" onClick={() => openEdit(item)}>{t('common.edit')}</button>
-                                <button className="action-btn danger" onClick={() => setDeleteItem(item)}>{t('common.delete')}</button>
-                            </div>
+                {filtered.map((item, idx) => (
+                    <div key={item.id} className="table-row">
+                        <div className="col-num">{idx + 1}</div>
+                        <div className="col-name">{item.name}</div>
+                        <div className="col-address">{item.address}</div>
+                        <div className="col-count">{item.facultyCount}</div>
+                        <div className="col-actions">
+                            <button className="action-btn" onClick={() => openEdit(item)}>{t('common.edit')}</button>
+                            <button className="action-btn danger" onClick={() => setDeleteItem(item)}>{t('common.delete')}</button>
                         </div>
-                    );
-                })}
+                    </div>
+                ))}
 
                 {isLoading ? (
                     <div className="empty-state">
@@ -124,7 +113,7 @@ export default function WorkTypesPage() {
                 <div className="dialog-backdrop" onClick={() => setIsFormOpen(false)}>
                     <div className="dialog" onClick={(e) => e.stopPropagation()}>
                         <h2 className="dialog-title">
-                            {editingItem ? t('admin.editWorkType') : t('admin.createWorkType')}
+                            {editingItem ? t('admin.editInstitute') : t('admin.createInstitute')}
                         </h2>
                         <div className="dialog-body">
                             <label className="form-label">
@@ -137,17 +126,13 @@ export default function WorkTypesPage() {
                                 />
                             </label>
                             <label className="form-label">
-                                {t('admin.level')}
-                                <select
+                                {t('admin.address')}
+                                <input
+                                    type="text"
                                     className="form-input"
-                                    value={formData.degreeLevelId}
-                                    onChange={(e) => setFormData({ ...formData, degreeLevelId: e.target.value })}
-                                >
-                                    <option value="">{t('common.select') || 'Select...'}</option>
-                                    {degreeLevels.map(opt => (
-                                        <option key={opt.id} value={opt.id}>{opt.name}</option>
-                                    ))}
-                                </select>
+                                    value={formData.address}
+                                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                                />
                             </label>
                         </div>
                         <div className="dialog-buttons">

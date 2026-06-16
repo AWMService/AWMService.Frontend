@@ -12,7 +12,7 @@ function UsersPage() {
 
     const universityId = user?.universityId || 1;
 
-    
+
     const { data: users = [], isLoading, error } = useQuery({
         queryKey: ['admin-users', universityId, statusFilter, searchQuery],
         queryFn: () => adminApi.fetchUsers({

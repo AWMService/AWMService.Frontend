@@ -1,4 +1,3 @@
-
 .tm-overlay {
     position: fixed;
     top: 0;
@@ -29,8 +28,15 @@
 }
 
 @keyframes tmSlideUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .tm-scroll-area {
@@ -100,7 +106,7 @@
 .tm-lang-btn--active {
     background: #FFFFFF;
     color: #111827;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .tm-lang-btn:hover:not(.tm-lang-btn--active) {
@@ -173,7 +179,8 @@
 
 .tm-rejected-info {
     margin-top: 20px;
-    margin-bottom: 24px; 
+    margin-bottom: 24px;
+    margin-bottom: 24px;
     padding: 16px;
     background-color: #FEF2F2;
     border-radius: 12px;
@@ -240,7 +247,7 @@
     background: #2563EB !important;
     color: #FFFFFF !important;
     border: 1px solid #2563EB !important;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 .tm-btn--approve:hover {
@@ -325,12 +332,24 @@
 }
 
 @keyframes tmFadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 
 @media (max-width: 500px) {
-    .tm-info-grid { grid-template-columns: 1fr; }
-    .tm-footer__actions { grid-template-columns: 1fr; }
+    .tm-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tm-footer__actions {
+        grid-template-columns: 1fr;
+    }
 }

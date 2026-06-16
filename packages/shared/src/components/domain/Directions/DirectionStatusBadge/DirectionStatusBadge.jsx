@@ -24,5 +24,4 @@ const DirectionStatusBadge = ({ status }) => {
 
     return <span className={`status-badge ${statusClass}`}>{t(key)}</span>;
 };
-
 export default DirectionStatusBadge;

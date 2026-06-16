@@ -2,7 +2,7 @@
     background: #fff;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .card-header {
@@ -107,7 +107,6 @@
     stroke-linejoin: round;
 }
 
-
 .edit-workload-input {
     display: flex;
     align-items: center;
@@ -153,15 +152,15 @@
 
 
 .progress-fill.low {
-    background-color:  rgba(96, 165, 250, 0.8);
+    background-color: rgba(96, 165, 250, 0.8);
 }
 
 .progress-fill.medium {
-    background-color:  rgba(96, 165, 250, 0.8);
+    background-color: rgba(96, 165, 250, 0.8);
 }
 
 .progress-fill.high {
-    background-color:  rgba(96, 165, 250, 0.8);
+    background-color: rgba(96, 165, 250, 0.8);
 }
 
 .progress-text {

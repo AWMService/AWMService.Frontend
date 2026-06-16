@@ -10,7 +10,6 @@ export const ROLES = {
   ADMIN: 'admin',
   VICE_RECTOR: 'viceRector',
 };
-
 export const UNIVERSAL_ROLES = [
   ROLES.SUPERVISOR,
   ROLES.REVIEWER,
@@ -19,7 +18,6 @@ export const UNIVERSAL_ROLES = [
   ROLES.SECRETARY,
   ROLES.COMMISSION_MEMBER,
 ];
-
 export const ROLE_META = {
   [ROLES.STUDENT]: {
     labelKey: 'roles.student',
@@ -72,7 +70,6 @@ export const ROLE_META = {
     icon: 'BarChart3',
   },
 };
-
 export const BACKEND_TO_FRONTEND_ROLE_MAP = {
   Student: ROLES.STUDENT,
   STUDENT: ROLES.STUDENT,
@@ -95,15 +92,13 @@ export const BACKEND_TO_FRONTEND_ROLE_MAP = {
   CommissionSecretary: ROLES.SECRETARY,
   COMMISSION_SECRETARY: ROLES.SECRETARY,
 };
-
 const FRONTEND_ROLE_KEYS = new Set(Object.values(ROLES));
-
 export const normalizeRole = (role) => {
   if (!role) {
     return null;
   }
 
-  
+
   const idMap = {
     1: ROLES.ADMIN,
     2: ROLES.DEPARTMENT,
@@ -115,7 +110,6 @@ export const normalizeRole = (role) => {
     8: ROLES.NORMOCONTROL,
     9: ROLES.REVIEWER,
   };
-
   if (idMap[role]) {
     return idMap[role];
   }
@@ -133,7 +127,6 @@ export const normalizeRole = (role) => {
   }
   return BACKEND_TO_FRONTEND_ROLE_MAP[role] || role.charAt(0).toLowerCase() + role.slice(1);
 };
-
 export const normalizeRoles = (roles = []) => (
   roles
     .map(normalizeRole)

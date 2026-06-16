@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import "./DirectionModal.css";
-
 const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
     const { t } = useTranslation();
-    const [reviewMode, setReviewMode] = useState(null); 
+    const [reviewMode, setReviewMode] = useState(null);
     const [rejectionReason, setRejectionReason] = useState("");
     const [language, setLanguage] = useState("ru");
-
     if (!direction) return null;
 
     const isPending = direction.status === "pending";
@@ -15,7 +13,7 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
 
     const handleReject = () => {
         if (!rejectionReason.trim()) {
-            return; 
+            return;
         }
 
         onUpdateStatus(direction.id, "rejected", rejectionReason);
@@ -24,51 +22,45 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
 
     const handleRevision = () => {
         if (!rejectionReason.trim()) {
-            return; 
+            return;
         }
 
         onUpdateStatus(direction.id, "revision", rejectionReason);
         handleClose();
     };
-
     const handleClose = () => {
         setReviewMode(null);
         setRejectionReason("");
         onClose();
     };
-
     const getTitle = () => direction.title[language];
     const getDescription = () => direction.description[language];
-
     return (
         <div className="dm-overlay" onClick={handleClose}>
             <div
                 className="dm-content"
                 onClick={(e) => e.stopPropagation()}
             >
-                {}
+                { }
                 <div className="dm-header">
                     <div
-                        className={`dm-status ${
-                            direction.status === "pending"
+                        className={`dm-status ${direction.status === "pending"
                                 ? "dm-status--pending"
                                 : direction.status === "rejected"
                                     ? "dm-status--rejected"
                                     : direction.status === "revision"
                                         ? "dm-status--revision"
                                         : "dm-status--approved"
-                        }`}
+                            }`}
                     >
                         {t(`status.${direction.status === 'pending' ? 'underReview' : direction.status}`)}
                     </div>
-
                     <div className="dm-lang-switch">
                         {["kk", "ru", "en"].map((lang) => (
                             <button
                                 key={lang}
-                                className={`dm-lang-btn ${
-                                    language === lang ? "dm-lang-btn--active" : ""
-                                }`}
+                                className={`dm-lang-btn ${language === lang ? "dm-lang-btn--active" : ""
+                                    }`}
                                 onClick={() => setLanguage(lang)}
                             >
                                 {lang.toUpperCase()}
@@ -77,13 +69,12 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                     </div>
                 </div>
 
-                {}
+                { }
                 <div className="dm-scroll-area">
                     <h2 className="dm-title">{getTitle()}</h2>
                     <p className="dm-subtitle">
                         {t('department.directionInfo')}
                     </p>
-
                     <div className="dm-body">
                         <div className="dm-info-grid">
                             <div className="dm-info-item">
@@ -105,7 +96,6 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                                 </span>
                             </div>
                         </div>
-
                         <div className="dm-section">
                             <span className="dm-section__title">
                                 {t('department.directionDescription')}
@@ -115,7 +105,7 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                             </div>
                         </div>
 
-                        {}
+                        { }
                         {(direction.status === 'rejected' || direction.status === 'revision') && direction.rejectionReason && (
                             <div className={`dm-rejected-info ${direction.status === 'revision' ? 'dm-revision-info' : ''}`}>
                                 <span className="dm-rejected-info__label">
@@ -128,7 +118,7 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
                         )}
                     </div>
 
-                    {}
+                    { }
                     <div className="dm-footer">
                         {isPending ? (
                             !reviewMode ? (
@@ -225,5 +215,4 @@ const DirectionModal = ({ direction, onClose, onUpdateStatus }) => {
         </div>
     );
 };
-
 export default DirectionModal;

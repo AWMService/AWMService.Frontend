@@ -8,7 +8,7 @@
     z-index: 1000;
 }
 
-.secondary-button{
+.secondary-button {
     font-weight: 500;
 }
 
@@ -58,7 +58,6 @@
     appearance: none;
 }
 
-
 .dialog select {
     background-image: url("data:image/svg+xml;utf8,<svg fill='none' stroke='%236b7280' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M19 9l-7 7-7-7'/></svg>");
     background-repeat: no-repeat;
@@ -68,13 +67,10 @@
     cursor: pointer;
 }
 
-
 .dialog input:hover,
 .dialog select:hover {
     border-color: #9ca3af;
 }
-
-
 
 .dialog input:focus,
 .dialog select:focus {
@@ -91,7 +87,6 @@
     background: #ffffff;
     color: #111827;
 }
-
 
 .dialog select option:checked {
     background: #3b82f6;
@@ -110,10 +105,9 @@
         opacity: 0;
         transform: scale(0.95);
     }
+
     to {
         opacity: 1;
         transform: scale(1);
     }
 }
-
-

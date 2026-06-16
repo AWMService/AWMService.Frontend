@@ -10,7 +10,6 @@ export const queryClient = new QueryClient({
     },
   },
 });
-
 export const ApiProvider = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>

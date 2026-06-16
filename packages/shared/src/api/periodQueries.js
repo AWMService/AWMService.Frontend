@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './apiClient';
 
 const STAGE_MAP = {
-  
+
   "DirectionSubmission": 1,
   "TopicCreation": 2,
   "TopicSelection": 3,
@@ -15,7 +15,7 @@ const STAGE_MAP = {
 };
 
 const STAGE_MAP_REV = {
-  
+
   1: "DirectionSubmission",
   2: "TopicCreation",
   3: "TopicSelection",
@@ -114,7 +114,6 @@ export const periodApi = {
     return data;
   }
 };
-
 export const periodKeys = {
   all: ['periods'],
   byDepartment: (orgUnitId, semesterId, specialityId = null) => [...periodKeys.all, 'department', orgUnitId, semesterId, specialityId],

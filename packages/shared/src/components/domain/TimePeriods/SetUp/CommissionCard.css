@@ -1,5 +1,3 @@
-
-
 .commission-card,
 .commission-card * {
     box-sizing: border-box;
@@ -184,7 +182,6 @@
     text-align: center;
 }
 
-
 .commission-header {
     display: flex;
     justify-content: space-between;
@@ -220,4 +217,3 @@
 .icon-button.danger svg {
     stroke: #dc2626;
 }
-

@@ -12,7 +12,7 @@ function UserFormModal({ isOpen, user, onClose, onSave, isLoading: isSaving }) {
 
     const universityId = currentUser?.universityId || 1;
 
-    
+
     const { data: roles = [] } = useQuery({
         queryKey: ['admin-roles', universityId],
         queryFn: () => adminApi.fetchRoles(universityId),
@@ -32,7 +32,7 @@ function UserFormModal({ isOpen, user, onClose, onSave, isLoading: isSaving }) {
                     login: user.login || '',
                     name: user.name || user.login || '',
                     email: user.email || '',
-                    password: '', 
+                    password: '',
                     roleId: user.roleId || '',
                     orgUnitId: user.orgUnitId || '',
                     status: user.isActive ? 'active' : 'inactive',
@@ -58,7 +58,7 @@ function UserFormModal({ isOpen, user, onClose, onSave, isLoading: isSaving }) {
         else if (!/\S+@\S+\.\S+/.test(form.email)) next.email = t('validation.email') || 'Invalid email';
         if (!user && !form.password.trim()) next.password = t('validation.required') || 'Required';
         if (!form.roleId) next.roleId = t('validation.required') || 'Required';
-        
+
         setErrors(next);
         return Object.keys(next).length === 0;
     };

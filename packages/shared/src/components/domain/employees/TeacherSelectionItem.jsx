@@ -1,7 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import "./TeacherSelectionItem.css";
-
 export function TeacherSelectionItem({ teacher, isSelected, onToggle }) {
   const { t } = useTranslation();
   return (
@@ -17,19 +16,16 @@ export function TeacherSelectionItem({ teacher, isSelected, onToggle }) {
               className="checkbox-input"
           />
         </div>
-
         <div className="teacher-details">
           <div className="teacher-header">
             <h4 className="teacher-name">{teacher.name}</h4>
           </div>
-
           <div className="teacher-info-grid">
             <p><span className="font-medium">{t('department.position')}:</span> {teacher.positionTitle}</p>
             {teacher.specialization && (
               <p><span className="font-medium">{t('department.specialization')}:</span> {teacher.specialization}</p>
             )}
           </div>
-
           <div className="teacher-contact-info">
             <div className="contact-item">
               <svg viewBox="0 0 24 24">
@@ -38,7 +34,6 @@ export function TeacherSelectionItem({ teacher, isSelected, onToggle }) {
               </svg>
               <span>{teacher.email}</span>
             </div>
-
             <div className="contact-item">
               <svg viewBox="0 0 24 24">
                 <path d="M22 16.92V21a2 2 0 0 1-2.18 2

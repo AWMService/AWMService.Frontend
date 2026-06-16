@@ -40,7 +40,6 @@ export const usePrograms = () => {
     queryFn: eduApi.fetchPrograms,
   });
 };
-
 export const useCreateProgram = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -48,7 +47,6 @@ export const useCreateProgram = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['programs'] }),
   });
 };
-
 export const useUpdateProgram = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -56,7 +54,6 @@ export const useUpdateProgram = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['programs'] }),
   });
 };
-
 export const useDeleteProgram = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -104,7 +101,6 @@ export const useWorkTypes = () => {
     queryFn: wfApi.fetchWorkTypes,
   });
 };
-
 export const useCreateWorkType = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -112,7 +108,6 @@ export const useCreateWorkType = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['workTypes'] }),
   });
 };
-
 export const useUpdateWorkType = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -120,7 +115,6 @@ export const useUpdateWorkType = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['workTypes'] }),
   });
 };
-
 export const useDeleteWorkType = () => {
   const queryClient = useQueryClient();
   return useMutation({

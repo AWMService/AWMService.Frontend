@@ -17,7 +17,8 @@
   padding: 0 1.5rem;
 }
 
-.shared-header-left, .shared-header-right {
+.shared-header-left,
+.shared-header-right {
   display: flex;
   align-items: center;
   gap: 1.5rem;
@@ -133,8 +134,8 @@
 }
 
 .icon-btn img {
-  filter: none !important; 
-  
+  filter: none !important;
+
 }
 
 .red-badge {

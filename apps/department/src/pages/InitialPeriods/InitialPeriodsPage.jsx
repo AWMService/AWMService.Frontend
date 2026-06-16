@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Calendar, CheckCircle2, PlayCircle, Clock, Sparkles, AlertCircle } from "lucide-react";
-import { 
-    ConfirmModal, 
-    getIntlLocale, 
-    useAuth, 
-    usePeriods, 
+import {
+    ConfirmModal,
+    getIntlLocale,
+    useAuth,
+    usePeriods,
     useApproveInitialPeriods,
     useOrgUnitSpecialities,
     useResetStagesOverride
@@ -31,7 +31,7 @@ export default function InitialPeriodsPage() {
     const { t, i18n } = useTranslation();
     const locale = getIntlLocale(i18n.language);
     const { user } = useAuth();
-    
+
     const orgUnitId = user?.orgUnitId;
     const semesterId = user?.currentSemesterId;
 
@@ -42,26 +42,26 @@ export default function InitialPeriodsPage() {
     const [orderError, setOrderError] = useState("");
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-    
+
     const { data: specialities = [] } = useOrgUnitSpecialities(orgUnitId);
     const { data: periodsData = [], isLoading } = usePeriods(orgUnitId, semesterId, selectedSpecialityId);
     const { data: defaultPeriodsData = [] } = usePeriods(orgUnitId, semesterId, null);
 
-    
+
     const approveMutation = useApproveInitialPeriods(orgUnitId, semesterId, selectedSpecialityId);
     const resetMutation = useResetStagesOverride(orgUnitId, semesterId);
 
     useEffect(() => {
-        
+
         const sourceData = (selectedSpecialityId && (!periodsData || periodsData.length === 0))
             ? defaultPeriodsData
             : periodsData;
 
         if (sourceData && sourceData.length > 0) {
-            const initialPeriods = sourceData.filter(p => 
+            const initialPeriods = sourceData.filter(p =>
                 ["DirectionSubmission", "TopicCreation", "TopicSelection"].includes(p.workflowStage)
             );
-            
+
             if (initialPeriods.length > 0) {
                 const newFormData = getEmptyFormData();
                 initialPeriods.forEach(p => {
@@ -74,12 +74,12 @@ export default function InitialPeriodsPage() {
                     }
                 });
                 setFormData(newFormData);
-                
-                
+
+
                 if (periodsData && periodsData.length > 0) {
                     setIsApproved(true);
                 } else {
-                    
+
                     setIsApproved(false);
                 }
             } else {
@@ -203,7 +203,7 @@ export default function InitialPeriodsPage() {
 
     return (
         <div className="initial-periods-page">
-            {}
+            { }
             <div className="speciality-selector-wrapper">
                 <span className="selector-label">{t("student.specialty")}:</span>
                 <select
@@ -224,7 +224,7 @@ export default function InitialPeriodsPage() {
                 </select>
             </div>
 
-            {}
+            { }
             {isApproved ? (
                 <div className="periods-summary">
                     <div className="stage-cards-grid">
@@ -261,7 +261,7 @@ export default function InitialPeriodsPage() {
                     </div>
                 </div>
             ) : (
-                
+
                 <div className="periods-form">
                     {selectedSpecialityId && periodsData.length === 0 && (
                         <div className="inherited-dates-warning">
@@ -318,7 +318,7 @@ export default function InitialPeriodsPage() {
                             disabled={!allDatesFilled || approveMutation.isPending}
                             onClick={handleSubmit}
                         >
-                            {selectedSpecialityId 
+                            {selectedSpecialityId
                                 ? t("department.saveOverride", "Сохранить настройки этапов")
                                 : t("department.approveInitialPeriods")
                             }
@@ -329,7 +329,7 @@ export default function InitialPeriodsPage() {
 
             <ConfirmModal
                 isOpen={isConfirmOpen}
-                title={selectedSpecialityId 
+                title={selectedSpecialityId
                     ? t("department.saveOverride", "Сохранить настройки этапов")
                     : t("department.approveInitialPeriods")
                 }

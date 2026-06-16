@@ -6,7 +6,6 @@ import {
   hasAnyRole,
   redirectToLogin,
 } from '../auth/authRouting';
-
 const DefaultAuthFallback = ({ text = 'Загрузка...' }) => (
   <div
     style={{
@@ -21,23 +20,18 @@ const DefaultAuthFallback = ({ text = 'Загрузка...' }) => (
     {text}
   </div>
 );
-
 export function RequireAuth({ allowedRoles = [], children, fallback }) {
   const { user, isLoading, hasToken, isAuthenticated, isLoggingOut } = useAuth();
   const fallbackContent = fallback || <DefaultAuthFallback />;
-
   const isAllowed = !allowedRoles.length || hasAnyRole(user?.roles, allowedRoles);
-
   useEffect(() => {
     if (isLoading || isLoggingOut?.current) {
       return;
     }
-
     if (!hasToken || !isAuthenticated) {
       redirectToLogin(window.location.href);
       return;
     }
-
     if (!isAllowed) {
       const cabinetUrl = getCabinetUrl(user);
       if (cabinetUrl) {
@@ -47,22 +41,17 @@ export function RequireAuth({ allowedRoles = [], children, fallback }) {
       }
     }
   }, [allowedRoles, hasToken, isAllowed, isAuthenticated, isLoading, user]);
-
   if (isLoading || !hasToken || !isAuthenticated) {
     return fallbackContent;
   }
-
   if (!isAllowed) {
     return fallback || <DefaultAuthFallback text="Переходим в ваш кабинет..." />;
   }
-
   return children;
 }
-
 export function LoginRedirect() {
   useEffect(() => {
     window.location.assign(getLoginUrl());
   }, []);
-
   return <DefaultAuthFallback text="Открываем единый вход..." />;
 }

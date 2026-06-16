@@ -3,14 +3,14 @@ import { apiClient } from './apiClient';
 
 const read = (value, key) => {
   if (!value) return undefined;
-  
+
   if (value[key] !== undefined) return value[key];
-  
-  
+
+
   const pascal = key.charAt(0).toUpperCase() + key.slice(1);
   if (value[pascal] !== undefined) return value[pascal];
 
-  
+
   const lowerKey = key.toLowerCase();
   const realKey = Object.keys(value).find(k => k.toLowerCase() === lowerKey);
   return realKey ? value[realKey] : undefined;
@@ -18,8 +18,8 @@ const read = (value, key) => {
 
 const readLocalized = (item, field) => {
   if (!item) return { ru: '', kk: '', en: '' };
-  
-  
+
+
   const existing = read(item, field);
   if (existing && typeof existing === 'object') {
     return {
@@ -29,30 +29,25 @@ const readLocalized = (item, field) => {
     };
   }
 
-  
+
   return {
     ru: read(item, `${field}Ru`) || '',
     kk: read(item, `${field}Kz`) || read(item, `${field}Kk`) || '',
     en: read(item, `${field}En`) || '',
   };
 };
-
 export const directionStatusFromState = (stateName, displayName) => {
   const raw = `${stateName || ''} ${displayName || ''}`.toLowerCase();
-
   if (raw.includes('draft') || raw.includes('черновик')) return 'draft';
   if (raw.includes('submitted') || raw.includes('на рассмотр')) return 'pending';
   if (raw.includes('approved') || raw.includes('одобр') || raw.includes('утвержд')) return 'approved';
   if (raw.includes('rejected') || raw.includes('отклон')) return 'rejected';
   if (raw.includes('revision') || raw.includes('requiresrevision') || raw.includes('доработ')) return 'revision';
-
   return 'pending';
 };
-
 export const normalizeDirection = (item) => {
   const currentStateName = read(item, 'currentStateName');
   const currentStateDisplayName = read(item, 'currentStateDisplayName');
-
   return {
     ...item,
     id: read(item, 'id'),
@@ -74,7 +69,6 @@ export const normalizeDirection = (item) => {
     isDeleted: read(item, 'isDeleted') ?? false,
   };
 };
-
 export const directionPayloadFromForm = ({ form, user, workTypeId }) => ({
   orgUnitId: user?.orgUnitId,
   supervisorId: user?.userId,
@@ -87,7 +81,6 @@ export const directionPayloadFromForm = ({ form, user, workTypeId }) => ({
   descriptionKz: form.description?.kk?.trim() || '',
   descriptionEn: form.description?.en?.trim() || '',
 });
-
 export const directionsApi = {
   fetchBySupervisor: async ({ semesterId }) => {
     const { data } = await apiClient.get('/v1/directions/my', {
@@ -102,22 +95,18 @@ export const directionsApi = {
     });
     return data.map(normalizeDirection);
   },
-
   fetchById: async (id) => {
     const { data } = await apiClient.get(`/v1/directions/${id}`);
     return normalizeDirection(data);
   },
-
   create: async (payload) => {
     const { data } = await apiClient.post('/v1/directions', payload);
     return data;
   },
-
   update: async (id, payload) => {
     const { data } = await apiClient.put(`/v1/directions/${id}`, payload);
     return data;
   },
-
   submit: async (id) => {
     const { data } = await apiClient.post(`/v1/directions/${id}/submit`);
     return data;
@@ -128,7 +117,6 @@ export const directionsApi = {
     return data;
   },
 };
-
 export const directionKeys = {
   all: ['directions'],
   supervisor: (supervisorId, semesterId) => [...directionKeys.all, 'supervisor', supervisorId, semesterId],
@@ -146,17 +134,14 @@ export const useDirectionsByDepartment = (orgUnitId, semesterId, filters = {}) =
   queryFn: () => directionsApi.fetchByDepartment({ orgUnitId, semesterId, ...filters }),
   enabled: !!orgUnitId,
 });
-
 export const useDirectionDetail = (id) => useQuery({
   queryKey: directionKeys.detail(id),
   queryFn: () => directionsApi.fetchById(id),
   enabled: !!id,
 });
-
 const invalidateDirections = (queryClient) => {
   queryClient.invalidateQueries({ queryKey: directionKeys.all });
 };
-
 export const useCreateDirection = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -164,7 +149,6 @@ export const useCreateDirection = () => {
     onSuccess: () => invalidateDirections(queryClient),
   });
 };
-
 export const useUpdateDirection = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -172,7 +156,6 @@ export const useUpdateDirection = () => {
     onSuccess: () => invalidateDirections(queryClient),
   });
 };
-
 export const useSubmitDirection = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -196,7 +179,6 @@ export const useApproveDirection = () => {
     onSuccess: () => invalidateDirections(queryClient),
   });
 };
-
 export const useRejectDirection = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -204,7 +186,6 @@ export const useRejectDirection = () => {
     onSuccess: () => invalidateDirections(queryClient),
   });
 };
-
 export const useRequestDirectionRevision = () => {
   const queryClient = useQueryClient();
   return useMutation({

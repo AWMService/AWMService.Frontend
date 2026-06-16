@@ -1,5 +1,4 @@
 import { normalizeRole, normalizeRoles, ROLES, UNIVERSAL_ROLES } from './roles';
-
 const DEFAULT_APP_URLS = {
   auth: 'http://localhost:3000',
   student: 'http://localhost:3001',
@@ -7,7 +6,6 @@ const DEFAULT_APP_URLS = {
   department: 'http://localhost:3003',
   admin: 'http://localhost:3004',
 };
-
 const getEnvValue = (key) => {
   try {
     return import.meta.env?.[key];
@@ -15,14 +13,11 @@ const getEnvValue = (key) => {
     return undefined;
   }
 };
-
 const getBaseUrl = (envKey, fallbackKey) => {
   const value = getEnvValue(envKey) || DEFAULT_APP_URLS[fallbackKey];
   return value.replace(/\/+$/, '');
 };
-
 export const getAuthBaseUrl = () => getBaseUrl('VITE_AUTH_APP_URL', 'auth');
-
 export const getLoginUrl = (returnTo = typeof window !== 'undefined' ? window.location.href : '') => {
   const url = new URL('/login', getAuthBaseUrl());
   if (returnTo) {
@@ -30,12 +25,10 @@ export const getLoginUrl = (returnTo = typeof window !== 'undefined' ? window.lo
   }
   return url.toString();
 };
-
 export const getLogoutUrl = () => {
   const url = new URL('/logout', getAuthBaseUrl());
   return url.toString();
 };
-
 const ROLE_DESTINATIONS = {
   [ROLES.STUDENT]: {
     app: 'student',
@@ -88,7 +81,6 @@ const ROLE_DESTINATIONS = {
     path: '/monitoring',
   },
 };
-
 const ROLE_PRIORITY = [
   ROLES.ADMIN,
   ROLES.VICE_RECTOR,
@@ -101,14 +93,12 @@ const ROLE_PRIORITY = [
   ROLES.SECRETARY,
   ROLES.COMMISSION_MEMBER,
 ];
-
 const getRolesFromUserOrList = (userOrRoles) => {
   if (Array.isArray(userOrRoles)) {
     return userOrRoles;
   }
   return userOrRoles?.roles || [];
 };
-
 export const getPrimaryRole = (userOrRoles, preferredRole) => {
   const savedRole = preferredRole ?? (
     typeof localStorage !== 'undefined'
@@ -117,30 +107,23 @@ export const getPrimaryRole = (userOrRoles, preferredRole) => {
   );
   const roles = normalizeRoles(getRolesFromUserOrList(userOrRoles));
   const normalizedPreferredRole = normalizeRole(savedRole);
-
   if (normalizedPreferredRole && roles.includes(normalizedPreferredRole)) {
     return normalizedPreferredRole;
   }
-
   return ROLE_PRIORITY.find((role) => roles.includes(role)) || roles[0] || null;
 };
-
 export const getDefaultRouteForRole = (role) => {
   const normalizedRole = normalizeRole(role);
   return ROLE_DESTINATIONS[normalizedRole]?.path || '/';
 };
-
 export const getCabinetTarget = (userOrRoles, preferredRole) => {
   const role = getPrimaryRole(userOrRoles, preferredRole);
   const destination = ROLE_DESTINATIONS[role];
-
   if (!destination) {
     return null;
   }
-
   const baseUrl = getBaseUrl(destination.envKey, destination.app);
   const url = new URL(destination.path, baseUrl);
-
   return {
     role,
     href: url.toString(),
@@ -148,26 +131,21 @@ export const getCabinetTarget = (userOrRoles, preferredRole) => {
     app: destination.app,
   };
 };
-
 export const appendAuthTokensToUrl = (href, { token, refreshToken } = {}) => {
   if (!token && !refreshToken) {
     return href;
   }
-
   const url = new URL(href, typeof window !== 'undefined' ? window.location.href : undefined);
   const hashParams = new URLSearchParams(url.hash.replace(/^#/, ''));
-
   if (token) {
     hashParams.set('access_token', token);
   }
   if (refreshToken) {
     hashParams.set('refresh_token', refreshToken);
   }
-
   url.hash = hashParams.toString();
   return url.toString();
 };
-
 export const getCabinetUrl = (userOrRoles, options = {}) => {
   const target = getCabinetTarget(userOrRoles, options.preferredRole);
   if (!target) {
@@ -175,17 +153,14 @@ export const getCabinetUrl = (userOrRoles, options = {}) => {
   }
   return appendAuthTokensToUrl(target.href, options);
 };
-
 export const hasAnyRole = (userRoles = [], allowedRoles = []) => {
   if (!allowedRoles?.length) {
     return true;
   }
-
   const normalizedUserRoles = normalizeRoles(userRoles);
   const normalizedAllowedRoles = normalizeRoles(allowedRoles);
   return normalizedAllowedRoles.some((role) => normalizedUserRoles.includes(role));
 };
-
 const getAllowedReturnOrigins = () => [
   typeof window !== 'undefined' ? window.location.origin : null,
   getAuthBaseUrl(),
@@ -194,17 +169,14 @@ const getAllowedReturnOrigins = () => [
   getBaseUrl('VITE_DEPARTMENT_APP_URL', 'department'),
   getBaseUrl('VITE_ADMIN_APP_URL', 'admin'),
 ].filter(Boolean).map((origin) => new URL(origin).origin);
-
 export const getReturnToUrl = () => {
   if (typeof window === 'undefined') {
     return null;
   }
-
   const value = new URLSearchParams(window.location.search).get('returnTo');
   if (!value) {
     return null;
   }
-
   try {
     const url = new URL(value, window.location.origin);
     if (!getAllowedReturnOrigins().includes(url.origin)) {
@@ -215,7 +187,6 @@ export const getReturnToUrl = () => {
     return null;
   }
 };
-
 export const getPostLoginRedirectUrl = (userOrRoles, tokens = {}) => {
   const returnTo = getReturnToUrl();
   if (returnTo) {
@@ -223,13 +194,10 @@ export const getPostLoginRedirectUrl = (userOrRoles, tokens = {}) => {
   }
   return getCabinetUrl(userOrRoles, tokens);
 };
-
 export const redirectToLogin = (returnTo) => {
   window.location.assign(getLoginUrl(returnTo));
 };
-
 export const redirectToCabinet = (userOrRoles, tokens = {}) => {
   window.location.assign(getCabinetUrl(userOrRoles, tokens));
 };
-
 export const isUniversalRole = (role) => UNIVERSAL_ROLES.includes(normalizeRole(role));

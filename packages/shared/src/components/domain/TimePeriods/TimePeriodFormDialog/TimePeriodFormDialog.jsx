@@ -3,20 +3,20 @@ import { useTranslation } from "react-i18next";
 import "./TimePeriodFormDialog.css";
 
 const ALL_PERIOD_OPTIONS = [
-    { value: "PreDefense1",  labelKey: "student.preDefense1" },
-    { value: "PreDefense2",  labelKey: "student.preDefense2" },
-    { value: "PreDefense3",  labelKey: "student.preDefense3" },
+    { value: "PreDefense1", labelKey: "student.preDefense1" },
+    { value: "PreDefense2", labelKey: "student.preDefense2" },
+    { value: "PreDefense3", labelKey: "student.preDefense3" },
     { value: "FinalDefense", labelKey: "student.defense" },
     { value: "ChecksPeriod", labelKey: "student.checksPeriod" },
 ];
 
 export default function TimePeriodFormDialog({
-                                                 isOpen,
-                                                 onClose,
-                                                 onSubmit,
-                                                 editingPeriod,
-                                                 allowedStages,
-                                             }) {
+    isOpen,
+    onClose,
+    onSubmit,
+    editingPeriod,
+    allowedStages,
+}) {
     const { t } = useTranslation();
     const [formData, setFormData] = useState({
         name: "",
@@ -39,24 +39,19 @@ export default function TimePeriodFormDialog({
             setFormData({ name: "", startDate: "", endDate: "" });
         }
     }, [editingPeriod, isOpen]);
-
     if (!isOpen) return null;
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
-
     const handleSubmit = (e) => {
         e.preventDefault();
         onSubmit(formData);
     };
-
     return (
         <div className="dialog-backdrop">
             <div className="dialog">
                 <h2>{editingPeriod ? t('department.editPeriod') : t('department.createPeriod')}</h2>
-
                 <form onSubmit={handleSubmit}>
                     <label>
                         {t('common.period')}:
@@ -74,7 +69,6 @@ export default function TimePeriodFormDialog({
                             ))}
                         </select>
                     </label>
-
                     <label>
                         {t('common.startDate')}:
                         <input
@@ -85,7 +79,6 @@ export default function TimePeriodFormDialog({
                             required
                         />
                     </label>
-
                     <label>
                         {t('common.endDate')}:
                         <input
@@ -96,12 +89,10 @@ export default function TimePeriodFormDialog({
                             required
                         />
                     </label>
-
                     <div className="dialog-buttons">
                         <button type="submit" className="button primary-button">
                             {editingPeriod ? t('common.save') : t('common.create')}
                         </button>
-
                         <button
                             type="button"
                             className="button secondary-button"

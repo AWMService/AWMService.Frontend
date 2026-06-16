@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import "./ThemeModal.css";
-
 const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
     const { t } = useTranslation();
     const [showRejection, setShowRejection] = useState(false);
     const [rejectionReason, setRejectionReason] = useState("");
     const [language, setLanguage] = useState("ru");
-
     if (!theme) return null;
 
     const isPending = theme.status === "pending" || theme.status === "На рассмотрении";
@@ -21,41 +19,35 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
         onUpdateStatus(theme.id, "rejected", rejectionReason);
         handleClose();
     };
-
     const handleClose = () => {
         setShowRejection(false);
         setRejectionReason("");
         onClose();
     };
-
     const getTitle = () => theme.title[language];
     const getDescription = () => theme.description[language];
-
     return (
         <div className="tm-overlay" onClick={handleClose}>
             <div className="tm-content" onClick={(e) => e.stopPropagation()}>
 
-                {}
+                { }
                 <div className="tm-header">
                     <div
-                        className={`tm-status ${
-                            isPending
+                        className={`tm-status ${isPending
                                 ? "tm-status--pending"
                                 : isRejected
                                     ? "tm-status--rejected"
                                     : "tm-status--approved"
-                        }`}
+                            }`}
                     >
                         {theme.status}
                     </div>
-
                     <div className="tm-lang-switch">
                         {["kk", "ru", "en"].map((lang) => (
                             <button
                                 key={lang}
-                                className={`tm-lang-btn ${
-                                    language === lang ? "tm-lang-btn--active" : ""
-                                }`}
+                                className={`tm-lang-btn ${language === lang ? "tm-lang-btn--active" : ""
+                                    }`}
                                 onClick={() => setLanguage(lang)}
                             >
                                 {lang.toUpperCase()}
@@ -64,13 +56,12 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                     </div>
                 </div>
 
-                {}
+                { }
                 <div className="tm-scroll-area">
                     <h2 className="tm-title">{getTitle()}</h2>
                     <p className="tm-subtitle">
                         {t('department.themeInfo')}
                     </p>
-
                     <div className="tm-body">
                         <div className="tm-info-grid">
                             <div className="tm-info-item">
@@ -92,7 +83,6 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                                 </span>
                             </div>
                         </div>
-
                         <div className="tm-section">
                             <span className="tm-section__title">
                                 {t('department.themeDescription')}
@@ -102,7 +92,7 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                             </div>
                         </div>
 
-                        {}
+                        { }
                         {isRejected && theme.rejectionReason && (
                             <div className="tm-rejected-info">
                                 <span className="tm-rejected-info__label">
@@ -115,7 +105,7 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                         )}
                     </div>
 
-                    {}
+                    { }
                     <div className="tm-footer">
                         {isPending ? (
                             !showRejection ? (
@@ -186,5 +176,4 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
         </div>
     );
 };
-
 export default ThemeModal;

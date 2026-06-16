@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { staffApi } from './adminApi';
-
 export const staffKeys = {
   all: ['staff'],
   byOrgUnit: (orgUnitId) => [...staffKeys.all, 'orgUnit', orgUnitId],

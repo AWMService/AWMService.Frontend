@@ -2,32 +2,26 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supportedLanguages, changeLanguage, normalizeLanguage } from '../i18n';
 import './LanguageSelector.css';
-
 export const LanguageSelector = ({ variant = 'dropdown' }) => {
   const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
-
   const currentCode = normalizeLanguage(i18n.language);
   const currentLang = supportedLanguages.find(l => l.code === currentCode) 
     || supportedLanguages.find(l => l.code === 'ru');
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
   const handleLanguageChange = (langCode) => {
     changeLanguage(langCode);
     setIsOpen(false);
   };
-
   if (variant === 'buttons') {
     return (
       <div className="language-selector language-selector--buttons">
@@ -43,7 +37,6 @@ export const LanguageSelector = ({ variant = 'dropdown' }) => {
       </div>
     );
   }
-
   return (
     <div className="language-selector" ref={dropdownRef}>
       <button 
@@ -60,7 +53,6 @@ export const LanguageSelector = ({ variant = 'dropdown' }) => {
           <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" fill="none"/>
         </svg>
       </button>
-      
       {isOpen && (
         <div className="language-selector__dropdown">
           {supportedLanguages.map((lang) => (
@@ -78,5 +70,4 @@ export const LanguageSelector = ({ variant = 'dropdown' }) => {
     </div>
   );
 };
-
 export default LanguageSelector;

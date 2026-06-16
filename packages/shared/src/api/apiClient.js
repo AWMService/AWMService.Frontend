@@ -6,7 +6,6 @@ export const apiClient = axios.create({
     'Content-Type': 'application/json',
   },
 });
-
 apiClient.interceptors.request.use(
   (config) => {
     const token = getToken();
@@ -37,8 +36,8 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config;
     if (error.response) {
       const { status, data } = error.response;
-      
-      
+
+
       const appError = {
         status,
         code: data?.code || data?.extensions?.code || 'UNKNOWN_ERROR',
@@ -53,14 +52,14 @@ apiClient.interceptors.response.use(
           window.dispatchEvent(new Event('awm:unauthorized'));
           return Promise.reject(appError);
         }
-        
+
         const refreshToken = getRefreshToken();
         if (!refreshToken) {
           clearAuthTokens();
           window.dispatchEvent(new Event('awm:unauthorized'));
           return Promise.reject(appError);
         }
-        
+
         if (isRefreshing) {
           return new Promise((resolve, reject) => {
             failedQueue.push({ resolve, reject });
@@ -71,10 +70,10 @@ apiClient.interceptors.response.use(
             })
             .catch((err) => Promise.reject(err));
         }
-        
+
         originalRequest._retry = true;
         isRefreshing = true;
-        
+
         try {
           const { data: refreshData } = await axios.post(
             `${apiClient.defaults.baseURL}/v1/Auth/refresh-token`,
@@ -95,10 +94,8 @@ apiClient.interceptors.response.use(
           isRefreshing = false;
         }
       }
-      
       return Promise.reject(appError);
     }
-    
     return Promise.reject({
       status: 0,
       code: 'NETWORK_ERROR',

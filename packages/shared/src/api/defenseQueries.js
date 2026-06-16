@@ -9,7 +9,7 @@ export const evaluationApi = {
     if (orgUnitId) params.orgUnitId = orgUnitId;
     if (specialityId) params.specialityId = specialityId;
     if (defenseStageType) params.defenseStageType = defenseStageType;
-    
+
     const { data } = await apiClient.get('/v1/evaluation-criteria', { params });
     return data;
   },
@@ -65,7 +65,7 @@ export const scheduleApi = {
     return data;
   },
   generateSchedule: async (generateData) => {
-    
+
     const { data } = await apiClient.post('/v1/schedules/generate', generateData);
     return data;
   },

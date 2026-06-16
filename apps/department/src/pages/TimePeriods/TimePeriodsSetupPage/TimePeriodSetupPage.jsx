@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ArrowLeft } from "lucide-react";
 import { useQueries } from "@tanstack/react-query";
-import { 
+import {
     useAuth,
     useOrgUnitEmployees,
     useCreateCommission,
@@ -37,22 +37,22 @@ const generateSessionsForPeriod = (startDateStr, endDateStr) => {
     const sessions = [];
     const start = new Date(startDateStr);
     const end = new Date(endDateStr);
-    
-    
+
+
     const startDate = new Date(start.getFullYear(), start.getMonth(), start.getDate());
     const endDate = new Date(end.getFullYear(), end.getMonth(), end.getDate());
 
-    
+
     let count = 0;
     for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
         if (++count > 10) break;
-        
+
         const dateStr = d.toISOString().split('T')[0];
-        
-        
+
+
         const hourStart = 9;
-        const hourEnd = 14; 
-        
+        const hourEnd = 14;
+
         for (let h = hourStart; h < hourEnd; h++) {
             for (let m = 0; m < 60; m += 30) {
                 const timeStr = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
@@ -71,7 +71,7 @@ const generateSessionsForPeriod = (startDateStr, endDateStr) => {
 
 export default function TimePeriodSetupPage() {
     const navigate = useNavigate();
-    const { id } = useParams(); 
+    const { id } = useParams();
     const { t } = useTranslation();
     const { user } = useAuth();
 
@@ -80,11 +80,11 @@ export default function TimePeriodSetupPage() {
 
     const [currentStep, setCurrentStep] = useState(1);
     const [commissions, setCommissions] = useState([]);
-    
-    
+
+
     const { data: specialities = [] } = useOrgUnitSpecialities(orgUnitId);
 
-    
+
     const { data: allTeachers = [] } = useOrgUnitEmployees(orgUnitId);
     const teachersList = useMemo(() => {
         return allTeachers.map(t => ({
@@ -93,27 +93,27 @@ export default function TimePeriodSetupPage() {
         }));
     }, [allTeachers]);
 
-    
+
     const { data: students = [] } = useDefenseReadiness({ orgUnitId, semesterId });
 
-    
+
     const createCommissionMutation = useCreateCommission(orgUnitId, semesterId);
     const autoDistributeMutation = useAutoDistributeStudents();
     const updateScheduleMutation = useUpdateSchedule();
 
-    
+
     const { data: periods = [] } = usePeriods(orgUnitId, semesterId);
     const currentPeriod = useMemo(() => {
         const stageId = Number(id);
         return periods.find(p => p.id === stageId);
     }, [periods, id]);
 
-    
+
     const { data: existingCommissions = [] } = useCommissions(orgUnitId, semesterId);
     const filteredCommissions = useMemo(() => {
         const { commissionTypeId, preDefenseNumber } = getCommissionTypeAndNumber(id);
-        const filtered = existingCommissions.filter(c => 
-            c.commissionTypeId === commissionTypeId && 
+        const filtered = existingCommissions.filter(c =>
+            c.commissionTypeId === commissionTypeId &&
             c.preDefenseNumber === preDefenseNumber
         );
         return filtered.map(c => ({
@@ -129,7 +129,7 @@ export default function TimePeriodSetupPage() {
         }));
     }, [existingCommissions, id]);
 
-    
+
     const scheduleQueries = useQueries({
         queries: commissions.map(c => ({
             queryKey: ['preDefense', 'schedule', c.dbId],
@@ -138,17 +138,17 @@ export default function TimePeriodSetupPage() {
         }))
     });
 
-    
+
     React.useEffect(() => {
         if (commissions.length > 0) {
             setCommissions(prev => {
                 let changed = false;
                 const next = prev.map((c, index) => {
                     const slots = scheduleQueries[index]?.data || [];
-                    
+
                     const sessionsMap = {};
-                    
-                    
+
+
                     if (currentPeriod) {
                         const standardSessions = generateSessionsForPeriod(currentPeriod.startDate, currentPeriod.endDate);
                         standardSessions.forEach(s => {
@@ -184,8 +184,8 @@ export default function TimePeriodSetupPage() {
                     });
 
                     const sessions = Object.values(sessionsMap).sort((a, b) => a.sessionId.localeCompare(b.sessionId));
-                    
-                    
+
+
                     const oldSessionsStr = JSON.stringify(c.sessions || []);
                     const newSessionsStr = JSON.stringify(sessions);
                     if (oldSessionsStr !== newSessionsStr) {
@@ -197,20 +197,20 @@ export default function TimePeriodSetupPage() {
                     }
                     return c;
                 });
-                
+
                 return changed ? next : prev;
             });
         }
     }, [scheduleQueries, currentPeriod, commissions.length, currentStep]);
 
-    
+
     React.useEffect(() => {
         if (filteredCommissions.length > 0 && commissions.length === 0) {
             setCommissions(filteredCommissions);
         }
     }, [filteredCommissions, commissions.length]);
 
-    
+
     const handleBack = () => {
         if (currentStep > 1) {
             setCurrentStep(prev => prev - 1);
@@ -246,11 +246,11 @@ export default function TimePeriodSetupPage() {
         );
     };
 
-    
+
     const handleSaveCommissions = async () => {
         const { commissionTypeId, preDefenseNumber } = getCommissionTypeAndNumber(id);
         const savedCommissions = [];
-        
+
         try {
             for (const c of commissions) {
                 if (c.dbId) {
@@ -278,7 +278,7 @@ export default function TimePeriodSetupPage() {
         }
     };
 
-    
+
     const handleAutoDistribute = async () => {
         const { commissionTypeId, preDefenseNumber } = getCommissionTypeAndNumber(id);
         try {
@@ -289,7 +289,7 @@ export default function TimePeriodSetupPage() {
                 preDefenseNumber,
                 specialityId: null
             });
-            setCurrentStep(2); 
+            setCurrentStep(2);
         } catch (error) {
             console.error("Auto distribution failed", error);
             alert(error.message || t('department.distributionFailed', 'Ошибка при распределении'));

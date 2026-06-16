@@ -4,7 +4,6 @@ import './SharedHeader.css';
 import { getInitials } from '../utils/user';
 import arrowDownIcon from '../assets/icons/arrow-down-icon.svg';
 import bellIcon from '../assets/icons/bell-icon.svg';
-
 const Icon = ({ src, alt, size = 16, className = "" }) => (
     <img
         src={src}
@@ -18,26 +17,31 @@ const Icon = ({ src, alt, size = 16, className = "" }) => (
         }}
     />
 );
-
 export function SharedHeader({
-    appLogoBox,       
-    appLogoBoxColor,  
-    appTitle,         
-    appSubtitle,      
-    pageTitle,        
-    userProfile,      
+    appLogoBox,
+    appLogoBoxColor,
+    appTitle,
+    appSubtitle,
+    pageTitle,
+    userProfile,
+    userDropdownItems,
+    appLogoBox,
+    appLogoBoxColor,
+    appTitle,
+    appSubtitle,
+    pageTitle,
+    userProfile,
     userDropdownItems,
     onLogout,
     notificationCount = 0,
     actions           
+    actions
 }) {
     const { t } = useTranslation();
     const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
-
     const notificationsRef = useRef(null);
     const userRef = useRef(null);
-
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (notificationsRef.current && !notificationsRef.current.contains(e.target)) {
@@ -47,18 +51,16 @@ export function SharedHeader({
                 setUserMenuOpen(false);
             }
         };
-
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
-
     return (
         <header className="shared-header">
             <div className="shared-header-content">
-                {}
+                { }
                 <div className="shared-header-left">
                     <div className="logo-section">
-                        <div 
+                        <div
                             className="logo-box"
                             style={{ background: appLogoBoxColor || 'var(--awm-primary, #6366f1)' }}
                         >
@@ -77,12 +79,11 @@ export function SharedHeader({
                     )}
                 </div>
 
-                {}
+                { }
                 <div className="shared-header-right">
-                    
                     {actions}
 
-                    {}
+                    { }
                     <div className="nav-item-dropdown" ref={notificationsRef}>
                         <button
                             className="icon-btn"
@@ -96,7 +97,6 @@ export function SharedHeader({
                                 <span className="red-badge">{notificationCount}</span>
                             )}
                         </button>
-
                         {notificationsOpen && (
                             <div className="dropdown-menu align-right" style={{ width: '320px', padding: '0' }}>
                                 <div className="dropdown-header" style={{ padding: '12px 16px', fontSize: '13px', borderBottom: '1px solid #f1f5f9', fontWeight: '600', color: '#1e293b' }}>
@@ -128,7 +128,7 @@ export function SharedHeader({
                         )}
                     </div>
 
-                    {}
+                    { }
                     <div className="nav-item-dropdown" ref={userRef}>
                         <div
                             className="user-profile"
@@ -150,7 +150,6 @@ export function SharedHeader({
                                 className={userMenuOpen ? 'rotate' : ''}
                             />
                         </div>
-
                         {userMenuOpen && (
                             <div className="dropdown-menu align-right">
                                 {userDropdownItems}

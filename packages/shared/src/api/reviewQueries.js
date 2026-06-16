@@ -6,7 +6,6 @@ export async function fetchReviewsByWork(workId) {
   const { data } = await apiClient.get(`/v1/works/${workId}/reviews`);
   return data;
 }
-
 export function useReviewsByWork(workId) {
   return useQuery({
     queryKey: ['reviews', 'work', workId],
@@ -22,7 +21,6 @@ export async function createSupervisorReview(workId, formData) {
   });
   return data;
 }
-
 export function useCreateSupervisorReview(workId) {
   const queryClient = useQueryClient();
   return useMutation({
@@ -72,7 +70,6 @@ export async function fetchAssignedReviewer(workId) {
   const { data } = await apiClient.get(`/v1/works/${workId}/assigned-reviewer`);
   return data;
 }
-
 export function useAssignedReviewer(workId) {
   return useQuery({
     queryKey: ['assignedReviewer', workId],
@@ -86,7 +83,6 @@ export async function assignReviewerToWork(workId, reviewerEntityId) {
   const { data } = await apiClient.post(`/v1/works/${workId}/assign-reviewer`, { reviewerEntityId });
   return data;
 }
-
 export function useAssignReviewer(workId) {
   const queryClient = useQueryClient();
   return useMutation({
@@ -103,7 +99,6 @@ export async function fetchMyReviewerAssignments() {
   const { data } = await apiClient.get('/v1/reviews/my-assignments');
   return data;
 }
-
 export function useMyReviewerAssignments() {
   return useQuery({
     queryKey: ['reviews', 'my-assignments'],

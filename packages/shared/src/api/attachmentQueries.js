@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './apiClient';
-
 const ATTACHMENT_TYPES = {
   Draft: 0,
   Final: 1,
@@ -12,7 +11,6 @@ const ATTACHMENT_TYPES = {
   Protocol: 7,
   Other: 8,
 };
-
 export const ATTACHMENT_TYPE_LABELS = {
   Draft: 'Draft',
   Final: 'Final',
@@ -24,17 +22,14 @@ export const ATTACHMENT_TYPE_LABELS = {
   Protocol: 'Protocol',
   Other: 'Other',
 };
-
 function buildUrl(workId, attachmentId) {
   const base = `/v1/student-works/${workId}/attachments`;
   return attachmentId != null ? `${base}/${attachmentId}` : base;
 }
-
 export async function fetchAttachments(workId) {
   const { data } = await apiClient.get(buildUrl(workId));
   return data;
 }
-
 export function useAttachments(workId) {
   return useQuery({
     queryKey: ['attachments', workId],
@@ -42,7 +37,6 @@ export function useAttachments(workId) {
     enabled: !!workId,
   });
 }
-
 export async function uploadAttachment(workId, file, attachmentType = 'Draft') {
   const formData = new FormData();
   formData.append('File', file);
@@ -53,7 +47,6 @@ export async function uploadAttachment(workId, file, attachmentType = 'Draft') {
   });
   return data;
 }
-
 export function useUploadAttachment(workId) {
   const queryClient = useQueryClient();
   return useMutation({
@@ -63,12 +56,10 @@ export function useUploadAttachment(workId) {
     },
   });
 }
-
 export async function downloadAttachment(workId, attachmentId, fileName) {
   const response = await apiClient.get(`${buildUrl(workId, attachmentId)}/download`, {
     responseType: 'blob',
   });
-
   const url = window.URL.createObjectURL(new Blob([response.data]));
   const link = document.createElement('a');
   link.href = url;
@@ -78,11 +69,9 @@ export async function downloadAttachment(workId, attachmentId, fileName) {
   document.body.removeChild(link);
   window.URL.revokeObjectURL(url);
 }
-
 export async function deleteAttachment(workId, attachmentId) {
   await apiClient.delete(buildUrl(workId, attachmentId));
 }
-
 export function useDeleteAttachment(workId) {
   const queryClient = useQueryClient();
   return useMutation({
@@ -135,7 +124,6 @@ export async function fetchCurrentWorkId() {
   if (!data || !data.workId) return null;
   return data.workId;
 }
-
 export function useCurrentWorkId() {
   return useQuery({
     queryKey: ['currentWorkId'],

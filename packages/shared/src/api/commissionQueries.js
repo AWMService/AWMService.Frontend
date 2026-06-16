@@ -1,11 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './apiClient';
-
 export const commissionApi = {
   fetchCommissions: async (orgUnitId, semesterId, specialityId = null) => {
     const params = { orgUnitId, semesterId };
     if (specialityId) params.specialityId = specialityId;
-    
+
     const { data } = await apiClient.get('/v1/commissions', { params });
     return data;
   },
@@ -14,7 +13,7 @@ export const commissionApi = {
     return data;
   },
   createCommission: async (commissionData) => {
-    
+
     const { data } = await apiClient.post('/v1/commissions', commissionData);
     return data;
   },
@@ -31,10 +30,9 @@ export const commissionApi = {
     return data;
   }
 };
-
 export const commissionKeys = {
   all: ['commissions'],
-  byDepartment: (orgUnitId, semesterId, specialityId = null) => 
+  byDepartment: (orgUnitId, semesterId, specialityId = null) =>
     [...commissionKeys.all, 'department', orgUnitId, semesterId, specialityId],
   detail: (commissionId) => [...commissionKeys.all, 'detail', commissionId]
 };
@@ -46,7 +44,6 @@ export const useCommissions = (orgUnitId, semesterId, specialityId = null) => {
     enabled: !!orgUnitId && !!semesterId,
   });
 };
-
 export const useCommissionDetail = (commissionId) => {
   return useQuery({
     queryKey: commissionKeys.detail(commissionId),

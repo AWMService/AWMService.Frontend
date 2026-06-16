@@ -6,13 +6,11 @@ export const CHECK_TYPES = {
   AntiPlagiarism: 2,
   SoftwareCheck: 3,
 };
-
 export async function fetchQualityChecks(workId) {
   const { data } = await apiClient.get(`/v1/quality-checks/by-work/${workId}`);
-  
+
   return data.map(c => ({ ...c, checkType: c.checkTypeName }));
 }
-
 export function useQualityChecks(workId) {
   return useQuery({
     queryKey: ['qualityChecks', workId],
@@ -20,7 +18,6 @@ export function useQualityChecks(workId) {
     enabled: !!workId,
   });
 }
-
 export async function submitForCheck(workId, checkType) {
   const typeId = typeof checkType === 'number' ? checkType : (CHECK_TYPES[checkType] ?? 1);
   const { data } = await apiClient.post(`/v1/quality-checks/works/${workId}/submit`, {
@@ -28,7 +25,6 @@ export async function submitForCheck(workId, checkType) {
   });
   return data;
 }
-
 export function useSubmitForCheck(workId) {
   const queryClient = useQueryClient();
   return useMutation({

@@ -1,7 +1,6 @@
 import { apiClient } from './apiClient';
-
 export const adminApi = {
-  
+
   fetchUsers: async ({ universityId, isActive, search }) => {
     const params = { universityId };
     if (isActive !== undefined && isActive !== null && isActive !== 'all') {
@@ -13,43 +12,38 @@ export const adminApi = {
     const { data } = await apiClient.get('/v1/Users', { params });
     return data;
   },
-
   fetchUserById: async (userId) => {
     const { data } = await apiClient.get(`/v1/Users/${userId}`);
     return data;
   },
-
   createUser: async (userData) => {
     const { data } = await apiClient.post('/v1/Users', userData);
     return data;
   },
-
   updateUser: async (userId, userData) => {
     const { data } = await apiClient.put(`/v1/Users/${userId}`, userData);
     return data;
   },
-
   toggleUserStatus: async (userId, isActive) => {
     const { data } = await apiClient.patch(`/v1/Users/${userId}/status`, { isActive });
     return data;
   },
 
-  
+
   fetchRoles: async () => {
     const { data } = await apiClient.get('/v1/Roles');
     return data;
   },
 
-  
+
   fetchStudents: async ({ universityId, search, status }) => {
     const params = { universityId, search, status };
     const { data } = await apiClient.get('/v1/Students', { params });
     return data;
   }
 };
-
 export const orgApi = {
-  
+
   fetchOrgUnits: async (typeId) => {
     const { data } = await apiClient.get('/v1/OrgUnits', { params: { typeId } });
     return data;
@@ -67,9 +61,8 @@ export const orgApi = {
     return data;
   }
 };
-
 export const eduApi = {
-  
+
   fetchPrograms: async () => {
     const { data } = await apiClient.get('/v1/academic-programs');
     return data;
@@ -87,7 +80,7 @@ export const eduApi = {
     return data;
   },
 
-  
+
   fetchSpecialityLevels: async () => {
     const { data } = await apiClient.get('/v1/speciality-levels');
     return data;
@@ -105,9 +98,8 @@ export const eduApi = {
     return data;
   }
 };
-
 export const wfApi = {
-  
+
   fetchWorkTypes: async () => {
     const { data } = await apiClient.get('/v1/WorkTypes');
     return data;
@@ -125,7 +117,6 @@ export const wfApi = {
     return data;
   }
 };
-
 export const staffApi = {
   fetchOrgUnitEmployees: async (orgUnitId) => {
     const { data } = await apiClient.get(`/v1/org-units/${orgUnitId}/employees/available`);
@@ -140,7 +131,7 @@ export const staffApi = {
     return data;
   },
   updateWorkload: async (orgUnitId, userId, semesterId, specialityId, maxWorkload) => {
-    const { data } = await apiClient.put(`/v1/org-units/${orgUnitId}/employees/${userId}/workload`, 
+    const { data } = await apiClient.put(`/v1/org-units/${orgUnitId}/employees/${userId}/workload`,
       { maxWorkload },
       { params: { semesterId, specialityId } }
     );
