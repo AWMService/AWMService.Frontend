@@ -21,9 +21,10 @@ export function TeacherSelectionItem({ teacher, isSelected, onToggle }) {
             <h4 className="teacher-name">{teacher.name}</h4>
           </div>
           <div className="teacher-info-grid">
-            <p><span className="font-medium">{t('department.position')}:</span> {teacher.position}</p>
-            <p><span className="font-medium">{t('department.degree')}:</span> {teacher.degree}</p>
-            <p><span className="font-medium">{t('department.specialization')}:</span> {teacher.specialization}</p>
+            <p><span className="font-medium">{t('department.position')}:</span> {teacher.positionTitle}</p>
+            {teacher.specialization && (
+              <p><span className="font-medium">{t('department.specialization')}:</span> {teacher.specialization}</p>
+            )}
           </div>
           <div className="teacher-contact-info">
             <div className="contact-item">

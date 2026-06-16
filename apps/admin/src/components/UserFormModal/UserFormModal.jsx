@@ -7,10 +7,11 @@ import './UserFormModal.css';
 function UserFormModal({ isOpen, user, onClose, onSave, isLoading: isSaving }) {
     const { t } = useTranslation();
     const { user: currentUser } = useAuth();
-    const [form, setForm] = useState({ login: '', name: '', email: '', password: '', roleId: '', departmentId: '', status: 'active' });
+    const [form, setForm] = useState({ login: '', name: '', email: '', password: '', roleId: '', orgUnitId: '', status: 'active' });
     const [errors, setErrors] = useState({});
 
     const universityId = currentUser?.universityId || 1;
+
 
     const { data: roles = [] } = useQuery({
         queryKey: ['admin-roles', universityId],
@@ -33,11 +34,11 @@ function UserFormModal({ isOpen, user, onClose, onSave, isLoading: isSaving }) {
                     email: user.email || '',
                     password: '',
                     roleId: user.roleId || '',
-                    departmentId: user.departmentId || '',
+                    orgUnitId: user.orgUnitId || '',
                     status: user.isActive ? 'active' : 'inactive',
                 });
             } else {
-                setForm({ login: '', name: '', email: '', password: '', roleId: '', departmentId: '', status: 'active' });
+                setForm({ login: '', name: '', email: '', password: '', roleId: '', orgUnitId: '', status: 'active' });
             }
             setErrors({});
         }
@@ -57,7 +58,7 @@ function UserFormModal({ isOpen, user, onClose, onSave, isLoading: isSaving }) {
         else if (!/\S+@\S+\.\S+/.test(form.email)) next.email = t('validation.email') || 'Invalid email';
         if (!user && !form.password.trim()) next.password = t('validation.required') || 'Required';
         if (!form.roleId) next.roleId = t('validation.required') || 'Required';
-        
+
         setErrors(next);
         return Object.keys(next).length === 0;
     };
@@ -65,7 +66,7 @@ function UserFormModal({ isOpen, user, onClose, onSave, isLoading: isSaving }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!validate()) return;
-        onSave({ ...form, roleId: Number(form.roleId), departmentId: form.departmentId ? Number(form.departmentId) : null });
+        onSave({ ...form, roleId: Number(form.roleId), orgUnitId: form.orgUnitId ? Number(form.orgUnitId) : null });
     };
 
     return (
@@ -130,8 +131,8 @@ function UserFormModal({ isOpen, user, onClose, onSave, isLoading: isSaving }) {
                     <div className="form-field">
                         <label>{t('nav.departments')}</label>
                         <select
-                            value={form.departmentId}
-                            onChange={(e) => handleChange('departmentId', e.target.value)}
+                            value={form.orgUnitId}
+                            onChange={(e) => handleChange('orgUnitId', e.target.value)}
                         >
                             <option value="">{t('common.select')}</option>
                             {departments.map(dept => (
@@ -155,3 +156,4 @@ function UserFormModal({ isOpen, user, onClose, onSave, isLoading: isSaving }) {
 }
 
 export default UserFormModal;
+

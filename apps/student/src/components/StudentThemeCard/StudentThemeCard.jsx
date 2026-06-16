@@ -2,9 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import './StudentThemeCard.css';
 
-export function StudentThemeCard({ theme, onApply, onCancel, onReapply }) {
+export function StudentThemeCard({ theme, isAlreadyAssigned, onApply, onCancel, onReapply }) {
     const { t } = useTranslation();
-    const { title, description, supervisor, availableSlots, direction, status, rejectionReason } = theme;
+    const { title, description, supervisor, availableSlots, direction, status, isAssigned, rejectionReason } = theme;
 
     const renderStatusLabel = () => {
         if (status === 'applied') return <span className="status-text text-pending">● {t('student.pending')}</span>;
@@ -16,6 +16,14 @@ export function StudentThemeCard({ theme, onApply, onCancel, onReapply }) {
     const renderAction = () => {
         const isFull = availableSlots === 0;
 
+        if (isAssigned) {
+            return (
+                <span className="btn-compact btn-assigned">
+                    {t('student.assigned', 'Закреплено')}
+                </span>
+            );
+        }
+
         if (status === 'applied') {
             return (
                 <button className="btn-compact btn-danger" onClick={() => onCancel(theme.id)}>
@@ -24,14 +32,26 @@ export function StudentThemeCard({ theme, onApply, onCancel, onReapply }) {
             );
         }
         if (status === 'rejected') {
+            if (isAlreadyAssigned) {
+                return (
+                    <span className="btn-compact btn-disabled">
+                        {t('student.alreadyAssigned', 'Уже закреплены')}
+                    </span>
+                );
+            }
             return (
                 <button className="btn-compact btn-primary" onClick={() => onReapply(theme.id)}>
                     {t('student.reapply')}
                 </button>
             );
         }
-        if (status === 'approved') {
-            return null;
+
+        if (isAlreadyAssigned) {
+            return (
+                <span className="btn-compact btn-disabled">
+                    {t('student.alreadyAssigned', 'Уже закреплены')}
+                </span>
+            );
         }
 
         return (
@@ -46,10 +66,13 @@ export function StudentThemeCard({ theme, onApply, onCancel, onReapply }) {
     };
 
     return (
-        <div className={`theme-card-compact ${status === 'rejected' ? 'rejected-border' : ''}`}>
+        <div className={`theme-card-compact ${isAssigned ? 'assigned-border' : ''} ${status === 'rejected' ? 'rejected-border' : ''}`}>
 
             <div className="compact-header">
-                <span className="supervisor-sm">{supervisor}</span>
+                <div className="header-left">
+                    <span className="supervisor-sm">{supervisor}</span>
+                    <span className="direction-badge">{direction}</span>
+                </div>
                 {renderStatusLabel()}
             </div>
 

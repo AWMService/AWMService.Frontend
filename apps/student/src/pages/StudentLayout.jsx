@@ -1,14 +1,16 @@
 import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
+import { useAuth, useMyWorkProgress, useMyApplications, useActiveCheckConfigurations } from '@awm/shared';
 import { StudentHeader } from '../components/StudentHeader';
 import { ProgressStepper } from '../components/ProgressStepper';
 
-const STANDALONE_PAGES = ['profile', 'my-work', 'notifications'];
+const STANDALONE_PAGES = ['my-applications'];
 
 const isStandalonePage = (path) =>
     STANDALONE_PAGES.some((page) => path.includes(page));
 
 const getStepFromPath = (path) => {
+  if (path.includes('pre-defense-3')) return 3;
   if (path.includes('pre-defense-1')) return 2;
   if (path.includes('pre-defense-2')) return 3;
   if (path.includes('normocontrol')) return 4;
@@ -20,10 +22,48 @@ const getStepFromPath = (path) => {
   return 1;
 };
 
+const stateToHighestStep = (stateName) => {
+  if (!stateName) return 1;
+  if (stateName.startsWith('PreDefense1.')) return 2;
+  if (stateName.startsWith('PreDefense2.') || stateName.startsWith('PreDefense3.')) return 3;
+  if (stateName === 'Checks.WaitingForInitial') return 4;
+  if (stateName === 'Checks.WaitingForAntiPlagiarism') return 6;
+  if (stateName.startsWith('Checks.')) return 5;
+  if (stateName.startsWith('Reviews.')) return 7;
+  if (
+    stateName === 'ReadyForDefense' ||
+    stateName.startsWith('Defense.') ||
+    stateName === 'Defended' ||
+    stateName === 'DefenseFailed'
+  ) return 8;
+  return 1;
+};
+
 export const StudentLayout = () => {
   const location = useLocation();
+  const { user } = useAuth();
+  const { data: workProgress } = useMyWorkProgress();
+  const { data: myApplications = [] } = useMyApplications(user?.currentSemesterId);
+  const { data: activeConfigs } = useActiveCheckConfigurations(
+    workProgress?.orgUnitId,
+    workProgress?.specialityId ?? null
+  );
+
+  
+  
+  const activeCheckTypeCodes = (activeConfigs && activeConfigs.length > 0)
+    ? activeConfigs.map(c => c.checkTypeCode).filter(Boolean)
+    : null;
+
   const currentStep = getStepFromPath(location.pathname);
-  const highestCompletedStep = 8; // Mock: student has access up to step 8
+  const baseHighestStep = stateToHighestStep(workProgress?.currentStateName);
+
+  
+  const hasApprovedApplication = myApplications.some(a => a.status === 'approved');
+  const hasWork = !!workProgress;
+  
+  const highestCompletedStep = (!hasWork && hasApprovedApplication) ? 2 : baseHighestStep;
+  const maxVisibleStep = (hasApprovedApplication && !hasWork) ? 1 : null;
 
   const standalone = isStandalonePage(location.pathname);
 
@@ -32,7 +72,12 @@ export const StudentLayout = () => {
       <StudentHeader />
       <main className="student-main-content">
         {!standalone && (
-          <ProgressStepper currentStep={currentStep} highestCompletedStep={highestCompletedStep} />
+          <ProgressStepper
+            currentStep={currentStep}
+            highestCompletedStep={highestCompletedStep}
+            activeCheckTypeCodes={activeCheckTypeCodes}
+            maxVisibleStep={maxVisibleStep}
+          />
         )}
         <div className="student-page-content">
           <Outlet />

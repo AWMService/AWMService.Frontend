@@ -7,13 +7,16 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
     const [rejectionReason, setRejectionReason] = useState("");
     const [language, setLanguage] = useState("ru");
     if (!theme) return null;
-    const isPending = theme.status === "На рассмотрении";
-    const isRejected = theme.status === "Отклонено";
+
+    const isPending = theme.status === "pending" || theme.status === "На рассмотрении";
+    const isRejected = theme.status === "rejected" || theme.status === "Отклонено";
+
     const handleReject = () => {
         if (!rejectionReason.trim()) {
             return;
         }
-        onUpdateStatus(theme.id, "Отклонено", rejectionReason);
+
+        onUpdateStatus(theme.id, "rejected", rejectionReason);
         handleClose();
     };
     const handleClose = () => {
@@ -26,15 +29,16 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
     return (
         <div className="tm-overlay" onClick={handleClose}>
             <div className="tm-content" onClick={(e) => e.stopPropagation()}>
+
+                { }
                 <div className="tm-header">
                     <div
-                        className={`tm-status ${
-                            isPending
+                        className={`tm-status ${isPending
                                 ? "tm-status--pending"
                                 : isRejected
                                     ? "tm-status--rejected"
                                     : "tm-status--approved"
-                        }`}
+                            }`}
                     >
                         {theme.status}
                     </div>
@@ -42,9 +46,8 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                         {["kk", "ru", "en"].map((lang) => (
                             <button
                                 key={lang}
-                                className={`tm-lang-btn ${
-                                    language === lang ? "tm-lang-btn--active" : ""
-                                }`}
+                                className={`tm-lang-btn ${language === lang ? "tm-lang-btn--active" : ""
+                                    }`}
                                 onClick={() => setLanguage(lang)}
                             >
                                 {lang.toUpperCase()}
@@ -52,6 +55,8 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                         ))}
                     </div>
                 </div>
+
+                { }
                 <div className="tm-scroll-area">
                     <h2 className="tm-title">{getTitle()}</h2>
                     <p className="tm-subtitle">
@@ -86,6 +91,8 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                                 <p>{getDescription()}</p>
                             </div>
                         </div>
+
+                        { }
                         {isRejected && theme.rejectionReason && (
                             <div className="tm-rejected-info">
                                 <span className="tm-rejected-info__label">
@@ -97,6 +104,8 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                             </div>
                         )}
                     </div>
+
+                    { }
                     <div className="tm-footer">
                         {isPending ? (
                             !showRejection ? (
@@ -112,7 +121,7 @@ const ThemeModal = ({ theme, onClose, onUpdateStatus }) => {
                                         onClick={() =>
                                             onUpdateStatus(
                                                 theme.id,
-                                                "Утверждено"
+                                                "approved"
                                             )
                                         }
                                     >

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { getLocalizedValue, useAuth, useDefenseSchedule, useEvaluationCriteria, useSubmitGrade, useGradesBySchedule } from "@awm/shared";
+import { getLocalizedValue, useAuth, useDefenseSchedule, useEvaluationCriteria, useSubmitGrade, useGradesBySchedule, useDownloadScheduleReport, useAttachments, downloadAttachment, useCommissionDetail, useWorkTypes, useStartReconciliation, useGenerateProtocol, useFinalizeProtocol } from "@awm/shared";
 import StudentJournalDrawer from "../../components/StudentJournalDrawer/StudentJournalDrawer.jsx";
 import "./StudentList.css";
 
@@ -15,16 +15,32 @@ export default function StudentList() {
     const [scores, setScores] = useState({});
     const [status, setStatus] = useState("editing");
 
+    
+    const [readinessPercent, setReadinessPercent] = useState(0);
+    const [decisionType, setDecisionType] = useState(1);
+    const [decisionComment, setDecisionComment] = useState("");
+
     const currentStageKey = "defense";
 
     const { data: defenseSchedule = [], isLoading: isScheduleLoading } = useDefenseSchedule(Number(commissionId));
+    const { data: commission } = useCommissionDetail(Number(commissionId));
+    const defenseStageType = commission?.commissionTypeId || 2;
+    const { mutate: downloadSchedule, isPending: isDownloading } = useDownloadScheduleReport();
+    const { data: workTypes = [] } = useWorkTypes();
+    const [workTypeId, setWorkTypeId] = useState(1);
 
-    // Build topics/students from defense schedule slots that have assigned works
+    useEffect(() => {
+        if (workTypes.length > 0 && !workTypes.find(wt => String(wt.id) === String(workTypeId))) {
+            setWorkTypeId(workTypes[0].id);
+        }
+    }, [workTypes, workTypeId]);
+
+    
     const topics = useMemo(() => {
         if (!defenseSchedule) return [];
         const slotsWithWorks = defenseSchedule.filter(slot => slot.studentWorkId);
         
-        // Group by topic or keep as individual items
+        
         return slotsWithWorks.map((slot, i) => ({
             id: slot.id || i,
             title: {
@@ -45,33 +61,46 @@ export default function StudentList() {
                         ru: slot.studentName || `Студент ${i + 1}`,
                         en: slot.studentName || `Student ${i + 1}`,
                     },
-                    readiness: slot.status === 'Graded' ? 100 : 0,
+                    readiness: slot.isProtocolFinalized ? 100 : slot.isReconciliationStarted ? 50 : 0,
                     scheduleId: slot.id,
+                    isLocked: slot.isProtocolFinalized,
+                    averageScore: slot.averageScore,
+                    protocolId: slot.protocolId,
+                    isProtocolFinalized: slot.isProtocolFinalized,
+                    workTypeId: slot.workTypeId
                 }
             ],
         }));
     }, [defenseSchedule]);
 
-    // Load criteria for grading
-    const workTypeId = user?.workTypeId || 1;
-    const departmentId = user?.departmentId;
-    const { data: criteriaList = [], isLoading: isCriteriaLoading } = useEvaluationCriteria(workTypeId, departmentId);
+    
+    const activeWorkTypeId = selectedStudent?.workTypeId || (defenseSchedule?.length > 0 && defenseSchedule[0].workTypeId) || workTypeId;
 
-    // Load existing grades for selected schedule
+    
+    const orgUnitId = user?.orgUnitId;
+    const { data: criteriaList = [], isLoading: isCriteriaLoading } = useEvaluationCriteria(activeWorkTypeId, orgUnitId, null, defenseStageType);
+
+    
     const selectedScheduleId = selectedStudent?.scheduleId;
     const { data: existingGrades = [] } = useGradesBySchedule(selectedScheduleId);
 
+    
+    const { data: attachments = [] } = useAttachments(selectedStudent?.id);
+
     useEffect(() => {
-        if (existingGrades.length > 0) {
+        if (existingGrades.length > 0 && isJournalOpen) {
             const gradeMap = {};
             existingGrades.forEach(g => {
-                gradeMap[g.criteriaId || g.id] = g.score;
+                
+                if (g.userId === user?.userId || g.userId === undefined) {
+                    gradeMap[g.criteriaId || g.id] = g.score;
+                }
             });
             setScores(gradeMap);
         }
-    }, [existingGrades]);
+    }, [existingGrades, isJournalOpen, user]);
 
-    // Блокировка прокрутки страницы при открытом drawer
+    
     useEffect(() => {
         if (isJournalOpen) {
             document.body.style.overflow = "hidden";
@@ -92,19 +121,31 @@ export default function StudentList() {
         setScores((prev) => ({ ...prev, [id]: num }));
     };
 
-    const totalScore = Object.values(scores).reduce((a, b) => a + b, 0);
+    
+    const totalScore = criteriaList.reduce((sum, criteria) => {
+        const score = scores[criteria.id] || 0;
+        const weight = criteria.weight != null ? criteria.weight : 1.0;
+        return sum + (score * weight);
+    }, 0);
+
+    const startReconciliationMutation = useStartReconciliation();
+    const generateProtocolMutation = useGenerateProtocol();
+    const finalizeProtocolMutation = useFinalizeProtocol();
 
     const openJournal = (student, topic) => {
         setSelectedStudent({ ...student, topicTitle: topic.title, scheduleId: student.scheduleId });
         setScores({});
-        setStatus("editing");
+        setReadinessPercent(student.readiness || 0);
+        setDecisionType(1);
+        setDecisionComment("");
+        setStatus(student.isLocked ? "locked" : student.isReconciliationStarted ? "finalizing" : "editing");
         setIsJournalOpen(true);
     };
 
     const handleSendGrades = async () => {
         if (!selectedScheduleId) return;
         try {
-            // Submit each criteria score
+            
             for (const [criteriaId, score] of Object.entries(scores)) {
                 await submitGradeMutation.mutateAsync({
                     scheduleId: selectedScheduleId,
@@ -115,6 +156,39 @@ export default function StudentList() {
             setStatus("waiting");
         } catch (error) {
             console.error('Failed to submit grades', error);
+        }
+    };
+
+    const handleReconciliation = async () => {
+        if (!selectedScheduleId) return;
+        try {
+            await startReconciliationMutation.mutateAsync(selectedScheduleId);
+            setStatus("finalizing");
+        } catch (error) {
+            console.error('Failed to start reconciliation', error);
+        }
+    };
+
+    const handleFinalize = async () => {
+        if (!selectedScheduleId) return;
+        try {
+            
+            let pId = selectedStudent?.protocolId;
+            if (!pId) {
+                const newProtocolId = await generateProtocolMutation.mutateAsync({
+                    scheduleId: selectedScheduleId,
+                    decisionType: decisionType,
+                    comments: decisionComment,
+                    readinessPercent: readinessPercent
+                });
+                pId = newProtocolId;
+            }
+            if (pId) {
+                await finalizeProtocolMutation.mutateAsync({ id: pId, isStudentPresent: true });
+                setStatus("locked");
+            }
+        } catch (error) {
+            console.error('Failed to finalize protocol', error);
         }
     };
 
@@ -129,9 +203,34 @@ export default function StudentList() {
     return (
         <div className={`s-page-container ${isJournalOpen ? "s-drawer-open" : ""}`}>
             <div className="s-main-content">
-                <h1 className="s-title">
-                    {t('commission.commissions')} №{commissionId} ({t(`student.${currentStageKey}`)})
-                </h1>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px', width: '100%' }}>
+                    <h1 className="s-title" style={{ margin: 0 }}>
+                        {t('commission.title', `Комиссия №${commissionId}`)} 
+                        {defenseStageType === 1 ? ` (${t('commission.preDefense')})` : ` (${t('commission.defense')})`}
+                    </h1>
+                    <button
+                        onClick={() => downloadSchedule(Number(commissionId))}
+                        disabled={isDownloading}
+                        className="download-button"
+                        style={{
+                            padding: '8px 16px',
+                            borderRadius: '8px',
+                            border: 'none',
+                            background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                            color: '#fff',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 6px -1px rgba(59, 130, 246, 0.3)',
+                            transition: 'all 0.2s',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            fontSize: '14px'
+                        }}
+                    >
+                        📥 {isDownloading ? t('common.downloading', 'Скачивание...') : t('commission.downloadSchedule', 'Скачать PDF расписания')}
+                    </button>
+                </div>
 
                 <div className="s-topics-grid">
                     {topics.map((topic) => (
@@ -142,12 +241,12 @@ export default function StudentList() {
                             {topic.students.map((s) => (
                                 <div
                                     key={s.id}
-                                    className="s-student-item"
+                                    className={`s-student-item ${s.isLocked ? 'sec-student-finalized' : ''}`}
                                     onClick={() => openJournal(s, topic)}
                                 >
                                     <span>{getLocalizedValue(s.name)}</span>
-                                    <span className="s-readiness-tag">
-                                        {s.readiness}%
+                                    <span className={`s-readiness-tag ${s.readiness === 100 ? 'sec-score-complete' : s.readiness === 50 ? 'sec-status-warning' : ''}`}>
+                                        {s.isLocked ? t('status.protocolClosed') : `${s.readiness}%`}
                                     </span>
                                 </div>
                             ))}
@@ -166,9 +265,16 @@ export default function StudentList() {
                 open={isJournalOpen}
                 onClose={() => setIsJournalOpen(false)}
                 selectedStudent={selectedStudent}
+                mockDocs={attachments.map(a => ({
+                    id: a.id,
+                    name: { ru: a.fileName, kk: a.fileName, en: a.fileName },
+                    size: (a.fileSizeBytes / 1024).toFixed(1) + ' KB',
+                    workId: a.workId
+                }))}
+                onDownloadDoc={(doc) => downloadAttachment(doc.workId, doc.id, doc.name.ru)}
                 criteriaList={criteriaList.map(c => ({
-                    id: String(c.id || c.criteriaId),
-                    label: { ru: c.nameRu || c.name, kk: c.nameKz || c.name, en: c.nameEn || c.name },
+                    id: String(c.id),
+                    label: { ru: c.criteriaName, kk: c.criteriaName, en: c.criteriaName },
                     max: c.maxScore || 10,
                 }))}
                 scores={scores}
@@ -176,10 +282,16 @@ export default function StudentList() {
                 totalScore={totalScore}
                 onScoreChange={handleScoreChange}
                 onSend={handleSendGrades}
-                onFinalize={() => setStatus("locked")}
+                onFinalize={handleFinalize}
                 onEdit={() => setStatus("editing")}
-                onSimulateSecretary={() => status === "waiting" && setStatus("finalizing")}
+                onSimulateSecretary={handleReconciliation}
                 isSubmitting={submitGradeMutation.isPending}
+                readinessPercent={readinessPercent}
+                onReadinessChange={setReadinessPercent}
+                decisionType={decisionType}
+                onDecisionTypeChange={setDecisionType}
+                decisionComment={decisionComment}
+                onDecisionCommentChange={setDecisionComment}
             />
         </div>
     );

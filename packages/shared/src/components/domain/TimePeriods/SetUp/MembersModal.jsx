@@ -13,7 +13,8 @@ const teachers = [
     "Лебедева Н.Н.",
     " Иванова Е.Е.",
 ];
-export default function MembersModal({ isOpen, selected, onClose, onConfirm }) {
+
+export default function MembersModal({ isOpen, selected = [], onClose, onConfirm, teachersList = [] }) {
     const { t } = useTranslation();
     const [checked, setChecked] = useState([]);
     const [query, setQuery] = useState("");
@@ -26,14 +27,16 @@ export default function MembersModal({ isOpen, selected, onClose, onConfirm }) {
         return () => document.removeEventListener("keydown", onEsc);
     }, [onClose]);
     if (!isOpen) return null;
-    const filtered = teachers.filter((t) =>
-        t.toLowerCase().includes(query.toLowerCase())
+
+    const filtered = teachersList.filter((t) =>
+        t.name.toLowerCase().includes(query.toLowerCase())
     );
-    const toggle = (name) => {
-        if (checked.includes(name)) {
-            setChecked((prev) => prev.filter((n) => n !== name));
+
+    const toggle = (id) => {
+        if (checked.includes(id)) {
+            setChecked((prev) => prev.filter((n) => n !== id));
         } else if (checked.length < 4) {
-            setChecked((prev) => [...prev, name]);
+            setChecked((prev) => [...prev, id]);
         }
     };
     return (
@@ -48,16 +51,18 @@ export default function MembersModal({ isOpen, selected, onClose, onConfirm }) {
                         onChange={(e) => setQuery(e.target.value)}
                     />
                 </div>
+
+                { }
                 <div className="modal-list">
                     {filtered.map((t) => {
-                        const active = checked.includes(t);
+                        const active = checked.includes(t.id);
                         return (
                             <div
-                                key={t}
+                                key={t.id}
                                 className={`modal-item ${active ? "active" : ""}`}
-                                onClick={() => toggle(t)}
+                                onClick={() => toggle(t.id)}
                             >
-                                <span>{t}</span>
+                                <span>{t.name}</span>
                                 {active && <span className="check">✓</span>}
                             </div>
                         );

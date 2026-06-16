@@ -1,28 +1,35 @@
 .shared-header {
   background: white;
   border-bottom: 1px solid #e5e7eb;
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 50;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   height: 64px;
 }
+
 .shared-header-content {
   display: flex;
   justify-content: space-between;
-  align-height: center;
+  align-items: center;
   height: 100%;
   padding: 0 1.5rem;
 }
-.shared-header-left, .shared-header-right {
+
+.shared-header-left,
+.shared-header-right {
   display: flex;
   align-items: center;
   gap: 1.5rem;
 }
+
 .logo-section {
   display: flex;
   align-items: center;
   gap: 0.75rem;
 }
+
 .logo-box {
   width: 32px;
   height: 32px;
@@ -34,29 +41,36 @@
   font-weight: 600;
   font-size: 14px;
 }
+
 .logo-text-group {
   display: flex;
   flex-direction: column;
 }
+
 .logo-main {
   font-weight: 600;
   font-size: 14px;
   color: #111827;
 }
+
 .logo-sub {
   font-size: 12px;
   color: #6b7280;
 }
+
 .page-divider {
   width: 1px;
   height: 24px;
   background: #e5e7eb;
 }
+
 .page-title {
   font-size: 14px;
   font-weight: 500;
   color: #374151;
 }
+
+
 .user-profile {
   display: flex;
   align-items: center;
@@ -66,9 +80,11 @@
   cursor: pointer;
   transition: background-color 0.2s;
 }
+
 .user-profile:hover {
   background: #f3f4f6;
 }
+
 .avatar-circle {
   width: 32px;
   height: 32px;
@@ -81,19 +97,24 @@
   font-weight: 600;
   font-size: 14px;
 }
+
 .user-info-box {
   display: flex;
   flex-direction: column;
 }
+
 .u-name {
   font-size: 14px;
   font-weight: 500;
   color: #111827;
 }
+
 .u-role {
   font-size: 12px;
   color: #6b7280;
 }
+
+
 .icon-btn {
   position: relative;
   width: 40px;
@@ -107,12 +128,16 @@
   cursor: pointer;
   transition: background-color 0.2s;
 }
+
 .icon-btn:hover {
   background: #f3f4f6;
 }
+
 .icon-btn img {
-  filter: none !important; 
+  filter: none !important;
+
 }
+
 .red-badge {
   position: absolute;
   top: 6px;
@@ -129,12 +154,16 @@
   justify-content: center;
   padding: 0 4px;
 }
+
 .rotate {
   transform: rotate(180deg);
 }
+
+
 .nav-item-dropdown {
   position: relative;
 }
+
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -147,9 +176,11 @@
   z-index: 100;
   margin-top: 0.5rem;
 }
+
 .dropdown-menu.align-right {
   right: 0;
 }
+
 .dropdown-header {
   padding: 0.5rem 1rem;
   font-size: 12px;
@@ -158,6 +189,7 @@
   border-bottom: 1px solid #e5e7eb;
   margin-bottom: 0.5rem;
 }
+
 .dropdown-item {
   padding: 0.5rem 1rem;
   font-size: 14px;
@@ -167,13 +199,16 @@
   align-items: center;
   gap: 0.5rem;
 }
+
 .dropdown-item:hover {
   background: #f3f4f6;
   color: #111827;
 }
+
 .dropdown-item.logout {
   color: #ef4444;
 }
+
 .dropdown-item.logout:hover {
   background: #fef2f2;
 }

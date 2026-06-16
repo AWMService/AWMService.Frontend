@@ -1,97 +1,51 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getIntlLocale, getLocalizedValue, useAuth, usePendingChecks } from '@awm/shared';
+import { getIntlLocale, getLocalizedValue, useAuth, useAllExpertChecks, useCompleteQualityCheckMutation, uploadExpertDocument } from '@awm/shared';
 import DocumentPreviewModal from '../../components/DocumentPreviewModal/DocumentPreviewModal';
 import RemarksFormModal from '../../components/RemarksFormModal/RemarksFormModal';
 import './NormocontrolPage.css';
 
-// Mock data для документов на нормоконтроль
-const initialDocuments = [
-    {
-        id: 1,
-        studentName: 'Иванов А.А.',
-        group: 'ИС-21',
-        themeTitle: {
-            ru: 'Разработка веб-приложения для управления задачами',
-            kk: 'Тапсырмаларды басқаруға арналған веб-қосымша әзірлеу',
-            en: 'Development of a web application for task management',
-        },
-        documentType: {
-            ru: 'Пояснительная записка',
-            kk: 'Түсіндірме жазба',
-            en: 'Explanatory note',
-        },
-        submittedDate: '2025-05-15',
-        status: 'pending',
-        version: 2,
-    },
-    {
-        id: 2,
-        studentName: 'Сидорова М.В.',
-        group: 'ИС-21',
-        themeTitle: {
-            ru: 'Мобильное приложение для учёта финансов',
-            kk: 'Қаржыны есепке алуға арналған мобильді қосымша',
-            en: 'Mobile application for financial tracking',
-        },
-        documentType: {
-            ru: 'Пояснительная записка',
-            kk: 'Түсіндірме жазба',
-            en: 'Explanatory note',
-        },
-        submittedDate: '2025-05-14',
-        status: 'revision',
-        version: 1,
-        remarks: 3,
-    },
-    {
-        id: 3,
-        studentName: 'Петренко О.И.',
-        group: 'ИС-20',
-        themeTitle: {
-            ru: 'Система автоматизации документооборота',
-            kk: 'Құжат айналымын автоматтандыру жүйесі',
-            en: 'Document workflow automation system',
-        },
-        documentType: {
-            ru: 'Пояснительная записка',
-            kk: 'Түсіндірме жазба',
-            en: 'Explanatory note',
-        },
-        submittedDate: '2025-05-10',
-        status: 'approved',
-        version: 3,
-    },
-];
+
+const API_STATUS = { Pending: 0, Approved: 1, SentForRevision: 2 };
+
+function mapStatus(apiStatus) {
+    if (apiStatus === API_STATUS.Approved) return 'approved';
+    if (apiStatus === API_STATUS.SentForRevision) return 'revision';
+    return 'pending';
+}
 
 function NormocontrolPage() {
     const { t } = useTranslation();
     const locale = getIntlLocale();
     const { user } = useAuth();
-    const departmentId = user?.departmentId;
-    const academicYearId = user?.academicYearId;
-    const { data: pendingChecks = [] } = usePendingChecks(departmentId, academicYearId, 'NormControl');
+    const orgUnitId = user?.orgUnitId;
+    const semesterId = user?.currentSemesterId;
 
-    const apiDocuments = useMemo(() => pendingChecks.map(check => ({
+    
+    const { data: allChecks = [] } = useAllExpertChecks(orgUnitId, semesterId, 'NormControl');
+    const completeCheckMutation = useCompleteQualityCheckMutation();
+
+    const displayDocuments = useMemo(() => allChecks.map(check => ({
         id: check.id,
         workId: check.workId,
-        studentName: `Work #${check.workId}`,
+        studentName: check.studentName || `Work #${check.workId}`,
         group: '-',
-        themeTitle: { ru: `Check #${check.id}`, kk: `Check #${check.id}`, en: `Check #${check.id}` },
+        themeTitle: {
+            ru: check.topicTitle || `Check #${check.id}`,
+            kk: check.topicTitle || `Check #${check.id}`,
+            en: check.topicTitle || `Check #${check.id}`,
+        },
         documentType: { ru: 'Документ', kk: 'Құжат', en: 'Document' },
-        submittedDate: check.checkedAt || new Date().toISOString(),
-        status: check.isPassed ? 'approved' : 'revision',
+        submittedDate: check.createdAt || new Date().toISOString(),
+        status: mapStatus(check.status),
         version: check.attemptNumber || 1,
         remarks: check.comment ? 1 : 0,
-    })), [pendingChecks]);
+    })), [allChecks]);
 
     const [activeTab, setActiveTab] = useState('pending');
-    const [documents, setDocuments] = useState(initialDocuments);
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [remarkOpen, setRemarkOpen] = useState(false);
-
-    const displayDocuments = apiDocuments.length > 0 ? apiDocuments : documents;
 
     const openPreview = (doc) => {
         setSelectedDocument(doc);
@@ -109,27 +63,48 @@ function NormocontrolPage() {
         setSelectedDocument(null);
     };
 
-    const handleRemarkSubmit = (remark) => {
-        setDocuments((prev) =>
-            prev.map((doc) =>
-                doc.id === remark.documentId
-                    ? { ...doc, status: 'revision', remarks: (doc.remarks || 0) + 1 }
-                    : doc
-            )
-        );
+    const handleRemarkSubmit = async (remark) => {
+        const doc = displayDocuments.find(d => d.id === remark.documentId);
+        if (!doc) return;
+
+        let attachmentId = null;
+        if (remark.file && doc.workId) {
+            try {
+                const uploaded = await uploadExpertDocument(doc.workId, doc.id, remark.file, 'Other');
+                attachmentId = uploaded?.id ?? null;
+            } catch (err) {
+                console.error('Failed to upload expert document', err);
+            }
+        }
+
+        try {
+            await completeCheckMutation.mutateAsync({
+                workId: doc.workId,
+                checkId: doc.id,
+                checkData: { isPassed: false, comment: remark.text, attachmentId },
+            });
+        } catch (err) {
+            console.error('Failed to complete quality check', err);
+        }
         closeModals();
     };
 
-    const handleApprove = (docId) => {
-        setDocuments((prev) =>
-            prev.map((doc) =>
-                doc.id === docId ? { ...doc, status: 'approved' } : doc
-            )
-        );
+    const handleApprove = async (docId) => {
+        const doc = displayDocuments.find(d => d.id === docId);
+        if (!doc) return;
+        try {
+            await completeCheckMutation.mutateAsync({
+                workId: doc.workId,
+                checkId: doc.id,
+                checkData: { isPassed: true },
+            });
+        } catch (err) {
+            console.error('Failed to approve quality check', err);
+        }
     };
 
     const filteredDocs = displayDocuments.filter(doc => {
-        if (activeTab === 'pending') return doc.status === 'pending';
+        if (activeTab === 'pending')  return doc.status === 'pending';
         if (activeTab === 'revision') return doc.status === 'revision';
         if (activeTab === 'approved') return doc.status === 'approved';
         return true;
@@ -137,9 +112,9 @@ function NormocontrolPage() {
 
     const getStatusBadge = (status) => {
         const statusMap = {
-            pending: { label: t('normocontrol.pendingCheck'), class: 'status-pending' },
-            revision: { label: t('normocontrol.revision'), class: 'status-revision' },
-            approved: { label: t('normocontrol.approved'), class: 'status-approved' },
+            pending:  { label: t('normocontrol.pendingCheck'), class: 'status-pending' },
+            revision: { label: t('normocontrol.revision'),     class: 'status-revision' },
+            approved: { label: t('normocontrol.approved'),     class: 'status-approved' },
         };
         return statusMap[status] || { label: status, class: '' };
     };
@@ -151,33 +126,37 @@ function NormocontrolPage() {
             year: 'numeric',
         }).format(new Date(value));
 
+    const pendingCount  = displayDocuments.filter(d => d.status === 'pending').length;
+    const revisionCount = displayDocuments.filter(d => d.status === 'revision').length;
+    const approvedCount = displayDocuments.filter(d => d.status === 'approved').length;
+
     return (
         <div className="normocontrol-page">
             <div className="page-header">
                 <h1>{t('normocontrol.documentsCheck')}</h1>
                 <p className="page-subtitle">
-                    {t('normocontrol.pendingCheck')}: {displayDocuments.filter(d => d.status === 'pending').length}
+                    {t('normocontrol.pendingCheck')}: {pendingCount}
                 </p>
             </div>
 
             <div className="tabs">
-                <button 
+                <button
                     className={`tab ${activeTab === 'pending' ? 'active' : ''}`}
                     onClick={() => setActiveTab('pending')}
                 >
-                    {t('normocontrol.pendingCheck')} ({displayDocuments.filter(d => d.status === 'pending').length})
+                    {t('normocontrol.pendingCheck')} ({pendingCount})
                 </button>
-                <button 
+                <button
                     className={`tab ${activeTab === 'revision' ? 'active' : ''}`}
                     onClick={() => setActiveTab('revision')}
                 >
-                    {t('normocontrol.revision')} ({displayDocuments.filter(d => d.status === 'revision').length})
+                    {t('normocontrol.revision')} ({revisionCount})
                 </button>
-                <button 
+                <button
                     className={`tab ${activeTab === 'approved' ? 'active' : ''}`}
                     onClick={() => setActiveTab('approved')}
                 >
-                    {t('normocontrol.checked')} ({displayDocuments.filter(d => d.status === 'approved').length})
+                    {t('normocontrol.checked')} ({approvedCount})
                 </button>
             </div>
 
@@ -195,9 +174,9 @@ function NormocontrolPage() {
                                     {statusBadge.label}
                                 </span>
                             </div>
-                            
+
                             <p className="theme-title">{getLocalizedValue(doc.themeTitle)}</p>
-                            
+
                             <div className="document-meta">
                                 <span className="doc-type">{t('normocontrol.documentType')}</span>
                                 <span className="version">v{doc.version}</span>
@@ -205,7 +184,7 @@ function NormocontrolPage() {
 
                             <div className="document-card-footer">
                                 <span>{t('common.date')}: {formatDate(doc.submittedDate)}</span>
-                                {doc.remarks && (
+                                {doc.remarks > 0 && (
                                     <span className="remarks">
                                         {t('normocontrol.remarksCount', { count: doc.remarks })}
                                     </span>
@@ -218,7 +197,11 @@ function NormocontrolPage() {
                                 </button>
                                 {doc.status === 'pending' && (
                                     <>
-                                        <button className="action-btn success" onClick={() => handleApprove(doc.id)}>
+                                        <button
+                                            className="action-btn success"
+                                            onClick={() => handleApprove(doc.id)}
+                                            disabled={completeCheckMutation.isPending}
+                                        >
                                             {t('normocontrol.approved')}
                                         </button>
                                         <button className="action-btn warning" onClick={() => openRemarkForm(doc)}>
@@ -237,6 +220,7 @@ function NormocontrolPage() {
                     </div>
                 )}
             </div>
+
             {previewOpen && selectedDocument && (
                 <DocumentPreviewModal
                     document={selectedDocument}

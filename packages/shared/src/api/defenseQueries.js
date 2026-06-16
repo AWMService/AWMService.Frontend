@@ -1,11 +1,299 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './apiClient';
+
+
+
+export const evaluationApi = {
+  fetchCriteria: async (workTypeId, orgUnitId = null, specialityId = null, defenseStageType = null) => {
+    const params = { workTypeId };
+    if (orgUnitId) params.orgUnitId = orgUnitId;
+    if (specialityId) params.specialityId = specialityId;
+    if (defenseStageType) params.defenseStageType = defenseStageType;
+
+    const { data } = await apiClient.get('/v1/evaluation-criteria', { params });
+    return data;
+  },
+  createCriteria: async (criteriaData) => {
+    const { data } = await apiClient.post('/v1/evaluation-criteria', criteriaData);
+    return data;
+  },
+  updateCriteria: async (id, criteriaData) => {
+    const { data } = await apiClient.put(`/v1/evaluation-criteria/${id}`, criteriaData);
+    return data;
+  },
+  deleteCriteria: async (id) => {
+    const { data } = await apiClient.delete(`/v1/evaluation-criteria/${id}`);
+    return data;
+  }
+};
+
+export function useEvaluationCriteria(workTypeId, orgUnitId = null, specialityId = null, defenseStageType = null) {
+  return useQuery({
+    queryKey: ['evaluation', 'criteria', workTypeId, orgUnitId, specialityId, defenseStageType],
+    queryFn: () => evaluationApi.fetchCriteria(workTypeId, orgUnitId, specialityId, defenseStageType),
+    enabled: !!workTypeId,
+  });
+}
+
+export function useCreateEvaluationCriteria() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: evaluationApi.createCriteria,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['evaluation', 'criteria'] });
+    },
+  });
+}
+
+
+
+export const scheduleApi = {
+  fetchScheduleByWork: async (workId) => {
+    const { data } = await apiClient.get(`/v1/schedules/by-work/${workId}`);
+    return data;
+  },
+  fetchGrades: async (scheduleId) => {
+    const { data } = await apiClient.get(`/v1/schedules/${scheduleId}/grades`);
+    return data;
+  },
+  addGrade: async (scheduleId, gradeData) => {
+    const { data } = await apiClient.post(`/v1/schedules/${scheduleId}/grades`, gradeData);
+    return data;
+  },
+  startReconciliation: async (scheduleId) => {
+    const { data } = await apiClient.post(`/v1/schedules/${scheduleId}/start-reconciliation`);
+    return data;
+  },
+  generateSchedule: async (generateData) => {
+
+    const { data } = await apiClient.post('/v1/schedules/generate', generateData);
+    return data;
+  },
+  updateSchedule: async (id, scheduleData) => {
+    const { data } = await apiClient.put(`/v1/schedules/${id}`, scheduleData);
+    return data;
+  },
+  deleteSchedule: async (id) => {
+    const { data } = await apiClient.delete(`/v1/schedules/${id}`);
+    return data;
+  }
+};
+
+export function useGenerateSchedule() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (generateData) => scheduleApi.generateSchedule(generateData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['preDefense'] });
+      queryClient.invalidateQueries({ queryKey: ['defenseSchedule'] });
+    },
+  });
+}
+
+export function useUpdateSchedule() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...data }) => scheduleApi.updateSchedule(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['preDefense'] });
+      queryClient.invalidateQueries({ queryKey: ['defenseSchedule'] });
+    },
+  });
+}
+
+export function useDeleteSchedule() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id) => scheduleApi.deleteSchedule(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['preDefense'] });
+      queryClient.invalidateQueries({ queryKey: ['defenseSchedule'] });
+    },
+  });
+}
+
+export function useScheduleByWork(workId) {
+  return useQuery({
+    queryKey: ['schedule', 'byWork', workId],
+    queryFn: () => scheduleApi.fetchScheduleByWork(workId),
+    enabled: !!workId && workId > 0,
+  });
+}
+
+export function useGradesBySchedule(scheduleId) {
+  return useQuery({
+    queryKey: ['evaluation', 'grades', scheduleId],
+    queryFn: () => scheduleApi.fetchGrades(scheduleId),
+    enabled: !!scheduleId,
+  });
+}
+
+export function useSubmitGrade() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ scheduleId, ...gradeData }) => scheduleApi.addGrade(scheduleId, gradeData),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['evaluation', 'grades', variables.scheduleId] });
+      queryClient.invalidateQueries({ queryKey: ['preDefense'] });
+      queryClient.invalidateQueries({ queryKey: ['defenseSchedule'] });
+    },
+  });
+}
+
+export function useStartReconciliation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (scheduleId) => scheduleApi.startReconciliation(scheduleId),
+    onSuccess: (_, scheduleId) => {
+      queryClient.invalidateQueries({ queryKey: ['evaluation', 'grades', scheduleId] });
+      queryClient.invalidateQueries({ queryKey: ['preDefense'] });
+      queryClient.invalidateQueries({ queryKey: ['defenseSchedule'] });
+    },
+  });
+}
+
+
+
+export const protocolApi = {
+  createProtocol: async (protocolData) => {
+    const { data } = await apiClient.post('/v1/protocols', protocolData);
+    return data;
+  },
+  finalizeProtocol: async (id, isStudentPresent = true) => {
+    const { data } = await apiClient.post(`/v1/protocols/${id}/finalize`, { isStudentPresent });
+    return data;
+  },
+  fetchProtocol: async (id) => {
+    const { data } = await apiClient.get(`/v1/protocols/${id}`);
+    return data;
+  },
+  downloadProtocolPdf: async (protocolId) => {
+    const response = await apiClient.get(`/v1/protocols/${protocolId}/pdf`, { responseType: 'blob' });
+    return response.data;
+  },
+  downloadAdmittedStudentsList: async (orgUnitId, semesterId) => {
+    const response = await apiClient.get('/v1/protocols/admitted-list', {
+      params: { orgUnitId, semesterId },
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+  downloadScheduleReport: async (commissionId) => {
+    const response = await apiClient.get('/v1/protocols/schedule-report', {
+      params: { commissionId },
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+  notifyUnreadyStudents: async (orgUnitId, semesterId, specialityId = null) => {
+    const response = await apiClient.post('/v1/protocols/notify-unready', {
+      orgUnitId,
+      semesterId,
+      specialityId,
+    });
+    return response.data;
+  }
+};
+
+export function useGenerateProtocol() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: protocolApi.createProtocol,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['protocols'] });
+    },
+  });
+}
+
+export function useFinalizeProtocol() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, isStudentPresent = true }) => protocolApi.finalizeProtocol(id, isStudentPresent),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['protocols'] });
+      queryClient.invalidateQueries({ queryKey: ['preDefense'] });
+      queryClient.invalidateQueries({ queryKey: ['defenseSchedule'] });
+    },
+  });
+}
+
+export function useProtocolDetail(protocolId) {
+  return useQuery({
+    queryKey: ['protocols', 'detail', protocolId],
+    queryFn: () => protocolApi.fetchProtocol(protocolId),
+    enabled: !!protocolId,
+  });
+}
+
+export function useDownloadProtocolPdf() {
+  return useMutation({
+    mutationFn: (id) => protocolApi.downloadProtocolPdf(id),
+    onSuccess: (data, id) => {
+      const url = window.URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `protocol_${id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+  });
+}
+
+export function useDownloadAdmittedStudentsList() {
+  return useMutation({
+    mutationFn: ({ orgUnitId, semesterId }) =>
+      protocolApi.downloadAdmittedStudentsList(orgUnitId, semesterId),
+    onSuccess: (data, variables) => {
+      const url = window.URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `admitted_${variables.orgUnitId}_${variables.semesterId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+  });
+}
+
+export function useDownloadScheduleReport() {
+  return useMutation({
+    mutationFn: (commissionId) => protocolApi.downloadScheduleReport(commissionId),
+    onSuccess: (data, commissionId) => {
+      const url = window.URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `schedule_commission_${commissionId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+  });
+}
+
+export function useNotifyUnreadyStudents() {
+  return useMutation({
+    mutationFn: ({ orgUnitId, semesterId, specialityId }) =>
+      protocolApi.notifyUnreadyStudents(orgUnitId, semesterId, specialityId),
+  });
+}
+
+
+
+
+export const useSubmitPreDefenseGrade = useSubmitGrade;
+export const useStartPreDefenseReconciliation = useStartReconciliation;
+export const useStartDefenseReconciliation = useStartReconciliation;
+export const useGeneratePreDefenseProtocol = useGenerateProtocol;
+export const usePreDefenseGradesBySchedule = useGradesBySchedule;
+
 export async function fetchPreDefenseSchedule(commissionId) {
-  const { data } = await apiClient.get('/pre-defense/schedule', {
+  const { data } = await apiClient.get('/v1/schedules', {
     params: { commissionId },
   });
   return data;
 }
+
 export function usePreDefenseSchedule(commissionId) {
   return useQuery({
     queryKey: ['preDefense', 'schedule', commissionId],
@@ -13,287 +301,8 @@ export function usePreDefenseSchedule(commissionId) {
     enabled: !!commissionId,
   });
 }
-export async function fetchPreDefenseAttempts(workId) {
-  const { data } = await apiClient.get(`/pre-defense/works/${workId}/attempts`);
-  return data;
-}
-export function usePreDefenseAttempts(workId) {
-  return useQuery({
-    queryKey: ['preDefense', 'attempts', workId],
-    queryFn: () => fetchPreDefenseAttempts(workId),
-    enabled: !!workId,
-  });
-}
-export async function fetchFailedPreDefenseStudents(departmentId, academicYearId, preDefenseNumber = null) {
-  const params = { departmentId, academicYearId };
-  if (preDefenseNumber != null) params.preDefenseNumber = preDefenseNumber;
-  const { data } = await apiClient.get('/pre-defense/failed-students', { params });
-  return data;
-}
-export function useFailedPreDefenseStudents(departmentId, academicYearId, preDefenseNumber) {
-  return useQuery({
-    queryKey: ['preDefense', 'failed', departmentId, academicYearId, preDefenseNumber],
-    queryFn: () => fetchFailedPreDefenseStudents(departmentId, academicYearId, preDefenseNumber),
-    enabled: !!departmentId && !!academicYearId,
-  });
-}
-export async function schedulePreDefense(workId, scheduleData) {
-  const { data } = await apiClient.post(`/pre-defense/works/${workId}/schedule`, scheduleData);
-  return data;
-}
-export function useSchedulePreDefense() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ workId, ...scheduleData }) => schedulePreDefense(workId, scheduleData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['preDefense'] });
-    },
-  });
-}
-export async function recordAttendance(attemptId, attendanceData) {
-  await apiClient.put(`/pre-defense/attempts/${attemptId}/attendance`, attendanceData);
-}
-export function useRecordAttendance() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ attemptId, ...attendanceData }) => recordAttendance(attemptId, attendanceData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['preDefense'] });
-    },
-  });
-}
-export async function submitPreDefenseGrade(scheduleId, gradeData) {
-  const { data } = await apiClient.post(`/pre-defense/schedule/${scheduleId}/grades`, gradeData);
-  return data;
-}
-export function useSubmitPreDefenseGrade() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ scheduleId, ...gradeData }) => submitPreDefenseGrade(scheduleId, gradeData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['preDefense'] });
-    },
-  });
-}
-export async function finalizePreDefenseAttempt(attemptId, finalizeData) {
-  await apiClient.put(`/pre-defense/attempts/${attemptId}/finalize`, finalizeData);
-}
-export function useFinalizePreDefenseAttempt() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ attemptId, ...finalizeData }) => finalizePreDefenseAttempt(attemptId, finalizeData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['preDefense'] });
-    },
-  });
-}
-export async function startPreDefenseReconciliation(scheduleId) {
-  await apiClient.put(`/pre-defense/schedule/${scheduleId}/start-reconciliation`);
-}
-export function useStartPreDefenseReconciliation() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: startPreDefenseReconciliation,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['preDefense'] });
-    },
-  });
-}
-export async function distributePreDefenseStudents(distributeData) {
-  const { data } = await apiClient.post('/pre-defense/distribute', distributeData);
-  return data;
-}
-export function useDistributePreDefenseStudents() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: distributePreDefenseStudents,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['preDefense'] });
-    },
-  });
-}
-export async function generatePreDefenseSlots(generateData) {
-  const { data } = await apiClient.post('/pre-defense/generate-slots', generateData);
-  return data;
-}
-export function useGeneratePreDefenseSlots() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: generatePreDefenseSlots,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['preDefense'] });
-    },
-  });
-}
-export async function generatePreDefenseProtocol(protocolData) {
-  const { data } = await apiClient.post('/pre-defense/protocols', protocolData);
-  return data;
-}
-export function useGeneratePreDefenseProtocol() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: generatePreDefenseProtocol,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['preDefense'] });
-    },
-  });
-}
-export async function fetchDefenseSchedule(commissionId) {
-  const { data } = await apiClient.get('/defense-schedule', {
-    params: { commissionId },
-  });
-  return data;
-}
-export function useDefenseSchedule(commissionId) {
-  return useQuery({
-    queryKey: ['defenseSchedule', commissionId],
-    queryFn: () => fetchDefenseSchedule(commissionId),
-    enabled: !!commissionId,
-  });
-}
-export async function fetchDefenseSlot(slotId) {
-  const { data } = await apiClient.get(`/defense-schedule/${slotId}`);
-  return data;
-}
-export function useDefenseSlot(slotId) {
-  return useQuery({
-    queryKey: ['defenseSchedule', 'slot', slotId],
-    queryFn: () => fetchDefenseSlot(slotId),
-    enabled: !!slotId,
-  });
-}
-export async function createDefenseSlot(slotData) {
-  const { data } = await apiClient.post('/defense-schedule', slotData);
-  return data;
-}
-export function useCreateDefenseSlot() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: createDefenseSlot,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['defenseSchedule'] });
-    },
-  });
-}
-export async function updateDefenseSlot(scheduleId, slotData) {
-  await apiClient.put(`/defense-schedule/${scheduleId}`, slotData);
-}
-export function useUpdateDefenseSlot() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ scheduleId, ...slotData }) => updateDefenseSlot(scheduleId, slotData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['defenseSchedule'] });
-    },
-  });
-}
-export async function assignWorkToSlot(scheduleId, assignmentData) {
-  await apiClient.post(`/defense-schedule/${scheduleId}/assign`, assignmentData);
-}
-export function useAssignWorkToSlot() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ scheduleId, ...assignmentData }) => assignWorkToSlot(scheduleId, assignmentData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['defenseSchedule'] });
-    },
-  });
-}
-export async function generateDefenseSlots(generateData) {
-  const { data } = await apiClient.post('/defense-schedule/generate-slots', generateData);
-  return data;
-}
-export function useGenerateDefenseSlots() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: generateDefenseSlots,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['defenseSchedule'] });
-    },
-  });
-}
-export async function startDefenseReconciliation(scheduleId) {
-  await apiClient.put(`/defense-schedule/${scheduleId}/start-reconciliation`);
-}
-export function useStartDefenseReconciliation() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: startDefenseReconciliation,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['defenseSchedule'] });
-    },
-  });
-}
-export async function fetchEvaluationCriteria(workTypeId, departmentId = null) {
-  const params = { workTypeId };
-  if (departmentId != null) params.departmentId = departmentId;
-  const { data } = await apiClient.get('/evaluation/criteria', { params });
-  return data;
-}
-export function useEvaluationCriteria(workTypeId, departmentId) {
-  return useQuery({
-    queryKey: ['evaluation', 'criteria', workTypeId, departmentId],
-    queryFn: () => fetchEvaluationCriteria(workTypeId, departmentId),
-    enabled: !!workTypeId,
-  });
-}
-export async function fetchGradesBySchedule(scheduleId) {
-  const { data } = await apiClient.get(`/evaluation/schedule/${scheduleId}/grades`);
-  return data;
-}
-export function useGradesBySchedule(scheduleId) {
-  return useQuery({
-    queryKey: ['evaluation', 'grades', scheduleId],
-    queryFn: () => fetchGradesBySchedule(scheduleId),
-    enabled: !!scheduleId,
-  });
-}
-export async function submitGrade(scheduleId, gradeData) {
-  const { data } = await apiClient.post(`/evaluation/schedule/${scheduleId}/grades`, gradeData);
-  return data;
-}
-export function useSubmitGrade() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ scheduleId, ...gradeData }) => submitGrade(scheduleId, gradeData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['evaluation'] });
-    },
-  });
-}
-export async function finalizeDefense(scheduleId) {
-  await apiClient.put(`/evaluation/schedule/${scheduleId}/finalize`);
-}
-export function useFinalizeDefense() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: finalizeDefense,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['evaluation'] });
-    },
-  });
-}
-export async function fetchProtocol(protocolId) {
-  const { data } = await apiClient.get(`/protocols/${protocolId}`);
-  return data;
-}
-export function useProtocol(protocolId) {
-  return useQuery({
-    queryKey: ['protocols', protocolId],
-    queryFn: () => fetchProtocol(protocolId),
-    enabled: !!protocolId,
-  });
-}
-export async function generateProtocol(protocolData) {
-  const { data } = await apiClient.post('/protocols', protocolData);
-  return data;
-}
-export function useGenerateProtocol() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: generateProtocol,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['protocols'] });
-    },
-  });
-}
+
+export const useDefenseSchedule = usePreDefenseSchedule;
+export const useProtocol = useProtocolDetail;
+
+

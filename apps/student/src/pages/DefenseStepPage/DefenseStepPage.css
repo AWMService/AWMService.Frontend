@@ -37,7 +37,7 @@
   gap: 1.5rem;
 }
 
-/* Attempt History */
+
 .attempt-history-section {
   margin-top: 2rem;
 }
@@ -147,4 +147,24 @@
   .defense-step-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.defense-result-banner {
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.defense-result-banner--passed {
+  background-color: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.defense-result-banner--failed {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
 }

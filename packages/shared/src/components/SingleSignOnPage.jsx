@@ -1,25 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import { getRefreshToken, getToken } from '../api';
 import { useAuth } from '../context/AuthContext';
-import { getPostLoginRedirectUrl } from '../auth/authRouting';
+import { getPostLoginRedirectUrl, getLoginUrl } from '../auth/authRouting';
 import { useTranslation } from 'react-i18next';
 import { changeLanguage, supportedLanguages, normalizeLanguage } from '../i18n';
 import eyeIcon from '../assets/icons/eye-icon.svg';
 import eyeOffIcon from '../assets/icons/eye-off-icon.svg';
 import './SingleSignOnPage.css';
 export function SingleSignOnPage() {
+  const { t, i18n } = useTranslation();
+  const currentLang = normalizeLanguage(i18n.language);
+
   const { user, isLoading, isAuthenticated, login } = useAuth();
   const [credentials, setCredentials] = useState({ login: '', password: '' });
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   useEffect(() => {
     if (!isLoading && isAuthenticated && user) {
-      window.location.replace(getPostLoginRedirectUrl(user, {
+      const redirectUrl = getPostLoginRedirectUrl(user, {
         token: getToken(),
         refreshToken: getRefreshToken(),
-      }));
+      });
+
+      if (redirectUrl && redirectUrl !== getLoginUrl()) {
+        window.location.replace(redirectUrl);
+      } else if (!redirectUrl) {
+        setError(t('auth.noRoleError'));
+      }
     }
-  }, [isAuthenticated, isLoading, user]);
+  }, [isAuthenticated, isLoading, user, t]);
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setCredentials((current) => ({ ...current, [name]: value }));
@@ -37,15 +49,19 @@ export function SingleSignOnPage() {
         token: response.token,
         refreshToken: response.refreshToken,
       });
-      window.location.assign(redirectUrl);
+
+      if (redirectUrl && redirectUrl !== getLoginUrl()) {
+        window.location.assign(redirectUrl);
+      } else if (!redirectUrl) {
+        setError(t('auth.noRoleError'));
+        setIsSubmitting(false);
+      }
     } catch (err) {
       setError(err?.message || 'Не удалось выполнить вход. Проверьте логин и пароль.');
       setIsSubmitting(false);
     }
   };
-  const { t, i18n } = useTranslation();
-  const currentLang = normalizeLanguage(i18n.language);
-  const [showPassword, setShowPassword] = useState(false);
+
   return (
     <main className="sso-page">
       <section className="sso-panel" aria-labelledby="sso-title">

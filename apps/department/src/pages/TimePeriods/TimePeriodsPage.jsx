@@ -1,154 +1,470 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuth, usePeriods, useApproveDefensePeriods, ConfirmModal } from "@awm/shared";
+import { useNavigate } from "react-router-dom";
+import { Calendar, Trash2, Settings, CalendarClock, Plus, AlertCircle, RefreshCw } from "lucide-react";
+import {
+    useAuth,
+    usePeriods,
+    useApproveDefensePeriods,
+    useApproveChecksPeriods,
+    useOrgUnitSpecialities,
+    useResetStagesOverride,
+    ConfirmModal
+} from "@awm/shared";
 import "./TimePeriodsPage.css";
 
-import { TimePeriodCard, TimePeriodFormDialog } from "@awm/shared";
+import { TimePeriodFormDialog } from "@awm/shared";
 
-import plusIcon from "../../assets/icons/plus-icon.svg";
+const PRE_DEFENSE_STAGES  = ["PreDefense1", "PreDefense2", "PreDefense3"];
+const FINAL_DEFENSE_STAGES = ["FinalDefense", "ChecksPeriod"];
 
-const DEFENSE_STAGES = ["PreDefense1", "PreDefense2", "PreDefense3", "FinalDefense"];
 
-export default function TimePeriodsPage() {
+function StageCard({ period, onDelete, onSetup, onEdit }) {
     const { t } = useTranslation();
-    const { user } = useAuth();
+    const isChecks = period.stageKey === "ChecksPeriod";
+    const isFinal = period.stageKey === "FinalDefense";
     
-    const departmentId = user?.departmentId;
-    const academicYearId = user?.currentAcademicYearId;
-
-    const { data: periodsData = [], isLoading } = usePeriods(departmentId, academicYearId);
-    const approveMutation = useApproveDefensePeriods(departmentId, academicYearId);
-
-    const [localPeriods, setLocalPeriods] = useState([]);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-
-    useEffect(() => {
-        if (periodsData && periodsData.length > 0) {
-            const defensePeriods = periodsData.filter(p => DEFENSE_STAGES.includes(p.workflowStage));
-            const mapped = defensePeriods.map(p => ({
-                id: p.id.toString(),
-                name: p.workflowStage,
-                startDate: p.startDate ? p.startDate.split('T')[0] : "",
-                endDate: p.endDate ? p.endDate.split('T')[0] : "",
-                commissions: 0,
-                students: 0,
-                dates: 0,
-                progress: 0,
-                status: "upcoming",
-            }));
-            setLocalPeriods(mapped);
-            setHasUnsavedChanges(false);
-        }
-    }, [periodsData]);
-
-    const handleAddPeriod = (formData) => {
-        const newPeriod = {
-            id: `new-${Date.now()}`,
-            name: formData.name, // workflowStage
-            startDate: formData.startDate,
-            endDate: formData.endDate,
-            commissions: 0,
-            students: 0,
-            dates: 0,
-            progress: 0,
-            status: "upcoming",
-        };
-
-        setLocalPeriods((prev) => [...prev, newPeriod]);
-        setHasUnsavedChanges(true);
-        setIsDialogOpen(false);
-    };
-
-    const deletePeriod = (id) => {
-        setLocalPeriods((prev) => prev.filter((p) => p.id !== id));
-        setHasUnsavedChanges(true);
-    };
-
-    const handleSaveAndApprove = async () => {
-        const payload = localPeriods.map(p => ({
-            workflowStage: p.name,
-            startDate: new Date(p.startDate).toISOString(),
-            endDate: new Date(p.endDate).toISOString(),
-        }));
-
-        try {
-            await approveMutation.mutateAsync(payload);
-            setHasUnsavedChanges(false);
-            setIsConfirmOpen(false);
-        } catch (error) {
-            console.error("Failed to approve defense periods", error);
-        }
-    };
-
-    if (isLoading) {
-        return <div className="time-periods-page"><p>{t('common.loading', 'Loading...')}</p></div>;
-    }
-
-    if (!departmentId || !academicYearId) {
-        return <div className="time-periods-page"><p>{t('department.noDepartmentSelected', 'Department or Academic Year missing.')}</p></div>;
-    }
+    
+    let statusColor = "#3b82f6"; 
+    if (period.stageKey === "PreDefense2") statusColor = "#f59e0b"; 
+    if (period.stageKey === "PreDefense3") statusColor = "#ef4444"; 
+    if (isChecks) statusColor = "#0f766e"; 
+    if (isFinal) statusColor = "#10b981"; 
 
     return (
-        <div className="time-periods-page">
-            <div className="page-header">
-                <div className="page-header-info">
-                    <div>
-                        <h1 className="page-title">{t('department.timePeriodsTitle')}</h1>
-                        <p className="page-subtitle">
-                            {t('department.timePeriodsSubtitle')}
-                        </p>
+        <div className="premium-stage-card">
+            <div className="stage-card-header">
+                <div className="title-section">
+                    <h3 className="stage-card-title">{period.name}</h3>
+                    <div className="stage-card-dates">
+                        <Calendar size={14} />
+                        <span>{period.startDate} — {period.endDate}</span>
                     </div>
                 </div>
-
-                <div className="page-actions" style={{ display: 'flex', gap: '10px' }}>
-                    {hasUnsavedChanges && (
-                        <button
-                            className="button secondary-button"
-                            onClick={() => setIsConfirmOpen(true)}
-                            disabled={approveMutation.isPending}
-                        >
-                            {t('common.save', 'Save Changes')}
-                        </button>
-                    )}
-                    <button
-                        className="button primary-button"
-                        onClick={() => setIsDialogOpen(true)}
-                    >
-                        <img src={plusIcon} alt="Add" className="button-icon" />
-                        {t('department.addPeriod')}
+                <div className="actions-section">
+                    <span className="stage-status-pill" style={{ color: statusColor, backgroundColor: statusColor + "12", borderColor: statusColor + "25" }}>
+                        {t('commission.statusUpcoming', 'Предстоит')}
+                    </span>
+                    <button className="stage-delete-btn" onClick={onDelete} title={t('common.delete', 'Удалить')}>
+                        <Trash2 size={16} />
                     </button>
                 </div>
             </div>
 
-            <div className="periods-list">
-                {localPeriods.map((period) => (
-                    <TimePeriodCard
-                        key={period.id}
-                        period={period}
-                        onDelete={() => deletePeriod(period.id)}
-                    />
-                ))}
-                {localPeriods.length === 0 && (
-                    <div className="empty-state">
-                        <p>{t('department.periodsNotFound', 'No periods added yet.')}</p>
-                    </div>
-                )}
+            <div className="stage-progress-section">
+                <div className="stage-progress-bar-container">
+                    <div className="stage-progress-fill" style={{ width: `${period.progress}%`, backgroundColor: statusColor }} />
+                </div>
+                <span className="stage-progress-label">{period.progress}%</span>
             </div>
 
+            <div className="stage-meta-grid">
+                <div className="meta-item">
+                    <span className="meta-count">{period.commissions}</span>
+                    <span className="meta-label">{t('commission.commissions', 'Комиссии')}</span>
+                </div>
+                <div className="meta-item">
+                    <span className="meta-count">{period.students}</span>
+                    <span className="meta-label">{t('commission.students', 'Студенты')}</span>
+                </div>
+                <div className="meta-item">
+                    <span className="meta-count">{period.dates}</span>
+                    <span className="meta-label">{t('common.date', 'Дата')}</span>
+                </div>
+            </div>
+
+            <div className="stage-actions-row">
+                <button className="stage-action-btn primary" onClick={onSetup}>
+                    <Settings size={14} />
+                    <span>{t('department.setupPeriod', 'Настройка этапа')}</span>
+                </button>
+                <button className="stage-action-btn secondary" onClick={onEdit}>
+                    <CalendarClock size={14} />
+                    <span>{t('common.edit', 'Редактировать')}</span>
+                </button>
+            </div>
+        </div>
+    );
+}
+
+export default function TimePeriodsPage() {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
+    const { user } = useAuth();
+
+    const orgUnitId  = user?.orgUnitId;
+    const semesterId = user?.currentSemesterId;
+
+    
+    const [selectedSpecialityId, setSelectedSpecialityId] = useState(null);
+
+    
+    const [localPreDefensePeriods, setLocalPreDefensePeriods] = useState([]);
+    const [hasUnsavedPDChanges, setHasUnsavedPDChanges]       = useState(false);
+    const [isPDDialogOpen, setIsPDDialogOpen]                 = useState(false);
+    const [isPDConfirmOpen, setIsPDConfirmOpen]               = useState(false);
+
+    
+    const [localFinalDefensePeriods, setLocalFinalDefensePeriods]     = useState([]);
+    const [hasUnsavedFDChanges, setHasUnsavedFDChanges]               = useState(false);
+    const [isFDDialogOpen, setIsFDDialogOpen]                         = useState(false);
+    const [isFDConfirmOpen, setIsFDConfirmOpen]                       = useState(false);
+
+    
+    const [editingPDPeriod, setEditingPDPeriod] = useState(null);
+    const [editingFDPeriod, setEditingFDPeriod] = useState(null);
+
+    
+    const { data: specialities = [] }           = useOrgUnitSpecialities(orgUnitId);
+    const { data: periodsData = [], isLoading } = usePeriods(orgUnitId, semesterId, selectedSpecialityId);
+
+    
+    const approvePDMutation = useApproveDefensePeriods(orgUnitId, semesterId, selectedSpecialityId);
+    const approveFDMutation = useApproveChecksPeriods(orgUnitId, semesterId, selectedSpecialityId);
+    const resetMutation     = useResetStagesOverride(orgUnitId, semesterId);
+
+    
+    const stageLabel = (key) => ({
+        PreDefense1:  t('student.preDefense1'),
+        PreDefense2:  t('student.preDefense2'),
+        PreDefense3:  t('student.preDefense3'),
+        FinalDefense: t('student.defense'),
+        ChecksPeriod: t('student.checksPeriod'),
+    }[key] ?? key);
+
+    const mapPeriod = (p) => ({
+        id:        p.id.toString(),
+        name:      stageLabel(p.workflowStage),
+        stageKey:  p.workflowStage,
+        startDate: p.startDate ? p.startDate.split('T')[0] : "",
+        endDate:   p.endDate   ? p.endDate.split('T')[0]   : "",
+        commissions: p.commissionsCount || 0,
+        students:    p.studentsCount || 0,
+        dates:       p.datesCount || 0,
+        progress:    p.progress || 0,
+        status:      "upcoming",
+    });
+
+    useEffect(() => {
+        if (periodsData && periodsData.length > 0) {
+            setLocalPreDefensePeriods(
+                periodsData.filter(p => PRE_DEFENSE_STAGES.includes(p.workflowStage)).map(mapPeriod)
+            );
+            setLocalFinalDefensePeriods(
+                periodsData.filter(p => FINAL_DEFENSE_STAGES.includes(p.workflowStage)).map(mapPeriod)
+            );
+            setHasUnsavedPDChanges(false);
+            setHasUnsavedFDChanges(false);
+        } else {
+            setLocalPreDefensePeriods([]);
+            setLocalFinalDefensePeriods([]);
+            setHasUnsavedPDChanges(false);
+            setHasUnsavedFDChanges(false);
+        }
+    
+    }, [periodsData]);
+
+    
+    const openPDEdit = (period) => {
+        setEditingPDPeriod(period);
+        setIsPDDialogOpen(true);
+    };
+
+    const handleAddPDPeriod = (formData) => {
+        if (editingPDPeriod) {
+            setLocalPreDefensePeriods(prev => prev.map(p => 
+                p.id === editingPDPeriod.id ? { ...p, startDate: formData.startDate, endDate: formData.endDate, stageKey: formData.name, name: stageLabel(formData.name) } : p
+            ));
+        } else {
+            setLocalPreDefensePeriods(prev => [...prev, {
+                id:        `new-pd-${Date.now()}`,
+                name:      stageLabel(formData.name),
+                stageKey:  formData.name,
+                startDate: formData.startDate,
+                endDate:   formData.endDate,
+                commissions: 0, students: 0, dates: 0, progress: 0, status: "upcoming",
+            }]);
+        }
+        setEditingPDPeriod(null);
+        setHasUnsavedPDChanges(true);
+        setIsPDDialogOpen(false);
+    };
+
+    const deletePDPeriod = (id) => {
+        setLocalPreDefensePeriods(prev => prev.filter(p => p.id !== id));
+        setHasUnsavedPDChanges(true);
+    };
+
+    const handleSaveAndApprovePD = async () => {
+        const payload = localPreDefensePeriods.map(p => ({
+            workflowStage: p.stageKey,
+            startDate:     new Date(p.startDate).toISOString(),
+            endDate:       new Date(p.endDate).toISOString(),
+        }));
+        try {
+            await approvePDMutation.mutateAsync(payload);
+            setHasUnsavedPDChanges(false);
+            setIsPDConfirmOpen(false);
+        } catch (err) {
+            console.error("Failed to approve Stage 7 periods", err);
+        }
+    };
+
+    
+    const openFDEdit = (period) => {
+        setEditingFDPeriod(period);
+        setIsFDDialogOpen(true);
+    };
+
+    const handleAddFDPeriod = (formData) => {
+        if (editingFDPeriod) {
+            setLocalFinalDefensePeriods(prev => prev.map(p => 
+                p.id === editingFDPeriod.id ? { ...p, startDate: formData.startDate, endDate: formData.endDate, stageKey: formData.name, name: stageLabel(formData.name) } : p
+            ));
+        } else {
+            setLocalFinalDefensePeriods(prev => [...prev, {
+                id:        `new-fd-${Date.now()}`,
+                name:      stageLabel(formData.name),
+                stageKey:  formData.name,
+                startDate: formData.startDate,
+                endDate:   formData.endDate,
+                commissions: 0, students: 0, dates: 0, progress: 0, status: "upcoming",
+            }]);
+        }
+        setEditingFDPeriod(null);
+        setHasUnsavedFDChanges(true);
+        setIsFDDialogOpen(false);
+    };
+
+    const deleteFDPeriod = (id) => {
+        setLocalFinalDefensePeriods(prev => prev.filter(p => p.id !== id));
+        setHasUnsavedFDChanges(true);
+    };
+
+    const handleSaveAndApproveFD = async () => {
+        const payload = localFinalDefensePeriods.map(p => ({
+            workflowStage: p.stageKey,
+            startDate:     new Date(p.startDate).toISOString(),
+            endDate:       new Date(p.endDate).toISOString(),
+        }));
+        try {
+            await approveFDMutation.mutateAsync(payload);
+            setHasUnsavedFDChanges(false);
+            setIsFDConfirmOpen(false);
+        } catch (err) {
+            console.error("Failed to approve Stage 9 periods", err);
+        }
+    };
+
+    
+    const handleResetOverride = async () => {
+        if (window.confirm(t("department.confirmResetOverride", "Вы действительно хотите удалить индивидуальные сроки для этой специальности и вернуться к общим срокам кафедры?"))) {
+            try {
+                await resetMutation.mutateAsync(selectedSpecialityId);
+            } catch (err) {
+                console.error("Failed to reset override", err);
+            }
+        }
+    };
+
+    if (isLoading) {
+        return <div className="time-periods-page"><div className="loader-pulse">{t('common.loading', 'Загрузка...')}</div></div>;
+    }
+
+    if (!orgUnitId || !semesterId) {
+        return <div className="time-periods-page"><p>{t('department.noDepartmentSelected', 'Кафедра или учебный год не выбраны.')}</p></div>;
+    }
+
+    const hasPDOverride = selectedSpecialityId && periodsData.some(p => PRE_DEFENSE_STAGES.includes(p.workflowStage));
+    const hasFDOverride = selectedSpecialityId && periodsData.some(p => FINAL_DEFENSE_STAGES.includes(p.workflowStage));
+
+    return (
+        <div className="time-periods-page">
+            {}
+            <div className="speciality-selector-wrapper">
+                <span className="selector-label">
+                    {t("student.specialty")}:
+                </span>
+                <select
+                    className="speciality-select"
+                    value={selectedSpecialityId || ""}
+                    onChange={(e) => {
+                        const val = e.target.value;
+                        setSelectedSpecialityId(val ? Number(val) : null);
+                        setLocalPreDefensePeriods([]);
+                        setLocalFinalDefensePeriods([]);
+                        setHasUnsavedPDChanges(false);
+                        setHasUnsavedFDChanges(false);
+                    }}
+                >
+                    <option value="">{t("department.allSpecialities", "Общее для кафедры (По умолчанию)")}</option>
+                    {specialities.map(s => (
+                        <option key={s.id} value={s.id}>{s.code} - {s.title}</option>
+                    ))}
+                </select>
+            </div>
+
+            {}
+            <div className="dashboard-section">
+                <div className="section-header">
+                    <div className="section-title-wrapper">
+                        <h2 className="section-title">
+                            {t('department.stage7Title', 'Этап 7: Предзащиты')}
+                        </h2>
+                        <p className="section-subtitle">
+                            {t('department.stage7Subtitle', 'Утверждение периодов предзащит и комиссий')}
+                        </p>
+                    </div>
+                    <div className="section-actions">
+                        {hasPDOverride && !hasUnsavedPDChanges && (
+                            <button
+                                className="button reset-button"
+                                onClick={handleResetOverride}
+                            >
+                                <RefreshCw size={14} style={{ marginRight: '6px' }} />
+                                {t('department.resetToDefaults', 'Сбросить к общим срокам')}
+                            </button>
+                        )}
+                        {hasUnsavedPDChanges && (
+                            <button
+                                className="button save-btn ripple-effect"
+                                onClick={() => setIsPDConfirmOpen(true)}
+                                disabled={approvePDMutation.isPending}
+                            >
+                                {t('common.save', 'Сохранить')}
+                            </button>
+                        )}
+                        <button
+                            className="button primary-button ripple-effect"
+                            onClick={() => setIsPDDialogOpen(true)}
+                        >
+                            <Plus size={16} style={{ marginRight: '6px' }} />
+                            {t('department.addPeriod')}
+                        </button>
+                    </div>
+                </div>
+
+                {selectedSpecialityId && !hasPDOverride && !hasUnsavedPDChanges && (
+                    <div className="inherited-dates-warning">
+                        <AlertCircle size={18} />
+                        <span>{t("department.usingInheritedDates", "Внимание: для данной специальности используются общие сроки кафедры.")}</span>
+                    </div>
+                )}
+
+                <div className="stage-cards-grid">
+                    {localPreDefensePeriods.map((period) => (
+                        <StageCard
+                            key={period.id}
+                            period={period}
+                            onDelete={() => deletePDPeriod(period.id)}
+                            onSetup={() => navigate(`/defenses?tab=distribution&stageId=${period.id}`)}
+                            onEdit={() => openPDEdit(period)}
+                        />
+                    ))}
+                    {localPreDefensePeriods.length === 0 && (
+                        <div className="empty-state">
+                            <p>{t('department.periodsNotFound', 'Периоды не добавлены.')}</p>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {}
+            <div className="dashboard-section stage-9-section">
+                <div className="section-header">
+                    <div className="section-title-wrapper">
+                        <h2 className="section-title">
+                            {t('department.stage9Title', 'Этап 9: Эксперты и защиты')}
+                        </h2>
+                        <p className="section-subtitle">
+                            {t('department.stage9Subtitle', 'Настройка сроков проверок, рецензирования и финальной защиты')}
+                        </p>
+                    </div>
+                    <div className="section-actions">
+                        {hasUnsavedFDChanges && (
+                            <button
+                                className="button save-btn ripple-effect"
+                                onClick={() => setIsFDConfirmOpen(true)}
+                                disabled={approveFDMutation.isPending}
+                            >
+                                {t('common.save', 'Сохранить')}
+                            </button>
+                        )}
+                        {!hasUnsavedFDChanges && localFinalDefensePeriods.length > 0 && (
+                            <button
+                                className="button approve-all-btn ripple-effect"
+                                onClick={() => setIsFDConfirmOpen(true)}
+                                disabled={approveFDMutation.isPending}
+                            >
+                                {t('department.approveFinalStages', 'Утвердить экспертов и периоды')}
+                            </button>
+                        )}
+                        <button
+                            className="button secondary-button ripple-effect"
+                            onClick={() => setIsFDDialogOpen(true)}
+                        >
+                            <Plus size={16} style={{ marginRight: '6px' }} />
+                            {t('department.addPeriod')}
+                        </button>
+                    </div>
+                </div>
+
+                {hasFDOverride && !hasUnsavedFDChanges && (
+                    <div className="inherited-dates-warning">
+                        <AlertCircle size={18} />
+                        <span>{t("department.usingInheritedDates", "Внимание: для данной специальности используются общие сроки кафедры.")}</span>
+                    </div>
+                )}
+
+                <div className="stage-cards-grid">
+                    {localFinalDefensePeriods.map((period) => (
+                        <StageCard
+                            key={period.id}
+                            period={period}
+                            onDelete={() => deleteFDPeriod(period.id)}
+                            onSetup={() => navigate(`/defenses?tab=distribution&stageId=${period.id}`)}
+                            onEdit={() => openFDEdit(period)}
+                        />
+                    ))}
+                    {localFinalDefensePeriods.length === 0 && (
+                        <div className="empty-state">
+                            <p>{t('department.periodsNotFound', 'Периоды не заданы.')}</p>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {}
             <TimePeriodFormDialog
-                isOpen={isDialogOpen}
-                onClose={() => setIsDialogOpen(false)}
-                onSubmit={handleAddPeriod}
+                isOpen={isPDDialogOpen}
+                onClose={() => { setIsPDDialogOpen(false); setEditingPDPeriod(null); }}
+                onSubmit={handleAddPDPeriod}
+                allowedStages={PRE_DEFENSE_STAGES}
+                editingPeriod={editingPDPeriod}
+            />
+
+            <TimePeriodFormDialog
+                isOpen={isFDDialogOpen}
+                onClose={() => { setIsFDDialogOpen(false); setEditingFDPeriod(null); }}
+                onSubmit={handleAddFDPeriod}
+                allowedStages={FINAL_DEFENSE_STAGES}
+                editingPeriod={editingFDPeriod}
             />
 
             <ConfirmModal
-                isOpen={isConfirmOpen}
-                title={t("department.approveDefensePeriods", "Approve Defense Periods")}
-                message={t("department.periodsApproved", "Are you sure you want to approve these periods?")}
-                onConfirm={handleSaveAndApprove}
-                onCancel={() => setIsConfirmOpen(false)}
+                isOpen={isPDConfirmOpen}
+                title={t("department.approvePDTitle", "Утвердить периоды предзащит")}
+                message={t("department.periodsApproved", "Вы уверены, что хотите утвердить эти периоды?")}
+                onConfirm={handleSaveAndApprovePD}
+                onCancel={() => setIsPDConfirmOpen(false)}
+            />
+
+            <ConfirmModal
+                isOpen={isFDConfirmOpen}
+                title={t("department.approveFDTitle", "Утвердить экспертов и периоды защиты")}
+                message={t("department.checksPeriodsApproveConfirm", "Утвердить период проверок? Это зафиксирует сроки нормоконтроля, антиплагиата и рецензирования.")}
+                onConfirm={handleSaveAndApproveFD}
+                onCancel={() => setIsFDConfirmOpen(false)}
             />
         </div>
     );

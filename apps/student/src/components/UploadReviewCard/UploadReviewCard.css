@@ -32,7 +32,7 @@
     color: #64748B;
 }
 
-/* Состояние когда файл выбран */
+
 .file-selected-view {
     display: flex;
     align-items: center;
@@ -63,7 +63,7 @@
     color: white;
     border: none;
     border-radius: 6px;
-    padding: 10px; /* Меньше высота кнопки */
+    padding: 10px; 
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;

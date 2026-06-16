@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getIntlLocale, getLocalizedValue, normalizeLanguage } from "@awm/shared";
-import { X, Calendar, BookOpen, Layers, Users, User, Info, Check, AlertCircle } from "lucide-react";
+import { X, Calendar, BookOpen, Layers, Users, User, Info, Check, AlertCircle, ChevronDown, ChevronUp, FileText } from "lucide-react";
 import "./TopicViewModal.css";
 
 export default function TopicViewModal({
@@ -17,10 +17,13 @@ export default function TopicViewModal({
     const [titleTab, setTitleTab] = useState(currentLanguage);
     const [descTab, setDescTab] = useState(currentLanguage);
 
-    // Логика отказа
-    const [rejectingId, setRejectingId] = useState(null); // ID заявки, которую отклоняем
-    const [rejectReason, setRejectReason] = useState(""); // Текст причины
+    
+    const [rejectingId, setRejectingId] = useState(null); 
+    const [rejectReason, setRejectReason] = useState(""); 
     const [rejectError, setRejectError] = useState(false);
+
+    
+    const [expandedRequestId, setExpandedRequestId] = useState(null);
 
     useEffect(() => {
         if (!topic) return;
@@ -37,7 +40,7 @@ export default function TopicViewModal({
                 : ["kk", "kz", "ru", "en"].find((lang) => availableDescriptions[lang]) || "en"
         );
 
-        // Сброс состояния при открытии новой темы
+        
         setRejectingId(null);
         setRejectReason("");
         setRejectError(false);
@@ -52,19 +55,15 @@ export default function TopicViewModal({
         rejected: t('status.rejected'),
     };
 
-    const workTypeLabels = {
-        diploma_project: t('supervisor.diplomaProject'),
-        diploma_work: t('supervisor.diplomaWork'),
-        course_work: t('supervisor.courseWork'),
-    };
+    
 
-    // Списки
-    const students = topic.students || []; // Уже принятые
-    // Предполагаем, что заявки приходят в topic.requests.
-    // Если структура другая, поменяйте это поле.
+    
+    const students = topic.students || []; 
+    
+    
     const requests = topic.requests || [];
 
-    const maxParticipants = topic.participantCount || 1;
+    const maxParticipants = topic.maxParticipants || 1;
     const remainingSlots = maxParticipants - students.length;
 
     const formatDate = (iso) => {
@@ -80,7 +79,11 @@ export default function TopicViewModal({
         }
     };
 
-    // Обработчики кнопок
+    
+    const toggleMotivationLetter = (reqId) => {
+        setExpandedRequestId((prev) => (prev === reqId ? null : reqId));
+    };
+
     const handleStartReject = (reqId) => {
         setRejectingId(reqId);
         setRejectReason("");
@@ -120,13 +123,13 @@ export default function TopicViewModal({
                 </div>
 
                 <div className="tv-body">
-                    {/* Инфо-сетка */}
+                    {}
                     <div className="tv-info-grid">
                         <div className="tv-info-item">
                             <Layers size={16} />
                             <div className="tv-info-content">
                                 <label>{t('supervisor.workType')}</label>
-                                <span>{workTypeLabels[topic.workType] || topic.workType}</span>
+                                <span>{topic.workTypeName || topic.workType || t('common.noData')}</span>
                             </div>
                         </div>
                         <div className="tv-info-item">
@@ -152,7 +155,7 @@ export default function TopicViewModal({
                         </div>
                     </div>
 
-                    {/* --- НОВАЯ СЕКЦИЯ: ЗАЯВКИ (ТОЛЬКО ЕСЛИ ЕСТЬ) --- */}
+                    {}
                     {requests.length > 0 && (
                         <div className="tv-section requests-section">
                             <div className="tv-section-header">
@@ -172,11 +175,14 @@ export default function TopicViewModal({
                                                 </div>
                                                 <div className="tv-req-details">
                                                     <span className="tv-student-name">{req.student?.fullName || t('roles.student')}</span>
+                                                    {req.student?.speciality && (
+                                                        <span className="tv-student-speciality">{req.student.speciality}</span>
+                                                    )}
                                                     <span className="tv-req-date">{t('department.submitted')} {formatDate(req.createdAt)}</span>
                                                 </div>
                                             </div>
 
-                                            {/* Кнопки действий (скрываем, если открыта форма отказа) */}
+                                            {}
                                             {rejectingId !== req.id && (
                                                 <div className="tv-req-actions">
                                                     <button
@@ -197,7 +203,26 @@ export default function TopicViewModal({
                                             )}
                                         </div>
 
-                                        {/* Форма отказа */}
+                                        {}
+                                        {req.motivationLetter && rejectingId !== req.id && (
+                                            <div className="tv-motivation-section">
+                                                <button
+                                                    className="tv-motivation-toggle"
+                                                    onClick={() => toggleMotivationLetter(req.id)}
+                                                >
+                                                    <FileText size={14} />
+                                                    <span>{t('supervisor.motivationLetter')}</span>
+                                                    {expandedRequestId === req.id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                                                </button>
+                                                {expandedRequestId === req.id && (
+                                                    <div className="tv-motivation-content">
+                                                        <p>{req.motivationLetter}</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {}
                                         {rejectingId === req.id && (
                                             <div className="tv-reject-form">
                                                 <textarea
@@ -228,7 +253,7 @@ export default function TopicViewModal({
                         </div>
                     )}
 
-                    {/* СЕКЦИЯ ПРИНЯТЫХ СТУДЕНТОВ */}
+                    {}
                     <div className="tv-section">
                         <div className="tv-section-header">
                             <div className="tv-section-title">
@@ -249,7 +274,12 @@ export default function TopicViewModal({
                                             <div className="tv-student-avatar">
                                                 <User size={14} />
                                             </div>
-                                            <span className="tv-student-name">{student.fullName}</span>
+                                            <div className="tv-student-info">
+                                                <span className="tv-student-name">{student.fullName}</span>
+                                                {student.speciality && (
+                                                    <span className="tv-student-speciality">{student.speciality}</span>
+                                                )}
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
@@ -261,7 +291,7 @@ export default function TopicViewModal({
                         </div>
                     </div>
 
-                    {/* Название */}
+                    {}
                     <div className="tv-section">
                         <div className="tv-section-header">
                             <div className="tv-section-title">
@@ -285,7 +315,7 @@ export default function TopicViewModal({
                         </div>
                     </div>
 
-                    {/* Описание */}
+                    {}
                     <div className="tv-section">
                         <div className="tv-section-header">
                             <div className="tv-section-title">

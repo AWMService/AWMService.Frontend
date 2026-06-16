@@ -1,18 +1,18 @@
 .topics-page {
-    padding: 64px 84px; /* Большие отступы по краям для "свободы" */
+    padding: 64px 84px; 
     background-color: #fcfcfd;
     min-height: 100vh;
     font-family: 'Inter', -apple-system, sans-serif;
     margin-top: 64px;
 }
 
-/* Контейнер с фиксированной шириной, но не центрированный принудительно */
+
 .topics-container {
     max-width: 1200px;
     width: 100%;
 }
 
-/* Header */
+
 .topics-header {
     display: flex;
     justify-content: space-between;
@@ -42,7 +42,7 @@
     align-items: center;
     gap: 8px;
     font-size: 14px;
-    font-weight: 400; /* Жирность убрана */
+    font-weight: 400; 
     cursor: pointer;
     transition: background 0.2s;
 }
@@ -51,14 +51,14 @@
     background: #1d4ed8;
 }
 
-/* Grid Layout */
+
 .topics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Уменьшенные карточки */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
     gap: 20px;
 }
 
-/* Compact Topic Card */
+
 .topic-card {
     background: #ffffff;
     border: 1px solid #f1f5f9;
@@ -75,7 +75,7 @@
     box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.05);
 }
 
-/* Vertical Status Indicator */
+
 .topic-card::after {
     content: "";
     position: absolute;
@@ -181,7 +181,7 @@
     color: #64748b;
 }
 
-/* Footer Actions */
+
 .topic-card-footer {
     padding: 12px 20px;
     background: #fcfdfe;

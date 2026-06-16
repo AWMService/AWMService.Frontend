@@ -1,5 +1,6 @@
 import { apiClient } from './apiClient';
 export const adminApi = {
+
   fetchUsers: async ({ universityId, isActive, search }) => {
     const params = { universityId };
     if (isActive !== undefined && isActive !== null && isActive !== 'all') {
@@ -8,139 +9,172 @@ export const adminApi = {
     if (search) {
       params.search = search;
     }
-    const { data } = await apiClient.get('/Users', { params });
+    const { data } = await apiClient.get('/v1/Users', { params });
     return data;
   },
   fetchUserById: async (userId) => {
-    const { data } = await apiClient.get(`/Users/${userId}`);
+    const { data } = await apiClient.get(`/v1/Users/${userId}`);
     return data;
   },
   createUser: async (userData) => {
-    const { data } = await apiClient.post('/Users', userData);
+    const { data } = await apiClient.post('/v1/Users', userData);
     return data;
   },
   updateUser: async (userId, userData) => {
-    const { data } = await apiClient.put(`/Users/${userId}`, userData);
+    const { data } = await apiClient.put(`/v1/Users/${userId}`, userData);
     return data;
   },
   toggleUserStatus: async (userId, isActive) => {
-    const { data } = await apiClient.patch(`/Users/${userId}/status`, { isActive });
+    const { data } = await apiClient.patch(`/v1/Users/${userId}/status`, { isActive });
     return data;
   },
-  fetchRoles: async (universityId) => {
-    const { data } = await apiClient.get('/Roles', { params: { universityId } });
+
+
+  fetchRoles: async () => {
+    const { data } = await apiClient.get('/v1/Roles');
+    return data;
+  },
+
+
+  fetchStudents: async ({ universityId, search, status }) => {
+    const params = { universityId, search, status };
+    const { data } = await apiClient.get('/v1/Students', { params });
     return data;
   }
 };
 export const orgApi = {
-  fetchInstitutes: async (universityId) => {
-    const { data } = await apiClient.get('/Institutes', { params: { universityId } });
+
+  fetchOrgUnits: async (typeId) => {
+    const { data } = await apiClient.get('/v1/OrgUnits', { params: { typeId } });
     return data;
   },
-  createInstitute: async (instituteData) => {
-    const { data } = await apiClient.post('/Institutes', instituteData);
+  createOrgUnit: async (orgUnitData) => {
+    const { data } = await apiClient.post('/v1/OrgUnits', orgUnitData);
     return data;
   },
-  updateInstitute: async (id, instituteData) => {
-    const { data } = await apiClient.put(`/Institutes/${id}`, instituteData);
+  updateOrgUnit: async (id, orgUnitData) => {
+    const { data } = await apiClient.put(`/v1/OrgUnits/${id}`, orgUnitData);
     return data;
   },
-  deleteInstitute: async (id) => {
-    const { data } = await apiClient.delete(`/Institutes/${id}`);
-    return data;
-  },
-  fetchDepartments: async (universityId) => {
-    const { data } = await apiClient.get('/Departments', { params: { universityId } });
-    return data;
-  },
-  createDepartment: async (instituteId, deptData) => {
-    const { data } = await apiClient.post(`/Institutes/${instituteId}/departments`, deptData);
-    return data;
-  },
-  updateDepartment: async (id, deptData) => {
-    const { data } = await apiClient.put(`/Departments/${id}`, deptData);
-    return data;
-  },
-  deleteDepartment: async (id) => {
-    const { data } = await apiClient.delete(`/Departments/${id}`);
+  deleteOrgUnit: async (id) => {
+    const { data } = await apiClient.delete(`/v1/OrgUnits/${id}`);
     return data;
   }
 };
 export const eduApi = {
+
   fetchPrograms: async () => {
-    const { data } = await apiClient.get('/academic-programs');
+    const { data } = await apiClient.get('/v1/academic-programs');
     return data;
   },
   createProgram: async (programData) => {
-    const { data } = await apiClient.post('/academic-programs', programData);
+    const { data } = await apiClient.post('/v1/academic-programs', programData);
     return data;
   },
   updateProgram: async (id, programData) => {
-    const { data } = await apiClient.put(`/academic-programs/${id}`, programData);
+    const { data } = await apiClient.put(`/v1/academic-programs/${id}`, programData);
     return data;
   },
   deleteProgram: async (id) => {
-    const { data } = await apiClient.delete(`/academic-programs/${id}`);
+    const { data } = await apiClient.delete(`/v1/academic-programs/${id}`);
     return data;
   },
-  fetchDegreeLevels: async () => {
-    const { data } = await apiClient.get('/degree-levels');
+
+
+  fetchSpecialityLevels: async () => {
+    const { data } = await apiClient.get('/v1/speciality-levels');
     return data;
   },
-  createDegreeLevel: async (levelData) => {
-    const { data } = await apiClient.post('/degree-levels', levelData);
+  createSpecialityLevel: async (levelData) => {
+    const { data } = await apiClient.post('/v1/speciality-levels', levelData);
     return data;
   },
-  updateDegreeLevel: async (id, levelData) => {
-    const { data } = await apiClient.put(`/degree-levels/${id}`, levelData);
+  updateSpecialityLevel: async (id, levelData) => {
+    const { data } = await apiClient.put(`/v1/speciality-levels/${id}`, levelData);
     return data;
   },
-  deleteDegreeLevel: async (id) => {
-    const { data } = await apiClient.delete(`/degree-levels/${id}`);
+  deleteSpecialityLevel: async (id) => {
+    const { data } = await apiClient.delete(`/v1/speciality-levels/${id}`);
     return data;
   }
 };
 export const wfApi = {
+
   fetchWorkTypes: async () => {
-    const { data } = await apiClient.get('/WorkTypes');
+    const { data } = await apiClient.get('/v1/WorkTypes');
     return data;
   },
   createWorkType: async (typeData) => {
-    const { data } = await apiClient.post('/WorkTypes', typeData);
+    const { data } = await apiClient.post('/v1/WorkTypes', typeData);
     return data;
   },
   updateWorkType: async (id, typeData) => {
-    const { data } = await apiClient.put(`/WorkTypes/${id}`, typeData);
+    const { data } = await apiClient.put(`/v1/WorkTypes/${id}`, typeData);
     return data;
   },
   deleteWorkType: async (id) => {
-    const { data } = await apiClient.delete(`/WorkTypes/${id}`);
+    const { data } = await apiClient.delete(`/v1/WorkTypes/${id}`);
     return data;
   }
 };
 export const staffApi = {
-  fetchStaffByDepartment: async (departmentId) => {
-    const { data } = await apiClient.get('/Staff', { params: { departmentId } });
+  fetchOrgUnitEmployees: async (orgUnitId) => {
+    const { data } = await apiClient.get(`/v1/org-units/${orgUnitId}/employees/available`);
     return data;
   },
   createStaff: async (staffData) => {
-    const { data } = await apiClient.post('/Staff', staffData);
+    const { data } = await apiClient.post('/v1/Staff', staffData);
     return data;
   },
   updateStaff: async (staffId, staffData) => {
-    const { data } = await apiClient.put(`/Staff/${staffId}`, staffData);
+    const { data } = await apiClient.put(`/v1/Staff/${staffId}`, staffData);
     return data;
   },
-  updateWorkload: async (staffId, maxStudentsLoad) => {
-    const { data } = await apiClient.patch(`/Staff/${staffId}/workload`, { maxStudentsLoad });
+  updateWorkload: async (orgUnitId, userId, semesterId, specialityId, maxWorkload) => {
+    const { data } = await apiClient.put(`/v1/org-units/${orgUnitId}/employees/${userId}/workload`,
+      { maxWorkload },
+      { params: { semesterId, specialityId } }
+    );
     return data;
   },
-  approveSupervisors: async (departmentId, staffIds) => {
-    const { data } = await apiClient.post('/Staff/approve-supervisors', { departmentId, staffIds });
+  approveEmployees: async (orgUnitId, semesterId, specialityId, assignments) => {
+    const { data } = await apiClient.post(`/v1/org-units/${orgUnitId}/employees/approve`, {
+      semesterId,
+      specialityId,
+      assignments
+    });
     return data;
   },
-  fetchSupervisors: async (departmentId) => {
-    const { data } = await apiClient.get('/Staff/supervisors', { params: { departmentId } });
+  fetchApprovedEmployees: async (orgUnitId, semesterId, specialityId = null) => {
+    const { data } = await apiClient.get(`/v1/org-units/${orgUnitId}/employees/approved`, {
+      params: { semesterId, specialityId }
+    });
+    return data;
+  },
+  removeEmployee: async (orgUnitId, userId, semesterId, specialityId = null) => {
+    const { data } = await apiClient.delete(`/v1/org-units/${orgUnitId}/employees/${userId}`, {
+      params: { semesterId, specialityId }
+    });
+    return data;
+  },
+  fetchEmployeesStatus: async (orgUnitId, semesterId, specialityId = null) => {
+    const { data } = await apiClient.get(`/v1/org-units/${orgUnitId}/employees/status`, {
+      params: { semesterId, specialityId }
+    });
+    return data;
+  },
+  confirmEmployees: async (orgUnitId, semesterId, specialityId = null) => {
+    const { data } = await apiClient.post(`/v1/org-units/${orgUnitId}/employees/confirm`, {
+      semesterId,
+      specialityId
+    });
+    return data;
+  },
+  unlockEmployees: async (orgUnitId, semesterId, specialityId = null) => {
+    const { data } = await apiClient.post(`/v1/org-units/${orgUnitId}/employees/unlock`, {
+      semesterId,
+      specialityId
+    });
     return data;
   }
 };

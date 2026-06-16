@@ -1,94 +1,94 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-    MapPin, ChevronDown, ChevronUp,
-    ShieldCheck, ArrowLeft
-} from 'lucide-react';
-import { getIntlLocale } from '@awm/shared';
+import { useParams, useNavigate } from 'react-router-dom';
+import { MapPin, ShieldCheck, ArrowLeft, Users, UserCheck } from 'lucide-react';
+import { 
+    getIntlLocale, 
+    useAuth, 
+    useCommissions, 
+    usePreDefenseSchedule,
+    useDownloadScheduleReport 
+} from '@awm/shared';
 import './TimePeriodSchedulePage.css';
 
-/* ===== ДАННЫЕ (MOCK) ===== */
-const mockSchedule = {
-    title: "График защит",
-    commissions: [
-        {
-            id: "c1",
-            name: "ГЭК №1 (ПИ)",
-            chairman: "д.т.н. Соколов А.П.",
-            secretary: "Петрова В.Д.",
-            members: ["Иванов И.И.", "Сидоров С.С."],
-            sessions: [
-                {
-                    id: "s1",
-                    date: "2026-06-10",
-                    time: "09:00",
-                    room: "402",
-                    type: "Защита",
-                    students: [
-                        "Иванов И.И.", "Петров П.П.", "Сидоров С.С.", "Кузнецов К.К.", "Смирнов А.А.",
-                        "Попов В.В.", "Васильев Г.Г.", "Соколов Д.Д.", "Михайлов Е.Е.", "Новиков Ж.Ж.",
-                        "Федоров З.З.", "Морозов И.И.", "Волков К.К.", "Алексеев Л.Л.", "Лебедев М.М.",
-                        "Семенов Н.Н.", "Егоров О.О.", "Павлов П.П.", "Козлов Р.Р.", "Степанов С.С.",
-                        "Николаев Т.Т.", "Орлов У.У.", "Андреев Ф.Ф."
-                    ]
-                },
-                {
-                    id: "s2",
-                    date: "2026-06-10",
-                    time: "14:00",
-                    room: "402",
-                    type: "Защита",
-                    students: [
-                        "Григорьев А.А.", "Яковлев Б.Б.", "Романов В.В.", "Воробьев Г.Г.", "Сергеев Д.Д.",
-                        "Зайцев Е.Е.", "Борисов Ж.Ж.", "Комаров З.З.", "Киселев И.И.", "Макаров К.К.",
-                        "Громов Л.Л.", "Денисов М.М.", "Гаврилов Н.Н.", "Титов О.О.", "Белов П.П.",
-                        "Тарасов Р.Р.", "Жуков С.С.", "Баранов Т.Т.", "Фролов У.У.", "Шестаков Ф.Ф.",
-                        "Горбунов Х.Х.", "Панин Ц.Ц."
-                    ]
-                },
-            ],
-        },
-    ],
+const getCommissionTypeAndNumber = (stageId) => {
+    const id = Number(stageId);
+    if (id === 5) return { commissionTypeId: 1, preDefenseNumber: 1 };
+    if (id === 6) return { commissionTypeId: 1, preDefenseNumber: 2 };
+    if (id === 7) return { commissionTypeId: 1, preDefenseNumber: 3 };
+    if (id === 8) return { commissionTypeId: 2, preDefenseNumber: null };
+    return { commissionTypeId: 1, preDefenseNumber: 1 };
 };
 
 export default function TimePeriodSchedulePage() {
     const { t, i18n } = useTranslation();
+    const { id } = useParams(); 
+    const navigate = useNavigate();
+    const { user } = useAuth();
     const locale = getIntlLocale(i18n.language);
-    const [selectedDate, setSelectedDate] = useState('2026-06-10');
-    const [expandedCards, setExpandedCards] = useState({});
 
-    const toggleCard = (sessionId) => {
-        setExpandedCards(prev => ({
-            ...prev,
-            [sessionId]: !prev[sessionId]
-        }));
-    };
+    const orgUnitId = user?.orgUnitId;
+    const semesterId = user?.currentSemesterId;
 
+    const [selectedCommissionId, setSelectedCommissionId] = useState(null);
+    const [selectedDate, setSelectedDate] = useState('');
+
+    
+    const { data: commissions = [], isLoading: isCommissionsLoading } = useCommissions(orgUnitId, semesterId);
+
+    
+    const filteredCommissions = useMemo(() => {
+        const { commissionTypeId, preDefenseNumber } = getCommissionTypeAndNumber(id);
+        return commissions.filter(c => 
+            c.commissionTypeId === commissionTypeId && 
+            c.preDefenseNumber === preDefenseNumber
+        );
+    }, [commissions, id]);
+
+    
+    React.useEffect(() => {
+        if (filteredCommissions.length > 0 && !selectedCommissionId) {
+            setSelectedCommissionId(filteredCommissions[0].id);
+        }
+    }, [filteredCommissions, selectedCommissionId]);
+
+    const selectedCommission = filteredCommissions.find(c => c.id === selectedCommissionId);
+
+    
+    const { data: schedule = [], isLoading: isScheduleLoading } = usePreDefenseSchedule(selectedCommissionId);
+    const { mutate: downloadScheduleReport, isPending: isDownloading } = useDownloadScheduleReport();
+
+    
     const uniqueDates = useMemo(() => {
-        const dates = new Set();
-        mockSchedule.commissions.forEach(c => {
-            c.sessions.forEach(s => dates.add(s.date));
-        });
-        return Array.from(dates).sort();
-    }, []);
+        const dates = schedule.map(s => s.date);
+        return [...new Set(dates)].filter(Boolean).sort();
+    }, [schedule]);
 
-    const dailyEvents = useMemo(() => {
-        const events = [];
-        mockSchedule.commissions.forEach(commission => {
-            commission.sessions.forEach(session => {
-                if (session.date === selectedDate) {
-                    events.push({
-                        ...session,
-                        commissionName: commission.name,
-                        chairman: commission.chairman,
-                        secretary: commission.secretary,
-                        members: commission.members
-                    });
-                }
-            });
-        });
-        return events.sort((a, b) => a.time.localeCompare(b.time));
-    }, [selectedDate]);
+    
+    React.useEffect(() => {
+        if (uniqueDates.length > 0 && (!selectedDate || !uniqueDates.includes(selectedDate))) {
+            setSelectedDate(uniqueDates[0]);
+        }
+    }, [uniqueDates, selectedDate]);
+
+    
+    const dailySlots = useMemo(() => {
+        return schedule
+            .filter(s => s.date === selectedDate)
+            .sort((a, b) => a.startTime.localeCompare(b.startTime));
+    }, [schedule, selectedDate]);
+
+    if (isCommissionsLoading || isScheduleLoading) {
+        return (
+            <div className="dept-schedule-page">
+                <p>{t('common.loading')}</p>
+            </div>
+        );
+    }
+
+    const chairman = selectedCommission?.members?.find(m => m.roleType === 1);
+    const secretary = selectedCommission?.members?.find(m => m.roleType === 3);
+    const membersList = selectedCommission?.members?.filter(m => m.roleType === 2) || [];
 
     return (
         <div className="dept-schedule-page">
@@ -98,93 +98,125 @@ export default function TimePeriodSchedulePage() {
 
             <div className="schedule-header-fixed">
                 <div className="header-top">
-                    <div className="header-content-row">
+                    <button className="back-button" onClick={() => navigate(-1)} style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', color: '#4b5563', fontWeight: '600', marginBottom: '16px' }}>
+                        <ArrowLeft size={18} /> {t('common.back')}
+                    </button>
+                    <div className="header-content-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
                         <div className="header-titles">
-                            <h1>{mockSchedule.title}</h1>
-                            <p className="subtitle">{t('commission.overallSchedule')}</p>
+                            <h1>{t('commission.scheduleTitle', 'График защит и предзащит')}</h1>
+                            <p className="subtitle">{t('commission.overallSchedule', 'Расписание работы комиссии и выступлений студентов')}</p>
                         </div>
+                        {selectedCommissionId && (
+                            <button 
+                                onClick={() => downloadScheduleReport(selectedCommissionId)}
+                                disabled={isDownloading}
+                                className="download-button"
+                                style={{ 
+                                    padding: '10px 20px', 
+                                    borderRadius: '8px', 
+                                    border: 'none', 
+                                    background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)', 
+                                    color: '#fff', 
+                                    fontWeight: '600', 
+                                    cursor: 'pointer', 
+                                    boxShadow: '0 4px 6px -1px rgba(59, 130, 246, 0.3)',
+                                    transition: 'all 0.2s',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px'
+                                }}
+                            >
+                                📥 {isDownloading ? t('common.downloading', 'Скачивание...') : t('commission.downloadSchedule', 'Скачать PDF расписания')}
+                            </button>
+                        )}
                     </div>
                 </div>
 
-                <div className="date-picker-row">
-                    {uniqueDates.map(date => (
-                        <button
-                            key={date}
-                            className={`date-tab ${selectedDate === date ? 'active' : ''}`}
-                            onClick={() => setSelectedDate(date)}
+                {filteredCommissions.length > 1 && (
+                    <div className="commission-selector-row" style={{ marginBottom: '16px' }}>
+                        <select 
+                            className="commission-select"
+                            value={selectedCommissionId || ''}
+                            onChange={(e) => {
+                                setSelectedCommissionId(Number(e.target.value));
+                                setSelectedDate('');
+                            }}
+                            style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid #d1d5db', background: '#fff', fontSize: '14px', fontWeight: '600', color: '#374151' }}
                         >
-                            <span className="date-tab-day">{new Date(date).getDate()}</span>
-                            <span className="date-tab-month">
-                                {new Date(date).toLocaleDateString(locale, { month: 'short' }).replace('.', '')}
-                            </span>
-                        </button>
-                    ))}
-                </div>
+                            {filteredCommissions.map(c => (
+                                <option key={c.id} value={c.id}>{c.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                )}
+
+                {uniqueDates.length > 0 && (
+                    <div className="date-picker-row">
+                        {uniqueDates.map(date => (
+                            <button
+                                key={date}
+                                className={`date-tab ${selectedDate === date ? 'active' : ''}`}
+                                onClick={() => setSelectedDate(date)}
+                            >
+                                <span className="date-tab-day">{new Date(date).getDate()}</span>
+                                <span className="date-tab-month">
+                                    {new Date(date).toLocaleDateString(locale, { month: 'short' }).replace('.', '')}
+                                </span>
+                            </button>
+                        ))}
+                    </div>
+                )}
             </div>
 
-            <div className="timeline-container">
-                {dailyEvents.length > 0 ? (
-                    dailyEvents.map((event, index) => (
-                        <div key={event.id} className="timeline-item">
+            <div className="timeline-container" style={{ marginTop: '20px' }}>
+                {selectedCommission && (
+                    <div className="commission-meta-card" style={{ background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(8px)', border: '1px solid rgba(229, 231, 235, 0.5)', borderRadius: '16px', padding: '20px', marginBottom: '24px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
+                        <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1f2937', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <ShieldCheck size={18} className="text-blue-500" /> {selectedCommission.name}
+                        </h3>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+                            <div>
+                                <span style={{ fontSize: '12px', color: '#9ca3af', fontWeight: '500', display: 'block' }}>{t('commission.chairmanLabel', 'Председатель:')}</span>
+                                <span style={{ fontSize: '14px', color: '#374151', fontWeight: '600' }}>{chairman?.fullName || "—"}</span>
+                            </div>
+                            <div>
+                                <span style={{ fontSize: '12px', color: '#9ca3af', fontWeight: '500', display: 'block' }}>{t('commission.secretaryLabel', 'Секретарь:')}</span>
+                                <span style={{ fontSize: '14px', color: '#374151', fontWeight: '600' }}>{secretary?.fullName || "—"}</span>
+                            </div>
+                            <div>
+                                <span style={{ fontSize: '12px', color: '#9ca3af', fontWeight: '500', display: 'block' }}>{t('commission.membersLabel', 'Члены комиссии:')}</span>
+                                <span style={{ fontSize: '14px', color: '#374151', fontWeight: '600' }}>
+                                    {membersList.map(m => m.fullName).join(', ') || "—"}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {dailySlots.length > 0 ? (
+                    dailySlots.map((slot, index) => (
+                        <div key={slot.id || index} className="timeline-item">
                             <div className="timeline-time">
-                                <span className="time-main">{event.time}</span>
+                                <span className="time-main">{slot.startTime}</span>
                                 <div className="timeline-dot"></div>
-                                {index !== dailyEvents.length - 1 && <div className="timeline-line"></div>}
+                                {index !== dailySlots.length - 1 && <div className="timeline-line"></div>}
                             </div>
 
                             <div className="card-wrapper">
-                                <div className={`sharp-card ${expandedCards[event.id] ? 'expanded' : ''}`}>
-                                    <div className={`card-accent ${event.type === 'Защита' ? 'final' : 'pre'}`}></div>
+                                <div className="sharp-card expanded">
+                                    <div className="card-accent final"></div>
                                     <div className="card-main-content">
                                         <div className="card-header">
-                                            <div className="commission-badge">
-                                                <ShieldCheck size={14} />
-                                                {event.commissionName}
-                                            </div>
                                             <div className="room-badge">
-                                                <MapPin size={14} /> {event.room}
+                                                <MapPin size={14} /> {slot.location}
                                             </div>
                                         </div>
 
-                                        <div className="students-section">
-                                            <div className="section-label">{t('commission.students')} ({event.students.length}):</div>
-                                            {/* Добавлен контейнер со скроллом */}
-                                            <div className="students-scroll-area">
-                                                <div className="students-grid">
-                                                    {event.students.map((student, idx) => (
-                                                        <div key={idx} className="student-chip-compact">
-                                                            <span className="student-num">{idx + 1}</span>
-                                                            <span className="student-name">{student}</span>
-                                                        </div>
-                                                    ))}
-                                                </div>
+                                        <div className="students-section" style={{ marginTop: '12px' }}>
+                                            <div className="student-chip-compact" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', background: 'none', border: 'none', padding: 0 }}>
+                                                <span className="student-name" style={{ fontSize: '16px', fontWeight: '700', color: '#111827' }}>{slot.studentName}</span>
+                                                <span className="student-topic" style={{ fontSize: '14px', color: '#4b5563', marginTop: '4px', fontStyle: 'italic' }}>{slot.topicTitle}</span>
                                             </div>
-                                        </div>
-
-                                        <div className="commission-details">
-                                            <button className="details-toggle" onClick={() => toggleCard(event.id)}>
-                                                <span>{t('department.commissionComposition')}</span>
-                                                {expandedCards[event.id] ? <ChevronUp size={16}/> : <ChevronDown size={16}/>}
-                                            </button>
-
-                                            {expandedCards[event.id] && (
-                                                <div className="details-content">
-                                                    <div className="detail-row">
-                                                        <span className="label">{t('commission.chairmanLabel')}</span>
-                                                        <span className="value">{event.chairman}</span>
-                                                    </div>
-                                                    <div className="detail-row">
-                                                        <span className="label">{t('commission.secretaryLabel')}</span>
-                                                        <span className="value">{event.secretary}</span>
-                                                    </div>
-                                                    <div className="detail-row members-block">
-                                                        <span className="label">{t('commission.membersLabel')}</span>
-                                                        <ul className="members-list-inline">
-                                                            {event.members.map((m, i) => <li key={i}>{m}</li>)}
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -194,7 +226,7 @@ export default function TimePeriodSchedulePage() {
                 ) : (
                     <div className="empty-state">
                         <div className="empty-icon">📅</div>
-                        <p>{t('commission.noCommissionsDay')}</p>
+                        <p>{t('commission.noCommissionsDay', 'На выбранную дату расписание отсутствует')}</p>
                     </div>
                 )}
             </div>

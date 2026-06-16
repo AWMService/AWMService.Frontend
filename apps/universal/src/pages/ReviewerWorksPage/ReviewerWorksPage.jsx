@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMyReviewerAssignments } from '@awm/shared';
+import { useMyReviewerAssignments, useUploadExternalReview } from '@awm/shared';
 import ReviewWritingModal from '../../components/ReviewWritingModal/ReviewWritingModal';
 import './ReviewerWorksPage.css';
 
@@ -10,6 +10,7 @@ function ReviewerWorksPage() {
     const [reviewModalWork, setReviewModalWork] = useState(null);
 
     const { data: assignments = [], isLoading } = useMyReviewerAssignments();
+    const { mutateAsync: uploadReview } = useUploadExternalReview();
 
     const works = useMemo(() => {
         return assignments.map(item => ({
@@ -42,6 +43,19 @@ function ReviewerWorksPage() {
             </div>
         );
     }
+
+    const handleSubmitReview = async (reviewData) => {
+        if (reviewData.file && reviewData.workId) {
+            try {
+                const formData = new FormData();
+                formData.append('File', reviewData.file);
+                await uploadReview({ workId: reviewData.workId, formData });
+            } catch (err) {
+                console.error('Failed to upload review file', err);
+            }
+        }
+        setReviewModalWork(null);
+    };
 
     return (
         <div className="reviewer-works-page">
@@ -99,9 +113,7 @@ function ReviewerWorksPage() {
                 isOpen={!!reviewModalWork}
                 work={reviewModalWork}
                 onClose={() => setReviewModalWork(null)}
-                onSubmit={() => {
-                    setReviewModalWork(null);
-                }}
+                onSubmit={handleSubmitReview}
             />
         </div>
     );

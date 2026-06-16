@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getIntlLocale, useUploadAttachment, useCurrentWorkId, useAttachments, useQualityChecks, useSubmitForCheck, useMyWorkProgress, useActivePeriod } from '@awm/shared';
+import { getIntlLocale, useUploadAttachment, useCurrentWorkId, useAttachments, useQualityChecks, useSubmitForCheck, useMyWorkProgress, useActivePeriod, useDeleteAttachment, downloadAttachment, downloadExpertDocument, useActiveCheckConfigurations, useSaveRepoUrl } from '@awm/shared';
 import './ReviewStepPage.css';
 import warningIcon from '../../assets/icons/alert-circle-icon.svg';
 import infoIcon from '../../assets/icons/pre-defense/info-icon.svg';
@@ -19,16 +19,20 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
     const { data: workId } = useCurrentWorkId();
     const { data: workProgress } = useMyWorkProgress();
     const { data: apiAttachments = [] } = useAttachments(workId);
+    const deleteMutation = useDeleteAttachment(workId);
     const uploadMutation = useUploadAttachment(workId);
+    
     const checkType = route === 'software-check' ? 'SoftwareCheck' : 'NormControl';
+    
+    const checkTypeId = route === 'software-check' ? 3 : 1;
     const { data: checks = [] } = useQualityChecks(workId);
     const { data: activePeriod } = useActivePeriod(
-        workProgress?.departmentId,
-        workProgress?.academicYearId,
+        workProgress?.orgUnitId,
+        workProgress?.semesterId,
         checkType
     );
     const submitMutation = useSubmitForCheck(workId);
-    const latestCheck = checks.filter(c => c.checkType === checkType).sort((a, b) => b.attemptNumber - a.attemptNumber)[0];
+    const latestCheck = checks.filter(c => c.checkTypeId === checkTypeId).sort((a, b) => b.attemptNumber - a.attemptNumber)[0];
     const derivedStatus = latestCheck
         ? latestCheck.isPassed ? 'success' : 'failed'
         : initialStatus || 'in_progress';
@@ -41,6 +45,23 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
     const [submitMode, setSubmitMode] = useState('file');
     const [repoUrl, setRepoUrl] = useState('');
     const [repoUrlError, setRepoUrlError] = useState('');
+    const saveRepoUrlMutation = useSaveRepoUrl(workId);
+
+    const { data: activeConfigs } = useActiveCheckConfigurations(
+        workProgress?.orgUnitId,
+        workProgress?.specialityId ?? null
+    );
+
+    
+    const checkCode = checkType === 'SoftwareCheck' ? 'SOFTWARECHECK'
+                    : checkType === 'NormControl'    ? 'NORMCONTROL'
+                    : 'ANTIPLAGIARISM';
+
+    
+    
+    const isCheckRequired = !activeConfigs
+        || activeConfigs.length === 0
+        || activeConfigs.some(c => c.checkTypeCode === checkCode);
 
     const period = activePeriod ? {
         start: new Date(activePeriod.startDate).toLocaleDateString(),
@@ -51,7 +72,7 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
         name: workProgress?.supervisorName || t('common.noData'),
         position: t('student.assignedExpert'),
         degree: '',
-        ...expert
+        ...(expert || {})
     };
 
     const comments = latestCheck?.comment || null;
@@ -102,19 +123,58 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
         }
     };
 
-    const handleDeleteFile = () => {
-        // Delete handled by UploadedFilesCard via API
+    const handleDeleteFile = async (attachmentId) => {
+        if (!workId || !attachmentId) return;
+        try {
+            await deleteMutation.mutateAsync(attachmentId);
+        } catch (err) {
+            console.error(err);
+        }
     };
 
-    const handleRepoSubmit = () => {
+    const handleDownloadFile = async (attachmentId, fileName) => {
+        if (!workId || !attachmentId) return;
+        try {
+            await downloadAttachment(workId, attachmentId, fileName);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleRepoSubmit = async () => {
         if (!REPO_URL_PATTERN.test(repoUrl.trim())) {
             setRepoUrlError(t('student.invalidUrl'));
             return;
         }
         setRepoUrlError('');
-        setStatus('in_progress');
-        setRepoUrl('');
+        try {
+            await saveRepoUrlMutation.mutateAsync(repoUrl.trim());
+            await submitMutation.mutateAsync(checkType);
+            setStatus('in_progress');
+            setRepoUrl('');
+        } catch (err) {
+            setRepoUrlError(err.message || t('common.error'));
+        }
     };
+
+    if (!isCheckRequired) {
+        return (
+            <div className="review-step-page">
+                <header className="review-step-header">
+                    <div className="header-title-row">
+                        <img src={pageIcon} alt="" className="page-icon"/>
+                        <h2>{pageTitle}</h2>
+                    </div>
+                </header>
+                <div className="review-step-content">
+                    <InfoBox icon={infoIcon} type="neutral">
+                        <p className="info-title">{t('student.checkNotRequired')}</p>
+                        <p className="info-desc">{t('student.checkNotRequiredDesc')}</p>
+                    </InfoBox>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="review-step-page">
@@ -167,9 +227,9 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
                             <button
                                 className="btn-primary"
                                 onClick={handleRepoSubmit}
-                                disabled={!repoUrl.trim()}
+                                disabled={!repoUrl.trim() || saveRepoUrlMutation.isPending || submitMutation.isPending}
                             >
-                                {t('student.submitRepo')}
+                                {(saveRepoUrlMutation.isPending || submitMutation.isPending) ? '…' : t('student.submitRepo')}
                             </button>
                         </div>
                         {repoUrlError && <p className="repo-url-error">{repoUrlError}</p>}
@@ -180,13 +240,28 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
                     <div className="review-step-left">
                         {(!isSoftwareCheck || submitMode === 'file') && (
                             <UploadedFilesCard
-                                uploadedFiles={apiAttachments.map(a => ({ name: a.fileName, date: new Date(a.createdAt).toLocaleDateString(locale), id: a.id }))}
+                                uploadedFiles={apiAttachments.map(a => ({ name: a.fileName, date: new Date(a.uploadedAt).toLocaleDateString(locale), id: a.id }))}
                                 onUploadClick={() => setIsModalOpen(true)}
                                 onDeleteFile={handleDeleteFile}
+                                onDownloadFile={handleDownloadFile}
                                 status={status}
                             />
                         )}
                         <CommentsCard comments={comments} status={status} />
+                        {status === 'failed' && latestCheck?.attachmentId && (
+                            <div className="card expert-attachment-card" style={{ marginTop: '1rem', padding: '1rem' }}>
+                                <h4 style={{ margin: '0 0 0.5rem', fontSize: '0.9rem', fontWeight: 600 }}>
+                                    {t('student.expertDocument')}
+                                </h4>
+                                <button
+                                    className="btn-primary"
+                                    style={{ width: '100%' }}
+                                    onClick={() => downloadExpertDocument(workId, latestCheck.id, 'expert_remarks.pdf')}
+                                >
+                                    {t('student.downloadExpertDocument')}
+                                </button>
+                            </div>
+                        )}
                     </div>
 
                     <div className="review-step-right">
@@ -210,3 +285,4 @@ const ReviewStepPage = ({ pageTitle, pageIcon, expert, initialStatus, route }) =
 };
 
 export default ReviewStepPage;
+

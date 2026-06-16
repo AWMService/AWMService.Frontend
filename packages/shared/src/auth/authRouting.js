@@ -149,7 +149,7 @@ export const appendAuthTokensToUrl = (href, { token, refreshToken } = {}) => {
 export const getCabinetUrl = (userOrRoles, options = {}) => {
   const target = getCabinetTarget(userOrRoles, options.preferredRole);
   if (!target) {
-    return getLoginUrl();
+    return null;
   }
   return appendAuthTokensToUrl(target.href, options);
 };

@@ -1,9 +1,6 @@
-/* ===== PAGE ===== */
+
 .setup-page {
     font-family: "Segoe UI", Roboto, sans-serif;
-    padding: 40px;
-    background: #f5f7fb;
-    margin-top: 64px;
 }
 
 .custom-calendar {
@@ -82,7 +79,7 @@
     flex: 1;
     height: 200px;
     overflow-y: auto;
-    scrollbar-width: none; /* Скрываем скролл для чистоты */
+    scrollbar-width: none; 
 }
 
 .time-column::-webkit-scrollbar { display: none; }
@@ -148,16 +145,16 @@
     font-weight: 500;
 }
 
-/* Эффект при клике на сам селект */
+
 .slot-form select {
-    /* Чтобы ваш текущий селект выглядел как кнопка для открытия меню */
+    
     border: 1px solid #c7d2fe;
     background-color: white;
 }
 
 
 
-/* ===== BACK ===== */
+
 .back-button {
     display: inline-flex;
     align-items: center;
@@ -177,7 +174,7 @@
     background: #f9fafb;
 }
 
-/* ===== HEADERS ===== */
+
 h1 {
     margin: 6px 0 10px;
     font-size: 22px;
@@ -185,7 +182,7 @@ h1 {
     color: #111827;
 }
 
-/* ===== PROGRESS ===== */
+
 .progress-section {
     background: #ffffff;
     border-radius: 12px;
@@ -211,14 +208,14 @@ h1 {
     font-weight: 500;
 }
 
-/* ===== LAYOUT ===== */
+
 .setup-content {
     display: grid;
     grid-template-columns: 220px 1fr;
     gap: 20px;
 }
 
-/* ===== STEPS ===== */
+
 .setup-steps {
     background: #ffffff;
     border-radius: 12px;
@@ -273,20 +270,20 @@ h1 {
     flex-shrink: 0;
 }
 
-/* ===== MAIN ===== */
+
 .setup-main {
     background: #ffffff;
     border-radius: 12px;
     padding: 16px;
 }
 
-/* ===== TITLES ===== */
+
 .setup-main h3 {
     margin-bottom: 12px;
     font-size: 18px;
 }
 
-/* ===== BUTTONS ===== */
+
 .btn-primary {
     background: linear-gradient(90deg, #2563eb, #3b82f6);
     color: #ffffff;
@@ -311,7 +308,7 @@ h1 {
 
 
 
-/* 🔥 FIXED OUTLINE BUTTON */
+
 .btn-outline {
     background: #ffffff;
     color: #2563eb;
@@ -351,21 +348,21 @@ h1 {
     transition: all 0.2s ease;
 }
 
-/* hover */
+
 .btn-add-Commission:hover {
     background: #eff6ff;
     border-color: #2563eb;
     color: #2563eb;
 }
 
-/* active — текст НЕ пропадает */
+
 .btn-add-Commission:active {
     background: #dbeafe;
     color: #1d4ed8;
     transform: scale(0.97);
 }
 
-/* focus */
+
 .btn-add-Commission:focus {
     outline: none;
     background: #eff6ff;
@@ -373,7 +370,7 @@ h1 {
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
 }
 
-/* disabled (на будущее) */
+
 .btn-add-Commission:disabled {
     background: #f9fafb;
     color: #9ca3af;
@@ -383,14 +380,14 @@ h1 {
 
 
 
-/* ===== ACTIONS ===== */
+
 .setup-actions {
     margin-top: 12px;
     display: flex;
     align-items: center;
 }
 
-/* ===== STEP 2 GRID ===== */
+
 .layout {
     display: grid;
     grid-template-columns: 260px 1fr;
@@ -398,7 +395,7 @@ h1 {
     margin-top: 16px;
 }
 
-/* ===== STUDENTS ===== */
+
 .students-column {
     background: #ffffff;
     border: 1px solid #e5e7eb;
@@ -427,14 +424,14 @@ h1 {
     border-radius: 999px;
 }
 
-/* ===== SLOTS ===== */
+
 .slots-column {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-/* ===== CREATE SLOT ===== */
+
 .slot-create-card {
     background: #f9fafb;
     border: 1px solid #e5e7eb;
@@ -442,7 +439,7 @@ h1 {
     padding: 12px;
 }
 
-/* ===== SLOT FORM ===== */
+
 .slot-form {
     display: grid;
     grid-template-columns:
@@ -482,7 +479,7 @@ h1 {
 
 
 
-/* ===== FINAL STEP ===== */
+
 .final-summary {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -490,7 +487,7 @@ h1 {
     margin-bottom: 28px;
 }
 
-/* ===== SUMMARY CARDS ===== */
+
 .summary-card {
     background: linear-gradient(180deg, #ffffff, #f9fafb);
     border: 1px solid #e5e7eb;
@@ -512,7 +509,7 @@ h1 {
     font-weight: 700;
 }
 
-/* success / danger accents */
+
 .summary-card.success {
     border-color: #bbf7d0;
 }
@@ -529,7 +526,7 @@ h1 {
     color: #dc2626;
 }
 
-/* ===== FINAL COMMISSIONS ===== */
+
 .final-commissions {
     display: flex;
     flex-direction: column;
@@ -537,7 +534,7 @@ h1 {
     margin-bottom: 32px;
 }
 
-/* ===== COMMISSION CARD ===== */
+
 .final-commission {
     background: #ffffff;
     border: 1px solid #e5e7eb;
@@ -552,7 +549,7 @@ h1 {
     color: #111827;
 }
 
-/* ===== SESSION ===== */
+
 .final-session {
     display: flex;
     justify-content: space-between;
@@ -574,7 +571,7 @@ h1 {
     background: #f3f4f6;
 }
 
-/* date & time */
+
 .session-datetime {
     display: flex;
     gap: 14px;
@@ -582,7 +579,7 @@ h1 {
     font-weight: 500;
 }
 
-/* students */
+
 .session-students {
     color: #374151;
 }
@@ -592,12 +589,12 @@ h1 {
     font-weight: 600;
 }
 
-/* ===== FINAL BUTTON ===== */
+
 .final-approve {
     margin-top: 10px;
 }
 
-/* disabled primary */
+
 .btn-primary:disabled {
     background: #e5e7eb;
     color: #9ca3af;
@@ -605,7 +602,7 @@ h1 {
     box-shadow: none;
 }
 
-/* ===== WARNING ===== */
+
 .final-warning {
     margin-top: 12px;
     font-size: 14px;

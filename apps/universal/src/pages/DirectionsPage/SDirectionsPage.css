@@ -7,7 +7,7 @@
     margin-top: 64px;
 }
 
-/* Header Section */
+
 .directions-header {
     display: flex;
     justify-content: space-between;
@@ -41,7 +41,7 @@
     align-items: center;
     gap: 10px;
     font-size: 14px;
-    font-weight: 400; /* Жирность убрана */
+    font-weight: 400; 
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -61,7 +61,7 @@
     box-shadow: none;
 }
 
-/* Grid Layout */
+
 .directions-grid-layout {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -70,7 +70,7 @@
     margin: 0 auto;
 }
 
-/* Custom Card Style */
+
 .custom-dir-card {
     background: #ffffff;
     border: 1px solid #f1f5f9;
@@ -88,7 +88,7 @@
     border-color: #e2e8f0;
 }
 
-/* Status Vertical Line */
+
 .custom-dir-card::after {
     content: "";
     position: absolute;
@@ -170,7 +170,7 @@
     border-left: 2px solid #ef4444;
 }
 
-/* Footer Actions */
+
 .card-footer-actions {
     padding: 16px 24px;
     background: #f8fafc;
@@ -222,7 +222,7 @@
     border-color: #4f46e5;
 }
 
-/* Empty State */
+
 .empty-state-wrapper {
     text-align: center;
     padding: 80px 20px;

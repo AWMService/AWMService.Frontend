@@ -1,4 +1,4 @@
-/* Общий сброс для предотвращения выхода элементов за границы */
+
 .ctm-modal, .ctm-modal * {
     box-sizing: border-box;
 }
@@ -32,7 +32,7 @@
     to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Header */
+
 .ctm-header {
     padding: 20px 24px;
     border-bottom: 1px solid #f1f5f9;
@@ -54,7 +54,7 @@
     align-items: center;
     gap: 6px;
     margin-top: 4px;
-    color: #d97706; /* Оранжевый акцент "На рассмотрении" */
+    color: #d97706; 
     font-size: 12px;
     font-weight: 500;
 }
@@ -74,7 +74,7 @@
     color: #ef4444;
 }
 
-/* Body */
+
 .ctm-body {
     padding: 24px;
     overflow-y: auto;
@@ -105,7 +105,7 @@
 
 .ctm-icon-muted { color: #94a3b8; }
 
-/* Группа инпутов */
+
 .ctm-input-group {
     display: flex;
     flex-direction: column;
@@ -159,7 +159,7 @@
     border: none;
     font-size: 14px;
     outline: none;
-    resize: none; /* Запрет изменения размера вручную */
+    resize: none; 
     line-height: 1.5;
     background: transparent;
     color: #1e293b;
@@ -179,7 +179,7 @@
     padding-left: 14px;
 }
 
-/* Сетка параметров */
+
 .ctm-grid-params {
     display: grid;
     grid-template-columns: 1.2fr 1fr;
@@ -193,7 +193,7 @@
     background-color: #fff;
 }
 
-/* Ошибки и уведомления */
+
 .ctm-error-notice {
     display: flex;
     align-items: center;
@@ -211,7 +211,7 @@
     background: #fffafb;
 }
 
-/* Footer */
+
 .ctm-footer {
     padding: 20px 24px;
     border-top: 1px solid #f1f5f9;
@@ -255,7 +255,7 @@
     opacity: 0.7;
 }
 
-/* Адаптивность */
+
 @media (max-width: 600px) {
     .ctm-grid-params { grid-template-columns: 1fr; }
     .ctm-modal { height: 100%; border-radius: 0; }

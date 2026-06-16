@@ -7,7 +7,8 @@ const emptyForm = { name: '', degreeLevelId: '' };
 
 export default function WorkTypesPage() {
     const { t } = useTranslation();
-    
+
+
     const { data: items = [], isLoading } = useWorkTypes();
     const createMutation = useCreateWorkType();
     const updateMutation = useUpdateWorkType();
@@ -39,7 +40,7 @@ export default function WorkTypesPage() {
 
     const handleSave = () => {
         if (!formData.name.trim()) return;
-        
+
         const payload = {
             ...formData,
             degreeLevelId: formData.degreeLevelId ? Number(formData.degreeLevelId) : null,

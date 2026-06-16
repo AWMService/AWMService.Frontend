@@ -1,134 +1,300 @@
+
+
 .time-periods-page {
-    padding: 44px;
-    font-family: Arial, sans-serif;
-    margin-top: 64px;
+    flex: 1;
+    animation: fadeIn 0.4s ease-out;
 }
 
-.page-header {
+
+.dashboard-section {
+    background: #ffffff;
+    border: 1px solid rgba(229, 231, 235, 0.5);
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 25px -4px rgba(0, 0, 0, 0.02);
+}
+
+.dashboard-section.stage-9-section {
+    border-top: 1px solid rgba(229, 231, 235, 0.7);
+}
+
+.section-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.header-buttons button {
-    margin-left: 10px;
-}
-
-.btn {
-    padding: 6px 12px;
-    margin: 5px;
-    border: 1px solid #333;
-    background-color: #fff;
-    cursor: pointer;
-}
-
-.btn:hover {
-    background-color: #eee;
-}
-
-.btn.danger {
-    border-color: red;
-    color: red;
-}
-
-.btn.secondary {
-    background-color: #ddd;
-}
-
-.status-message {
-    padding: 10px;
-    background-color: #cce5ff;
-    color: #004085;
-    margin-bottom: 15px;
-    position: relative;
-    border-radius: 4px;
-}
-
-.status-message .close {
-    position: absolute;
-    right: 10px;
-    cursor: pointer;
-}
-
-.statistics-grid {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.stat-card {
-    padding: 10px;
-    border: 1px solid #ccc;
-    flex: 1;
-    text-align: center;
-    border-radius: 4px;
-}
-
-.periods-list {
-    display: flex;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    gap: 16px;
     flex-wrap: wrap;
-    gap: 10px;
 }
 
-.period-card {
-    border: 1px solid #ccc;
-    padding: 15px;
-    border-radius: 4px;
-    width: 250px;
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+    letter-spacing: -0.02em;
 }
 
-.card-buttons button {
-    margin-right: 5px;
+.section-subtitle {
+    font-size: 0.875rem;
+    color: #4b5563;
+    margin: 4px 0 0 0;
 }
 
-.dialog-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.4);
+.section-actions {
     display: flex;
-    justify-content: center;
     align-items: center;
+    gap: 12px;
 }
 
-.dialog {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 4px;
-    width: 300px;
-}
 
-.dialog-buttons {
+.premium-stage-card {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    padding: 24px;
     display: flex;
-    justify-content: flex-end;
-    margin-top: 10px;
+    flex-direction: column;
+    box-shadow: 0 4px 20px -3px rgba(0, 0, 0, 0.02);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    min-height: 220px;
 }
 
-.dialog-buttons .btn {
-    margin-left: 5px;
+.premium-stage-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 30px -5px rgba(0, 0, 0, 0.07);
+    border-color: rgba(99, 102, 241, 0.25);
 }
+
+.card-top-glow {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 200px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.stage-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    z-index: 2;
+}
+
+.stage-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.01em;
+}
+
+.stage-card-dates {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.775rem;
+    font-weight: 600;
+    color: #6b7280;
+}
+
+.stage-card-dates svg {
+    color: #9ca3af;
+}
+
+.actions-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stage-status-pill {
+    padding: 3px 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 9999px;
+    border: 1px solid transparent;
+}
+
+.stage-delete-btn {
+    background: transparent;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stage-delete-btn:hover {
+    background: #fef2f2;
+    color: #ef4444;
+}
+
+
+.stage-progress-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    z-index: 2;
+}
+
+.stage-progress-bar-container {
+    flex: 1;
+    height: 6px;
+    background: #f3f4f6;
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.stage-progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.5s ease-out;
+}
+
+.stage-progress-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #4b5563;
+}
+
+
+.stage-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    background: #f9fafb;
+    border-radius: 14px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    z-index: 2;
+}
+
+.meta-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.meta-count {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+.meta-label {
+    font-size: 0.725rem;
+    font-weight: 500;
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+
+.stage-actions-row {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+    z-index: 2;
+}
+
+.stage-action-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0.55rem;
+    font-size: 0.825rem;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.stage-action-btn.primary {
+    background: #ffffff;
+    color: #4f46e5;
+    border: 1.5px solid rgba(79, 70, 229, 0.25);
+}
+
+.stage-action-btn.primary:hover {
+    background: rgba(79, 70, 229, 0.04);
+    border-color: #4f46e5;
+}
+
+.stage-action-btn.secondary {
+    background: #f9fafb;
+    color: #4b5563;
+    border: 1.5px solid #e5e7eb;
+}
+
+.stage-action-btn.secondary:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+}
+
+
+.save-btn {
+    background: #10b981;
+    color: #ffffff;
+}
+
+.save-btn:hover {
+    background: #059669;
+}
+
+.approve-all-btn {
+    background: #0f766e;
+    color: #ffffff;
+}
+
+.approve-all-btn:hover {
+    background: #0d5c56;
+}
+
 
 .empty-state {
+    grid-column: 1 / -1;
+    background: #fafafa;
+    border: 2px dashed #e5e7eb;
+    border-radius: 16px;
+    padding: 40px;
     text-align: center;
-    padding: 50px;
-    border: 2px dashed #ccc;
-    border-radius: 4px;
-}
-
-.quick-selector {
-    border: 1px solid #ccc;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 4px;
-}
-
-.quick-selector .templates button {
-    display: block;
-    margin-bottom: 5px;
-    width: 100%;
+    color: #6b7280;
+    font-weight: 500;
 }
 
 
+@media (max-width: 768px) {
+    .section-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .section-actions {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+    }
+
+    .section-actions button {
+        width: 100%;
+    }
+
+    .stage-actions-row {
+        flex-direction: column;
+    }
+}

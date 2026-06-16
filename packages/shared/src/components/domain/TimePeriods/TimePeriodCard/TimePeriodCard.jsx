@@ -10,6 +10,7 @@ export default function TimePeriodCard({ period, onDelete }) {
     };
     return (
         <div className="tp-card">
+            { }
             <div className="tp-card__header">
                 <div>
                     <h3 className="tp-card__title">
@@ -37,6 +38,8 @@ export default function TimePeriodCard({ period, onDelete }) {
                     </button>
                 </div>
             </div>
+
+            { }
             <div className="tp-card__progress-wrapper">
                 <div className="tp-card__progress-bar">
                     <div
@@ -46,11 +49,15 @@ export default function TimePeriodCard({ period, onDelete }) {
                 </div>
                 <span className="tp-card__progress-text">{period.progress}%</span>
             </div>
+
+            { }
             <div className="tp-card__summary">
                 <span>{t('commission.commissions')}: {period.commissions}</span>
                 <span>{t('commission.students')}: {period.students}</span>
                 <span>{t('common.date')}: {period.dates}</span>
             </div>
+
+            { }
             <div className="tp-card__actions">
                 <button
                     className="tp-card__action-btn"

@@ -31,7 +31,7 @@
     margin: 0 0 16px 0;
 }
 
-/* Info list */
+
 .my-work-info-list {
     display: flex;
     flex-direction: column;
@@ -57,7 +57,7 @@
     color: #1e293b;
 }
 
-/* Participants table */
+
 .my-work-participants-table {
     width: 100%;
     border-collapse: collapse;
@@ -94,7 +94,7 @@
     color: #16a34a;
 }
 
-/* Materials / Files */
+
 .my-work-materials-card {
     margin-bottom: 20px;
 }
@@ -158,7 +158,7 @@
     background: #eff6ff;
 }
 
-/* Timeline */
+
 .my-work-timeline-card {
     margin-bottom: 0;
 }

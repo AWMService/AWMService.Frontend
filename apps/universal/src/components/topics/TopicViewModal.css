@@ -20,7 +20,7 @@
     flex-direction: column;
     overflow: hidden;
     animation: tv-slide-up 0.2s ease-out;
-    max-height: 90vh; /* Ограничиваем высоту */
+    max-height: 90vh; 
 }
 
 @keyframes tv-slide-up {
@@ -28,7 +28,7 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Header */
+
 .tv-header {
     padding: 16px 24px;
     border-bottom: 1px solid #f1f5f9;
@@ -71,14 +71,14 @@
 
 .tv-close-btn:hover { color: #64748b; }
 
-/* Body */
+
 .tv-body {
     padding: 20px 24px;
     overflow-y: auto;
-    flex: 1; /* Занимает доступное место */
+    flex: 1; 
 }
 
-/* Сетка инфо-блоков */
+
 .tv-info-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -111,7 +111,7 @@
     font-weight: 500;
 }
 
-/* Sections */
+
 .tv-section { margin-bottom: 24px; }
 
 .tv-section-header {
@@ -136,7 +136,7 @@
 
 .text-orange { color: #f97316; }
 
-/* ЗАЯВКИ (Requests) - СТИЛИ */
+
 .requests-section {
     background: #fff7ed;
     border: 1px solid #ffedd5;
@@ -229,7 +229,7 @@
 }
 .btn-reject:hover { background: #fecaca; }
 
-/* Форма отказа внутри карточки */
+
 .tv-reject-form {
     margin-top: 10px;
     padding-top: 10px;
@@ -276,7 +276,49 @@
 .btn-cancel { background: #ffffff; border: 1px solid #e2e8f0; color: #64748b; }
 .btn-confirm-reject { background: #dc2626; color: white; }
 
-/* Остальные стили */
+
+.tv-motivation-section {
+    margin-top: 8px;
+}
+
+.tv-motivation-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    color: #0369a1;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.tv-motivation-toggle:hover {
+    background: #e0f2fe;
+}
+
+.tv-motivation-content {
+    margin-top: 6px;
+    padding: 10px 12px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #334155;
+    line-height: 1.5;
+    animation: fadeIn 0.2s;
+}
+
+.tv-motivation-content p {
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+
 .tv-tabs-mini {
     background: #f1f5f9;
     padding: 2px;
@@ -314,7 +356,7 @@
 
 .desc-area { min-height: 80px; white-space: pre-wrap; }
 
-/* Footer */
+
 .tv-footer {
     padding: 16px 24px;
     border-top: 1px solid #f1f5f9;
@@ -342,7 +384,7 @@
     .tv-info-grid { grid-template-columns: 1fr; }
 }
 
-/* Элементы списка студентов */
+
 .tv-remaining-slots {
     font-size: 11px;
     background: #eff6ff;
@@ -383,6 +425,18 @@
     font-weight: 500;
 }
 
+.tv-student-speciality {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 400;
+}
+
+.tv-student-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
 .tv-empty-box {
     padding: 16px;
     background: #f8fafc;
@@ -394,3 +448,9 @@
 }
 
 .tv-empty-text { color: #cbd5e1; font-style: italic; }
+
+
+.tv-req-header .tv-student-info {
+    flex-direction: row;
+    align-items: center;
+}

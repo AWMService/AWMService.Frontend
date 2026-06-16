@@ -25,8 +25,7 @@ export function Header() {
       appSubtitle={t('nav.dashboard')}
       pageTitle={getPageName()}
       userProfile={{
-        initials: 'ИИ',
-        name: user?.name || 'Иванов И.И.',
+        name: user?.name || user?.login || 'Пользователь',
         role: t('roles.department'),
       }}
       userDropdownItems={

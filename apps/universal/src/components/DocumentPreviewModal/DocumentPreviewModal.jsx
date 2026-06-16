@@ -1,25 +1,46 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { getIntlLocale, getLocalizedValue } from '@awm/shared';
-import { X, Download, FileText, Clock } from 'lucide-react';
+import { getIntlLocale, getLocalizedValue, useAttachments, useQualityChecks, downloadAttachment } from '@awm/shared';
+import { X, Download, FileText, Clock, CheckCircle, XCircle } from 'lucide-react';
 import './DocumentPreviewModal.css';
-
-const mockVersions = [
-    { version: 1, date: '2025-04-20', size: '1.8 MB' },
-    { version: 2, date: '2025-05-05', size: '2.1 MB' },
-    { version: 3, date: '2025-05-15', size: '2.4 MB' },
-];
 
 export default function DocumentPreviewModal({ document, onClose }) {
     const { t, i18n } = useTranslation();
     const locale = getIntlLocale(i18n.language);
 
+    
+    const { data: attachments = [] } = useAttachments(document?.workId);
+    const { data: checks = [] } = useQualityChecks(document?.workId);
+
     if (!document) return null;
 
+    
+    const latestAttachment = attachments
+        .slice()
+        .sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt))[0];
+
     const documentType = getLocalizedValue(document.documentType, i18n.language) || 'document';
-    const docName = `${document.studentName.replace(/\s/g, '_')}_${documentType}.docx`;
-    const versions = mockVersions.slice(0, document.version);
+    const docName = latestAttachment?.fileName
+        || `${document.studentName.replace(/\s/g, '_')}_${documentType}.docx`;
+
+    
+    const checkHistory = checks
+        .filter(c => c.checkTypeName === 'NormControl' || c.checkType === 'NormControl')
+        .sort((a, b) => a.attemptNumber - b.attemptNumber)
+        .map(c => ({
+            version:   c.attemptNumber,
+            date:      c.createdAt,
+            isPassed:  c.isPassed,
+            comment:   c.comment,
+        }));
+
+    
+    const versions = checkHistory.length > 0
+        ? checkHistory
+        : [{ version: document.version, date: document.submittedDate, isPassed: null, comment: null }];
+
     const currentVersion = versions[versions.length - 1];
+
     const formatDate = (value) =>
         new Date(value).toLocaleDateString(locale, {
             day: '2-digit',
@@ -28,9 +49,12 @@ export default function DocumentPreviewModal({ document, onClose }) {
         });
 
     const handleDownload = () => {
-        console.log('Download:', docName);
-        alert(`${t('common.download')}: ${docName}`);
+        if (latestAttachment) {
+            downloadAttachment(document.workId, latestAttachment.id, docName);
+        }
     };
+
+    const canDownload = !!latestAttachment;
 
     return (
         <div className="dpm-overlay" onClick={onClose}>
@@ -55,12 +79,8 @@ export default function DocumentPreviewModal({ document, onClose }) {
                             <span className="dpm-info-value">{docName}</span>
                         </div>
                         <div className="dpm-info-item">
-                            <span className="dpm-info-label">{t('normocontrol.fileSize')}</span>
-                            <span className="dpm-info-value">{currentVersion?.size || '—'}</span>
-                        </div>
-                        <div className="dpm-info-item">
                             <span className="dpm-info-label">{t('normocontrol.version')}</span>
-                            <span className="dpm-info-value">v{document.version}</span>
+                            <span className="dpm-info-value">v{currentVersion?.version ?? document.version}</span>
                         </div>
                         <div className="dpm-info-item">
                             <span className="dpm-info-label">{t('normocontrol.uploadDate')}</span>
@@ -70,8 +90,19 @@ export default function DocumentPreviewModal({ document, onClose }) {
                             <span className="dpm-info-label">{t('normocontrol.documentType')}</span>
                             <span className="dpm-info-value">{documentType}</span>
                         </div>
+                        {latestAttachment && (
+                            <div className="dpm-info-item">
+                                <span className="dpm-info-label">{t('normocontrol.fileSize')}</span>
+                                <span className="dpm-info-value">
+                                    {latestAttachment.fileSizeBytes
+                                        ? `${(latestAttachment.fileSizeBytes / 1024 / 1024).toFixed(1)} MB`
+                                        : '—'}
+                                </span>
+                            </div>
+                        )}
                     </div>
 
+                    {}
                     <div className="dpm-section">
                         <h3 className="dpm-section-title">
                             <Clock size={16} />
@@ -81,18 +112,29 @@ export default function DocumentPreviewModal({ document, onClose }) {
                             {versions.map((v) => (
                                 <div
                                     key={v.version}
-                                    className={`dpm-version-item ${v.version === document.version ? 'current' : ''}`}
+                                    className={`dpm-version-item ${v.version === (currentVersion?.version ?? document.version) ? 'current' : ''}`}
                                 >
-                                    <div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                         <span>v{v.version}</span>
-                                        {v.version === document.version && (
-                                            <span className="dpm-version-tag" style={{ marginLeft: 8 }}>
+                                        {v.isPassed === true && (
+                                            <CheckCircle size={14} color="#059669" title={t('normocontrol.approved')} />
+                                        )}
+                                        {v.isPassed === false && (
+                                            <XCircle size={14} color="#DC2626" title={t('normocontrol.revision')} />
+                                        )}
+                                        {v.version === (currentVersion?.version ?? document.version) && (
+                                            <span className="dpm-version-tag" style={{ marginLeft: 4 }}>
                                                 {t('normocontrol.currentVersion')}
                                             </span>
                                         )}
                                     </div>
                                     <div>
-                                        <span className="dpm-version-date">{formatDate(v.date)} · {v.size}</span>
+                                        <span className="dpm-version-date">{formatDate(v.date)}</span>
+                                        {v.comment && (
+                                            <span className="dpm-version-comment" style={{ marginLeft: 8, fontSize: '0.8em', color: '#6B7280' }}>
+                                                {v.comment.length > 60 ? `${v.comment.slice(0, 60)}…` : v.comment}
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
                             ))}
@@ -104,7 +146,12 @@ export default function DocumentPreviewModal({ document, onClose }) {
                     <button className="dpm-btn-secondary" onClick={onClose}>
                         {t('common.close')}
                     </button>
-                    <button className="dpm-btn-primary" onClick={handleDownload}>
+                    <button
+                        className="dpm-btn-primary"
+                        onClick={handleDownload}
+                        disabled={!canDownload}
+                        title={canDownload ? undefined : t('common.noData')}
+                    >
                         <Download size={16} />
                         {t('common.download')}
                     </button>

@@ -3,22 +3,25 @@ import { useTranslation } from 'react-i18next';
 import { MapPin, ChevronRight, UserCheck, Users, ShieldCheck } from 'lucide-react';
 import './SchedulePage.css';
 import { useNavigate } from "react-router-dom";
-import { getIntlLocale, useAuth, useCommissions, usePreDefenseSchedule, useDefenseSchedule } from "@awm/shared";
+import { getIntlLocale, useAuth, useCommissions, usePreDefenseSchedule, useDefenseSchedule, useRole, ROLES } from "@awm/shared";
 
 export default function SchedulePage() {
     const { t, i18n } = useTranslation();
     const locale = getIntlLocale(i18n.language);
     const navigate = useNavigate();
     const { user } = useAuth();
+    const { currentRole } = useRole();
+    const isSecretary = currentRole === ROLES.SECRETARY;
+    
     const [selectedCommissionId, setSelectedCommissionId] = useState(null);
     const [selectedDate, setSelectedDate] = useState('');
 
-    const departmentId = user?.departmentId;
-    const academicYearId = user?.currentAcademicYearId;
+    const orgUnitId = user?.orgUnitId;
+    const semesterId = user?.currentSemesterId;
 
-    const { data: commissions = [], isLoading: isCommissionsLoading } = useCommissions(departmentId, academicYearId);
+    const { data: commissions = [], isLoading: isCommissionsLoading } = useCommissions(orgUnitId, semesterId);
 
-    // Auto-select first commission if none selected
+    
     React.useEffect(() => {
         if (commissions.length > 0 && !selectedCommissionId) {
             setSelectedCommissionId(commissions[0].id);
@@ -43,7 +46,7 @@ export default function SchedulePage() {
         return [...new Set(dates)].filter(Boolean);
     }, [scheduleData]);
 
-    // Auto-select first date if none selected
+    
     React.useEffect(() => {
         if (uniqueDates.length > 0 && (!selectedDate || !uniqueDates.includes(selectedDate))) {
             setSelectedDate(uniqueDates[0]);
@@ -112,7 +115,7 @@ export default function SchedulePage() {
                             <div className="timeline-dot"></div>
                         </div>
 
-                        <div className="card-wrapper" onClick={() => navigate(`/schedule/${selectedCommissionId}`)}>
+                        <div className="card-wrapper" onClick={() => navigate(isSecretary ? `/secretary/${selectedCommissionId}` : `/schedule/${selectedCommissionId}`)}>
                             <div className="sharp-card">
                                 <div className={`card-accent ${dailyEvent.type === 'defense' ? 'final' : 'pre'}`}></div>
 
@@ -136,19 +139,19 @@ export default function SchedulePage() {
                                     <div className="commission-info">
                                         <div className="member-row chairman">
                                             <ShieldCheck size={16} className="icon-blue" />
-                                            <span><strong>{t('commission.chairmanLabel')}</strong> {selectedCommission?.chairmanName || dailyEvent.chairman || '—'}</span>
+                                            <span><strong>{t('commission.chairmanLabel')}</strong> {selectedCommission?.members?.find(m => m.roleType === 2)?.fullName || dailyEvent.chairman || '—'}</span>
                                         </div>
 
                                         <div className="dropdown-content">
                                             <div className="members-grid">
                                                 <div className="member-row">
                                                     <UserCheck size={16} className="icon-gray" />
-                                                    <span><strong>{t('commission.secretaryLabel')}</strong> {selectedCommission?.secretaryName || dailyEvent.secretary || '—'}</span>
+                                                    <span><strong>{t('commission.secretaryLabel')}</strong> {selectedCommission?.members?.find(m => m.roleType === 3)?.fullName || dailyEvent.secretary || '—'}</span>
                                                 </div>
                                                 <div className="members-list">
                                                     <div className="list-label"><Users size={16} /> {t('commission.membersLabel')}</div>
                                                     <ul>
-                                                        {(dailyEvent.members || []).map((m, i) => <li key={i}>{m}</li>)}
+                                                        {selectedCommission?.members?.filter(m => m.roleType === 4).map((m, i) => <li key={i}>{m.fullName}</li>) || (dailyEvent.members || []).map((m, i) => <li key={i}>{m}</li>)}
                                                     </ul>
                                                 </div>
                                             </div>
@@ -169,3 +172,6 @@ export default function SchedulePage() {
         </div>
     );
 }
+
+
+

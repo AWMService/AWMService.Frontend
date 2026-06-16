@@ -8,53 +8,81 @@ import doneIcon from '../../assets/icons/done-icon.svg';
 import clockIcon from '../../assets/icons/pre-defense/clock-icon.svg';
 import { PeriodCard } from '../../components/PeriodCard/PeriodCard.jsx';
 import { UploadReviewCard } from '../../components/UploadReviewCard/UploadReviewCard.jsx';
-import { DownloadableMaterialsCard } from '../../components/DownloadableMaterialsCard/DownloadableMaterialsCard.jsx';
 import { ExpertCard } from '../../components/ExpertCard/ExpertCard.jsx';
 import { InfoBox } from '../../components/InfoBox/InfoBox.jsx';
-
-const downloadableFiles = [
-    { name: 'Дипломная_работа_финал.docx', size: '1.2 MB' },
-    { name: 'Отчет_антиплагиат.pdf', size: '450 KB' },
-    { name: 'Отзыв_научного_руководителя.pdf', size: '320 KB' },
-];
-
-const reviewerData = {
-    name: 'Волков Дмитрий Сергеевич',
-    email: 'volkov@university.edu',
-    department: 'Информационные системы',
-};
+import {
+    useCurrentWorkId,
+    useAssignedReviewer,
+    useReviewsByWork,
+    useUploadExternalReview,
+    useMyWorkProgress,
+    downloadAttachment,
+} from '@awm/shared';
 
 const CritiquePage = () => {
     const { t } = useTranslation();
     const [reviewFile, setReviewFile] = useState(null);
-    // 'not_received' | 'sent_to_reviewer' | 'received'
-    const [status, setStatus] = useState('not_received');
 
-    const periodData = { startDate: '21.05.2025', endDate: '10.06.2025' };
-    const expertData = {
-        name: 'Паленшеев Н.П.',
-        position: 'Преподаватель',
-        degree: 'PhD',
-        email: 'palensheevnur@university'
-    };
+    
+    const { data: workId } = useCurrentWorkId();
+    const { data: reviewer, isLoading: reviewerLoading } = useAssignedReviewer(workId);
+    const { data: reviews = [], isLoading: reviewsLoading, refetch: refetchReviews } = useReviewsByWork(workId);
+    const { data: workProgress } = useMyWorkProgress();
+    const uploadMutation = useUploadExternalReview();
+
+    
+    const externalReview = reviews.find(
+        (r) => r.type === 'ExternalReview' || r.reviewType === 'ExternalReview' || r.type === 2
+    );
+    const status = externalReview?.isFinal
+        ? 'received'
+        : externalReview
+        ? 'sent_to_reviewer'
+        : 'not_received';
+
+    
+    const periodData = workProgress
+        ? { startDate: '—', endDate: '—' } 
+        : { startDate: '—', endDate: '—' };
+
+    
+    const expertData = reviewer
+        ? {
+              name: reviewer.fullName,
+              position: reviewer.position || t('reviewer.externalReviewer'),
+              degree: reviewer.academicDegree || '',
+              email: reviewer.email || '',
+          }
+        : null;
 
     const handleFileChange = (event) => {
-        if (event.target.files.length > 0) {
+        if (event.target.files && event.target.files.length > 0) {
             setReviewFile(event.target.files[0]);
         }
     };
 
-    const handleSubmit = () => {
-        if (reviewFile) setStatus('sent_to_reviewer');
+    const handleSubmit = async () => {
+        if (!reviewFile || !workId) return;
+
+        const formData = new FormData();
+        formData.append('file', reviewFile);
+
+        try {
+            await uploadMutation.mutateAsync({ workId, formData });
+            setReviewFile(null);
+            refetchReviews();
+        } catch (err) {
+            console.error('Failed to upload review:', err);
+        }
     };
 
-    const handleCheckStatus = () => {
-        setStatus('received');
-    };
-
-    const handleDownloadReview = () => {
-        console.log('Download review: Рецензия_Волков.pdf');
-        alert(t('student.downloadReview') + ': Рецензия_Волков.pdf');
+    const handleDownloadReview = async () => {
+        if (!workId || !externalReview?.attachmentId) return;
+        try {
+            await downloadAttachment(workId, externalReview.attachmentId, 'review.pdf');
+        } catch (err) {
+            console.error('Failed to download review:', err);
+        }
     };
 
     const statusBadge = () => {
@@ -75,35 +103,62 @@ const CritiquePage = () => {
         return null;
     };
 
-    const reviewerInfoBlock = () => (
-        <div className="card-compact critique-reviewer-card">
-            <h3 className="card-title-compact">{t('student.reviewerInfo')}</h3>
-            <div className="critique-reviewer-details">
-                <div className="critique-reviewer-avatar">
-                    {reviewerData.name.charAt(0)}
-                </div>
-                <div className="critique-reviewer-text">
-                    <p className="critique-reviewer-name">{reviewerData.name}</p>
-                    <p className="critique-reviewer-meta">Email: {reviewerData.email}</p>
-                    <p className="critique-reviewer-meta">
-                        {t('student.department')}: {reviewerData.department}
-                    </p>
+    const reviewerInfoBlock = () => {
+        if (!reviewer) return null;
+        return (
+            <div className="card-compact critique-reviewer-card">
+                <h3 className="card-title-compact">{t('student.reviewerInfo')}</h3>
+                <div className="critique-reviewer-details">
+                    <div className="critique-reviewer-avatar">
+                        {reviewer.fullName.charAt(0)}
+                    </div>
+                    <div className="critique-reviewer-text">
+                        <p className="critique-reviewer-name">{reviewer.fullName}</p>
+                        {reviewer.email && (
+                            <p className="critique-reviewer-meta">Email: {reviewer.email}</p>
+                        )}
+                        {reviewer.organization && (
+                            <p className="critique-reviewer-meta">
+                                {t('student.department')}: {reviewer.organization}
+                            </p>
+                        )}
+                        {reviewer.position && (
+                            <p className="critique-reviewer-meta">{reviewer.position}</p>
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
-    );
+        );
+    };
+
+    const isLoading = reviewerLoading || reviewsLoading;
 
     const renderMainContent = () => {
+        if (isLoading) {
+            return <div className="critique-loading">{t('common.loading')}</div>;
+        }
+
+        if (!reviewer) {
+            return (
+                <InfoBox icon={infoIcon} type="neutral">
+                    <p className="info-title">{t('student.reviewerNotAssigned')}</p>
+                    <p className="info-desc">{t('student.reviewerNotAssignedDesc')}</p>
+                </InfoBox>
+            );
+        }
+
         if (status === 'not_received') {
             return (
                 <>
-                    <DownloadableMaterialsCard files={downloadableFiles} />
-                    <div className="spacer-20" />
                     <UploadReviewCard
                         onFileChange={handleFileChange}
                         onSubmit={handleSubmit}
                         reviewFile={reviewFile}
+                        isSubmitting={uploadMutation.isPending}
                     />
+                    {uploadMutation.isError && (
+                        <p className="critique-error">{t('common.uploadError')}</p>
+                    )}
                 </>
             );
         }
@@ -131,16 +186,11 @@ const CritiquePage = () => {
                             </div>
                         </>
                     )}
-
-                    <div className="spacer-20" />
-                    <button className="btn-primary-compact" onClick={handleCheckStatus}>
-                        {t('student.checkStatus')}
-                    </button>
                 </>
             );
         }
 
-        // status === 'received'
+        
         return (
             <>
                 <InfoBox icon={doneIcon} type="success">
@@ -151,22 +201,33 @@ const CritiquePage = () => {
                 <div className="spacer-20" />
                 {reviewerInfoBlock()}
 
-                <div className="spacer-20" />
-                <div className="card-compact">
-                    <h3 className="card-title-compact">{t('student.reviewFile')}</h3>
-                    <div className="critique-review-file-row">
-                        <div className="file-info-row">
-                            <img src={fileIcon} alt="File" />
-                            <div className="file-texts">
-                                <span className="fname">Рецензия_Волков.pdf</span>
-                                <span className="fsize">12.06.2025</span>
+                {externalReview?.attachmentId && (
+                    <>
+                        <div className="spacer-20" />
+                        <div className="card-compact">
+                            <h3 className="card-title-compact">{t('student.reviewFile')}</h3>
+                            <div className="critique-review-file-row">
+                                <div className="file-info-row">
+                                    <img src={fileIcon} alt="File" />
+                                    <div className="file-texts">
+                                        <span className="fname">{t('student.reviewDocument')}</span>
+                                        <span className="fsize">
+                                            {externalReview.createdAt
+                                                ? new Date(externalReview.createdAt).toLocaleDateString()
+                                                : ''}
+                                        </span>
+                                    </div>
+                                </div>
+                                <button
+                                    className="btn-primary-compact critique-download-btn"
+                                    onClick={handleDownloadReview}
+                                >
+                                    {t('student.downloadReview')}
+                                </button>
                             </div>
                         </div>
-                        <button className="btn-primary-compact critique-download-btn" onClick={handleDownloadReview}>
-                            {t('student.downloadReview')}
-                        </button>
-                    </div>
-                </div>
+                    </>
+                )}
             </>
         );
     };
@@ -193,7 +254,7 @@ const CritiquePage = () => {
 
                 <aside className="critique-side-col">
                     <PeriodCard period={periodData} />
-                    <ExpertCard expert={expertData} />
+                    {expertData && <ExpertCard expert={expertData} />}
                 </aside>
             </div>
         </div>

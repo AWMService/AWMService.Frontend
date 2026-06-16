@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import './SettingsPage.css';
 
 const DEFAULT_SETTINGS = {
-  departmentName: 'Кафедра информационных систем',
-  faculty: 'Факультет информационных технологий',
-  headOfDepartment: 'Иванов Иван Иванович',
-  phone: '+7 (495) 123-45-67',
-  email: 'is@university.edu',
+  departmentName: 'Программная инженерия',
+  faculty: 'Институт автоматики и информационных технологий',
+  headOfDepartment: 'Сыздыкова Заведующая Кафедрой',
+  phone: '+7 (727) 123-45-67',
+  email: 'head@university.edu',
   academicYear: '2025-2026',
   notifyNewDirections: true,
   notifyStudentApplications: true,
@@ -48,13 +48,8 @@ function SettingsPage() {
 
   return (
     <div className="settings-page">
-      <div className="page-header">
-        <h1>{t('department.settingsTitle')}</h1>
-        <p className="page-subtitle">{t('department.settingsSubtitle')}</p>
-      </div>
-
       <div className="settings-card">
-        {/* Department Profile */}
+        {}
         <div className="settings-group">
           <h2>{t('department.departmentProfile')}</h2>
 
@@ -109,7 +104,7 @@ function SettingsPage() {
           />
         </div>
 
-        {/* Academic Year */}
+        {}
         <div className="settings-group">
           <h2>{t('department.academicYear')}</h2>
 
@@ -128,7 +123,7 @@ function SettingsPage() {
           </select>
         </div>
 
-        {/* Notification Settings */}
+        {}
         <div className="settings-group">
           <h2>{t('department.notificationSettings')}</h2>
 

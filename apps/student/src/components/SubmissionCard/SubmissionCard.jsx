@@ -5,12 +5,12 @@ import uploadIcon from '../../assets/icons/pre-defense/upload-icon.svg';
 import fileIcon from '../../assets/icons/pre-defense/file-icon.svg';
 import deleteIcon from '../../assets/icons/pre-defense/delete-icon.svg';
 
-export const SubmissionCard = ({ isSubmitted, file, infoText, handleFileChange, handleSubmit, handleFileDelete, isUploading, uploadError }) => {
+export const SubmissionCard = ({ isSubmitted, file, infoText, handleFileChange, handleSubmit, handleFileDelete, isUploading, uploadError, title }) => {
     const { t } = useTranslation();
     return (
         <div className="card submission-card">
             <div className="card-header">
-                <h4 className="card-heading">{t('student.defenseMaterials')}</h4>
+                <h4 className="card-heading">{title ?? t('student.defenseMaterials')}</h4>
             </div>
 
             <div className="card-body">

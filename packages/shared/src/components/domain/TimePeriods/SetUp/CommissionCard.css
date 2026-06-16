@@ -2,6 +2,9 @@
 .commission-card * {
     box-sizing: border-box;
 }
+
+
+
 .commission-card {
     background: #ffffff;
     border: 1px solid #e5e7eb;
@@ -11,10 +14,14 @@
     flex-direction: column;
     gap: 20px;
 }
+
+
+
 .commission-header {
     border-bottom: 1px solid #e5e7eb;
     padding-bottom: 10px;
 }
+
 .commission-name {
     width: 100%;
     font-size: 18px;
@@ -24,19 +31,27 @@
     color: #1f2937;
     background: transparent;
 }
+
+
+
 .field {
     display: flex;
     flex-direction: column;
 }
+
 .field label {
     font-size: 13px;
     color: #6b7280;
     margin-bottom: 6px;
 }
+
+
+
 .select-box {
     position: relative;
     width: 100%;
 }
+
 .select-box input {
     width: 100%;
     height: 44px;
@@ -47,14 +62,19 @@
     color: #1f2937;
     background: #ffffff;
 }
+
 .select-box input::placeholder {
     color: #9ca3af;
 }
+
 .select-box input:focus {
     outline: none;
     border-color: #2563eb;
     box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
+
+
+
 .select-dropdown {
     position: absolute;
     top: calc(100% + 6px);
@@ -68,6 +88,7 @@
     max-height: 220px;
     overflow-y: auto;
 }
+
 .select-option {
     padding: 10px 14px;
     cursor: pointer;
@@ -75,20 +96,26 @@
     color: #1f2937;
     transition: background 0.15s ease;
 }
+
 .select-option:hover {
     background: #eff6ff;
     color: #2563eb;
 }
+
+
+
 .members-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
+
 .members-row span {
     font-size: 14px;
     font-weight: 500;
     color: #1f2937;
 }
+
 .btn-link {
     background: none;
     border: none;
@@ -98,14 +125,19 @@
     cursor: pointer;
     padding: 0;
 }
+
 .btn-link:hover {
     text-decoration: underline;
 }
+
+
+
 .members-chips {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
 }
+
 .chip {
     background: #eff6ff;
     color: #2563eb;
@@ -115,9 +147,16 @@
     font-weight: 500;
     white-space: nowrap;
 }
+
+
+
+
 .select-box {
     position: relative;
 }
+
+
+
 .clear-btn {
     position: absolute;
     right: 10px;
@@ -129,20 +168,26 @@
     font-size: 16px;
     cursor: pointer;
 }
+
 .clear-btn:hover {
     color: #2563eb;
 }
+
+
+
 .select-empty {
     padding: 12px;
     font-size: 13px;
     color: #6b7280;
     text-align: center;
 }
+
 .commission-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
+
 .icon-button {
     width: 32px;
     height: 32px;
@@ -154,9 +199,11 @@
     align-items: center;
     justify-content: center;
 }
+
 .icon-button:hover {
     background: #f3f4f6;
 }
+
 .icon-button svg {
     width: 18px;
     height: 18px;
@@ -166,6 +213,7 @@
     stroke-linecap: round;
     stroke-linejoin: round;
 }
+
 .icon-button.danger svg {
     stroke: #dc2626;
 }

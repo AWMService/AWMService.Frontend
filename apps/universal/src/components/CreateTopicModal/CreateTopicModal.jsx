@@ -86,7 +86,7 @@ export default function CreateTopicModal({ open, onClose, onCreate, directions =
                 </div>
 
                 <div className="ctm-body">
-                    {/* Direction */}
+                    {}
                     <div className="ctm-section">
                         <div className="ctm-section-label">
                             <Info size={16} className="ctm-icon-muted" />
@@ -106,7 +106,7 @@ export default function CreateTopicModal({ open, onClose, onCreate, directions =
                         </select>
                     </div>
 
-                    {/* Titles */}
+                    {}
                     <div className="ctm-section">
                         <div className="ctm-section-label">
                             <Globe size={16} className="ctm-icon-muted" />
@@ -143,7 +143,7 @@ export default function CreateTopicModal({ open, onClose, onCreate, directions =
                         </div>
                     </div>
 
-                    {/* Descriptions */}
+                    {}
                     <div className="ctm-section">
                         <div className="ctm-section-label">
                             <AlignLeft size={16} className="ctm-icon-muted" />
@@ -170,7 +170,7 @@ export default function CreateTopicModal({ open, onClose, onCreate, directions =
                                 />
                             </div>
 
-                            {/*  EN DESCRIPTION */}
+                            {}
                             <div className="ctm-field vertical">
                                 <div className="ctm-lang-tag">EN</div>
                                 <textarea
@@ -183,7 +183,7 @@ export default function CreateTopicModal({ open, onClose, onCreate, directions =
                         </div>
                     </div>
 
-                    {/* Params */}
+                    {}
                     <div className="ctm-grid-params">
                         <div className="ctm-section">
                             <div className="ctm-section-label">

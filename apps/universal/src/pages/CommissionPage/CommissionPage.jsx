@@ -1,29 +1,29 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRole, ROLES, getIntlLocale, getLocalizedValue, useAuth, useCommissions, useGenerateProtocol, useProtocol } from '@awm/shared';
+import { useNavigate } from 'react-router-dom';
+import { useRole, ROLES, getIntlLocale, getLocalizedValue, useAuth, useCommissions, useGenerateProtocol, useDownloadProtocolPdf } from '@awm/shared';
 import './CommissionPage.css';
 
 function CommissionPage() {
     const { t, i18n } = useTranslation();
+    const navigate = useNavigate();
     const locale = getIntlLocale(i18n.language);
     const { currentRole } = useRole();
     const { user } = useAuth();
     const [activeTab, setActiveTab] = useState('upcoming');
     const [protocolModal, setProtocolModal] = useState(null);
 
-    const departmentId = user?.departmentId;
-    const academicYearId = user?.currentAcademicYearId;
+    const orgUnitId = user?.orgUnitId;
+    const semesterId = user?.currentSemesterId;
 
-    const { data: commissions = [], isLoading } = useCommissions(departmentId, academicYearId);
+    const { data: commissions = [], isLoading } = useCommissions(orgUnitId, semesterId);
 
     const generateProtocolMutation = useGenerateProtocol();
 
-    // For protocol preview, fetch protocol if commission has protocolId
-    const [previewProtocolId, setPreviewProtocolId] = useState(null);
-    const { data: protocolData } = useProtocol(previewProtocolId);
+    const downloadProtocolMutation = useDownloadProtocolPdf();
 
     const filteredCommissions = commissions.filter(c => {
-        // Mock status logic: if commission has no upcoming schedule, treat as completed
+        
         const hasUpcoming = c.hasUpcomingSchedule !== false;
         if (activeTab === 'upcoming') return hasUpcoming;
         if (activeTab === 'completed') return !hasUpcoming;
@@ -33,19 +33,21 @@ function CommissionPage() {
     const isChairman = currentRole === ROLES.CHAIRMAN;
     const isSecretary = currentRole === ROLES.SECRETARY;
 
-    const handleGenerateProtocol = (commission) => {
-        setProtocolModal(commission);
-    };
+
 
     const handleConfirmGenerateProtocol = async () => {
         if (!protocolModal) return;
         try {
-            const result = await generateProtocolMutation.mutateAsync({
+            const newProtocolId = await generateProtocolMutation.mutateAsync({
                 commissionId: protocolModal.id,
-                // Add other required fields based on backend contract
+                
             });
-            setPreviewProtocolId(result);
             setProtocolModal(null);
+            
+            
+            if (newProtocolId) {
+                downloadProtocolMutation.mutate(newProtocolId);
+            }
         } catch (error) {
             console.error('Failed to generate protocol', error);
         }
@@ -122,24 +124,27 @@ function CommissionPage() {
                         <div className="commission-members">
                             <div className="member">
                                 <span className="member-role">{t('commission.chairman')}:</span>
-                                <span className="member-name">{commission.chairmanName || '—'}</span>
+                                <span className="member-name">{commission.members?.find(m => m.roleType === 2)?.fullName || '—'}</span>
                             </div>
                             <div className="member">
                                 <span className="member-role">{t('commission.secretary')}:</span>
-                                <span className="member-name">{commission.secretaryName || '—'}</span>
+                                <span className="member-name">{commission.members?.find(m => m.roleType === 3)?.fullName || '—'}</span>
                             </div>
                         </div>
 
                         <div className="commission-actions">
-                            <button className="action-btn primary">
+                            <button 
+                                className="action-btn primary"
+                                onClick={() => navigate(`/schedule/${commission.id}`)}
+                            >
                                 {t('commission.students')}
                             </button>
-                            {isSecretary && commission.hasUpcomingSchedule === false && (
+                            {(isSecretary || isChairman) && (
                                 <button
                                     className="action-btn secondary"
-                                    onClick={() => handleGenerateProtocol(commission)}
+                                    onClick={() => navigate(`/secretary/${commission.id}`)}
                                 >
-                                    {t('commission.generateProtocol')}
+                                    {t('nav.secretary')}
                                 </button>
                             )}
                         </div>
@@ -164,42 +169,12 @@ function CommissionPage() {
                         <div className="protocol-modal-meta">
                             <p><strong>{getLocalizedValue(protocolModal.name, i18n.language)}</strong></p>
                             <p>{t('commission.date')}: {formatDate(protocolModal.nextDate)} | {t('commission.time')}: {protocolModal.nextTime || '—'} | {t('commission.room')}: {protocolModal.room || '—'}</p>
-                            <p>{t('commission.chairman')}: {protocolModal.chairmanName || '—'} | {t('commission.secretary')}: {protocolModal.secretaryName || '—'}</p>
+                            <p>{t('commission.chairman')}: {protocolModal.members?.find(m => m.roleType === 2)?.fullName || '—'} | {t('commission.secretary')}: {protocolModal.members?.find(m => m.roleType === 3)?.fullName || '—'}</p>
                         </div>
 
-                        <div className="protocol-table-wrapper">
-                            <table className="protocol-table">
-                                <thead>
-                                    <tr>
-                                        <th>№</th>
-                                        <th>{t('commission.studentFullName')}</th>
-                                        <th>{t('commission.thesisTitle')}</th>
-                                        <th>{t('commission.averageScore')}</th>
-                                        <th>{t('commission.decision')}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {(protocolData?.students || []).map((s, idx) => (
-                                        <tr key={s.id || idx} className={idx % 2 === 0 ? 'protocol-row-even' : ''}>
-                                            <td>{idx + 1}</td>
-                                            <td>{s.name}</td>
-                                            <td>{getLocalizedValue(s.thesis, i18n.language)}</td>
-                                            <td className="protocol-score">{s.avgScore}</td>
-                                            <td>
-                                                <span className={`protocol-decision ${s.decision}`}>
-                                                    {s.decision === 'credit' ? t('status.credit') : t('status.noCredit')}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {(!protocolData?.students || protocolData.students.length === 0) && (
-                                        <tr>
-                                            <td colSpan={5} style={{ textAlign: 'center' }}>{t('common.noData')}</td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
+                            <div className="protocol-preview-placeholder">
+                                <p>{t('commission.protocolWillBeGeneratedAndDownloaded')}</p>
+                            </div>
 
                         <div className="protocol-modal-footer">
                             <button className="action-btn secondary" onClick={() => setProtocolModal(null)}>
@@ -221,3 +196,6 @@ function CommissionPage() {
 }
 
 export default CommissionPage;
+
+
+

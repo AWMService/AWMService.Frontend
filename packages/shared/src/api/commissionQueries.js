@@ -1,47 +1,47 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './apiClient';
 export const commissionApi = {
-  fetchCommissions: async (departmentId, academicYearId) => {
-    const { data } = await apiClient.get('/commissions', {
-      params: { departmentId, academicYearId }
-    });
+  fetchCommissions: async (orgUnitId, semesterId, specialityId = null) => {
+    const params = { orgUnitId, semesterId };
+    if (specialityId) params.specialityId = specialityId;
+
+    const { data } = await apiClient.get('/v1/commissions', { params });
     return data;
   },
   fetchCommissionById: async (commissionId) => {
-    const { data } = await apiClient.get(`/commissions/${commissionId}`);
+    const { data } = await apiClient.get(`/v1/commissions/${commissionId}`);
     return data;
   },
   createCommission: async (commissionData) => {
-    const { data } = await apiClient.post('/commissions', commissionData);
+
+    const { data } = await apiClient.post('/v1/commissions', commissionData);
     return data;
   },
   updateCommission: async (commissionId, commissionData) => {
-    const { data } = await apiClient.put(`/commissions/${commissionId}`, commissionData);
-    return data;
-  },
-  addMember: async (commissionId, memberData) => {
-    const { data } = await apiClient.post(`/commissions/${commissionId}/members`, memberData);
-    return data;
-  },
-  removeMember: async (commissionId, memberId) => {
-    const { data } = await apiClient.delete(`/commissions/${commissionId}/members/${memberId}`);
+    const { data } = await apiClient.put(`/v1/commissions/${commissionId}`, commissionData);
     return data;
   },
   deleteCommission: async (commissionId) => {
-    const { data } = await apiClient.delete(`/commissions/${commissionId}`);
+    const { data } = await apiClient.delete(`/v1/commissions/${commissionId}`);
+    return data;
+  },
+  autoDistributeStudents: async (distributionData) => {
+    const { data } = await apiClient.post('/v1/commissions/auto-distribute', distributionData);
     return data;
   }
 };
 export const commissionKeys = {
   all: ['commissions'],
-  byDepartment: (departmentId, academicYearId) => [...commissionKeys.all, 'department', departmentId, academicYearId],
+  byDepartment: (orgUnitId, semesterId, specialityId = null) =>
+    [...commissionKeys.all, 'department', orgUnitId, semesterId, specialityId],
   detail: (commissionId) => [...commissionKeys.all, 'detail', commissionId]
 };
-export const useCommissions = (departmentId, academicYearId) => {
+
+export const useCommissions = (orgUnitId, semesterId, specialityId = null) => {
   return useQuery({
-    queryKey: commissionKeys.byDepartment(departmentId, academicYearId),
-    queryFn: () => commissionApi.fetchCommissions(departmentId, academicYearId),
-    enabled: !!departmentId && !!academicYearId,
+    queryKey: commissionKeys.byDepartment(orgUnitId, semesterId, specialityId),
+    queryFn: () => commissionApi.fetchCommissions(orgUnitId, semesterId, specialityId),
+    enabled: !!orgUnitId && !!semesterId,
   });
 };
 export const useCommissionDetail = (commissionId) => {
@@ -51,40 +51,47 @@ export const useCommissionDetail = (commissionId) => {
     enabled: !!commissionId,
   });
 };
-export const useCreateCommission = (departmentId, academicYearId) => {
+
+export const useCreateCommission = (orgUnitId, semesterId, specialityId = null) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: commissionApi.createCommission,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: commissionKeys.byDepartment(departmentId, academicYearId) });
+      queryClient.invalidateQueries({ queryKey: commissionKeys.byDepartment(orgUnitId, semesterId, specialityId) });
     },
   });
 };
-export const useUpdateCommission = (departmentId, academicYearId) => {
+
+export const useUpdateCommission = (orgUnitId, semesterId, specialityId = null) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, ...data }) => commissionApi.updateCommission(id, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: commissionKeys.byDepartment(departmentId, academicYearId) });
+      queryClient.invalidateQueries({ queryKey: commissionKeys.byDepartment(orgUnitId, semesterId, specialityId) });
       queryClient.invalidateQueries({ queryKey: commissionKeys.detail(variables.id) });
     },
   });
 };
-export const useAddCommissionMember = (commissionId) => {
+
+export const useDeleteCommission = (orgUnitId, semesterId, specialityId = null) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (memberData) => commissionApi.addMember(commissionId, memberData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: commissionKeys.detail(commissionId) });
+    mutationFn: (id) => commissionApi.deleteCommission(id),
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: commissionKeys.byDepartment(orgUnitId, semesterId, specialityId) });
+      queryClient.invalidateQueries({ queryKey: commissionKeys.detail(id) });
     },
   });
 };
-export const useRemoveCommissionMember = (commissionId) => {
+
+export const useAutoDistributeStudents = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (memberId) => commissionApi.removeMember(commissionId, memberId),
+    mutationFn: commissionApi.autoDistributeStudents,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: commissionKeys.detail(commissionId) });
+      queryClient.invalidateQueries({ queryKey: commissionKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['preDefense'] });
+      queryClient.invalidateQueries({ queryKey: ['schedules'] });
     },
   });
 };

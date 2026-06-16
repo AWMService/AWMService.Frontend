@@ -10,10 +10,11 @@ export function AdminHeader() {
 
   const getPageName = () => {
     const path = location.pathname;
-    if (path.includes('/supervisors')) return t('nav.supervisors');
-    if (path.includes('/time-periods')) return t('nav.timePeriods');
-    if (path.includes('/directions-topics')) return t('nav.directionsTopics');
-    if (path.includes('/settings')) return t('auth.settings');
+    if (path.includes('/users')) return t('admin.users');
+    if (path.includes('/roles')) return t('nav.roles');
+    if (path.includes('/work-types')) return t('admin.workTypesTitle');
+    if (path.includes('/students')) return t('admin.studentsTitle');
+    if (path.includes('/monitoring')) return t('nav.monitoring');
     return t('nav.dashboard');
   };
 
@@ -25,13 +26,9 @@ export function AdminHeader() {
       appSubtitle={t('nav.dashboard')}
       pageTitle={getPageName()}
       userProfile={{
-        initials: 'А',
-        name: user?.name || 'Admin',
+        name: user?.name || user?.login || 'Admin',
         role: t('roles.admin', 'Администратор'),
       }}
-      userDropdownItems={
-        <div className="dropdown-item">{t('auth.profile')}</div>
-      }
       onLogout={logout}
       notificationCount={3}
       actions={<LanguageSelector />}

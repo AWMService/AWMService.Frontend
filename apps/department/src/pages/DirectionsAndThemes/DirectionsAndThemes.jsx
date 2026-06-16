@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
     getIntlLocale,
@@ -12,7 +12,6 @@ import {
     useDirectionsByDepartment,
     useRejectDirection,
     useRequestDirectionRevision,
-    useStaffByDepartment,
     useTopicCoordinationSummary,
     useWorkTypes,
 } from "@awm/shared";
@@ -31,22 +30,20 @@ const formatDate = (value, locale) => {
 
 const DirectionsAndThemes = () => {
     const location = useLocation();
-    const navigate = useNavigate();
     const { t, i18n } = useTranslation();
     const { user } = useAuth();
     const currentLanguage = normalizeLanguage(i18n.language);
     const locale = getIntlLocale(i18n.language);
 
-    const departmentId = user?.departmentId;
-    const academicYearId = user?.currentAcademicYearId;
+    const orgUnitId = user?.orgUnitId;
+    const semesterId = user?.currentSemesterId;
 
     const query = new URLSearchParams(location.search);
     const activeTab = query.get("tab") || TABS.DIRECTIONS;
     const isDirections = activeTab === TABS.DIRECTIONS;
 
-    const { data: rawDirections = [], isLoading: directionsLoading, error: directionsError } = useDirectionsByDepartment(departmentId, academicYearId);
-    const { data: coordinationSummary, isLoading: topicsLoading, error: topicsError } = useTopicCoordinationSummary(departmentId, academicYearId);
-    const { data: staff = [] } = useStaffByDepartment(departmentId);
+    const { data: rawDirections = [], isLoading: directionsLoading, error: directionsError } = useDirectionsByDepartment(orgUnitId, semesterId);
+    const { data: coordinationSummary, isLoading: topicsLoading, error: topicsError } = useTopicCoordinationSummary(orgUnitId, semesterId);
     const { data: workTypes = [] } = useWorkTypes();
 
     const approveMutation = useApproveDirection();
@@ -55,62 +52,65 @@ const DirectionsAndThemes = () => {
     const approveTopicMutation = useApproveTopic();
     const deactivateTopicMutation = useDeactivateTopic();
 
-    const staffById = useMemo(() => new Map(staff.map((item) => [item.id, item])), [staff]);
     const workTypesById = useMemo(() => new Map(workTypes.map((item) => [item.id, item])), [workTypes]);
 
     const directions = useMemo(() => rawDirections.map((direction) => {
-        const supervisor = staffById.get(direction.supervisorId);
         const workType = workTypesById.get(direction.workTypeId);
 
         return {
             ...direction,
-            supervisor: supervisor?.fullName || supervisor?.email || `#${direction.supervisorId}`,
+            supervisor: direction.supervisorFullName || `#${direction.supervisorId}`,
             type: workType?.name || `#${direction.workTypeId}`,
             submittedAt: formatDate(direction.submittedAt || direction.createdAt, locale),
             rejectionReason: direction.reviewComment,
         };
-    }), [rawDirections, staffById, workTypesById, locale]);
+    }), [rawDirections, workTypesById, locale]);
 
     const themes = useMemo(() => (coordinationSummary?.topics || []).map((topic) => ({
-        id: topic.topicId,
+        id: topic.id,
         title: topic.title,
         description: {
-            ru: topic.lastRejectionReason || "",
-            kk: topic.lastRejectionReason || "",
-            en: topic.lastRejectionReason || "",
+            ru: topic.descriptionRu || "",
+            kk: topic.descriptionKz || "",
+            en: topic.descriptionEn || "",
         },
-        status: topic.isClosed ? "closed" : topic.isApproved ? "approved" : "pending",
+        status: topic.status,
         type: t('department.themeOfDiplomaWork'),
-        supervisor: topic.supervisorName || `#${topic.supervisorId}`,
-        submittedAt: "—",
+        supervisor: topic.supervisorFullName || `#${topic.supervisorId}`,
+        submittedAt: formatDate(topic.submittedAt, locale),
         rejectionReason: topic.lastRejectionReason,
         acceptedCount: topic.acceptedCount,
         pendingCount: topic.pendingCount,
         maxParticipants: topic.maxParticipants,
-    })), [coordinationSummary, t]);
+    })), [coordinationSummary, t, locale]);
 
     const [selectedDirection, setSelectedDirection] = useState(null);
     const [selectedTheme, setSelectedTheme] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [filterStatus, setFilterStatus] = useState("all");
 
-    const filterOptions = [
-        { value: "all", label: t('common.all') },
-        { value: "draft", label: t('status.draft') },
-        { value: "pending", label: t('status.underReview') },
-        { value: "approved", label: t('status.approved') },
-        { value: "rejected", label: t('status.rejected') },
-        { value: "revision", label: t('status.revision') },
-        { value: "closed", label: t('status.closed', t('student.occupied')) },
-    ];
-
-    const changeTab = (tab) => {
-        navigate(`?tab=${tab}`);
-        setSearchQuery("");
-        setFilterStatus("all");
-        setSelectedDirection(null);
-        setSelectedTheme(null);
-    };
+    const filterOptions = useMemo(() => {
+        if (isDirections) {
+            return [
+                { value: "all", label: t('common.all') },
+                { value: "pending", label: t('status.underReview') },
+                { value: "approved", label: t('status.approved') },
+                { value: "rejected", label: t('status.rejected') },
+                { value: "revision", label: t('status.revision') },
+            ];
+        } else {
+            return [
+                { value: "all", label: t('common.all') },
+                { value: "pending", label: t('status.underReview') },
+                { value: "approved", label: t('status.approved') },
+                { value: "rejected", label: t('status.rejected') },
+                { value: "revision", label: t('status.revision') },
+                { value: "closed", label: t('status.closed') },
+                { value: "inactive", label: t('status.inactive', 'Inactive') },
+                { value: "reconciled", label: t('status.reconciled', 'Reconciled') },
+            ];
+        }
+    }, [isDirections, t]);
 
     const items = isDirections ? directions : themes;
 
@@ -137,12 +137,12 @@ const DirectionsAndThemes = () => {
         setSelectedDirection(null);
     };
 
-    const updateThemeStatus = async (id, newStatus) => {
+    const updateThemeStatus = async (id, newStatus, comment = "") => {
         if (newStatus === "approved") {
-            await approveTopicMutation.mutateAsync(id);
+            await approveTopicMutation.mutateAsync({ id, payload: { isApproved: true, comment: "" } });
         }
         if (newStatus === "rejected") {
-            await deactivateTopicMutation.mutateAsync(id);
+            await deactivateTopicMutation.mutateAsync({ id, comment });
         }
         setSelectedTheme(null);
     };
@@ -152,35 +152,6 @@ const DirectionsAndThemes = () => {
 
     return (
         <div className="projects-page">
-            <div className="page-header-info">
-                <div>
-                    <h1 className="page-title">
-                        {isDirections ? t('supervisor.directionsDP') : t('supervisor.themesDP')}
-                    </h1>
-                    <p className="page-subtitle">
-                        {isDirections
-                            ? t('department.directionsSubtitle')
-                            : t('department.themesSubtitle')}
-                    </p>
-                </div>
-            </div>
-
-            <div className="projects-tabs">
-                <button
-                    className={`tab-btn ${isDirections ? "active" : ""}`}
-                    onClick={() => changeTab(TABS.DIRECTIONS)}
-                >
-                    {t('department.directions')} <span>{directions.length}</span>
-                </button>
-
-                <button
-                    className={`tab-btn ${!isDirections ? "active" : ""}`}
-                    onClick={() => changeTab(TABS.THEMES)}
-                >
-                    {t('supervisor.topics')} <span>{themes.length}</span>
-                </button>
-            </div>
-
             <div className="projects-controls">
                 <input
                     type="text"
@@ -207,7 +178,7 @@ const DirectionsAndThemes = () => {
                 </div>
             </div>
 
-            {isDirections && (!departmentId || !academicYearId) && (
+            {isDirections && (!orgUnitId || !semesterId) && (
                 <p className="no-results">{t('department.noDepartmentSelected', 'Department or Academic Year missing.')}</p>
             )}
             {error && (
@@ -223,18 +194,18 @@ const DirectionsAndThemes = () => {
                 )}
 
                 {isDirections &&
-                    filteredItems.map((dir) => (
+                    filteredItems.map((dir, index) => (
                         <DirectionCard
-                            key={dir.id}
+                            key={dir.id ?? `direction-${index}`}
                             direction={dir}
                             onView={setSelectedDirection}
                         />
                     ))}
 
                 {!isDirections &&
-                    filteredItems.map((theme) => (
+                    filteredItems.map((theme, index) => (
                         <DirectionCard
-                            key={theme.id}
+                            key={theme.id ?? `theme-${index}`}
                             direction={{
                                 ...theme,
                                 type: t('department.themeOfDiplomaWork'),
@@ -266,3 +237,6 @@ const DirectionsAndThemes = () => {
 };
 
 export default DirectionsAndThemes;
+
+
+

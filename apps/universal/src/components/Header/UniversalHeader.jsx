@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LanguageSelector, RoleSelector, useAuth, useRole, SharedHeader } from '@awm/shared';
+import { LanguageSelector, useAuth, useRole, SharedHeader } from '@awm/shared';
 
 export function UniversalHeader() {
     const location = useLocation();
@@ -30,8 +30,7 @@ export function UniversalHeader() {
             appSubtitle={t('nav.dashboard')}
             pageTitle={getPageName()}
             userProfile={{
-                initials: 'РР',
-                name: user?.name || 'Рахимов Р.Р.',
+                name: user?.name || user?.login || 'Пользователь',
                 role: t(roleMeta?.labelKey || 'roles.supervisor'),
             }}
             userDropdownItems={
@@ -41,7 +40,6 @@ export function UniversalHeader() {
             notificationCount={2}
             actions={
                 <>
-                    <RoleSelector />
                     <LanguageSelector />
                 </>
             }

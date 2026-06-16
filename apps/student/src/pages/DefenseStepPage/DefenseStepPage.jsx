@@ -5,17 +5,32 @@ import { SubmissionCard } from '../../components/SubmissionCard/SubmissionCard.j
 import { ScheduleCard } from '../../components/ScheduleCard/ScheduleCard.jsx';
 import { Results } from '../../components/Results/Results.jsx';
 import { CommissionCard } from '../../components/CommissionCard/CommissionCard.jsx';
-import { useUploadAttachment, useCurrentWorkId, useStudentDefenseStep } from '@awm/shared';
+import { useUploadAttachment, useCurrentWorkId, useStudentDefenseStep, useAttachments, useDeleteAttachment } from '@awm/shared';
 
 const DefenseStepPage = () => {
   const { t } = useTranslation();
   const { data: defenseStep, isLoading } = useStudentDefenseStep();
   const { data: workId } = useCurrentWorkId();
   const uploadMutation = useUploadAttachment(workId);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [file, setFile] = useState(null);
+  const { data: attachments = [] } = useAttachments(workId);
+  const deleteMutation = useDeleteAttachment(workId);
+
+  const finalAttachment = attachments.find(a => a.attachmentTypeId === 1);
+  const presentationAttachment = attachments.find(a => a.attachmentTypeId === 2);
+
+  const [localFile, setLocalFile] = useState(null);
   const [uploadError, setUploadError] = useState(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+
+  
+  const [localPresentation, setLocalPresentation] = useState(null);
+  const [presentationError, setPresentationError] = useState(null);
+
+  const isSubmitted = !!finalAttachment;
+  const file = isSubmitted ? { name: finalAttachment.fileName, size: finalAttachment.fileSizeBytes } : localFile;
+
+  const presentationSubmitted = !!presentationAttachment;
+  const presentationFile = presentationSubmitted ? { name: presentationAttachment.fileName, size: presentationAttachment.fileSizeBytes } : localPresentation;
 
   const schedule = defenseStep?.schedule
     ? {
@@ -28,33 +43,81 @@ const DefenseStepPage = () => {
   const commission = defenseStep?.commission || [];
   const previousAttempts = defenseStep?.previousAttempts || [];
   const attemptNumber = defenseStep?.attemptNumber;
-  const results = defenseStep?.results;
   const resultsType = defenseStep?.stepType === 'defense' ? 'defense' : 'pre-defense';
   const pageTitle = defenseStep?.stepType === 'defense' ? t('student.defense') : t('student.preDefense');
   const infoText = t('student.uploadFinalVersion');
   const hasAttemptTracking = defenseStep?.stepType === 'pre-defense' && attemptNumber != null;
 
+  
+  const rawResults = defenseStep?.results;
+  const results = rawResults
+    ? {
+        finalGrade: rawResults.gradeLetter ?? rawResults.finalGrade ?? '—',
+        commissionGrade: rawResults.score != null ? rawResults.score.toFixed(1) : (rawResults.commissionGrade ?? '—'),
+        finalScore: rawResults.score != null ? rawResults.score.toFixed(1) : '—',
+        comments: rawResults.decision,
+      }
+    : null;
+
+  const isDefenseComplete = !!results && defenseStep?.stepType === 'defense';
+
   const handleFileChange = (e) => {
     if (e.target.files.length > 0) {
-      setFile(e.target.files[0]);
+      setLocalFile(e.target.files[0]);
     }
   };
 
   const handleSubmit = async () => {
-    if (!file || !workId) return;
+    if (!localFile || !workId) return;
     setUploadError(null);
     try {
-      await uploadMutation.mutateAsync({ file, attachmentType: 'Final' });
-      setIsSubmitted(true);
+      await uploadMutation.mutateAsync({ file: localFile, attachmentType: 'Final' });
+      setLocalFile(null);
     } catch (err) {
       setUploadError(err.message || t('common.error'));
     }
   };
 
-  const handleFileDelete = () => {
-    setFile(null);
-    setIsSubmitted(false);
+  const handleFileDelete = async () => {
+    if (finalAttachment) {
+      try {
+        await deleteMutation.mutateAsync(finalAttachment.id);
+      } catch (err) {
+        setUploadError(err.message || t('common.error'));
+      }
+    } else {
+      setLocalFile(null);
+    }
   };
+
+  const handlePresentationChange = (e) => {
+    if (e.target.files.length > 0) setLocalPresentation(e.target.files[0]);
+  };
+
+  const handlePresentationSubmit = async () => {
+    if (!localPresentation || !workId) return;
+    setPresentationError(null);
+    try {
+      await uploadMutation.mutateAsync({ file: localPresentation, attachmentType: 'Presentation' });
+      setLocalPresentation(null);
+    } catch (err) {
+      setPresentationError(err.message || t('common.error'));
+    }
+  };
+
+  const handlePresentationDelete = async () => {
+    if (presentationAttachment) {
+      try {
+        await deleteMutation.mutateAsync(presentationAttachment.id);
+      } catch (err) {
+        setPresentationError(err.message || t('common.error'));
+      }
+    } else {
+      setLocalPresentation(null);
+    }
+  };
+
+  const isFinalDefense = defenseStep?.stepType === 'defense';
 
   if (isLoading) {
     return (
@@ -74,19 +137,44 @@ const DefenseStepPage = () => {
           </span>
         )}
       </div>
+      {isDefenseComplete && (
+        <div className={`defense-result-banner ${rawResults?.isPassed ? 'defense-result-banner--passed' : 'defense-result-banner--failed'}`}>
+          {rawResults?.isPassed
+            ? t('student.defensePassedBanner', '🎓 Поздравляем! Вы успешно защитили дипломную работу.')
+            : t('student.defenseFailedBanner', 'К сожалению, защита не пройдена. Обратитесь к научному руководителю.')}
+        </div>
+      )}
+
       <div className="defense-step-grid">
         <div className="defense-step-left">
-          <SubmissionCard
-            isSubmitted={isSubmitted}
-            file={file}
-            infoText={infoText}
-            handleFileChange={handleFileChange}
-            handleSubmit={handleSubmit}
-            handleFileDelete={handleFileDelete}
-            isUploading={uploadMutation.isPending}
-            uploadError={uploadError}
-          />
-          {isSubmitted && <Results results={results} resultsType={resultsType} />}
+          {!isDefenseComplete && (
+            <>
+              <SubmissionCard
+                isSubmitted={isSubmitted}
+                file={file}
+                infoText={infoText}
+                handleFileChange={handleFileChange}
+                handleSubmit={handleSubmit}
+                handleFileDelete={handleFileDelete}
+                isUploading={uploadMutation.isPending}
+                uploadError={uploadError}
+              />
+              {isFinalDefense && (
+                <SubmissionCard
+                  title={t('student.presentationUpload', 'Загрузить презентацию')}
+                  isSubmitted={presentationSubmitted}
+                  file={presentationFile}
+                  infoText={t('student.presentationUploadHint', 'Загрузите файл презентации (PPTX, PDF) для защиты.')}
+                  handleFileChange={handlePresentationChange}
+                  handleSubmit={handlePresentationSubmit}
+                  handleFileDelete={handlePresentationDelete}
+                  isUploading={uploadMutation.isPending}
+                  uploadError={presentationError}
+                />
+              )}
+            </>
+          )}
+          {(isDefenseComplete || isSubmitted) && <Results results={results} resultsType={resultsType} />}
         </div>
         <div className="defense-step-right">
           {schedule && <ScheduleCard title={`${t('nav.schedule')} ${pageTitle}`} schedule={schedule} />}

@@ -3,7 +3,7 @@ import { apiClient } from './apiClient';
 export async function fetchNotifications(skip = 0, take = 20, onlyUnread = null) {
   const params = { skip, take };
   if (onlyUnread != null) params.onlyUnread = onlyUnread;
-  const { data } = await apiClient.get('/notifications', { params });
+  const { data } = await apiClient.get('/v1/notifications', { params });
   return data;
 }
 export function useNotifications(skip = 0, take = 20, onlyUnread = null) {
@@ -13,7 +13,7 @@ export function useNotifications(skip = 0, take = 20, onlyUnread = null) {
   });
 }
 export async function markNotificationAsRead(notificationId) {
-  await apiClient.patch(`/notifications/${notificationId}/read`);
+  await apiClient.post(`/v1/notifications/${notificationId}/read`);
 }
 export function useMarkAsRead() {
   const queryClient = useQueryClient();
@@ -26,7 +26,7 @@ export function useMarkAsRead() {
   });
 }
 export async function markAllNotificationsAsRead() {
-  await apiClient.patch('/notifications/read-all');
+  await apiClient.post('/v1/notifications/read-all');
 }
 export function useMarkAllAsRead() {
   const queryClient = useQueryClient();
@@ -39,7 +39,7 @@ export function useMarkAllAsRead() {
   });
 }
 export async function fetchUnreadCount() {
-  const { data } = await apiClient.get('/notifications/unread-count');
+  const { data } = await apiClient.get('/v1/notifications/unread-count');
   return data;
 }
 export function useUnreadCount() {

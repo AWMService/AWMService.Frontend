@@ -1,13 +1,14 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './apiClient';
 export const workKeys = {
   all: ['works'],
   myProgress: () => [...workKeys.all, 'my-progress'],
   mySupervised: () => [...workKeys.all, 'my-supervised'],
   defenseStep: () => [...workKeys.all, 'defense-step'],
+  readiness: (orgUnitId, semesterId, specialityId) => [...workKeys.all, 'readiness', orgUnitId, semesterId, specialityId],
 };
 export const fetchMyWorkProgress = async () => {
-  const { data } = await apiClient.get('/works/my-progress');
+  const { data } = await apiClient.get('/v1/works/my-progress');
   return data;
 };
 export const useMyWorkProgress = (options = {}) => {
@@ -18,7 +19,7 @@ export const useMyWorkProgress = (options = {}) => {
   });
 };
 export const fetchMySupervisedWorks = async () => {
-  const { data } = await apiClient.get('/works/my-supervised');
+  const { data } = await apiClient.get('/v1/works/my-supervised');
   return data;
 };
 export const useMySupervisedWorks = (options = {}) => {
@@ -28,8 +29,23 @@ export const useMySupervisedWorks = (options = {}) => {
     ...options,
   });
 };
+
+export const fetchWorkHistory = async (workId) => {
+  const { data } = await apiClient.get(`/v1/works/${workId}/history`);
+  return data;
+};
+
+export const useWorkHistory = (workId, options = {}) => {
+  return useQuery({
+    queryKey: [...workKeys.all, 'history', workId],
+    queryFn: () => fetchWorkHistory(workId),
+    enabled: !!workId && workId > 0,
+    ...options,
+  });
+};
+
 export const fetchStudentDefenseStep = async () => {
-  const { data } = await apiClient.get('/works/my-defense-step');
+  const { data } = await apiClient.get('/v1/schedules/my-defense-step');
   return data;
 };
 export const useStudentDefenseStep = (options = {}) => {
@@ -37,5 +53,54 @@ export const useStudentDefenseStep = (options = {}) => {
     queryKey: workKeys.defenseStep(),
     queryFn: fetchStudentDefenseStep,
     ...options,
+  });
+};
+
+export const fetchDefenseReadiness = async ({ orgUnitId, semesterId, specialityId }) => {
+  const { data } = await apiClient.get('/v1/works/defense-readiness', {
+    params: { orgUnitId, semesterId, specialityId }
+  });
+  return data;
+};
+
+export const useDefenseReadiness = (params, options = {}) => {
+  return useQuery({
+    queryKey: workKeys.readiness(params.orgUnitId, params.semesterId, params.specialityId),
+    queryFn: () => fetchDefenseReadiness(params),
+    enabled: !!params.orgUnitId && !!params.semesterId,
+    ...options,
+  });
+};
+
+export const useAdmitToDefense = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (workId) => {
+      await apiClient.post(`/v1/works/${workId}/admit`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: workKeys.all });
+    }
+  });
+};
+
+
+export const useSaveRepoUrl = (workId) => {
+  return useMutation({
+    mutationFn: async (repoUrl) => {
+      await apiClient.put(`/v1/works/${workId}/repo-url`, { repoUrl });
+    },
+  });
+};
+
+export const useGraduateWorks = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (workIds) => {
+      await apiClient.post('/v1/works/graduate', { workIds });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: workKeys.all });
+    }
   });
 };

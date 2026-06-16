@@ -3,30 +3,39 @@
     border: 1px solid #e5e7eb;
     border-radius: 12px;
     padding: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     font-family: "Segoe UI", Roboto, Arial, sans-serif;
 }
+
+
+
 .tp-card__header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
 }
+
 .tp-card__title {
     font-size: 18px;
     font-weight: 500;
     color: #111827;
     margin: 0;
 }
+
 .tp-card__dates {
     font-size: 13px;
     color: #6b7280;
     margin-top: 4px;
 }
+
+
+
 .tp-card__header-actions {
     display: flex;
     align-items: center;
     gap: 8px;
 }
+
 .tp-card__status {
     background: #f1f5f9;
     color: #475569;
@@ -35,6 +44,9 @@
     border-radius: 999px;
     padding: 4px 10px;
 }
+
+
+
 .tp-card__icon-btn {
     width: 32px;
     height: 32px;
@@ -46,9 +58,11 @@
     align-items: center;
     justify-content: center;
 }
+
 .tp-card__icon-btn:hover {
     background: #f3f4f6;
 }
+
 .tp-card__icon-btn svg {
     width: 18px;
     height: 18px;
@@ -58,15 +72,20 @@
     stroke-linecap: round;
     stroke-linejoin: round;
 }
+
 .tp-card__icon-btn--danger svg {
     stroke: #dc2626;
 }
+
+
+
 .tp-card__progress-wrapper {
     margin-top: 14px;
     display: flex;
     align-items: center;
     gap: 8px;
 }
+
 .tp-card__progress-bar {
     flex: 1;
     height: 6px;
@@ -74,18 +93,23 @@
     border-radius: 999px;
     overflow: hidden;
 }
+
 .tp-card__progress-fill {
     height: 100%;
     background-color: rgba(96, 165, 250, 0.8);
     border-radius: 999px;
     transition: width 0.3s ease;
 }
+
 .tp-card__progress-text {
     font-size: 12px;
     color: #6b7280;
     min-width: 32px;
     text-align: right;
 }
+
+
+
 .tp-card__summary {
     display: flex;
     gap: 24px;
@@ -93,12 +117,16 @@
     color: #374151;
     margin-top: 12px;
 }
+
+
+
 .tp-card__actions {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
     margin-top: 16px;
 }
+
 .tp-card__action-btn {
     display: inline-flex;
     align-items: center;
@@ -112,9 +140,11 @@
     color: #374151;
     cursor: pointer;
 }
+
 .tp-card__action-btn:hover {
     background: #f3f4f6;
 }
+
 .tp-card__action-btn svg {
     width: 16px;
     height: 16px;

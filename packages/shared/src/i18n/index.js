@@ -54,18 +54,23 @@ i18n
       caches: ['localStorage'],
     },
     interpolation: {
-      escapeValue: false, 
+      escapeValue: false,
+      escapeValue: false,
     },
     react: {
       useSuspense: false,
     },
   });
 export default i18n;
+
+
 export const changeLanguage = (lang) => {
   const normalized = normalizeLanguage(lang);
   i18n.changeLanguage(normalized);
   localStorage.setItem('awm-language', normalized);
 };
+
+
 export const getCurrentLanguage = () => {
   return normalizeLanguage(i18n.language || defaultLanguage);
 };

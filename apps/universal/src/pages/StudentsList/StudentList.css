@@ -1,4 +1,4 @@
-/* Основной контейнер страницы */
+
 .s-page-container {
     display: flex;
     position: relative;
@@ -11,14 +11,14 @@
     transition: all 0.4s ease;
 }
 
-/* Контент */
+
 .s-main-content {
     flex: 1;
     padding: 30px;
     transition: margin-right 0.3s ease;
 }
 
-/* Размытие контента при открытом журнале */
+
 .s-page-container.s-drawer-open .s-main-content {
     filter: blur(8px);
     transform: scale(0.98);
@@ -26,7 +26,7 @@
 }
 
 
-/* СЕТКА СТУДЕНТОВ */
+
 .s-topics-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -83,7 +83,7 @@
 }
 
 
-/* DRAWER */
+
 
 .s-journal-drawer {
     position: fixed;
@@ -132,7 +132,7 @@
     margin-top: 4px;
 }
 
-/* ВАЖНО: скролл только здесь */
+
 .s-drawer-body {
     flex: 1;
     overflow-y: auto;
@@ -140,7 +140,7 @@
 }
 
 
-/* Документы */
+
 
 .s-docs-section {
     padding: 16px 24px;
@@ -194,7 +194,7 @@
 }
 
 
-/* Таблица */
+
 
 .s-evaluation-table {
     width: 100%;
@@ -244,7 +244,7 @@
 }
 
 
-/* Статусы */
+
 
 .s-status-message {
     margin: 20px 24px;
@@ -270,7 +270,7 @@
 }
 
 
-/* Footer */
+
 
 .s-drawer-footer {
     padding: 24px;
@@ -354,7 +354,7 @@
     border: 1px solid #a7f3d0;
 }
 
-/* Score visibility info banner */
+
 .s-scores-hidden-banner {
     display: flex;
     align-items: flex-start;
@@ -376,4 +376,86 @@
     font-size: 13px;
     color: #64748b;
     line-height: 1.4;
+}
+
+
+.s-protocol-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid #e5e7eb;
+    background: #fafbfc;
+}
+
+.s-protocol-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.s-protocol-field--full {
+    grid-column: 1 / -1;
+}
+
+.s-field-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+}
+
+.s-readiness-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    transition: 0.2s;
+}
+
+.s-readiness-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    outline: none;
+}
+
+.s-decision-select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #111827;
+    background: #fff;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.s-decision-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    outline: none;
+}
+
+.s-decision-comment {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #111827;
+    resize: vertical;
+    min-height: 60px;
+    font-family: inherit;
+    transition: 0.2s;
+}
+
+.s-decision-comment:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    outline: none;
 }

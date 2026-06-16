@@ -5,62 +5,83 @@ import {
     getLocalizedValue,
     normalizeLanguage,
     useAuth,
-    useBulkApproveTopics,
-    useCompleteTopicCoordination,
-    useDeactivateTopic,
-    useTopicCoordinationSummary,
+    useReconciliationSummary,
+    useReconcileTopics,
+    useMarkTopicsInactive,
+    useSendTopicsBackForRevision,
+    useCompleteReconciliation,
+    useOrgUnitSpecialities,
 } from "@awm/shared";
 import "./TopicCoordinationPage.css";
 
 const STATUS_OPTIONS = [
     { value: "all", labelKey: "common.all" },
-    { value: "pending", labelKey: "status.pending" },
     { value: "approved", labelKey: "status.approved" },
     { value: "closed", labelKey: "status.closed" },
+    { value: "reconciled", labelKey: "status.reconciled" },
+    { value: "inactive", labelKey: "status.inactive" },
+    { value: "needsrevision", labelKey: "status.needsRevision" },
 ];
 
 const TopicCoordinationPage = () => {
     const { t, i18n } = useTranslation();
     const { user } = useAuth();
     const currentLanguage = normalizeLanguage(i18n.language);
-    const departmentId = user?.departmentId;
-    const academicYearId = user?.currentAcademicYearId;
+    const orgUnitId = user?.orgUnitId ?? user?.orgUnitId;
+    const semesterId = user?.currentSemesterId ?? user?.currentSemesterId;
 
-    const { data: summary, isLoading, error } = useTopicCoordinationSummary(departmentId, academicYearId);
-    const bulkApproveMutation = useBulkApproveTopics();
-    const deactivateMutation = useDeactivateTopic();
-    const completeMutation = useCompleteTopicCoordination();
+    const { data: specialitiesData, isLoading: isLoadingSpecialities } = useOrgUnitSpecialities(orgUnitId);
+    const [selectedSpecialityId, setSelectedSpecialityId] = useState(null);
+
+    const { data: summary, isLoading, error } = useReconciliationSummary(orgUnitId, semesterId, selectedSpecialityId);
+    const reconcileMutation = useReconcileTopics();
+    const markInactiveMutation = useMarkTopicsInactive();
+    const sendBackMutation = useSendTopicsBackForRevision();
+    const completeMutation = useCompleteReconciliation();
+
     const [selectedIds, setSelectedIds] = useState([]);
     const [filterStatus, setFilterStatus] = useState("all");
     const [searchTerm, setSearchTerm] = useState("");
 
-    // Reject modal state
-    const [rejectModalOpen, setRejectModalOpen] = useState(false);
-    const [rejectReason, setRejectReason] = useState("");
-    const [rejectTargetIds, setRejectTargetIds] = useState([]);
-    const [rejectError, setRejectError] = useState(false);
+    
+    const [revisionModalOpen, setRevisionModalOpen] = useState(false);
+    const [revisionComment, setRevisionComment] = useState("");
+    const [revisionTargetIds, setRevisionTargetIds] = useState([]);
+    const [revisionError, setRevisionError] = useState(false);
 
-    // Finalize confirm
+    
     const [finalizeModalOpen, setFinalizeModalOpen] = useState(false);
 
-    /* ===================== DERIVED DATA ===================== */
+    
+    const [inactiveModalOpen, setInactiveModalOpen] = useState(false);
+    const [inactiveTargetIds, setInactiveTargetIds] = useState([]);
+
+    
 
     const topics = useMemo(() => (summary?.topics || []).map((item) => ({
-        id: item.topicId,
-        student: `${item.acceptedCount}/${item.maxParticipants}`,
+        id: item.id,
+        students: `${item.acceptedCount}/${item.maxParticipants}`,
         topic: getLocalizedValue(item.title, currentLanguage),
-        supervisor: item.supervisorName || `#${item.supervisorId}`,
-        status: item.isClosed ? "closed" : item.isApproved ? "approved" : "pending",
-        rejectionReason: item.lastRejectionReason,
+        supervisor: item.supervisorFullName || `#${item.createdBy}`,
+        status: item.status,
+        reviewComment: item.reviewComment,
+        hasExcessApplications: item.hasExcessApplications,
+        hasNoStudents: item.hasNoStudents,
+        acceptedCount: item.acceptedCount,
+        pendingCount: item.pendingCount,
+        totalApplicationsCount: item.totalApplicationsCount,
+        maxParticipants: item.maxParticipants,
     })), [summary, currentLanguage]);
 
-    const stats = useMemo(() => {
-        const total = summary?.totalTopics ?? topics.length;
-        const approved = summary?.approvedTopics ?? topics.filter((topic) => topic.status === "approved").length;
-        const closed = summary?.closedTopics ?? topics.filter((topic) => topic.status === "closed").length;
-        const pending = Math.max(0, total - approved - closed);
-        return { total, approved, rejected: closed, pending };
-    }, [summary, topics]);
+    const stats = useMemo(() => ({
+        total: summary?.totalTopics ?? topics.length,
+        withStudents: summary?.topicsWithAcceptedStudents ?? 0,
+        withoutStudents: summary?.topicsWithoutStudents ?? 0,
+        excess: summary?.topicsWithExcessApplications ?? 0,
+        reconciled: summary?.reconciledTopics ?? 0,
+        inactive: summary?.inactiveTopics ?? 0,
+        needsRevision: summary?.needsRevisionTopics ?? 0,
+    }), [summary, topics]);
 
     const filteredTopics = useMemo(() => {
         return topics.filter((item) => {
@@ -68,20 +89,23 @@ const TopicCoordinationPage = () => {
             const term = searchTerm.toLowerCase();
             const matchesSearch =
                 !term ||
-                item.student.toLowerCase().includes(term) ||
-                item.topic.toLowerCase().includes(term);
+                item.topic.toLowerCase().includes(term) ||
+                item.supervisor.toLowerCase().includes(term);
             return matchesStatus && matchesSearch;
         });
     }, [topics, filterStatus, searchTerm]);
 
-    /* ===================== HANDLERS ===================== */
+    
+    const isActionable = (status) => status === "approved" || status === "closed";
+
+    
 
     const handleSelectAll = (e) => {
         if (e.target.checked) {
-            const pendingIds = filteredTopics
-                .filter((t) => t.status === "pending")
+            const actionableIds = filteredTopics
+                .filter((t) => isActionable(t.status))
                 .map((t) => t.id);
-            setSelectedIds(pendingIds);
+            setSelectedIds(actionableIds);
         } else {
             setSelectedIds([]);
         }
@@ -93,89 +117,122 @@ const TopicCoordinationPage = () => {
         );
     };
 
-    const handleApprove = async (id) => {
-        await bulkApproveMutation.mutateAsync([id]);
-        setSelectedIds((prev) => prev.filter((x) => x !== id));
+    const handleReconcile = async (ids) => {
+        await reconcileMutation.mutateAsync(ids);
+        setSelectedIds((prev) => prev.filter((x) => !ids.includes(x)));
     };
 
-    const handleBulkApprove = async () => {
-        await bulkApproveMutation.mutateAsync(selectedIds);
+    const handleBulkReconcile = async () => {
+        await reconcileMutation.mutateAsync(selectedIds);
         setSelectedIds([]);
     };
 
-    const openRejectModal = (ids) => {
-        setRejectTargetIds(ids);
-        setRejectReason("");
-        setRejectError(false);
-        setRejectModalOpen(true);
+    const openInactiveModal = (ids) => {
+        setInactiveTargetIds(ids);
+        setInactiveModalOpen(true);
     };
 
-    const confirmReject = async () => {
-        if (!rejectReason.trim()) {
-            setRejectError(true);
+    const confirmMarkInactive = async () => {
+        await markInactiveMutation.mutateAsync(inactiveTargetIds);
+        setSelectedIds((prev) => prev.filter((x) => !inactiveTargetIds.includes(x)));
+        setInactiveModalOpen(false);
+    };
+
+    const openRevisionModal = (ids) => {
+        setRevisionTargetIds(ids);
+        setRevisionComment("");
+        setRevisionError(false);
+        setRevisionModalOpen(true);
+    };
+
+    const confirmSendBackForRevision = async () => {
+        if (!revisionComment.trim()) {
+            setRevisionError(true);
             return;
         }
-        for (const id of rejectTargetIds) {
-            await deactivateMutation.mutateAsync(id);
-        }
-        setSelectedIds((prev) => prev.filter((x) => !rejectTargetIds.includes(x)));
-        setRejectModalOpen(false);
+        await sendBackMutation.mutateAsync({
+            topicIds: revisionTargetIds,
+            comment: revisionComment.trim(),
+        });
+        setSelectedIds((prev) => prev.filter((x) => !revisionTargetIds.includes(x)));
+        setRevisionModalOpen(false);
     };
 
     const handleFinalize = async () => {
-        await completeMutation.mutateAsync({ departmentId, academicYearId });
+        await completeMutation.mutateAsync({ orgUnitId, semesterId, specialityId: selectedSpecialityId });
         setFinalizeModalOpen(false);
     };
 
-    /* ===================== HELPERS ===================== */
+    
 
     const getStatusBadge = (status) => {
         const labelMap = {
-            pending: t("status.pending"),
             approved: t("status.approved"),
             closed: t("status.closed"),
+            reconciled: t("status.reconciled", "Согласовано"),
+            inactive: t("status.inactive", "Неактуальна"),
+            needsrevision: t("status.needsRevision", "На доработке"),
+            rejected: t("status.rejected"),
         };
         return (
             <span className={`tc-status-badge tc-status-badge--${status}`}>
-                {labelMap[status]}
+                {labelMap[status] || status}
             </span>
         );
     };
 
-    const pendingInFiltered = filteredTopics.filter((t) => t.status === "pending");
-    const allPendingSelected =
-        pendingInFiltered.length > 0 &&
-        pendingInFiltered.every((t) => selectedIds.includes(t.id));
+    const actionableInFiltered = filteredTopics.filter((t) => isActionable(t.status));
+    const allActionableSelected =
+        actionableInFiltered.length > 0 &&
+        actionableInFiltered.every((t) => selectedIds.includes(t.id));
 
-    /* ===================== RENDER ===================== */
+    
+    const hasUnprocessed = topics.some(
+        (t) => t.status === "approved" || t.status === "closed" || t.status === "needsrevision"
+    );
+
+    const isMutating =
+        reconcileMutation.isPending ||
+        markInactiveMutation.isPending ||
+        sendBackMutation.isPending ||
+        completeMutation.isPending;
+
+    
 
     return (
         <div className="topic-coordination-page">
-            {/* Header */}
-            <div className="page-header-info">
-                <div>
-                    <h1 className="page-title">{t("department.topicCoordinationTitle")}</h1>
-                    <p className="page-subtitle">{t("department.topicCoordinationSubtitle")}</p>
-                </div>
-            </div>
-
-            {/* Stats summary */}
+            {}
             <div className="tc-stats-summary">
                 <span className="tc-stat-item">
-                    {stats.total} {t("department.topicsCount")}
+                    {stats.total} {t("department.topicsCount", "тем")}
                 </span>
-                <span className="tc-stat-item">
-                    {stats.approved} {t("department.approvedCount")}
+                <span className="tc-stat-item tc-stat-item--success">
+                    {stats.withStudents} {t("department.withStudents", "со студентами")}
                 </span>
-                <span className="tc-stat-item">
-                    {stats.rejected} {t("department.rejectedCount")}
+                <span className="tc-stat-item tc-stat-item--warning">
+                    {stats.withoutStudents} {t("department.withoutStudents", "без студентов")}
                 </span>
-                <span className="tc-stat-item">
-                    {stats.pending} {t("department.pendingCount")}
+                {stats.excess > 0 && (
+                    <span className="tc-stat-item tc-stat-item--danger">
+                        {stats.excess} {t("department.excessApplications", "с превышением")}
+                    </span>
+                )}
+                <span className="tc-stat-item tc-stat-item--reconciled">
+                    {stats.reconciled} {t("department.reconciledCount", "согласовано")}
                 </span>
+                {stats.inactive > 0 && (
+                    <span className="tc-stat-item tc-stat-item--inactive">
+                        {stats.inactive} {t("department.inactiveCount", "неактуальных")}
+                    </span>
+                )}
+                {stats.needsRevision > 0 && (
+                    <span className="tc-stat-item tc-stat-item--revision">
+                        {stats.needsRevision} {t("department.needsRevisionCount", "на доработке")}
+                    </span>
+                )}
             </div>
 
-            {/* Filters */}
+            {}
             <div className="tc-filters">
                 <select
                     className="tc-filter-select"
@@ -184,7 +241,27 @@ const TopicCoordinationPage = () => {
                 >
                     {STATUS_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>
-                            {t(opt.labelKey)}
+                            {t(opt.labelKey, opt.value)}
+                        </option>
+                    ))}
+                </select>
+
+                <select
+                    className="tc-filter-select"
+                    value={selectedSpecialityId ?? ""}
+                    onChange={(e) => {
+                        const val = e.target.value;
+                        setSelectedSpecialityId(val ? Number(val) : null);
+                        setSelectedIds([]);
+                    }}
+                    disabled={isLoadingSpecialities || !specialitiesData?.length}
+                >
+                    <option value="">
+                        {t("department.allSpecialities", "Все специальности")}
+                    </option>
+                    {(specialitiesData || []).map((spec) => (
+                        <option key={spec.id} value={spec.id}>
+                            {spec.code} - {getLocalizedValue(spec.title, currentLanguage)}
                         </option>
                     ))}
                 </select>
@@ -192,13 +269,13 @@ const TopicCoordinationPage = () => {
                 <input
                     type="text"
                     className="tc-search-input"
-                    placeholder={t("department.searchTopicOrStudent")}
+                    placeholder={t("department.searchTopicOrSupervisor", "Поиск по теме или научному руководителю")}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
 
-            {/* Table */}
+            {}
             <div className="tc-table-wrapper">
                 {isLoading ? (
                     <p className="tc-no-results">{t("common.loading")}...</p>
@@ -213,23 +290,24 @@ const TopicCoordinationPage = () => {
                                 <th className="tc-col-checkbox">
                                     <input
                                         type="checkbox"
-                                        checked={allPendingSelected}
+                                        checked={allActionableSelected}
                                         onChange={handleSelectAll}
                                     />
                                 </th>
                                 <th className="tc-col-number">№</th>
-                                <th>{t("department.studentColumn")}</th>
-                                <th>{t("department.topicColumn")}</th>
-                                <th>{t("department.supervisorColumn")}</th>
-                                <th>{t("common.status")}</th>
-                                <th className="tc-col-actions">{t("common.actions")}</th>
+                                <th>{t("department.topicColumn", "Тема")}</th>
+                                <th>{t("department.supervisorColumn", "Научный руководитель")}</th>
+                                <th>{t("department.studentsColumn", "Студенты")}</th>
+                                <th>{t("department.applicationsColumn", "Заявки")}</th>
+                                <th>{t("common.status", "Статус")}</th>
+                                <th className="tc-col-actions">{t("common.actions", "Действия")}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredTopics.map((item, index) => (
-                                <tr key={item.id}>
+                                <tr key={item.id} className={item.hasExcessApplications ? "tc-row--excess" : ""}>
                                     <td className="tc-col-checkbox">
-                                        {item.status === "pending" && (
+                                        {isActionable(item.status) && (
                                             <input
                                                 type="checkbox"
                                                 checked={selectedIds.includes(item.id)}
@@ -238,28 +316,56 @@ const TopicCoordinationPage = () => {
                                         )}
                                     </td>
                                     <td className="tc-col-number">{index + 1}</td>
-                                    <td>{item.student}</td>
-                                    <td>{item.topic}</td>
+                                    <td>
+                                        <div className="tc-topic-cell">
+                                            <span className="tc-topic-title">{item.topic}</span>
+                                            {item.reviewComment && (
+                                                <span className="tc-topic-comment" title={item.reviewComment}>
+                                                    💬 {item.reviewComment}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </td>
                                     <td>{item.supervisor}</td>
+                                    <td className="tc-col-students">{item.students}</td>
+                                    <td className="tc-col-applications">
+                                        <span className={item.hasExcessApplications ? "tc-excess-badge" : ""}>
+                                            {item.totalApplicationsCount}
+                                        </span>
+                                    </td>
                                     <td>{getStatusBadge(item.status)}</td>
                                     <td className="tc-col-actions">
-                                        {item.status === "pending" && (
-                                            <>
+                                        {isActionable(item.status) && (
+                                            <div className="tc-action-group">
                                                 <button
                                                     className="tc-btn tc-btn--approve"
-                                                    onClick={() => handleApprove(item.id)}
-                                                    disabled={bulkApproveMutation.isPending}
+                                                    onClick={() => handleReconcile([item.id])}
+                                                    disabled={isMutating}
+                                                    title={t("department.reconcile", "Согласовать")}
                                                 >
-                                                    {t("department.approve")}
+                                                    ✓
                                                 </button>
-                                                <button
-                                                    className="tc-btn tc-btn--reject"
-                                                    onClick={() => openRejectModal([item.id])}
-                                                    disabled={deactivateMutation.isPending}
-                                                >
-                                                    {t("department.reject")}
-                                                </button>
-                                            </>
+                                                {item.hasNoStudents && (
+                                                    <button
+                                                        className="tc-btn tc-btn--inactive"
+                                                        onClick={() => openInactiveModal([item.id])}
+                                                        disabled={isMutating}
+                                                        title={t("department.markInactive", "Неактуальная")}
+                                                    >
+                                                        ⊘
+                                                    </button>
+                                                )}
+                                                {item.hasExcessApplications && (
+                                                    <button
+                                                        className="tc-btn tc-btn--revision"
+                                                        onClick={() => openRevisionModal([item.id])}
+                                                        disabled={isMutating}
+                                                        title={t("department.sendBackForRevision", "На доработку")}
+                                                    >
+                                                        ↩
+                                                    </button>
+                                                )}
+                                            </div>
                                         )}
                                     </td>
                                 </tr>
@@ -269,7 +375,7 @@ const TopicCoordinationPage = () => {
                 )}
             </div>
 
-            {/* Bulk actions bar */}
+            {}
             {selectedIds.length > 0 && (
                 <div className="tc-bulk-bar">
                     <span className="tc-bulk-bar__label">
@@ -277,83 +383,110 @@ const TopicCoordinationPage = () => {
                     </span>
                     <button
                         className="tc-bulk-btn tc-bulk-btn--approve"
-                        onClick={handleBulkApprove}
-                        disabled={bulkApproveMutation.isPending}
+                        onClick={handleBulkReconcile}
+                        disabled={isMutating}
                     >
-                        {t("department.approveSelected", { count: selectedIds.length })}
+                        ✓ {t("department.reconcileSelected", "Согласовать выбранные")} ({selectedIds.length})
                     </button>
                     <button
-                        className="tc-bulk-btn tc-bulk-btn--reject"
-                        onClick={() => openRejectModal(selectedIds)}
-                        disabled={deactivateMutation.isPending}
+                        className="tc-bulk-btn tc-bulk-btn--inactive"
+                        onClick={() => openInactiveModal(selectedIds)}
+                        disabled={isMutating}
                     >
-                        {t("department.rejectSelected", { count: selectedIds.length })}
+                        ⊘ {t("department.markInactiveSelected", "Неактуальные")} ({selectedIds.length})
+                    </button>
+                    <button
+                        className="tc-bulk-btn tc-bulk-btn--revision"
+                        onClick={() => openRevisionModal(selectedIds)}
+                        disabled={isMutating}
+                    >
+                        ↩ {t("department.sendBackSelected", "На доработку")} ({selectedIds.length})
                     </button>
                 </div>
             )}
 
-            {/* Reject modal */}
-            {rejectModalOpen && (
-                <div className="tc-reject-modal-backdrop" onClick={() => setRejectModalOpen(false)}>
+            {}
+            {revisionModalOpen && (
+                <div className="tc-reject-modal-backdrop" onClick={() => setRevisionModalOpen(false)}>
                     <div className="tc-reject-modal" onClick={(e) => e.stopPropagation()}>
                         <h2 className="tc-reject-modal__title">
-                            {t("department.rejectionReasonTitle")}
+                            {t("department.revisionCommentTitle", "Комментарий для научного руководителя")}
                         </h2>
+                        <p className="tc-reject-modal__subtitle">
+                            {t("department.revisionCommentHint", "Укажите, что необходимо исправить или уточнить")}
+                        </p>
                         <textarea
-                            placeholder={t("department.enterRejectionReason")}
-                            value={rejectReason}
+                            placeholder={t("department.enterRevisionComment", "Введите комментарий...")}
+                            value={revisionComment}
                             onChange={(e) => {
-                                setRejectReason(e.target.value);
-                                if (e.target.value.trim()) setRejectError(false);
+                                setRevisionComment(e.target.value);
+                                if (e.target.value.trim()) setRevisionError(false);
                             }}
                         />
-                        {rejectError && (
+                        {revisionError && (
                             <p className="tc-reject-modal__error">
-                                {t("department.rejectionReasonRequired")}
+                                {t("department.revisionCommentRequired", "Комментарий обязателен")}
                             </p>
                         )}
                         <div className="tc-reject-modal__actions">
                             <button
                                 className="tc-reject-modal__btn tc-reject-modal__btn--cancel"
-                                onClick={() => setRejectModalOpen(false)}
+                                onClick={() => setRevisionModalOpen(false)}
                             >
-                                {t("common.cancel")}
+                                {t("common.cancel", "Отмена")}
                             </button>
                             <button
                                 className="tc-reject-modal__btn tc-reject-modal__btn--confirm"
-                                disabled={!rejectReason.trim() || deactivateMutation.isPending}
-                                onClick={confirmReject}
+                                disabled={!revisionComment.trim() || sendBackMutation.isPending}
+                                onClick={confirmSendBackForRevision}
                             >
-                                {t("department.confirmRejection")}
+                                {t("department.confirmRevision", "Отправить на доработку")}
                             </button>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* Finalize section */}
+            {}
+            <ConfirmModal
+                isOpen={inactiveModalOpen}
+                title={t("department.confirmMarkInactive", "Пометить как неактуальные?")}
+                message={t("department.markInactiveMessage", "Выбранные темы будут помечены как неактуальные (без студентов). Это действие можно отменить до завершения согласования.")}
+                onConfirm={confirmMarkInactive}
+                onCancel={() => setInactiveModalOpen(false)}
+                confirmText={t("common.confirm", "Подтвердить")}
+                cancelText={t("common.cancel", "Отмена")}
+            />
+
+            {}
             <div className="tc-finalize-section">
                 <button
                     className="tc-finalize-btn"
-                    disabled={stats.pending > 0 || completeMutation.isPending || !departmentId || !academicYearId}
+                    disabled={hasUnprocessed || isMutating || !orgUnitId || !semesterId}
                     onClick={() => setFinalizeModalOpen(true)}
                 >
-                    {t("department.finalizeCoordination")}
+                    {t("department.finalizeReconciliation", "Завершить согласование тем")}
                 </button>
+                {hasUnprocessed && (
+                    <p className="tc-finalize-hint">
+                        {t("department.finalizeHint", "Для завершения все темы должны быть согласованы, помечены как неактуальные или отклонены")}
+                    </p>
+                )}
             </div>
 
-            {/* Finalize confirmation */}
+            {}
             <ConfirmModal
                 isOpen={finalizeModalOpen}
-                title={t("department.confirmFinalize")}
-                message={t("department.allTopicsProcessed")}
+                title={t("department.confirmFinalize", "Завершить согласование тем?")}
+                message={t("department.finalizeWarning", "Это необратимое действие. Для всех согласованных тем будут автоматически созданы дипломные работы с закреплёнными студентами.")}
                 onConfirm={handleFinalize}
                 onCancel={() => setFinalizeModalOpen(false)}
-                confirmText={t("common.confirm")}
-                cancelText={t("common.cancel")}
+                confirmText={t("department.completeReconciliation", "Завершить")}
+                cancelText={t("common.cancel", "Отмена")}
             />
         </div>
     );
 };
 
 export default TopicCoordinationPage;
+

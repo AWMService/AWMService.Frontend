@@ -18,7 +18,14 @@ export default function StudentJournalDrawer({
     onSend,
     onFinalize,
     onEdit,
-    onSimulateSecretary
+    onSimulateSecretary,
+    readinessPercent,
+    onReadinessChange,
+    decisionType,
+    onDecisionTypeChange,
+    decisionComment,
+    onDecisionCommentChange,
+    onDownloadDoc,
 }) {
     const { t } = useTranslation();
 
@@ -40,11 +47,22 @@ export default function StudentJournalDrawer({
                 <div className="s-docs-section">
                     <h4>{t('common.attachedMaterials')}</h4>
                     <div className="s-docs-list">
-                        {mockDocs.map((doc, i) => (
-                            <div key={i} className="s-doc-item">
+                        {mockDocs.length === 0 ? (
+                            <div className="s-doc-item" style={{opacity: 0.6}}>
+                                <div className="s-doc-info">
+                                    <span className="s-doc-name">{t('common.noData')}</span>
+                                </div>
+                            </div>
+                        ) : mockDocs.map((doc, i) => (
+                            <div 
+                                key={i} 
+                                className="s-doc-item" 
+                                style={{cursor: 'pointer'}} 
+                                onClick={() => onDownloadDoc?.(doc)}
+                            >
                                 <FileIcon />
                                 <div className="s-doc-info">
-                                    <span className="s-doc-name">{getLocalizedValue(doc.name)}</span>
+                                    <span className="s-doc-name" style={{color: '#3b82f6', textDecoration: 'underline'}}>{getLocalizedValue(doc.name)}</span>
                                     <span className="s-doc-size">{doc.size}</span>
                                 </div>
                             </div>
@@ -107,6 +125,50 @@ export default function StudentJournalDrawer({
                         <strong>{(totalScore * 0.95).toFixed(1)}</strong>
                     </div>
                 )}
+
+                {}
+                <div className="s-protocol-fields">
+                    <div className="s-protocol-field">
+                        <label className="s-field-label">{t('journal.readinessPercent', '% готовности ДП')}</label>
+                        <input
+                            type="number"
+                            className="s-readiness-input"
+                            value={readinessPercent ?? ''}
+                            onChange={(e) => onReadinessChange?.(parseInt(e.target.value) || 0)}
+                            disabled={status === 'locked'}
+                            min="0"
+                            max="100"
+                            placeholder="0"
+                        />
+                    </div>
+                    <div className="s-protocol-field">
+                        <label className="s-field-label">{t('journal.decision', 'Решение')}</label>
+                        <select
+                            className="s-decision-select"
+                            value={decisionType ?? ''}
+                            onChange={(e) => onDecisionTypeChange?.(e.target.value ? parseInt(e.target.value) : null)}
+                            disabled={status === 'locked'}
+                        >
+                            <option value="">{t('journal.selectDecision', '— Выберите —')}</option>
+                            <option value="1">{t('journal.admitted', 'Допущен')}</option>
+                            <option value="2">{t('journal.notAdmitted', 'Не допущен')}</option>
+                            <option value="3">{t('journal.needsRevision', 'Доработать')}</option>
+                        </select>
+                    </div>
+                    {(decisionType === 3 || decisionType === 2) && (
+                        <div className="s-protocol-field s-protocol-field--full">
+                            <label className="s-field-label">{t('journal.decisionComment', 'Комментарий к решению')}</label>
+                            <textarea
+                                className="s-decision-comment"
+                                value={decisionComment ?? ''}
+                                onChange={(e) => onDecisionCommentChange?.(e.target.value)}
+                                disabled={status === 'locked'}
+                                placeholder={t('journal.decisionCommentPlaceholder', 'Укажите необходимые доработки...')}
+                                rows={3}
+                            />
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div className="s-drawer-footer">

@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { useTranslation } from "react-i18next"
-import { Users } from "lucide-react"
+import { Users, CheckCircle, XCircle, Search } from "lucide-react"
 import { getLocalizedValue, useMySupervisedWorks } from "@awm/shared"
 import "./MyStudentsPage.css"
 import StudentModal from "../../components/MyStudentsModal/StudentModal.jsx"
@@ -11,9 +11,40 @@ export default function MyStudentsPage() {
     const [selectedStudent, setSelectedStudent] = useState(null)
 
     const getCardStatusClass = (stageKey) => {
+        if (stageKey === "awaitingDepartmentApproval") return "sp-pill-orange";
         if (stageKey === "preDefense") return "sp-pill-purple";
         if (stageKey === "defense") return "sp-pill-green";
         return "sp-pill-gray";
+    }
+
+    const renderCheckBadges = (work) => {
+        if (work.isAwaitingDepartmentApproval) return null;
+        const checks = work.qualityChecksSummary || [];
+        if (checks.length === 0) return null;
+
+        const antiPlag = checks.find(c => c.checkTypeId === 2);
+        const software = checks.find(c => c.checkTypeId === 3);
+        const norm = checks.find(c => c.checkTypeId === 1);
+
+        return (
+            <div className="sp-check-badges">
+                {antiPlag && (
+                    <span className={`sp-check-badge ${antiPlag.resultValue >= 70 ? 'sp-check-pass' : 'sp-check-fail'}`}>
+                        <Search size={10} /> {antiPlag.resultValue ?? '-'}%
+                    </span>
+                )}
+                {software && (
+                    <span className={`sp-check-badge ${software.isPassed ? 'sp-check-pass' : 'sp-check-fail'}`}>
+                        {software.isPassed ? <CheckCircle size={10} /> : <XCircle size={10} />} {t('supervisor.qualityChecks.softwareCheckShort')}
+                    </span>
+                )}
+                {norm && (
+                    <span className={`sp-check-badge ${norm.isPassed ? 'sp-check-pass' : 'sp-check-fail'}`}>
+                        {norm.isPassed ? <CheckCircle size={10} /> : <XCircle size={10} />} {t('supervisor.qualityChecks.normControlShort')}
+                    </span>
+                )}
+            </div>
+        )
     }
 
     if (isLoading) {
@@ -59,6 +90,8 @@ export default function MyStudentsPage() {
                                 <div key={s.studentId} className="sp-name-row">{getLocalizedValue(s.name)}</div>
                             ))}
                         </div>
+
+                        {renderCheckBadges(work)}
 
                         <button className="sp-open-btn" onClick={() => setSelectedStudent(work)}>
                             {t('common.openCard')}

@@ -73,7 +73,7 @@ export default function MyWorkPage() {
             <h1 className="my-work-page-title">{t('student.myWorkTitle')}</h1>
 
             <div className="my-work-grid">
-                {/* Work Details Card */}
+                {}
                 <div className="my-work-card">
                     <h2 className="my-work-card-title">{t('student.workDetails')}</h2>
                     <div className="my-work-info-list">
@@ -111,7 +111,7 @@ export default function MyWorkPage() {
                     </div>
                 </div>
 
-                {/* Participants Card */}
+                {}
                 <div className="my-work-card">
                     <h2 className="my-work-card-title">{t('student.participants')}</h2>
                     <table className="my-work-participants-table">
@@ -144,7 +144,7 @@ export default function MyWorkPage() {
                 </div>
             </div>
 
-            {/* Materials Card */}
+            {}
             <div className="my-work-card my-work-materials-card">
                 <h2 className="my-work-card-title">{t('student.materials')}</h2>
                 <div className="my-work-file-list">
@@ -164,7 +164,7 @@ export default function MyWorkPage() {
                 </div>
             </div>
 
-            {/* Work Status Timeline */}
+            {}
             <div className="my-work-card my-work-timeline-card">
                 <h2 className="my-work-card-title">{t('student.workTimeline')}</h2>
                 <div className="my-work-timeline">

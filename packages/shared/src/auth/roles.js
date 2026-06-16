@@ -72,36 +72,58 @@ export const ROLE_META = {
 };
 export const BACKEND_TO_FRONTEND_ROLE_MAP = {
   Student: ROLES.STUDENT,
+  STUDENT: ROLES.STUDENT,
   Supervisor: ROLES.SUPERVISOR,
+  SUPERVISOR: ROLES.SUPERVISOR,
   HeadOfDepartment: ROLES.DEPARTMENT,
+  DEPARTMENT_HEAD: ROLES.DEPARTMENT,
   Secretary: ROLES.SECRETARY,
   Expert: ROLES.NORMOCONTROL,
+  QUALITY_EXPERT: ROLES.NORMOCONTROL,
   Admin: ROLES.ADMIN,
+  ADMIN: ROLES.ADMIN,
   CommissionMember: ROLES.COMMISSION_MEMBER,
+  COMMISSION_MEMBER: ROLES.COMMISSION_MEMBER,
   Reviewer: ROLES.REVIEWER,
   Chairman: ROLES.CHAIRMAN,
   ViceRector: ROLES.VICE_RECTOR,
+  CommissionChairman: ROLES.CHAIRMAN,
+  COMMISSION_CHAIRMAN: ROLES.CHAIRMAN,
+  CommissionSecretary: ROLES.SECRETARY,
+  COMMISSION_SECRETARY: ROLES.SECRETARY,
 };
 const FRONTEND_ROLE_KEYS = new Set(Object.values(ROLES));
 export const normalizeRole = (role) => {
   if (!role) {
     return null;
   }
+
+
   const idMap = {
     1: ROLES.ADMIN,
-    2: ROLES.VICE_RECTOR,
-    3: ROLES.DEPARTMENT,
-    4: ROLES.SUPERVISOR,
-    5: ROLES.SECRETARY,
-    6: ROLES.NORMOCONTROL,
-    7: ROLES.STUDENT,
-    8: ROLES.COMMISSION_MEMBER,
+    2: ROLES.DEPARTMENT,
+    3: ROLES.SUPERVISOR,
+    4: ROLES.STUDENT,
+    5: ROLES.CHAIRMAN,
+    6: ROLES.SECRETARY,
+    7: ROLES.COMMISSION_MEMBER,
+    8: ROLES.NORMOCONTROL,
+    9: ROLES.REVIEWER,
   };
   if (idMap[role]) {
     return idMap[role];
   }
+  const upperRole = String(role).toUpperCase();
+  const dbRole = Object.keys(BACKEND_TO_FRONTEND_ROLE_MAP).find(k => k.toUpperCase() === upperRole);
+  if (dbRole) {
+    return BACKEND_TO_FRONTEND_ROLE_MAP[dbRole];
+  }
   if (FRONTEND_ROLE_KEYS.has(role)) {
     return role;
+  }
+  const lowered = String(role).toLowerCase();
+  if (FRONTEND_ROLE_KEYS.has(lowered)) {
+    return lowered;
   }
   return BACKEND_TO_FRONTEND_ROLE_MAP[role] || role.charAt(0).toLowerCase() + role.slice(1);
 };

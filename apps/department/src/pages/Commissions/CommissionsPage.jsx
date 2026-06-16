@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { 
-    ConfirmModal, 
-    useAuth, 
-    useCommissions, 
-    useStaffByDepartment, 
-    useCreateCommission, 
+import { useNavigate } from "react-router-dom";
+import {
+    ConfirmModal,
+    useAuth,
+    useCommissions,
+    useOrgUnitEmployees,
+    useCreateCommission,
     useUpdateCommission,
+    useOrgUnitSpecialities,
     commissionApi
 } from "@awm/shared";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -16,22 +18,26 @@ import "./CommissionsPage.css";
 
 function CommissionsPage() {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const { user } = useAuth();
     const queryClient = useQueryClient();
     
-    const departmentId = user?.departmentId;
-    const academicYearId = user?.currentAcademicYearId;
+    const orgUnitId = user?.orgUnitId;
+    const semesterId = user?.currentSemesterId;
 
-    const { data: commissions = [], isLoading: isCommsLoading } = useCommissions(departmentId, academicYearId);
-    const { data: staff = [], isLoading: isStaffLoading } = useStaffByDepartment(departmentId);
+    const [selectedSpecialityId, setSelectedSpecialityId] = useState(null);
+    const { data: specialities = [] } = useOrgUnitSpecialities(orgUnitId);
 
-    const createMutation = useCreateCommission(departmentId, academicYearId);
-    const updateMutation = useUpdateCommission(departmentId, academicYearId);
+    const { data: commissions = [], isLoading: isCommsLoading } = useCommissions(orgUnitId, semesterId, selectedSpecialityId);
+    const { data: staff = [], isLoading: isStaffLoading } = useOrgUnitEmployees(orgUnitId);
+
+    const createMutation = useCreateCommission(orgUnitId, semesterId, selectedSpecialityId);
+    const updateMutation = useUpdateCommission(orgUnitId, semesterId, selectedSpecialityId);
     
     const deleteMutation = useMutation({
         mutationFn: (id) => commissionApi.deleteCommission(id),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['commissions', 'department', departmentId, academicYearId] });
+            queryClient.invalidateQueries({ queryKey: ['commissions', 'department', orgUnitId, semesterId] });
         }
     });
 
@@ -45,10 +51,16 @@ function CommissionsPage() {
     };
 
     const handleEdit = (commission) => {
-        // Prepare data for modal
+        
+        const chairman = commission.members?.find(m => m.roleType === 2); 
+        const secretary = commission.members?.find(m => m.roleType === 3); 
+        const members = commission.members?.filter(m => m.roleType === 4).map(m => m.userId) || [];
+
         setEditingCommission({
             ...commission,
-            // We don't have IDs for members in the list view yet, so edit might be limited to name
+            chairmanId: chairman?.userId || '',
+            secretaryId: secretary?.userId || '',
+            memberIds: members
         });
         setIsFormOpen(true);
     };
@@ -56,12 +68,21 @@ function CommissionsPage() {
     const handleFormSubmit = async (formData) => {
         try {
             if (editingCommission) {
-                await updateMutation.mutateAsync({ id: editingCommission.id, name: formData.name });
+                await updateMutation.mutateAsync({
+                    id: editingCommission.id,
+                    name: formData.name,
+                    commissionTypeId: formData.commissionTypeId,
+                    preDefenseNumber: formData.preDefenseNumber,
+                    specialityId: formData.specialityId,
+                    chairmanUserId: formData.chairmanUserId,
+                    secretaryUserId: formData.secretaryUserId,
+                    memberUserIds: formData.memberUserIds
+                });
             } else {
                 await createMutation.mutateAsync({
                     ...formData,
-                    departmentId: departmentId,
-                    academicYearId: academicYearId
+                    orgUnitId: orgUnitId,
+                    semesterId: semesterId
                 });
             }
             setIsFormOpen(false);
@@ -99,14 +120,28 @@ function CommissionsPage() {
 
     return (
         <div className="commissions-page">
-            <div className="page-header">
-                <div>
-                    <h1 className="page-title">{t('department.commissionsTitle')}</h1>
+            {specialities.length > 0 && (
+                <div className="speciality-scope-selector">
+                    <label className="speciality-scope-label">{t('department.speciality', 'Специальность')}:</label>
+                    <select
+                        value={selectedSpecialityId || ""}
+                        onChange={(e) => setSelectedSpecialityId(e.target.value ? Number(e.target.value) : null)}
+                        className="speciality-scope-select"
+                    >
+                        <option value="">{t('department.allSpecialities', 'Общее для кафедры (По умолчанию)')}</option>
+                        {specialities.map(s => (
+                            <option key={s.id} value={s.id}>{s.code} - {s.title}</option>
+                        ))}
+                    </select>
                 </div>
-                <button className="button primary-button" onClick={handleCreate}>
-                    <img src={plusIcon} alt="" className="button-icon" />
-                    {t('department.createCommission')}
-                </button>
+            )}
+            <div className="page-header">
+                <div className="page-header__actions">
+                    <button className="button primary-button" onClick={handleCreate}>
+                        <img src={plusIcon} alt="" className="button-icon" />
+                        {t('department.createCommission')}
+                    </button>
+                </div>
             </div>
 
             <div className="commissions-grid">
@@ -116,56 +151,69 @@ function CommissionsPage() {
                     </div>
                 )}
 
-                {commissions.map((commission) => (
-                    <div key={commission.id} className="commission-card">
-                        <div className="commission-card__header">
-                            <h3 className="commission-card__name">{commission.name}</h3>
-                            <span
-                                className={`commission-card__type-badge commission-card__type-badge--${commission.commissionType.toLowerCase()}`}
-                            >
-                                {commission.commissionType === 'PreDefense'
-                                    ? t('department.predefense')
-                                    : t('department.defenseCommission')}
-                            </span>
-                        </div>
+                {commissions.map((commission) => {
+                    const chairman = commission.members?.find(m => m.roleType === 2)?.fullName;
+                    const secretary = commission.members?.find(m => m.roleType === 3)?.fullName;
+                    const memberCount = commission.members?.filter(m => m.roleType === 4).length || 0;
 
-                        <div className="commission-card__info">
-                            <div className="commission-card__info-row">
-                                <span className="commission-card__info-label">
-                                    {t('commission.chairman')}:
+                    return (
+                        <div key={commission.id} className="commission-card">
+                            <div className="commission-card__header">
+                                <h3 className="commission-card__name">{commission.name}</h3>
+                                <span
+                                    className={`commission-card__type-badge commission-card__type-badge--${commission.commissionTypeId === 1 ? 'predefense' : 'defense'}`}
+                                >
+                                    {commission.commissionTypeId === 1
+                                        ? t('department.predefense')
+                                        : t('department.defenseCommission')}
                                 </span>
-                                <span>{commission.chairmanName || t('common.notAssigned', 'Not assigned')}</span>
                             </div>
-                            <div className="commission-card__info-row">
-                                <span className="commission-card__info-label">
-                                    {t('commission.secretary')}:
-                                </span>
-                                <span>{commission.secretaryName || t('common.notAssigned', 'Not assigned')}</span>
-                            </div>
-                            <div className="commission-card__info-row">
-                                <span className="commission-card__info-label">
-                                    {t('commission.members')}:
-                                </span>
-                                <span>{getMembersLabel(commission.memberCount)}</span>
-                            </div>
-                        </div>
 
-                        <div className="commission-card__actions">
-                            <button
-                                className="commission-card__action-btn"
-                                onClick={() => handleEdit(commission)}
-                            >
-                                {t('department.editCommission')}
-                            </button>
-                            <button
-                                className="commission-card__action-btn commission-card__action-btn--danger"
-                                onClick={() => setDeleteTarget(commission)}
-                            >
-                                {t('department.deleteCommission')}
-                            </button>
+                            <div className="commission-card__info">
+                                <div className="commission-card__info-row">
+                                    <span className="commission-card__info-label">
+                                        {t('commission.chairman')}:
+                                    </span>
+                                    <span>{chairman || t('common.notAssigned')}</span>
+                                </div>
+                                <div className="commission-card__info-row">
+                                    <span className="commission-card__info-label">
+                                        {t('commission.secretary')}:
+                                    </span>
+                                    <span>{secretary || t('common.notAssigned')}</span>
+                                </div>
+                                <div className="commission-card__info-row">
+                                    <span className="commission-card__info-label">
+                                        {t('commission.members')}:
+                                    </span>
+                                    <span>{getMembersLabel(memberCount)}</span>
+                                </div>
+                            </div>
+
+                            <div className="commission-card__actions">
+                                <button
+                                    className="commission-card__action-btn"
+                                    onClick={() => handleEdit(commission)}
+                                >
+                                    {t('department.editCommission')}
+                                </button>
+                                <button
+                                    className="commission-card__action-btn"
+                                    onClick={() => navigate('/defenses?tab=distribution')}
+                                    style={{ border: '1px solid #4f46e5', color: '#4f46e5' }}
+                                >
+                                    {t('commission.schedule', 'Расписание')}
+                                </button>
+                                <button
+                                    className="commission-card__action-btn commission-card__action-btn--danger"
+                                    onClick={() => setDeleteTarget(commission)}
+                                >
+                                    {t('department.deleteCommission')}
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             <CommissionFormModal
@@ -174,6 +222,7 @@ function CommissionsPage() {
                 onSubmit={handleFormSubmit}
                 editingCommission={editingCommission}
                 staff={staff}
+                orgUnitId={orgUnitId}
             />
 
             <ConfirmModal

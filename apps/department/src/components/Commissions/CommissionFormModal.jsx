@@ -1,30 +1,35 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useOrgUnitSpecialities } from "@awm/shared";
 import "./CommissionFormModal.css";
 
 const emptyForm = {
     name: '',
-    type: 'PreDefense', // Matches backend enum string
+    type: 'PreDefense',
     chairmanId: '',
     secretaryId: '',
     memberIds: [],
     preDefenseNumber: 1,
+    specialityId: '',
 };
 
-export default function CommissionFormModal({ isOpen, onClose, onSubmit, editingCommission, staff = [] }) {
+export default function CommissionFormModal({ isOpen, onClose, onSubmit, editingCommission, staff = [], orgUnitId }) {
     const { t } = useTranslation();
     const [formData, setFormData] = useState(emptyForm);
+    const { data: specialities = [] } = useOrgUnitSpecialities(orgUnitId);
     const [memberSearch, setMemberSearch] = useState('');
 
     useEffect(() => {
         if (editingCommission) {
+            const type = editingCommission.commissionTypeId === 2 ? 'GAK' : 'PreDefense';
             setFormData({
                 name: editingCommission.name || '',
-                type: editingCommission.commissionType || 'PreDefense',
+                type: type,
                 chairmanId: editingCommission.chairmanId || '',
                 secretaryId: editingCommission.secretaryId || '',
                 memberIds: editingCommission.memberIds || [],
                 preDefenseNumber: editingCommission.preDefenseNumber || 1,
+                specialityId: editingCommission.specialityId || '',
             });
         } else {
             setFormData(emptyForm);
@@ -36,7 +41,7 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
         if (!memberSearch) return staff;
         const q = memberSearch.toLowerCase();
         return staff.filter(
-            (s) => s.fullName.toLowerCase().includes(q) || s.positionName?.toLowerCase().includes(q)
+            (s) => (s.fullName || '').toLowerCase().includes(q) || (s.positionTitle || '').toLowerCase().includes(q)
         );
     }, [memberSearch, staff]);
 
@@ -62,17 +67,16 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        // Map to backend request format
-        const members = [];
-        if (formData.chairmanId) members.push({ userId: parseInt(formData.chairmanId), role: 0 }); // 0 = Chairman
-        if (formData.secretaryId) members.push({ userId: parseInt(formData.secretaryId), role: 1 }); // 1 = Secretary
-        formData.memberIds.forEach(id => members.push({ userId: parseInt(id), role: 2 })); // 2 = Member
-
+        
+        
         onSubmit({
             name: formData.name,
-            commissionType: formData.type === 'PreDefense' ? 0 : 1,
+            commissionTypeId: formData.type === 'PreDefense' ? 1 : 2,
             preDefenseNumber: formData.type === 'PreDefense' ? parseInt(formData.preDefenseNumber) : null,
-            members: members
+            specialityId: formData.specialityId ? parseInt(formData.specialityId) : null,
+            chairmanUserId: parseInt(formData.chairmanId),
+            secretaryUserId: parseInt(formData.secretaryId),
+            memberUserIds: formData.memberIds.map(id => parseInt(id))
         });
     };
 
@@ -105,6 +109,18 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
                         </select>
                     </label>
 
+                    {specialities.length > 0 && (
+                        <label className="commission-modal__field">
+                            {t('department.speciality', 'Специальность')}
+                            <select name="specialityId" value={formData.specialityId} onChange={handleChange}>
+                                <option value="">{t('department.allSpecialities', 'Все специальности')}</option>
+                                {specialities.map((s) => (
+                                    <option key={s.id} value={s.id}>{s.code} — {s.title}</option>
+                                ))}
+                            </select>
+                        </label>
+                    )}
+
                     {formData.type === 'PreDefense' && (
                         <label className="commission-modal__field">
                             {t('department.predefenseNumber', 'Round Number')}
@@ -120,11 +136,17 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
                         {t('commission.chairman')}
                         <select name="chairmanId" value={formData.chairmanId} onChange={handleChange} required>
                             <option value="">{t('department.selectTeacher')}</option>
-                            {staff.map((s) => (
-                                <option key={s.userId} value={s.userId}>
-                                    {s.fullName} {s.positionName ? `— ${s.positionName}` : ''}
-                                </option>
-                            ))}
+                            {staff.map((s) => {
+                                const isSecretary = String(s.userId) === String(formData.secretaryId);
+                                const isMember = formData.memberIds.includes(s.userId);
+                                return (
+                                    <option key={s.userId} value={s.userId} disabled={isSecretary || isMember}>
+                                        {s.fullName} {s.positionTitle ? `— ${s.positionTitle}` : ''}
+                                        {isSecretary ? ` (${t('commission.secretary')})` : ''}
+                                        {isMember ? ` (${t('commission.member')})` : ''}
+                                    </option>
+                                );
+                            })}
                         </select>
                     </label>
 
@@ -132,11 +154,17 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
                         {t('commission.secretary')}
                         <select name="secretaryId" value={formData.secretaryId} onChange={handleChange} required>
                             <option value="">{t('department.selectTeacher')}</option>
-                            {staff.map((s) => (
-                                <option key={s.userId} value={s.userId}>
-                                    {s.fullName} {s.positionName ? `— ${s.positionName}` : ''}
-                                </option>
-                            ))}
+                            {staff.map((s) => {
+                                const isChairman = String(s.userId) === String(formData.chairmanId);
+                                const isMember = formData.memberIds.includes(s.userId);
+                                return (
+                                    <option key={s.userId} value={s.userId} disabled={isChairman || isMember}>
+                                        {s.fullName} {s.positionTitle ? `— ${s.positionTitle}` : ''}
+                                        {isChairman ? ` (${t('commission.chairman')})` : ''}
+                                        {isMember ? ` (${t('commission.member')})` : ''}
+                                    </option>
+                                );
+                            })}
                         </select>
                     </label>
 
@@ -150,19 +178,25 @@ export default function CommissionFormModal({ isOpen, onClose, onSubmit, editing
                                 value={memberSearch}
                                 onChange={(e) => setMemberSearch(e.target.value)}
                             />
-                            {filteredStaff.map((s) => (
-                                <label key={s.userId} className="commission-modal__member-item">
-                                    <input
-                                        type="checkbox"
-                                        checked={formData.memberIds.includes(s.userId)}
-                                        onChange={() => handleMemberToggle(s.userId)}
-                                    />
-                                    <span>{s.fullName}</span>
-                                    <span className="commission-modal__member-position">
-                                        {s.positionName}
-                                    </span>
-                                </label>
-                            ))}
+                            {filteredStaff.map((s) => {
+                                const isChairman = String(s.userId) === String(formData.chairmanId);
+                                const isSecretary = String(s.userId) === String(formData.secretaryId);
+                                if (isChairman || isSecretary) return null;
+
+                                return (
+                                    <label key={s.userId} className="commission-modal__member-item">
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.memberIds.includes(s.userId)}
+                                            onChange={() => handleMemberToggle(s.userId)}
+                                        />
+                                        <span>{s.fullName}</span>
+                                        <span className="commission-modal__member-position">
+                                            {s.positionTitle}
+                                        </span>
+                                    </label>
+                                );
+                            })}
                         </div>
                     </div>
 

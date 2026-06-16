@@ -1,8 +1,5 @@
 .commissions-page {
-    background-color: #F9FAFB;
     flex: 1;
-    margin-top: 64px;
-    padding: 56px;
 }
 
 .commissions-page .page-header {
@@ -29,13 +26,9 @@
     .commissions-grid {
         grid-template-columns: 1fr;
     }
-
-    .commissions-page {
-        padding: 24px 16px;
-    }
 }
 
-/* Commission Card */
+
 .commission-card {
     background: #ffffff;
     border: 1px solid #e5e7eb;

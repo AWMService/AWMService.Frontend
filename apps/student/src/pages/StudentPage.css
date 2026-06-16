@@ -5,7 +5,7 @@
 
 .student-main-content {
   padding: 2rem;
-  margin-top: 64px; /* Header height */
+  margin-top: 64px; 
 }
 
 .student-page-content {
@@ -35,7 +35,7 @@
 
 .filter-select {
     flex-shrink: 0;
-    width: 220px; /* Adjust width as needed */
+    width: 220px; 
     padding: 0.75rem;
     border: 1px solid #D9DBE0;
     border-radius: 5px;
@@ -61,7 +61,7 @@
     font-size: 15px;
 }
 
-/* Apply Modal */
+
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -123,7 +123,39 @@
     gap: 1rem;
 }
 
-/* My Applications Page */
+.student-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 1.5rem;
+    background: #f1f5f9;
+    padding: 4px;
+    border-radius: 8px;
+    width: fit-content;
+}
+
+.student-tab {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.student-tab.active {
+    background: #ffffff;
+    color: #2563eb;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.student-tab:hover:not(.active) {
+    color: #475569;
+}
+
+
 
 .my-applications-header {
     margin-bottom: 1.5rem;

@@ -1,13 +1,39 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './apiClient';
-const read = (value, key) => value?.[key] ?? value?.[key.charAt(0).toUpperCase() + key.slice(1)];
+
+const read = (value, key) => {
+  if (!value) return undefined;
+
+  if (value[key] !== undefined) return value[key];
+
+
+  const pascal = key.charAt(0).toUpperCase() + key.slice(1);
+  if (value[pascal] !== undefined) return value[pascal];
+
+
+  const lowerKey = key.toLowerCase();
+  const realKey = Object.keys(value).find(k => k.toLowerCase() === lowerKey);
+  return realKey ? value[realKey] : undefined;
+};
+
 const readLocalized = (item, field) => {
-  const value = read(item, field);
-  const pascal = field.charAt(0).toUpperCase() + field.slice(1);
+  if (!item) return { ru: '', kk: '', en: '' };
+
+
+  const existing = read(item, field);
+  if (existing && typeof existing === 'object') {
+    return {
+      ru: read(existing, 'ru') || '',
+      kk: read(existing, 'kk') || read(existing, 'kz') || '',
+      en: read(existing, 'en') || '',
+    };
+  }
+
+
   return {
-    ru: value?.ru ?? value?.Ru ?? read(item, `${field}Ru`) ?? read(item, `${pascal}Ru`) ?? '',
-    kk: value?.kk ?? value?.Kk ?? value?.kz ?? value?.Kz ?? read(item, `${field}Kz`) ?? read(item, `${pascal}Kz`) ?? '',
-    en: value?.en ?? value?.En ?? read(item, `${field}En`) ?? read(item, `${pascal}En`) ?? '',
+    ru: read(item, `${field}Ru`) || '',
+    kk: read(item, `${field}Kz`) || read(item, `${field}Kk`) || '',
+    en: read(item, `${field}En`) || '',
   };
 };
 export const directionStatusFromState = (stateName, displayName) => {
@@ -25,13 +51,14 @@ export const normalizeDirection = (item) => {
   return {
     ...item,
     id: read(item, 'id'),
-    departmentId: read(item, 'departmentId'),
+    orgUnitId: read(item, 'orgUnitId'),
     supervisorId: read(item, 'supervisorId'),
-    academicYearId: read(item, 'academicYearId'),
+    semesterId: read(item, 'semesterId'),
     workTypeId: read(item, 'workTypeId'),
     currentStateId: read(item, 'currentStateId'),
     currentStateName,
     currentStateDisplayName,
+    supervisorFullName: read(item, 'supervisorFullName'),
     title: readLocalized(item, 'title'),
     description: readLocalized(item, 'description'),
     status: directionStatusFromState(currentStateName, currentStateDisplayName),
@@ -43,9 +70,9 @@ export const normalizeDirection = (item) => {
   };
 };
 export const directionPayloadFromForm = ({ form, user, workTypeId }) => ({
-  departmentId: user?.departmentId,
-  supervisorId: user?.staffId,
-  academicYearId: user?.currentAcademicYearId,
+  orgUnitId: user?.orgUnitId,
+  supervisorId: user?.userId,
+  semesterId: user?.currentSemesterId,
   workTypeId,
   titleRu: form.title?.ru?.trim() || '',
   titleKz: form.title?.kk?.trim() || '',
@@ -55,62 +82,57 @@ export const directionPayloadFromForm = ({ form, user, workTypeId }) => ({
   descriptionEn: form.description?.en?.trim() || '',
 });
 export const directionsApi = {
-  fetchBySupervisor: async ({ supervisorId, academicYearId, workTypeId, stateId, includeDeleted = false }) => {
-    const { data } = await apiClient.get('/Directions/by-supervisor', {
-      params: { supervisorId, academicYearId, workTypeId, stateId, includeDeleted },
+  fetchBySupervisor: async ({ semesterId }) => {
+    const { data } = await apiClient.get('/v1/directions/my', {
+      params: { semesterId },
     });
     return data.map(normalizeDirection);
   },
-  fetchByDepartment: async ({ departmentId, academicYearId, workTypeId, stateId, supervisorId, includeDeleted = false }) => {
-    const { data } = await apiClient.get('/Directions/by-department', {
-      params: { departmentId, academicYearId, workTypeId, stateId, supervisorId, includeDeleted },
+
+  fetchByDepartment: async ({ orgUnitId, semesterId, stateId }) => {
+    const { data } = await apiClient.get(`/v1/directions/org-unit/${orgUnitId}`, {
+      params: { semesterId, stateId },
     });
     return data.map(normalizeDirection);
   },
   fetchById: async (id) => {
-    const { data } = await apiClient.get(`/Directions/${id}`);
+    const { data } = await apiClient.get(`/v1/directions/${id}`);
     return normalizeDirection(data);
   },
   create: async (payload) => {
-    const { data } = await apiClient.post('/Directions', payload);
+    const { data } = await apiClient.post('/v1/directions', payload);
     return data;
   },
   update: async (id, payload) => {
-    const { data } = await apiClient.put(`/Directions/${id}`, payload);
+    const { data } = await apiClient.put(`/v1/directions/${id}`, payload);
     return data;
   },
   submit: async (id) => {
-    const { data } = await apiClient.post(`/Directions/${id}/submit`);
+    const { data } = await apiClient.post(`/v1/directions/${id}/submit`);
     return data;
   },
-  approve: async (id) => {
-    const { data } = await apiClient.post(`/Directions/${id}/approve`);
-    return data;
-  },
-  reject: async ({ id, comment }) => {
-    const { data } = await apiClient.post(`/Directions/${id}/reject`, { comment });
-    return data;
-  },
-  requestRevision: async ({ id, comment }) => {
-    const { data } = await apiClient.post(`/Directions/${id}/request-revision`, { comment });
+
+  review: async ({ id, decisionId, comment }) => {
+    const { data } = await apiClient.post(`/v1/directions/${id}/review`, { decisionId, comment });
     return data;
   },
 };
 export const directionKeys = {
   all: ['directions'],
-  supervisor: (supervisorId, academicYearId) => [...directionKeys.all, 'supervisor', supervisorId, academicYearId],
-  department: (departmentId, academicYearId) => [...directionKeys.all, 'department', departmentId, academicYearId],
+  supervisor: (supervisorId, semesterId) => [...directionKeys.all, 'supervisor', supervisorId, semesterId],
+  department: (orgUnitId, semesterId) => [...directionKeys.all, 'department', orgUnitId, semesterId],
   detail: (id) => [...directionKeys.all, 'detail', id],
 };
-export const useDirectionsBySupervisor = (supervisorId, academicYearId, filters = {}) => useQuery({
-  queryKey: [...directionKeys.supervisor(supervisorId, academicYearId), filters],
-  queryFn: () => directionsApi.fetchBySupervisor({ supervisorId, academicYearId, ...filters }),
-  enabled: !!supervisorId && !!academicYearId,
+
+export const useDirectionsBySupervisor = (supervisorId, semesterId, filters = {}) => useQuery({
+  queryKey: [...directionKeys.supervisor(supervisorId, semesterId), filters],
+  queryFn: () => directionsApi.fetchBySupervisor({ semesterId, ...filters }),
 });
-export const useDirectionsByDepartment = (departmentId, academicYearId, filters = {}) => useQuery({
-  queryKey: [...directionKeys.department(departmentId, academicYearId), filters],
-  queryFn: () => directionsApi.fetchByDepartment({ departmentId, academicYearId, ...filters }),
-  enabled: !!departmentId && !!academicYearId,
+
+export const useDirectionsByDepartment = (orgUnitId, semesterId, filters = {}) => useQuery({
+  queryKey: [...directionKeys.department(orgUnitId, semesterId), filters],
+  queryFn: () => directionsApi.fetchByDepartment({ orgUnitId, semesterId, ...filters }),
+  enabled: !!orgUnitId,
 });
 export const useDirectionDetail = (id) => useQuery({
   queryKey: directionKeys.detail(id),
@@ -141,24 +163,33 @@ export const useSubmitDirection = () => {
     onSuccess: () => invalidateDirections(queryClient),
   });
 };
+
+export const useReviewDirection = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: directionsApi.review,
+    onSuccess: () => invalidateDirections(queryClient),
+  });
+};
+
 export const useApproveDirection = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: directionsApi.approve,
+    mutationFn: (id) => directionsApi.review({ id, decisionId: 1, comment: null }),
     onSuccess: () => invalidateDirections(queryClient),
   });
 };
 export const useRejectDirection = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: directionsApi.reject,
+    mutationFn: ({ id, comment }) => directionsApi.review({ id, decisionId: 2, comment }),
     onSuccess: () => invalidateDirections(queryClient),
   });
 };
 export const useRequestDirectionRevision = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: directionsApi.requestRevision,
+    mutationFn: ({ id, comment }) => directionsApi.review({ id, decisionId: 3, comment }),
     onSuccess: () => invalidateDirections(queryClient),
   });
 };

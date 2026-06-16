@@ -4,32 +4,39 @@ import { useTranslation } from 'react-i18next';
 import './ProgressStepper.css';
 import doneIcon from '../assets/icons/done-icon.svg';
 
-export function ProgressStepper({ currentStep = 1, highestCompletedStep = 1 }) {
+export function ProgressStepper({ currentStep = 1, highestCompletedStep = 1, activeCheckTypeCodes = null, maxVisibleStep = null }) {
   const { t } = useTranslation();
 
-  const steps = [
-    { id: 1, nameKey: 'student.chooseTheme', path: '/choose-theme' },
-    { id: 2, nameKey: 'student.preDefense1', path: '/pre-defense-1' },
-    { id: 3, nameKey: 'student.preDefense2', path: '/pre-defense-2' },
-    { id: 4, nameKey: 'student.normocontrol', path: '/normocontrol' },
-    { id: 5, nameKey: 'student.softwareCheck', path: '/software-check' },
-    { id: 6, nameKey: 'student.antiplagiarism', path: '/antiplagiarism' },
-    { id: 7, nameKey: 'student.critique', path: '/critique' },
-    { id: 8, nameKey: 'student.defense', path: '/defense' },
+  const allSteps = [
+    { id: 1, nameKey: 'student.chooseTheme',    path: '/choose-theme' },
+    { id: 2, nameKey: 'student.preDefense1',    path: '/pre-defense-1' },
+    { id: 3, nameKey: 'student.preDefense2',    path: '/pre-defense-2' },
+    { id: 4, nameKey: 'student.normocontrol',   path: '/normocontrol',   checkTypeCode: 'NORMCONTROL' },
+    { id: 5, nameKey: 'student.softwareCheck',  path: '/software-check', checkTypeCode: 'SOFTWARECHECK' },
+    { id: 6, nameKey: 'student.antiplagiarism', path: '/antiplagiarism', checkTypeCode: 'ANTIPLAGIARISM' },
+    { id: 7, nameKey: 'student.critique',       path: '/critique' },
+    { id: 8, nameKey: 'student.defense',        path: '/defense' },
   ];
+
+  
+  const steps = activeCheckTypeCodes === null
+    ? allSteps
+    : allSteps.filter(s => !s.checkTypeCode || activeCheckTypeCodes.includes(s.checkTypeCode));
 
   return (
       <div className="stepper-container">
         {steps.map((step, index) => {
-          const isCompleted = step.id < currentStep;
+          const effectiveMaxStep = maxVisibleStep != null ? maxVisibleStep : highestCompletedStep;
+          const isCompleted = step.id < highestCompletedStep;
           const isActive = step.id === currentStep;
-          const isAvailable = step.id <= highestCompletedStep;
+          const isAvailable = step.id <= effectiveMaxStep;
 
-          // Линия закрашивается, если мы прошли этот шаг
-          const isConnectorFilled = step.id < currentStep;
+          
+          const nextStep = steps[index + 1];
+          const isConnectorFilled = nextStep && nextStep.id <= effectiveMaxStep && step.id < highestCompletedStep;
 
           const StepCircle = () => (
-              <div className={`step-circle ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}`}>
+              <div className={`step-circle ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''} ${!isAvailable ? 'disabled' : ''}`}>
                 {isCompleted ? (
                     <img src={doneIcon} alt="✓" className="icon-svg" />
                 ) : (
@@ -40,24 +47,24 @@ export function ProgressStepper({ currentStep = 1, highestCompletedStep = 1 }) {
 
           return (
               <React.Fragment key={step.id}>
-                {/* Блок шага */}
+                {}
                 <div className={`step-wrapper ${!isAvailable ? 'disabled' : ''}`}>
                   {isAvailable ? (
                       <Link to={step.path} className="step-link">
                         <StepCircle />
-                        <span className={`step-label ${isActive ? 'active' : ''}`}>
+                        <span className={`step-label ${isActive ? 'active' : ''} ${!isAvailable ? 'disabled' : ''}`}>
                             {t(step.nameKey)}
                         </span>
                       </Link>
                   ) : (
                       <div className="step-link">
                         <StepCircle />
-                        <span className="step-label">{t(step.nameKey)}</span>
+                        <span className={`step-label ${!isAvailable ? 'disabled' : ''}`}>{t(step.nameKey)}</span>
                       </div>
                   )}
                 </div>
 
-                {/* Соединительная линия */}
+                {}
                 {index < steps.length - 1 && (
                     <div className={`connector-line ${isConnectorFilled ? 'filled' : ''}`} />
                 )}

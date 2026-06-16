@@ -20,7 +20,8 @@ export function SharedSidebar({ navigationItems, headerTitle }) {
         return false;
     };
     const handleNavClick = (e, item) => {
-        if (!item.onClick) {
+        if (item.onClick) {
+            item.onClick(e);
         }
         setIsMobileMenuOpen(false);
     };
@@ -49,6 +50,7 @@ export function SharedSidebar({ navigationItems, headerTitle }) {
     );
     return (
         <>
+            { }
             <aside className="shared-sidebar-desktop">
                 <div className="shared-sidebar-desktop-content">
                     <nav className="shared-sidebar-nav">
@@ -61,6 +63,8 @@ export function SharedSidebar({ navigationItems, headerTitle }) {
                     </nav>
                 </div>
             </aside>
+
+            { }
             <div className="shared-mobile-menu-button-wrapper">
                 <button
                     className="shared-mobile-menu-button"
@@ -74,12 +78,16 @@ export function SharedSidebar({ navigationItems, headerTitle }) {
                     />
                 </button>
             </div>
+
+            { }
             {isMobileMenuOpen && (
                 <div
                     className="shared-mobile-menu-overlay"
                     onClick={() => setIsMobileMenuOpen(false)}
                 />
             )}
+
+            { }
             <div className={`shared-sidebar-mobile ${isMobileMenuOpen ? "open" : ""}`}>
                 <div className="shared-sidebar-mobile-content">
                     <nav className="shared-sidebar-nav">

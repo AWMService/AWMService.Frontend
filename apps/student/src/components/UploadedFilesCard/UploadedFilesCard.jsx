@@ -4,7 +4,7 @@ import './UploadedFilesCard.css';
 import fileIcon from '../../assets/icons/pre-defense/file-icon.svg';
 import deleteIcon from '../../assets/icons/pre-defense/delete-icon.svg';
 
-export const UploadedFilesCard = ({ uploadedFiles, onUploadClick, onDeleteFile, status }) => {
+export const UploadedFilesCard = ({ uploadedFiles, onUploadClick, onDeleteFile, onDownloadFile, status }) => {
     const { t } = useTranslation();
     return (
         <div className="card files-card">
@@ -26,8 +26,14 @@ export const UploadedFilesCard = ({ uploadedFiles, onUploadClick, onDeleteFile, 
                             <div className="file-info-group">
                                 <img src={fileIcon} alt="doc" className="file-icon-large" />
                                 <div className="file-text-content">
-                                    <span className="file-name-text">{f.name}</span>
-                                    <span className="file-size-text">156 KB • {f.date}</span>
+                                    <span 
+                                        className="file-name-text" 
+                                        style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                                        onClick={() => onDownloadFile && onDownloadFile(f.id, f.name)}
+                                    >
+                                        {f.name}
+                                    </span>
+                                    <span className="file-size-text">{f.date}</span>
                                 </div>
                             </div>
 
@@ -35,7 +41,7 @@ export const UploadedFilesCard = ({ uploadedFiles, onUploadClick, onDeleteFile, 
                                 <button
                                     className="delete-icon-btn"
                                     title={t('common.delete')}
-                                    onClick={() => onDeleteFile(i)}
+                                    onClick={() => onDeleteFile(f.id)}
                                 >
                                     <img src={deleteIcon} alt="delete" />
                                 </button>

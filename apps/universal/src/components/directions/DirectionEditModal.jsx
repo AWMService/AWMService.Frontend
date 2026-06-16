@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { X, Edit3, Globe, AlignLeft } from "lucide-react";
+import { X, Edit3, Globe, AlignLeft, Layers } from "lucide-react";
 import "./DirectionEditModal.css";
 
-export default function DirectionEditModal({ direction, onClose, onSave }) {
+export default function DirectionEditModal({ direction, onClose, onSave, workTypes = [] }) {
     const { t } = useTranslation();
     const normalizeLangObj = (obj) => ({
         kk: obj?.kk ?? "",
@@ -15,6 +15,7 @@ export default function DirectionEditModal({ direction, onClose, onSave }) {
         id: direction?.id ?? Date.now().toString(),
         title: normalizeLangObj(direction?.title),
         description: normalizeLangObj(direction?.description),
+        workTypeId: direction?.workTypeId ?? "",
         status: direction?.status ?? "draft",
         createdAt: direction?.createdAt ?? new Date().toISOString(),
         approvedAt: direction?.approvedAt ?? null,
@@ -26,6 +27,7 @@ export default function DirectionEditModal({ direction, onClose, onSave }) {
                 id: direction.id,
                 title: normalizeLangObj(direction.title),
                 description: normalizeLangObj(direction.description),
+                workTypeId: direction.workTypeId ?? "",
                 status: direction.status ?? "draft",
                 createdAt: direction.createdAt ?? new Date().toISOString(),
                 approvedAt: direction.approvedAt ?? null,
@@ -38,6 +40,10 @@ export default function DirectionEditModal({ direction, onClose, onSave }) {
             ...prev,
             [field]: { ...prev[field], [lang]: value },
         }));
+    };
+
+    const handleWorkTypeChange = (value) => {
+        setForm(prev => ({ ...prev, workTypeId: parseInt(value, 10) }));
     };
 
     const handleSaveClick = () => {
@@ -65,7 +71,27 @@ export default function DirectionEditModal({ direction, onClose, onSave }) {
                 </div>
 
                 <div className="dem-body">
-                    {/* Title Section */}
+                    {}
+                    <div className="dem-section">
+                        <div className="dem-section-label">
+                            <Layers size={16} />
+                            <h3>{t('supervisor.workType')}</h3>
+                        </div>
+                        <select
+                            className="dem-select"
+                            value={form.workTypeId}
+                            onChange={(e) => handleWorkTypeChange(e.target.value)}
+                        >
+                            <option value="">{t('common.select')}</option>
+                            {workTypes.map((wt) => (
+                                <option key={wt.id} value={wt.id}>
+                                    {wt.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {}
                     <div className="dem-section">
                         <div className="dem-section-label">
                             <Globe size={16} />
@@ -87,7 +113,7 @@ export default function DirectionEditModal({ direction, onClose, onSave }) {
                         </div>
                     </div>
 
-                    {/* Description Section */}
+                    {}
                     <div className="dem-section">
                         <div className="dem-section-label">
                             <AlignLeft size={16} />

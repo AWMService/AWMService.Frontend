@@ -1,8 +1,5 @@
 .expert-assignment-page {
-    background-color: #f9fafb;
     flex: 1;
-    margin-top: 64px;
-    padding: 56px;
 }
 
 .expert-assignment-page .page-header {
@@ -46,7 +43,7 @@
     margin-top: 0.25rem;
 }
 
-/* Bulk assignment bar */
+
 .ea-bulk-bar {
     display: flex;
     align-items: center;
@@ -80,7 +77,7 @@
     cursor: not-allowed;
 }
 
-/* Table */
+
 .ea-table-wrapper {
     background: #fff;
     border: 1px solid #e5e7eb;
@@ -167,7 +164,7 @@
     font-size: 0.8125rem;
 }
 
-/* Bulk assignment modal */
+
 .ea-modal-overlay {
     position: fixed;
     inset: 0;
@@ -263,3 +260,16 @@
     background-color: #9ca3af;
     cursor: not-allowed;
 }
+
+.ea-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.ea-save-success-msg {
+    color: #10B981;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
